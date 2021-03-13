@@ -1,6 +1,5 @@
-# force the bot to use v6 since d.py uses v7 which can cause problems
 import discord.http
-discord.http.Route.BASE = "https://discordapp.com/api/v6"
+discord.http.Route.BASE = "https://discordapp.com/api/v6" # v6 > v7
 
 from Bot.AutoMod import AutoMod
 from discord import Intents
