@@ -34,7 +34,7 @@ def translate(guild, key, **kwargs):
             guild.id,
             "lang"
         )
-        LANG_CACHE[guild.id] = lang # cach the language for the guild, so we don't have to fetch it from the DB every time
+        LANG_CACHE[guild.id] = lang # cache the language for the guild, so we don't have to fetch it from the DB every time
     else:
         lang = LANG_CACHE[guild.id]
     try:
