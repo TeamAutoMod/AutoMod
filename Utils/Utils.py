@@ -30,7 +30,7 @@ def init(actual_bot):
 def init_master():
     global MASTER_CONFIG, LOADED_MASTER_CONFIG
     try:
-        with open("./Config/master.json", "r") as f:
+        with open("./Config/config.json", "r") as f:
             MASTER_CONFIG = json.load(f)
             LOADED_MASTER_CONFIG = True
     except Exception as ex:
