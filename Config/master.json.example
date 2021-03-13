@@ -1,0 +1,23 @@
+{
+    "TOKEN": "",
+    "DB_HOST": "",
+    "SENTRY_DSN": "",
+    "BOT_ADMINS": [],
+    "BLOCKED_GUILDS": [],
+    "GLOBAL_LOG_CHANNEL": "",
+    "GUILD_LOG_CHANNEL": "",
+    "SUPPORTED_LANGS": [],
+    "COGS": [
+        "Admin",
+        "AntiSpam",
+        "Basic",
+        "Censor",
+        "Custom",
+        "GuildConfig",
+        "Utility",
+        "Infractions",
+        "GlobalListeners",
+        "Moderation",
+        "Leveling"
+    ]
+}
