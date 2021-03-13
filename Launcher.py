@@ -27,8 +27,7 @@ db = Connector.Database()
 
 
 def prefix_callable(bot, message):
-    bot_id = bot.user.id
-    prefixes = [f"<@!{bot_id}> ", f"<@{bot_id}> "]
+    prefixes = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
     if message.guild is None:
         prefixes.append("+")
     elif bot.READY:
