@@ -78,44 +78,44 @@ class Guild(Converter):
 
 class DurationHolder:
 
-    def __init__(self, length, unit=None) -> None:
+    def __init__(self, dur, unit=None):
         super().__init__()
-        self.length = length
+        self.dur = dur
         self.unit = unit
 
     def to_seconds(self, ctx):
         if self.unit is None:
             self.unit = "seconds"
         unit = self.unit.lower()
-        length = self.length
-        if len(unit) > 1 and unit[-1:] == 's':  # plural -> singular
+        dur = self.dur
+        if len(unit) > 1 and unit[-1:] == 's':
             unit = unit[:-1]
         if unit == 'w' or unit == 'week':
-            length = length * 7
+            dur = dur * 7
             unit = 'd'
         if unit == 'd' or unit == 'day':
-            length = length * 24
+            dur = dur * 24
             unit = 'h'
         if unit == 'h' or unit == 'hour':
-            length = length * 60
+            dur = dur * 60
             unit = 'm'
         if unit == 'm' or unit == 'minute':
-            length = length * 60
+            dur = dur * 60
             unit = 's'
         if unit != 's' and unit != 'second':
             raise PostParseError('length', Translator.translate(ctx.guild, "invalid_lenth_unit"))
-        max_length = 60 * 60 * 24 * 365
-        if length > max_length:
+        max_dur = 60 * 60 * 24 * 365
+        if dur > max_dur:
             raise PostParseError('length', Translator.translate(ctx.guild, "mex_lenth", max_length=max_langth))
         else:
-            return length
+            return dur
 
     def __str__(self):
         if len(self.unit) == 1:
-            return f"{self.length}{self.unit}"
+            return f"{self.dur}{self.unit}"
         if self.unit[-1] != "s":
-            return f"{self.length} {self.unit}s"
-        return f"{self.length} {self.unit}"
+            return f"{self.dur} {self.unit}s"
+        return f"{self.dur} {self.unit}"
 
 
 
