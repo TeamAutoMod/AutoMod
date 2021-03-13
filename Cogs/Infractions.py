@@ -192,7 +192,7 @@ class Infractions(BaseCog):
 
             out = []
             pages = []
-            basic_table = f"Case{' '*3}| Target{' '*14}| Moderator{' '*10}| Timestamp{' '*11}| Type{' '*4}| Reason\n{'='*105}"
+            basic_table = f"Case{' '*3}| Target{' '*14}| Moderator{' '*10}| Timestamp{' '*11}| Type{' '*7}| Reason\n{'='*105}"
 
             counters = {
                 "Ban": 0,
@@ -246,7 +246,7 @@ class Infractions(BaseCog):
                             f"{target}{' '*abs(len(target) - 20)}",
                             f"{mod}{' '*abs(len(mod) - 19)}",
                             f"{timestamp}{' '*abs(len(timestamp) - 20)}",
-                            f"{inf_type}{' '*abs(len(inf_type) - 8)}",
+                            f"{inf_type}{' '*abs(len(inf_type) - 11)}",
                             f"{reason}"
                         )
                         out.append(output)
