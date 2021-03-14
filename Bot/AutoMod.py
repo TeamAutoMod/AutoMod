@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import aiohttp
-from prometheus_client import CollectorRegistry
 from collections import deque, defaultdict
 
 from discord.ext.commands import AutoShardedBot
@@ -40,7 +39,6 @@ class AutoMod(AutoShardedBot):
     running_unbans = set()
     running_msg_deletions = set()
     running_removals = set()
-    metrics_registry = CollectorRegistry()
     last_reload = None
     
     
@@ -66,9 +64,10 @@ class AutoMod(AutoShardedBot):
             for i in reversed(needs_removal):
                 del dates[i]
 
+                
     async def _run_event(self, coro, event_name, *args, **kwargs):
         while (self.locked or not self.READY) and event_name != "on_ready":
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(0.3)
         await super()._run_event(coro, event_name, *args, **kwargs)
 
 
