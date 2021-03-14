@@ -251,26 +251,9 @@ replacements = {
 }
 
 def replace_lookalikes(text):
-    for k, v in replacements.items():
-        text = text.replace(k, v)
+    for _, __ in replacements.items():
+        text = text.replace(_, __)
     return text
-
-
-def extract_info(o):
-    info = ""
-    if hasattr(o, "__dict__"):
-        info += str(o.__dict__)
-    elif hasattr(o, "__slots__"):
-        items = dict()
-        for slot in o.__slots__:
-            try:
-                items[slot] = getattr(o, slot)
-            except AttributeError:
-                pass
-        info += str(items)
-    else:
-        info += str(o) + " "
-    return info
 
 
 class PostParseError(commands.BadArgument):
