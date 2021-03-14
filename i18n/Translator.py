@@ -37,6 +37,7 @@ def translate(guild, key, **kwargs):
         LANG_CACHE[guild.id] = lang # cache the language for the guild, so we don't have to fetch it from the DB every time
     else:
         lang = LANG_CACHE[guild.id]
+    global string
     try:
         string = LANGS[lang][key]
     except KeyError:
