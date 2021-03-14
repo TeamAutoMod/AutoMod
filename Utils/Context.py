@@ -27,7 +27,7 @@ class Context(commands.Context):
         if not self.channel.permissions_for(self.me).add_reactions:
             raise RuntimeError("AutoMod doesn't have add_reactions perms.")
 
-        fmt = Translator.translate(message.guild, "prompt_text", message=message, yes=yes, no=no)
+        fmt = Translator.translate(self.guild, "prompt_text", message=message, yes=yes, no=no)
 
         author_id = author_id or self.author.id
         msg = await self.send(fmt)
