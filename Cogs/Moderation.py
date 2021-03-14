@@ -483,9 +483,15 @@ class Moderation(BaseCog):
         if before is None:
             before = ctx.message
         else:
-            before = discord.Object(id=before)
+            if isinstance(before, discord.Message):
+                before = before
+            else:
+                before = discord.Object(id=before)
         if after is not None:
-            after = discord.Object(id=after)
+            if isinstance(after, discord.Message):
+                after = after
+            else:
+                after = discord.Object(id=after)
         
         # after is set to a discord Object (message), which won't work for the clean last command
         # therefore we have to change its type if a time is given
