@@ -30,7 +30,7 @@ def init(actual_bot):
 def init_config():
     global CONFIG, LOADED_CONFIG
     try:
-        with open("./src/Config/config.json", "r") as f:
+        with open("./src/config.json", "r") as f:
             CONFIG = json.load(f)
             LOADED_CONFIG = True
     except Exception as ex:
