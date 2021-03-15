@@ -11,5 +11,13 @@ You can see the required arguments within the `Usage` colomn. The type of of the
 
 |   Command   |    Aliases    | Perms |                        Description                  |  Usage                |         Parameters       |
 | :---------: | :-----------: | :---: | :-------------------------------------------------: | :-------------------: | :----------------------: |
-| config      | configuration | Admin |          Base command for server config.            | !config <subcommand>  |    N/A                   |
+| config      | configuration | Admin |          Base command for server config.            | !config <subcommand>  |    None                  |
 | action_log  |      None     | Admin |      Sets a log channel for any mod actions         | !action_log <channel> |    `channel:Channel`     |
+
+### Basic
+
+|   Command   |    Aliases    | Perms |                        Description                  |  Usage   |  Parameters |
+| :---------: | :-----------: | :---: | :-------------------------------------------------: | :------: | :---------: |
+| about       |      None     |  User |      Shows some info about the bot (uptime etc)     | !about   |    None     |
+| ping        |      None     |  User |              Shows the bots ping/latency            | !ping    |    None     |
+| help        |      None     |  User |    Shows a a help message including a command list  | !help    |    None     |
