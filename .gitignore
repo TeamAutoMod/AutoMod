@@ -127,8 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< HEAD
 
 config.json
 package.json
 package-lock.json
 queries.*
+=======
+>>>>>>> 1b65ae8aca57bbd01918c2fe3d50f74a0a17375c
