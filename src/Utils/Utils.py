@@ -38,7 +38,7 @@ def init_config():
 
 
 
-def form_config(key):
+def from_config(key):
     global CONFIG, LOADED_CONFIG
     if not LOADED_CONFIG:
         init_config()
