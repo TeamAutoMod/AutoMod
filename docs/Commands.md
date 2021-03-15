@@ -16,8 +16,8 @@ You can see the required arguments within the `Usage` colomn. The type of of the
 
 ### Basic
 
-|   Command   |    Aliases    | Perms |                        Description                  |     Usage   |   Parameters   |
-| :---------: | :-----------: | :---: | :-------------------------------------------------: | :---------: | :------------: |
-| about       |      None     |  User |      Shows some info about the bot (uptime etc)     |   !about    |    None        |
-| ping        |      None     |  User |              Shows the bots ping/latency            |   !ping     |    None        |
-| help        |      None     |  User |    Shows a a help message including a command list  |   !help     |    None        | 
+|   Command   |    Aliases    | Perms |                        Description                  |       Usage       |   Parameters   |
+| :---------: | :-----------: | :---: | :-------------------------------------------------: | :---------------: | :------------: |
+| about       |      None     |  User |      Shows some info about the bot (uptime etc)     |       !about      |    None        |
+| ping        |      None     |  User |              Shows the bots ping/latency            |       !ping       |    None        |
+| help        |      None     |  User |    Shows a a help message including a command list  |       !help       |    None        | 
