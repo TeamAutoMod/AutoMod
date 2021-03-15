@@ -225,7 +225,7 @@ async def on_guild_join(bot, guild: Guild):
         await guild.chunk(cache=True)
         bot.missing_guilds.remove(guild.id)
         DBUtils.insert(db.configs, Schemas.guild_schema(guild))
-        await Logging.guild_log(bot, f"A new guild came up: {guild.name} ({guild.id}).")
+        await Logging.guild_log(bot, f"I was added to a new guild: {guild.name} ({guild.id}).")
 
 
 
