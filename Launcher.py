@@ -14,6 +14,7 @@ import contextlib
 import datetime
 import asyncio
 import traceback
+import argparse
 
 try:
     import uvloop
@@ -78,21 +79,33 @@ def init_logger():
 
 
 if __name__ == "__main__":
-    with init_logger():
-        automod = AutoMod(**{
-            "command_prefix": prefix_callable,
-            "case_insensitive": True,
-            "max_messages": 1000,
-            "intents": Intents(
-                guilds=True,
-                members=True,
-                bans=True,
-                emojis=True,
-                messages=True,
-                reactions=True
-            ),
-            "chunk_guilds_at_startup": False,
-            "description": "Discord moderation/utility bot!"
+    p = argparse.ArgumentParser()
+    p.add_argument("total_shards", help="The amount of shards that should be used")
+    cl_args = p.parse_args()
+    
+    bot_args = {
+        "command_prefix": prefix_callable,
+        "case_insensitive": True,
+        "max_messages": 1000,
+        "intents": Intents(
+            guilds=True,
+            members=True,
+            bans=True,
+            emojis=True,
+            messages=True,
+            reactions=True
+        ),
+        "chunk_guilds_at_startup": False,
+        "description": "Discord moderation/utility bot!"
+    }
+
+    if cl_args.total_shards:
+        bot_args.update({
+            "shard_count": int(total_shards)
         })
+
+    with init_logger():
+        """Initialize the bot"""
+        automod = AutoMod(**bot_args)
         automod.remove_command("help")
         automod.run()
