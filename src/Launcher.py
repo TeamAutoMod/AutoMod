@@ -101,9 +101,8 @@ if __name__ == "__main__":
     }
 
     if cl_args.total_shards:
-        shard_count = int(cl_args.total_shards)
         args.update({
-            "shard_count": shard_count
+            "shard_count": int(cl_args.total_shards)
         })
     
     with init_logger():
