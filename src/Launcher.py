@@ -29,8 +29,7 @@ db = Connector.Database()
 
 
 def prefix_callable(bot, message):
-    bot_id = bot.user.id
-    prefixes = [f"<@!{bot_id}> ", f"<@{bot_id}> "]
+    prefixes = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
     if message.guild is None:
         prefixes.append("+")
     elif bot.READY:
@@ -102,9 +101,8 @@ if __name__ == "__main__":
     }
 
     if cl_args.total_shards:
-        shard_count = int(cl_args.total_shards)
         args.update({
-            "shard_count": shard_count
+            "shard_count": int(cl_args.total_shards)
         })
     
     with init_logger():
