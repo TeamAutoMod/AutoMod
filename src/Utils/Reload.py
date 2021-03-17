@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 async def _reload(admin, bot):
     try:
         log.info(f"[Hot Reload] Hot reload triggered by {admin}")
-        await Utils.perform_shell_code("git pull AutoMod master")
+        await Utils.perform_shell_code("git pull origin master")
 
         importlib.reload(Reload)
         log.info("[Hot Reload] Reloading components")

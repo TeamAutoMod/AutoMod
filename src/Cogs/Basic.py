@@ -110,20 +110,24 @@ class Basic(BaseCog):
                     await message.clear_reactions()
                     break
         else:
-            if not query in [_.name for _ in client.commands]:
+            get_aliases = lambda t: [i for s in t for i in s] # [["1"], ["2"]] = ["1", "2"]
+
+            all_commands = [*[x.name for x in self.bot.commands], *get_aliases([y.aliases for y in self.bot.commands])]
+            if not query in all_commands:
                 return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
             
-            help_message = Translator.translate(ctx.guild, f"{query.lower()}_help")
+            help_message = Translator.translate(ctx.guild, f"{self.bot.get_command(query).name.lower()}_help")
             if help_message is None:
                 return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
                 
             self.bot.help_command.context = ctx
             try:
-                usage = self.bot.help_command.get_command_signature(command = self.bot.get_command(query.lower()))
+                usage = self.bot.help_command.get_command_signature(command=self.bot.get_command(query.lower()))
             except Exception:
                 return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
                 
             try:
+                query = self.bot.get_command(query).name # get the actual command name
                 group = [x for x in self.bot.get_command(query.lower()).cog.walk_commands() if x.name == f"{query.lower()}"]
                 commands = ["{}".format(Generators.generate_help(ctx, y)) for y in group[0].commands]
             except Exception:
