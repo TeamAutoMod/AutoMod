@@ -110,6 +110,9 @@ class Basic(BaseCog):
                     await message.clear_reactions()
                     break
         else:
+            if not query in [_.name for _ in client.commands]:
+                return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
+            
             help_message = Translator.translate(ctx.guild, f"{query.lower()}_help")
             if help_message is None:
                 return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))

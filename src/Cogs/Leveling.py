@@ -230,6 +230,7 @@ class Leveling(BaseCog):
     @lvlrole.command()
     @commands.has_permissions(ban_members=True)
     async def add(self, ctx, lvl: RangedInt(2, 200), role: discord.Role):
+        "add_help"
         if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem") is False:
             return await ctx.send(Translator.translate(ctx.guild, "lvlsystem_disabled"))
         
@@ -259,6 +260,7 @@ class Leveling(BaseCog):
     @lvlrole.command()
     @commands.has_permissions(ban_members=True)
     async def remove(self, ctx, role: discord.Role):
+        "remove_help"
         if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem") is False:
             return await ctx.send(Translator.translate(ctx.guild, "lvlsystem_disabled"))
 

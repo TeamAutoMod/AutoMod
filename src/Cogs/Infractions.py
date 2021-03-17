@@ -212,7 +212,7 @@ class Infractions(BaseCog):
                         case = doc["case"]
 
                         target = None
-                        if doc["target_id"] in self.cached_mods:
+                        if doc["target_id"] in self.cached_targets:
                             target = self.cached_targets[doc["target_id"]]
                         else:
                             raw_target = await Utils.get_user(int(doc["target_id"]))

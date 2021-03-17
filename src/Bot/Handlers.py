@@ -89,7 +89,7 @@ async def on_ready(bot):
                     log.error("[Booting Up] Error while loading %s: %s" % (cog, e))
             log.info(f"[Booting Up] AutoMod running at full speed, now starting cache filling!")
             t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.bot_log(f"``[{t} UTC]`` {SALUTE} Starting to build & fill the internal cache")
+            await Logging.bot_log(f"``[{t} UTC]`` {SALUTE} Starting to build the internal cache")
             bot.READY = True
         else:
             pass # bot is ready
@@ -146,6 +146,9 @@ async def fill_cache(bot):
                     except Exception as ex:
                         log.error(f"[Caching] Error while trying to fill up missing guild {g}: \n{ex}")
             log.info("[Caching] Fill-up task completed!")
+            end_time2 = time.time()
+            t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            await Logging.bot_log(f"``[{t} UTC]`` {SALUTE} Finished building the internal cache in {round(end_time2 - start_time, 2)} seconds")
             bot.initial_fill_complete = True
     except Exception as e:
         await log.error(f"[Caching] Guild fetching failed \n{e}")
@@ -263,7 +266,7 @@ async def on_shard_ready(bot, shard_id):
 
 async def on_shard_resumed(bot, shard_id):
     t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-    await Logging.bot_log(msg=f"``[{t} UTC]`` {SALUTE} Shard {shard_id} successfully resumed its session")
+    await Logging.bot_log(msg=f"``[{t} UTC]`` {SALUTE} Shard {shard_id} successfully resumed")
 
 
 
@@ -323,7 +326,7 @@ async def on_command_error(bot, ctx, error):
         bot.help_command.context = ctx
         usage = bot.help_command.get_command_signature(ctx.command)
         arg = param._name
-        real_error = Translator.translate(ctx.guild, replace_lookalikes(str(error)))
+        real_error = replace_lookalikes(str(error))
         await ctx.send(Translator.translate(ctx.guild, "arg_parse_error", arg=arg, error=real_error, usage=usage))
     elif isinstance(error, commands.CommandNotFound):
         return
