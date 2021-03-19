@@ -114,7 +114,7 @@ class AntiSpam(BaseCog):
             await self.handle_spam(message.guild, message.author, message)
         except Exception:
             ex = traceback.format_exc()
-            log.info(f"[Anti Spam] Error in on_messages listener: {ex}")
+            log.info(f"[Anti Spam] Error in on_message listener: {ex}")
             pass
         
 
