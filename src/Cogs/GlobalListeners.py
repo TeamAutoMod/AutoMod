@@ -43,7 +43,7 @@ class GlobalListeners(BaseCog):
         else:
             if before.content != after.content:
                 on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(c.guild.id, "messageLogChannel", Translator.translate(before.guild, "log_message_edit", user=before.author, user_id=before.author.id, channel=c.mention, on_time=on_time, before=before.content, after=after.content))
+                await Logging.log_to_guild(c.guild.id, "messageLogChannel", Translator.translate(before.guild, "log_message_edit", _emote="PEN", user=before.author, user_id=before.author.id, channel=c.mention, on_time=on_time, before=before.content, after=after.content))
             else:
                 pass
 
@@ -72,7 +72,7 @@ class GlobalListeners(BaseCog):
             return
         else:
             on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(c.guild.id, "messageLogChannel", Translator.translate(message.guild, "log_message_deletion", user=message.author, user_id=message.author.id, channel=c.mention, on_time=on_time, content=message.content))
+            await Logging.log_to_guild(c.guild.id, "messageLogChannel", Translator.translate(message.guild, "log_message_deletion", _emote="BIN", user=message.author, user_id=message.author.id, channel=c.mention, on_time=on_time, content=message.content))
         
 
     @commands.Cog.listener()
@@ -81,7 +81,7 @@ class GlobalListeners(BaseCog):
             created = (datetime.fromtimestamp(time.time()) - member.created_at).days
             try:
                 on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(member.guild.id, Translator.translate(member.guild, "joinLogChannel", "log_join", user=member, user_id=member.id, on_time=on_time, age=created))
+                await Logging.log_to_guild(member.guild.id, "joinLogChannel", Translator.translate(member.guild, "log_join", _emote="JOIN", user=member, user_id=member.id, on_time=on_time, age=created))
             except Exception:
                 pass
 
@@ -118,7 +118,7 @@ class GlobalListeners(BaseCog):
             joined = (datetime.fromtimestamp(time.time()) - member.joined_at).days
             try:
                 on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(member.guild.id, Translator.translate(member.guild, "joinLogChannel", "log_leave", user=member, user_id=member.id, on_time=on_time, joined=joined))
+                await Logging.log_to_guild(member.guild.id, "joinLogChannel", Translator.translate(member.guild, "log_leave", _emote="LEAVE", user=member, user_id=member.id, on_time=on_time, joined=joined))
             except Exception:
                 pass
         else:
@@ -133,7 +133,7 @@ class GlobalListeners(BaseCog):
             return
         else:
             on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_manual_unban", on_time=on_time, user=user, user_id=user.id))
+            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_manual_unban", _emote="ANGEL", on_time=on_time, user=user, user_id=user.id))
 
 
 

@@ -41,10 +41,10 @@ class Infractions(BaseCog):
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", reason))
                 
-                await ctx.send(Translator.translate(ctx.guild, "user_warned", user=target, user_id=target.id, reason=reason, case=case))
+                await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
-            
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", _emote="WARN", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                return
             warns = DBUtils.get(db.warns, "warnId", warn_id, "warns")
             if (int(warns) + 1) >= 4:
                 if DBUtils.get(db.warns, "warnId", warn_id, "kicked") is True:
@@ -57,9 +57,9 @@ class Infractions(BaseCog):
                     timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                     DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", reason))
 
-                    await ctx.send(Translator.translate(ctx.guild, "user_banned", user=target, user_id=target.id, reason=f"{reason} (seconds 4 warns)", case=case))
+                    await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (seconds 4 warns)", case=case))
                     on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                    await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate("log_ban", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (seconds 4 warns)", case=case))
+                    await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate("log_ban", _emote="ALERT", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (seconds 4 warns)", case=case))
                     return
                 else:
                     await ctx.guild.kick(user=target, reason=reason)
@@ -71,9 +71,9 @@ class Infractions(BaseCog):
                     timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                     DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Kick", reason))
 
-                    await ctx.send(Translator.translate(ctx.guild, "user_kicked", user=target, user_id=target.id, reason=f"{reason} (first 4 warns)", case=case))
+                    await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (first 4 warns)", case=case))
                     on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                    await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (first 4 warns)", case=case))
+                    await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", _emote="SHOE", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (first 4 warns)", case=case))
                     return
             
             DBUtils.update(db.warns, "warnId", warn_id, "warns", (int(warns) + 1))
@@ -82,12 +82,12 @@ class Infractions(BaseCog):
             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
             DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Warn", reason))
 
-            await ctx.send(Translator.translate(ctx.guild, "user_warned", user=target, user_id=target.id, reason=reason, case=case))
+            await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", _emote="WARN", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             return
         except Exception as error:
-            await ctx.send(Translator.translate(ctx.guild, "warn_error", target=target.name, error=error))
+            await ctx.send(Translator.translate(ctx.guild, "warn_error", _emote="NO", target=target.name, error=error))
 
 
     @staticmethod
@@ -96,9 +96,9 @@ class Infractions(BaseCog):
         if not DBUtils.get(db.warns, "warnId", warn_id, "check"):
             case = DBUtils.new_case()
 
-            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", user=target, user_id=target.id, reason=reason))
+            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", _emote="YES", user=target, user_id=target.id, reason=reason))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn_clearing", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn_clearing", _emote="ANGEL", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
             return
         else:
             DBUtils.update(db.warns, "warnId", warn_id, "kicked", False)
@@ -106,9 +106,9 @@ class Infractions(BaseCog):
 
             case = DBUtils.new_case()
 
-            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", user=target, user_id=target.id, reason=reason))
+            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", _emote="YES", user=target, user_id=target.id, reason=reason))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn_clearing", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn_clearing", _emote="ANGEL", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
 
 
     @commands.guild_only()
@@ -124,9 +124,9 @@ class Infractions(BaseCog):
             if await Moderation.can_act(self, ctx, member, ctx.author):
                 await self._warn(ctx, member, reason)
             else:
-                await ctx.send(Translator.translate(ctx.guild, "warn_not_allowed", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "warn_not_allowed", _emote="NO", user=member.name))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
 
     @commands.guild_only()
@@ -142,9 +142,9 @@ class Infractions(BaseCog):
             if await Moderation.can_act(self, ctx, member, ctx.author):
                 await self._clearwarns(ctx, member, reason)
             else:
-                await ctx.send(Translator.translate(ctx.guild, "warnclearing_not_allowed", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "warnclearing_not_allowed", _emote="NO", user=member.name))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
 
 
@@ -161,10 +161,10 @@ class Infractions(BaseCog):
     @commands.guild_only()
     @inf.command()
     @commands.has_permissions(ban_members=True)
-    async def find(self, ctx, user: discord.Member = None):
+    async def find(self, ctx, user: DiscordUser = None):
         """inf_find_help"""
         try:
-            msg = await ctx.send(Translator.translate(ctx.guild, "fetching_inf"))
+            msg = await ctx.send(Translator.translate(ctx.guild, "fetching_inf", _emote="LOAD"))
             search_by = {
                 "user": "target_id",
                 "guild": "guild",
@@ -306,7 +306,7 @@ class Infractions(BaseCog):
             guild = DBUtils.get(db.inf, "case", f"{case}", "guild")
             if guild != str(ctx.guild.id):
                 # the case exists, but is not on this server
-                return await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", case=case))
+                return await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", _emote="NO", case=case))
             
 
             target = None
@@ -385,7 +385,7 @@ class Infractions(BaseCog):
             )
             await ctx.send(embed=embed)
         except Exception:
-            await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", case=case))
+            await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", _emote="NO", case=case))
 
 
 
@@ -403,21 +403,21 @@ class Infractions(BaseCog):
             guild = DBUtils.get(db.inf, "case", f"{case}", "guild")
             if guild != str(ctx.guild.id):
                 # the case exists, but is not on this server
-                return await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", case=case))
+                return await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", _emote="NO", case=case))
             
             if DBUtils.get(db.inf, "case", f"{case}", "moderator_id") == str(ctx.author.id):
                 # user is already the responsible mod for this infraction
-                return await ctx.send(Translator.translate(ctx.guild, "case_already_owned"))
+                return await ctx.send(Translator.translate(ctx.guild, "case_already_owned", _emote="THINK"))
             
             DBUtils.update(db.inf, "case", f"{case}", "moderator_id", f"{ctx.author.id}")
             DBUtils.update(db.inf, "case", f"{case}", "moderator", f"{ctx.author.name}#{ctx.author.discriminator}")
             DBUtils.update(db.inf, "case", f"{case}", "moderator_av", f"{ctx.author.avatar_url_as()}")
 
-            await ctx.send(Translator.translate(ctx, "inf_claimed", case=case, reason=reason))
+            await ctx.send(Translator.translate(ctx, "inf_claimed", _emote="YES", case=case, reason=reason))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_inf_claim", on_time=on_time, moderator=ctx.author, moderator_id=ctx.author.id, case=case, reason=reason))
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_inf_claim", _emote="EYES", on_time=on_time, moderator=ctx.author, moderator_id=ctx.author.id, case=case, reason=reason))
         except Exception:
-            return await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", case=case))
+            return await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", _emote="NO", case=case))
 
 
             

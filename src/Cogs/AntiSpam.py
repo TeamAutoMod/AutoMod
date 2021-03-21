@@ -89,7 +89,7 @@ class AntiSpam(BaseCog):
             DBUtils.insert(db.inf, new_infraction(case, msg.guild.id, member, mod, timestamp, "Kick", "[AutoMod] Spam"))
 
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_spam", on_time=on_time, user=member, user_id=member.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=msg.channel.mention))
+            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_spam", _emote="SHOE", on_time=on_time, user=member, user_id=member.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=msg.channel.mention))
 
 
     

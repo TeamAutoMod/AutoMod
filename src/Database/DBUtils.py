@@ -61,17 +61,17 @@ def get_log_channels(guild_id):
     msg = get(db.configs, "guildId", f"{guild_id}", "messageLogChannel")
     m = get(db.configs, "guildId", f"{guild_id}", "joinLogChannel")
 
-    if g != 0 or g != "" or g != None:
+    if g != "":
         general += "<#{}>".format(str(g))
     else:
         general += "Not set yet"
     
-    if msg != 0 or msg != "" or msg != None:
+    if msg != "":
         messages += "<#{}>".format(str(msg))
     else:
         messages += "Not set yet"
 
-    if m != 0 or m != "" or m != None:
+    if m != "":
         members += "<#{}>".format(str(m))
     else:
         members += "Not set yet"

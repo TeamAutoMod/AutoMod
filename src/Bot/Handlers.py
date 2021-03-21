@@ -18,7 +18,7 @@ from discord.ext import commands
 
 from i18n import Translator
 from Database import Connector, DBUtils, Schemas
-from Utils import Logging, guild_info, Utils, Pages
+from Utils import Logging, guild_info, Utils, Pages, Emotes
 from Utils import Context as context
 from Utils.Constants import GREEN_TICK, RED_TICK, SALUTE
 
@@ -38,6 +38,7 @@ async def init_bot(bot):
     try:
         langs = Utils.from_config("SUPPORTED_LANGS")
         await Translator.init_translator(langs)
+        await Emotes.init_emotes()
 
         await Logging.init(bot)
         t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
@@ -189,7 +190,7 @@ async def check_mutes(bot):
 
                             DBUtils.delete(db.mutes, "mute_id", f"{guild.id}-{target.id}")
                             on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_unmute", on_time=on_time, user=target, user_id=target.id))
+                            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_unmute", _emote="ANGEL",on_time=on_time, user=target, user_id=target.id))
                         else:
                             pass
                     except Exception:
@@ -306,7 +307,7 @@ async def on_command_error(bot, ctx, error):
         else:
             await ctx.send(Translator.translate(ctx.guild, "just_joined"))
     if isinstance(error, commands.BotMissingPermissions):
-        await ctx.send(Translator.translate(ctx.guild, "missing_bot_perms"))
+        await ctx.send(Translator.translate(ctx.guild, "missing_bot_perms", _emote="LOCK"))
     elif isinstance(error, commands.CommandNotFound):
         pass
     elif isinstance(error, commands.MissingRequiredArgument):
@@ -314,23 +315,23 @@ async def on_command_error(bot, ctx, error):
         bot.help_command.context = ctx
         usage = bot.help_command.get_command_signature(ctx.command)
         arg = param._name
-        await ctx.send(Translator.translate(ctx.guild, "missing_arg", arg=arg, usage=usage))
+        await ctx.send(Translator.translate(ctx.guild, "missing_arg", _emote="NO", arg=arg, usage=usage))
     elif isinstance(error, PostParseError):
         bot.help_command.context = ctx
         usage = bot.help_command.get_command_signature(ctx.command)
         arg = error.type
         real_error = error.error
-        await ctx.send(Translator.translate(ctx.guild, "arg_parse_error", arg=arg, error=real_error, usage=usage))
+        await ctx.send(Translator.translate(ctx.guild, "arg_parse_error", _emote="NO", arg=arg, error=real_error, usage=usage))
     elif isinstance(error, commands.BadArgument):
         param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
         bot.help_command.context = ctx
         usage = bot.help_command.get_command_signature(ctx.command)
         arg = param._name
         real_error = replace_lookalikes(str(error))
-        await ctx.send(Translator.translate(ctx.guild, "arg_parse_error", arg=arg, error=real_error, usage=usage))
+        await ctx.send(Translator.translate(ctx.guild, "arg_parse_error", _emote="NO", arg=arg, error=real_error, usage=usage))
     elif isinstance(error, commands.CommandNotFound):
         return
     elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(Translator.translate(ctx.guild, "on_cooldown", retry_after=round(error.retry_after)))
     elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(Translator.translate(ctx.guild, "missing_user_perms"))
+        await ctx.send(Translator.translate(ctx.guild, "missing_user_perms", _emote="LOCK"))

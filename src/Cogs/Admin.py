@@ -39,7 +39,7 @@ class Admin(BaseCog):
 
     @commands.command(hidden=True)
     async def load(self, ctx, cog):
-        if os.path.isfile(f"Cogs/{cog}.py") or os.path.isfile(f"./Cogs/{cog}.py"):
+        if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./Cogs/src/{cog}.py"):
             self.bot.load_extension("Cogs.%s" % (cog))
             await ctx.send(f"**{cog}** has been loaded!")
             await Logging.bot_log(self.bot, f"**{cog}** has been loaded by {ctx.message.author.name}.", None)
@@ -49,7 +49,7 @@ class Admin(BaseCog):
 
     @commands.command(hidden=True)
     async def unload(self, ctx, cog):
-        if os.path.isfile(f"Cogs/{cog}.py") or os.path.isfile(f"./Cogs/{cog}.py"):
+        if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./src/Cogs/{cog}.py"):
             self.bot.unload_extension("Cogs.%s" % (cog))
             await ctx.send(f"**{cog}** has been unloaded!")
             await Logging.bot_log(self.bot, f"**{cog}** has been unloaded by {ctx.message.author.name}.", None)
@@ -59,7 +59,7 @@ class Admin(BaseCog):
 
     @commands.command(hidden=True)
     async def reload(self, ctx, cog):
-        if os.path.isfile(f"Cogs/{cog}.py") or os.path.isfile(f"./Cogs/{cog}.py"):
+        if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./src/Cogs/{cog}.py"):
             self.bot.reload_extension("Cogs.%s" % (cog))
             await ctx.send(f"**{cog}** has been reloaded!")
             await Logging.bot_log(self.bot, f"**{cog}** has been reloaded by {ctx.message.author.name}.", None)
@@ -119,17 +119,17 @@ class Admin(BaseCog):
             await ctx.send("```py\n{}\n```".format(error))
 
 
-    @commands.command(hidden=True)
-    async def block_server(self, ctx, guild: Guild):
-        with open("./blocked_guilds.json", "r", encoding="utf8", errors="ignore") as f:
-            blocked = json.load(f)
-        blocked[f"{guild.id}"] = {}
-        blocked[f"{guild.id}"]["owner"] = f"{guild.owner.id}"
-        await ctx.send(f"{GREEN_TICK} {guild.name} (``{guild.id}``) has been blocked")
-        await guild.leave()
-        await Logging.bot_log(self.bot, f"{guild.name} (``{guild.id}``) has been blocked by {ctx.author}")
-        with open("./blocked_guilds.json", "w", encoding="utf8", errors="ignore") as f:
-            json.dump(blocked, f)
+    # @commands.command(hidden=True)
+    # async def block_server(self, ctx, guild: Guild):
+    #     with open("./blocked_guilds.json", "r", encoding="utf8", errors="ignore") as f:
+    #         blocked = json.load(f)
+    #     blocked[f"{guild.id}"] = {}
+    #     blocked[f"{guild.id}"]["owner"] = f"{guild.owner.id}"
+    #     await ctx.send(f"{GREEN_TICK} {guild.name} (``{guild.id}``) has been blocked")
+    #     await guild.leave()
+    #     await Logging.bot_log(self.bot, f"{guild.name} (``{guild.id}``) has been blocked by {ctx.author}")
+    #     with open("./blocked_guilds.json", "w", encoding="utf8", errors="ignore") as f:
+    #         json.dump(blocked, f)
 
 
     @commands.command(hidden=True)

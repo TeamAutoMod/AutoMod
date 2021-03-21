@@ -15,6 +15,9 @@ from Database import Connector, DBUtils
 from Cogs.Base import BaseCog
 
 
+db = Connector.Database()
+
+
 
 class Utility(BaseCog):
     def __init__(self, bot):
@@ -88,6 +91,12 @@ class Utility(BaseCog):
                         value="No roles",
                         inline=False
                     )
+                mutes = len([x for x in db.warns.find() if str(x["warnId"].split("-")[1]) == str(member.id)])
+                e.add_field(
+                    name="**Warns**",
+                    value=mutes if mutes > 0 else "0 😇",
+                    inline=True
+                )
                 
                 joined = member.created_at.strftime("%d/%m/%Y")
                 e.add_field(
@@ -146,7 +155,7 @@ class Utility(BaseCog):
             strategy = Utils.complex_cleaning
         
         deleted = await strategy(ctx, search)
-        await ctx.send(Translator.translate(ctx.guild, "clean_success", deleted=deleted, plural="" if deleted == 1 else "s"))
+        await ctx.send(Translator.translate(ctx.guild, "clean_success", _emote="YES", deleted=deleted, plural="" if deleted == 1 else "s"))
         
 
 def setup(bot):

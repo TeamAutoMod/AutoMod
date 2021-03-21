@@ -47,7 +47,7 @@ class GuildConfig(BaseCog):
             "welcomeMessage",
             f"{msg}"
         )
-        await ctx.send(Translator.translate(ctx.guild, "msg_success"))
+        await ctx.send(Translator.translate(ctx.guild, "msg_success", _emote="YES"))
 
 
     @config.command()
@@ -60,7 +60,7 @@ class GuildConfig(BaseCog):
             "welcomeChannel",
             channel.id
         )
-        await ctx.send(Translator.translate(ctx.guild, "channel_success", channel=channel.mention))
+        await ctx.send(Translator.translate(ctx.guild, "channel_success", _emote="YES", channel=channel.mention))
 
     @config.command()
     async def welcome_off(self, ctx):
@@ -79,7 +79,7 @@ class GuildConfig(BaseCog):
             "welcomeMessage",
             ""
         )
-        await ctx.send(Translator.translate(ctx.guild, "off_success"))
+        await ctx.send(Translator.translate(ctx.guild, "off_success", _emote="YES"))
 
 
     
@@ -89,25 +89,25 @@ class GuildConfig(BaseCog):
         if new_prefix is None:
             await ctx.send(Translator.translate(ctx.guild, "current_prefix", prefix=DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")))
         elif len(new_prefix) > 15:
-            await ctx.send(Translator.translate(ctx.guild, "prefix_too_long"))
+            await ctx.send(Translator.translate(ctx.guild, "prefix_too_long", _emote="NO"))
         else:
             DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "prefix", f"{new_prefix}")
-            await ctx.send(Translator.translate(ctx.guild, "prefix_updated", prefix=new_prefix))
+            await ctx.send(Translator.translate(ctx.guild, "prefix_updated", _emote="YES", prefix=new_prefix))
     
 
     @config.command()
     async def mute_role(self, ctx, role: discord.Role):
         """mute_role_help"""
         if role == ctx.guild.default_role:
-            return await ctx.send(Translator.translate(ctx.guild, "default_role_forbidden"))
+            return await ctx.send(Translator.translate(ctx.guild, "default_role_forbidden", _emote="NO"))
         guild: discord.Guild = ctx.guild
         perms = guild.me.guild_permissions
         if not perms.manage_roles:
-            return await ctx.send(Translator.translate(ctx.guild, "mute_missing_perm"))
+            return await ctx.send(Translator.translate(ctx.guild, "mute_missing_perm", _emote="NO"))
         if not guild.me.top_role > role:
             return await ctx.send(Translator.translate(ctx.guild, "role_too_high"))
         DBUtils.update(db.configs, "guildId", f"{guild.id}", "muteRole", int(role.id))
-        await ctx.send(Translator.translate(ctx.guild, "updated_mute_role", role=role.mention))
+        await ctx.send(Translator.translate(ctx.guild, "updated_mute_role", _emote="YES", role=role.mention))
 
 
     @commands.command()
@@ -115,7 +115,7 @@ class GuildConfig(BaseCog):
     async def action_log(self, ctx, channel: discord.TextChannel):
         """action_log_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "memberLogChannel", int(channel.id))
-        await ctx.send(Translator.translate(ctx.guild, "log_mod_actions", channel=channel.mention))
+        await ctx.send(Translator.translate(ctx.guild, "log_mod_actions", _emote="YES", channel=channel.mention))
 
     
     @config.group()
@@ -129,26 +129,26 @@ class GuildConfig(BaseCog):
     async def message_logging(self, ctx, channel: discord.TextChannel):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "messageLogChannel", int(channel.id))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "messageLogging", True)
-        await ctx.send(Translator.translate(ctx.guild, "enabled_module_channel", module="message_logging", channel=channel.mention))
+        await ctx.send(Translator.translate(ctx.guild, "enabled_module_channel", _emote="YES", module="message_logging", channel=channel.mention))
 
 
     @enable.command()
     async def member_logging(self, ctx, channel: discord.TextChannel):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "joinLogChannel", int(channel.id))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "memberLogging", True)
-        await ctx.send(Translator.translate(ctx.guild, "enabled_module_channel", module="join_leave_logging", channel=channel.mention))
+        await ctx.send(Translator.translate(ctx.guild, "enabled_module_channel", _emote="YES", module="join_leave_logging", channel=channel.mention))
 
     
     @enable.command()
     async def automod(self, ctx):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "automod", True)
-        await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", module="automod"))
+        await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", _emote="YES", module="automod"))
 
     
     @enable.command()
     async def lvlsystem(self, ctx):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem", True)
-        await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", module="rank_system"))
+        await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", _emote="YES", module="rank_system"))
 
 
 
@@ -163,25 +163,25 @@ class GuildConfig(BaseCog):
     @disable.command(name="message_logging")
     async def _message_logging(self, ctx):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "messageLogging", False)
-        await ctx.send(Translator.translate(ctx.guild, "disabled_module", module="message_logging"))
+        await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="message_logging"))
 
 
     @disable.command(name="member_logging")
     async def _member_logging(self, ctx):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "memberLogging", False)
-        await ctx.send(Translator.translate(ctx.guild, "disabled_module", module="join_leave_logging"))    
+        await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="join_leave_logging"))    
 
 
     @disable.command(name="automod")
     async def _automod(self, ctx):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "automod", False)
-        await ctx.send(Translator.translate(ctx.guild, "disabled_module", module="automod"))
+        await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="automod"))
 
     
     @disable.command(name="lvlsystem")
     async def _lvlsystem(self, ctx):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem", False)
-        await ctx.send(Translator.translate(ctx.guild, "disabled_module", module="rank_system"))
+        await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="rank_system"))
 
 
     @config.group()
@@ -196,7 +196,7 @@ class GuildConfig(BaseCog):
                     ignored_users.append(Translator.translate(ctx.guild, "no_ignored_users"))
                 e = discord.Embed(
                     color=discord.Color.blurple(),
-                    title=Translator.translate(ctx.guild, "ignored_users", guild=ctx.guild.name),
+                    title=Translator.translate(ctx.guild, "ignored_users", guild_name=ctx.guild.name),
                     description="\n".join(ignored_users)
                 )
                 e.set_thumbnail(url=ctx.guild.icon_url)
@@ -209,20 +209,20 @@ class GuildConfig(BaseCog):
     async def _add(self, ctx, member: discord.Member):
         ignored_users = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users")
         if member.id in ignored_users:
-            return await ctx.send(Translator.translate(ctx.guild, "already_ignored_user", user=member.name))
+            return await ctx.send(Translator.translate(ctx.guild, "already_ignored_user", _emote="YES", user=member.name))
         ignored_users.append(int(member.id))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users", ignored_users)
-        await ctx.send(Translator.translate(ctx.guild, "ignored_user_added", user=member.name))
+        await ctx.send(Translator.translate(ctx.guild, "ignored_user_added", _emote="YES", user=member.name))
 
 
     @ignored_users.command(name="remove")
     async def _remove(self, ctx, user: discord.User):
         ignored_users = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users")
         if not user.id in ignored_users:
-            return await ctx.send(Translator.translate(ctx.guild, "not_existing_ignored_user", user=user.name))
+            return await ctx.send(Translator.translate(ctx.guild, "not_existing_ignored_user", _emote="NO", user=user.name))
         ignored_users.remove(int(user.id))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users", ignored_users)
-        await ctx.send(Translator.translate(ctx.guild, "ignored_user_removed", user=user.name))
+        await ctx.send(Translator.translate(ctx.guild, "ignored_user_removed", _emote="YES", user=user.name))
 
 
 
@@ -263,40 +263,40 @@ class GuildConfig(BaseCog):
         """black_list_help"""
         if ctx.invoked_subcommand is None:
             if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "automod") is False:
-                return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", prefix=ctx.prefix))
+                return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", _emote="NO", prefix=ctx.prefix))
             _censor_list = [x.strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "censored_words") if x != "--------------"]
             if len(_censor_list) < 1:
-                    return ctx.send(Translator.translate(ctx.guild, "black_list_empty", prefix=ctx.prefix))
-            await ctx.send(Translator.translate(ctx.guild, "censor_list", guild=ctx.guild.name, words=_censor_list))
+                    return ctx.send(Translator.translate(ctx.guild, "black_list_empty", _emote="NO", prefix=ctx.prefix))
+            await ctx.send(Translator.translate(ctx.guild, "censor_list", guild_name=ctx.guild.name, words=_censor_list))
 
 
     @black_list.command(name="add")
     async def add_to_censor_list(self, ctx, *, text: str):
         if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "automod") is False:
-            return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", prefix=ctx.prefix))
+            return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", _emote="NO", prefix=ctx.prefix))
         _censor_list = [x for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "censored_words") if x != "--------------"]
         if text.lower() in [x.strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "censored_words") if x != "--------------"]:
-            return await ctx.send(Translator.translate(ctx.guild, "already_on_black_list", word=text))
+            return await ctx.send(Translator.translate(ctx.guild, "already_on_black_list", _emote="NO", word=text))
         _censor_list.append(str(text))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "censored_words", _censor_list)
-        await ctx.send(Translator.translate(ctx.guild, "added_to_black_list", word=text))
+        await ctx.send(Translator.translate(ctx.guild, "added_to_black_list", _emote="YES", word=text))
 
 
     @black_list.command(name="remove")
     async def remove_from_censor_list(self, ctx, *, text: str):
         if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "automod") is False:
-            return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", prefix=ctx.prefix))
+            return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", _emote="NO", prefix=ctx.prefix))
         
         lower = [x.lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "censored_words") if x != "--------------"]
         if len(lower) < 1:
-            return await ctx.send(Translator.translate(ctx.guild, "black_list_empty", prefix=ctx.prefix))
+            return await ctx.send(Translator.translate(ctx.guild, "black_list_empty", _emote="NO", prefix=ctx.prefix))
 
         _censor_list = [x.strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "censored_words")]
         if not text.lower() in _censor_list:
-            return await ctx.send(Translator.translate(ctx.guild, "not_on_black_list", word=text))
+            return await ctx.send(Translator.translate(ctx.guild, "not_on_black_list", _emote="NO", word=text))
         _censor_list.remove(str(text.lower()))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "censored_words", _censor_list)
-        await ctx.send(Translator.translate(ctx.guild, "removed_from_black_list", word=text))
+        await ctx.send(Translator.translate(ctx.guild, "removed_from_black_list", _emote="YES", word=text))
 
 
 

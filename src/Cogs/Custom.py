@@ -29,7 +29,7 @@ class Custom(BaseCog):
             else:
                 e = discord.Embed(
                     color=discord.Color.blurple(),
-                    title=Translator.translate(ctx.guild, "custom_commands", guild=ctx.guild.name),
+                    title=Translator.translate(ctx.guild, "custom_commands", guild_name=ctx.guild.name),
                     description="\n".join(custom_commands)
                 )
                 e.set_thumbnail(url=ctx.guild.icon_url)
@@ -41,9 +41,9 @@ class Custom(BaseCog):
     async def create(self, ctx, trigger:str, *, reply: str = None):
         """create_help"""
         if len(trigger) == 0:
-            await ctx.send(Translator.translate(ctx.guild, "no_trigger"))
+            await ctx.send(Translator.translate(ctx.guild, "no_trigger", _emote="THINK"))
         elif reply is None or reply == "":
-            await ctx.send(Translator.translate(ctx.guild, "no_reply"))
+            await ctx.send(Translator.translate(ctx.guild, "no_reply", _emote="THINK"))
         elif len(trigger) > 20:
             await ctx.send(Translator.translate(ctx.guild, "trigger_too_long"))
         else:
@@ -52,7 +52,7 @@ class Custom(BaseCog):
                 await ctx.send(Translator.translate(ctx.guild, "command_already_exists"))
             else:
                 DBUtils.insert(db.commands, Schemas.command_schema(ctx.guild, trigger, reply, ctx.message.author))
-                await ctx.send(Translator.translate(ctx.guild, "command_added", command=trigger))
+                await ctx.send(Translator.translate(ctx.guild, "command_added", _emote="YES", command=trigger))
 
 
 
@@ -69,7 +69,7 @@ class Custom(BaseCog):
             await ctx.send(Translator.translate(ctx.guild, "command_does_not_exist"))
         else:
             DBUtils.delete(db.commands, "cmdId", f"{ctx.guild.id}-{trigger}")
-            await ctx.send(Translator.translate(ctx.guild, "command_removed", command=trigger))
+            await ctx.send(Translator.translate(ctx.guild, "command_removed", _emote="YES", command=trigger))
 
     
 

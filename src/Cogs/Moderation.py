@@ -52,18 +52,15 @@ class Moderation(BaseCog):
 
                 case = DBUtils.new_case()
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
-                """
-                12/03/21
-                """
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Ban", reason))
                 
-                await ctx.send(Translator.translate(ctx.guild, "user_banned", user=member, user_id=member.id, reason=reason, case=case))
+                await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=member, user_id=member.id, reason=reason, case=case))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_ban", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_ban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", _emote="NO", user=member.name))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
 
     
@@ -85,13 +82,13 @@ class Moderation(BaseCog):
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Kick", reason))
 
-                await ctx.send(Translator.translate(ctx.guild, "user_kicked", user=member, user_id=member.id, reason=reason, case=case))
+                await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=member, user_id=member.id, reason=reason, case=case))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", _emote="SHOE", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "kick_not_allowed", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "kick_not_allowed", _emote="NO", user=member.name))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
 
     @commands.guild_only()
@@ -113,13 +110,13 @@ class Moderation(BaseCog):
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Clean Ban", reason))
 
-                await ctx.send(Translator.translate(ctx.guild, "user_cleanbanned", user=member, user_id=member.id, reason=reason, case=case))
+                await ctx.send(Translator.translate(ctx.guild, "user_cleanbanned", _emote="YES", user=member, user_id=member.id, reason=reason, case=case))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_cleanban", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_cleanban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
                 await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", user=member.name))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
     
     @commands.guild_only()
@@ -141,13 +138,13 @@ class Moderation(BaseCog):
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Soft Ban", reason))
 
-                await ctx.send(Translator.translate(ctx.guild, "user_softbanned", user=member, user_id=member.id, reason=reason, case=case))
+                await ctx.send(Translator.translate(ctx.guild, "user_softbanned", _emote="YES", user=member, user_id=member.id, reason=reason, case=case))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_softban", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_softban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", _emote="NO", user=member.name))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
 
     @commands.guild_only()
@@ -170,11 +167,11 @@ class Moderation(BaseCog):
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, user, ctx.author, timestamp, "Force Ban", reason))
 
-                await ctx.send(Translator.translate(ctx.guild, "user_forcebanned", user=user, user_id=user.id, reason=reason, case=case))
+                await ctx.send(Translator.translate(ctx.guild, "user_forcebanned", _emote="YES", user=user, user_id=user.id, reason=reason, case=case))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_forceban", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_forceban", _emote="ALERT", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "target_already_banned"))
+                await ctx.send(Translator.translate(ctx.guild, "target_already_banned", _emote="NO_MOUTH"))
         else:
             await ctx.invoke(self.ban, user=user, reason=reason)
 
@@ -191,7 +188,7 @@ class Moderation(BaseCog):
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
-            await ctx.send(Translator.translate(ctx.guild, "not_banned", user=user.name))
+            await ctx.send(Translator.translate(ctx.guild, "not_banned", _emote="NO", user=user.name))
         else:
             self.bot.running_unbans.add(user.id)
             await self._unban(ctx, user, reason)
@@ -200,9 +197,9 @@ class Moderation(BaseCog):
             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
             DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, user, ctx.author, timestamp, "Unban", reason))
 
-            await ctx.send(Translator.translate(ctx.guild, "user_unbanned", user=user, user_id=user.id, reason=reason, case=case))
+            await ctx.send(Translator.translate(ctx.guild, "user_unbanned", _emote="YES", user=user, user_id=user.id, reason=reason, case=case))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_unban", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_unban", _emote="ANGEL", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
 
 
     @commands.guild_only()
@@ -219,13 +216,13 @@ class Moderation(BaseCog):
             
         mute_role_id = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "muteRole")
         if str(mute_role_id) == "" or mute_role_id == None:
-            return await ctx.send(Translator.translate(ctx.guild, "no_mute_role", prefix=ctx.prefix))
+            return await ctx.send(Translator.translate(ctx.guild, "no_mute_role", _emote="NO", prefix=ctx.prefix))
         else:
             role = ctx.guild.get_role(int(mute_role_id))
             if role is None:
-                return await ctx.send(Translator.translate(ctx.guild, "no_mute_role", prefix=ctx.prefix))
+                return await ctx.send(Translator.translate(ctx.guild, "no_mute_role", _emote="NO", prefix=ctx.prefix))
             if role in user.roles:
-                return await ctx.send(Translator.translate(ctx.guild, "user_already_muted", user=user.name))
+                return await ctx.send(Translator.translate(ctx.guild, "user_already_muted", _emote="NO_MOUTH", user=user.name))
             else:
                 if (ctx.author != user and user != ctx.bot.user and ctx.author.top_role > user.top_role) or ctx.guild.owner == ctx.author:
                     if ctx.guild.me.top_role.position > role.position:
@@ -239,15 +236,15 @@ class Moderation(BaseCog):
                             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                             DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, user, ctx.author, timestamp, "Mute", reason))
                             
-                            await ctx.send(Translator.translate(ctx.guild, "user_muted", user=user, user_id=user.id, length=length.length, unit=length.unit, reason=reason, case=case))
+                            await ctx.send(Translator.translate(ctx.guild, "user_muted", _emote="YES", user=user, user_id=user.id, length=length.length, unit=length.unit, reason=reason, case=case))
                             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason, case=case))
+                            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute", _emote="NO_MOUTH", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason, case=case))
                         else:
                             raise commands.BadArgument("number_too_small")
                     else:
                         await ctx.send(Translator.translate(ctx.guild, "role_too_high"))
                 else:
-                    await ctx.send(Translator.translate(ctx.guild, "mute_not_allowed", user=user.name))
+                    await ctx.send(Translator.translate(ctx.guild, "mute_not_allowed", _emote="NO", user=user.name))
     
 
     @commands.guild_only()
@@ -259,7 +256,7 @@ class Moderation(BaseCog):
             reason = Translator.translate(ctx.guild, "no_reason")
 
         if len(targets) < 1:
-            return await ctx.send(Translator.translate(ctx.guild, "no_ban_then"))
+            return await ctx.send(Translator.translate(ctx.guild, "no_ban_then", _emote="SALUTE"))
 
         if len(targets) > 15:
             return await ctx.send(Translator.translate(ctx.guild, "max_ban"))
@@ -293,14 +290,18 @@ class Moderation(BaseCog):
             try:
                 await self._forceban(ctx, target, reason)
                 self.bot.running_removals.add(target.id)
+
+                case = DBUtils.new_case()
+                timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
+                DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", f"[Multi Ban] {reason}"))
             except discord.HTTPException:
                 pass
             else:
                 banned += 1
         
-        await ctx.send(Translator.translate(ctx.guild, "mban_success", users=banned, total=len(to_ban)))
+        await ctx.send(Translator.translate(ctx.guild, "mban_success", _emote="YES", users=banned, total=len(to_ban)))
         on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_ban", on_time=on_time, users=banned, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
+        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_ban", _emote="ALERT", on_time=on_time, users=banned, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
 
 
     @commands.guild_only()
@@ -312,7 +313,7 @@ class Moderation(BaseCog):
             reason = Translator.translate(ctx.guild, "no_reason")
 
         if len(targets) < 1:
-            return await ctx.send(Translator.translate(ctx.guild, "no_kick_then"))
+            return await ctx.send(Translator.translate(ctx.guild, "no_kick_then", _emote="SALUTE"))
 
         if len(targets) > 15:
             return await ctx.send(Translator.translate(ctx.guild, "max_kick"))
@@ -343,14 +344,18 @@ class Moderation(BaseCog):
             try:
                 await ctx.guild.kick(target, reason=reason)
                 self.bot.running_removals.add(target.id)
+
+                case = DBUtils.new_case()
+                timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
+                DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Kick", f"[Multi Kick] {reason}"))
             except discord.HTTPException:
                 pass
             else:
                 kicked += 1
         
-        await ctx.send(Translator.translate(ctx.guild, "mkick_success", users=kicked, total=len(kicked)))
+        await ctx.send(Translator.translate(ctx.guild, "mkick_success", _emote="YES", users=kicked, total=len(kicked)))
         on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_kick", on_time=on_time, users=kicked, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
+        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_kick", _emote="SHOE", on_time=on_time, users=kicked, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
 
 
 
@@ -376,7 +381,7 @@ class Moderation(BaseCog):
     async def clean_user(self, ctx, users: commands.Greedy[DiscordUser], amount: RangedInt(1, 500) = 50):
         """clean_user_help"""
         if len(users) == 0:
-            return await ctx.send(Translator.translate(ctx.guild, "no_delete_then"))
+            return await ctx.send(Translator.translate(ctx.guild, "no_delete_then", _emote="THINK"))
         await self.perform_cleaning(ctx, amount, lambda x: any(x.author.id == u.id for u in users))
     
 
@@ -435,7 +440,7 @@ class Moderation(BaseCog):
         try:
             await ctx.guild.ban(user=user, reason=reason, delete_message_days=days)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", _emote="NO", error=e))
 
 
 
@@ -443,7 +448,7 @@ class Moderation(BaseCog):
         try:
             await ctx.guild.kick(user=user, reason=reason)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "kick_failed", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "kick_failed", _emote="NO", error=e))
 
 
 
@@ -451,18 +456,18 @@ class Moderation(BaseCog):
         try:
             await ctx.guild.unban(user=user, reason=reason)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "unban_failed", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "unban_failed", _emote="NO", error=e))
 
 
 
     async def _forceban(self, ctx, user, reason):
         if user.discriminator == "0000":
-            return await ctx.send(Translator.translate(ctx.guild, "is_system_user"))
+            return await ctx.send(Translator.translate(ctx.guild, "is_system_user", _emote="NO"))
         
         try:
             await ctx.guild.ban(user=user, reason=reason)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", _emote="NO", error=e))
 
 
 
@@ -476,9 +481,9 @@ class Moderation(BaseCog):
 
     async def perform_cleaning(self, ctx, limit, check, *, before=None, after=None, time=None):
         if ctx.channel.id in self.bot.cleans_running:
-            return await ctx.send(Translator.translate(ctx.guild, "already_cleaning"))
+            return await ctx.send(Translator.translate(ctx.guild, "already_cleaning", _emote="NO"))
         if limit > 500:
-            return await ctx.send(Translator.translate(ctx.guild, "too_many_messages", limit=limit))
+            return await ctx.send(Translator.translate(ctx.guild, "too_many_messages", _emote="NO", limit=limit))
         
         if before is None:
             before = ctx.message
@@ -501,9 +506,9 @@ class Moderation(BaseCog):
         self.bot.cleans_running[ctx.channel.id] = set()
         try:
             deleted = await ctx.channel.purge(limit=limit, before=before, after=after, check=check)
-            await ctx.send(Translator.translate(ctx.guild, "clean_success", deleted=len(deleted), plural="" if len(deleted) == 1 else "s"))
+            await ctx.send(Translator.translate(ctx.guild, "clean_success", _emote="YES", deleted=len(deleted), plural="" if len(deleted) == 1 else "s"))
         except Exception as ex:
-            await ctx.send(Translator.translate(ctx.guild, "cleaning_error", error=ex))
+            await ctx.send(Translator.translate(ctx.guild, "cleaning_error", _emote="NO", error=ex))
             self.bot.loop.create_task(self.finish_purgings(ctx.channel.id))
         self.bot.loop.create_task(self.finish_purgings(ctx.channel.id))
 
@@ -520,7 +525,7 @@ class Moderation(BaseCog):
             return False
         try:
             await ctx.guild.fetch_ban(target)
-            await ctx.send(Translator.translate(ctx.guild, "target_already_banned"))
+            await ctx.send(Translator.translate(ctx.guild, "target_already_banned", _emote="NO_MOUTH"))
             return False
         except discord.NotFound:
             return True
@@ -664,7 +669,7 @@ class Moderation(BaseCog):
         
         targets = {m for m in targets if all(_p(m) for _p in pr)}
         if len(targets) == 0:
-            return await ctx.send(Translator.translate(ctx.guild, "no_targets_found"))
+            return await ctx.send(Translator.translate(ctx.guild, "no_targets_found", _emote="NO"))
         
         if args.show:
             targets = sorted(targets, key=lambda m: m.joined_at or now)
@@ -687,14 +692,18 @@ class Moderation(BaseCog):
             try:
                 await self._forceban(ctx, target, reason)
                 self.bot.running_removals.add(target.id)
+
+                case = DBUtils.new_case()
+                timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
+                DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", f"[Custom Ban] {reason}"))
             except discord.HTTPException:
                 pass
             else:
                 banned += 1
         
-        await ctx.send(Translator.translate(ctx.guild, "mban_success", users=banned, total=len(targets)))
+        await ctx.send(Translator.translate(ctx.guild, "mban_success", _emote="YES", users=banned, total=len(targets)))
         on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_ban", on_time=on_time, users=banned, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
+        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_ban", _emote="ALERT", on_time=on_time, users=banned, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
 
 
 
@@ -795,22 +804,22 @@ class Moderation(BaseCog):
             
             before, after = point(ctx, args.before, args.after)
             if ctx.channel.id in self.bot.cleans_running:
-                return await ctx.send(Translator.translate(ctx.guild, "already_cleaning"))
+                return await ctx.send(Translator.translate(ctx.guild, "already_cleaning", _emote="NO"))
             
             self.bot.cleans_running[ctx.channel.id] = set()
-            _msg = await ctx.send(Translator.translate(ctx.guild, "working_on_action"))
+            _msg = await ctx.send(Translator.translate(ctx.guild, "working_on_action", _emote="LOAD"))
             try:
                 deleted = await ctx.channel.purge(limit=args.search, check=check, before=before, after=after)
                 del self.bot.cleans_running[ctx.channel.id]
                 try:
-                    await _msg.edit(content=Translator.translate(ctx.guild, "clean_success", deleted=len(deleted), plural="" if len(deleted) == 1 else "s"))
+                    await _msg.edit(content=Translator.translate(ctx.guild, "clean_success", _emote="YES", deleted=len(deleted), plural="" if len(deleted) == 1 else "s"))
                 except discord.NotFound:
                     pass
             except Exception as e:
                 del self.bot.cleans_running[ctx.channel.id]
                 log.error(e)
                 try:
-                    await _msg.edit(content=Translator.translate(ctx.guild, "already_deleted"))
+                    await _msg.edit(content=Translator.translate(ctx.guild, "already_deleted", _emote="NO"))
                 except discord.NotFound:
                     pass
         except Exception as _ex:
@@ -840,7 +849,7 @@ class Moderation(BaseCog):
                         await member.add_roles(mute_role)
 
                         on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                        await Logging.log_to_guild(g.id, "memberLogChannel", Translator.translate("log_reapplied_mute", on_time=on_time, user=member, user_id=member.id))
+                        await Logging.log_to_guild(g.id, "memberLogChannel", Translator.translate("log_reapplied_mute", _emote="WARN", on_time=on_time, user=member, user_id=member.id))
                     except Exception:
                         return
         except Exception:

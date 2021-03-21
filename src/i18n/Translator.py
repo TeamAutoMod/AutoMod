@@ -2,6 +2,7 @@ import json
 import logging
 
 from Database import Connector, DBUtils
+from Utils import Emotes
 
 
 
@@ -26,7 +27,7 @@ async def init_translator(langs):
 
 
 
-def translate(guild, key, **kwargs):
+def translate(guild, key, _emote=None, **kwargs):
     if not guild.id in LANG_CACHE:
         try:
             lang = DBUtils.get(
@@ -53,4 +54,7 @@ def translate(guild, key, **kwargs):
     except KeyError:
         string = LANGS["en_US"][key]
     finally:
-        return str(string).format(**kwargs)
+        if "{emote}" in string:
+            return str(string).format(emote=str(Emotes.get(_emote)), **kwargs)
+        else:
+            return str(string).format(**kwargs)
