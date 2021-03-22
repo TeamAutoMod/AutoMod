@@ -4,6 +4,7 @@ from subprocess import Popen
 import os
 import json
 import asyncio
+import numpy as np
 
 from Utils import Logging
 from Database import Connector, DBUtils
@@ -122,3 +123,27 @@ async def perform_shell_code(cmd):
 async def get_version():
     code, output, error = await perform_shell_code("git rev-parse --short FETCH_HEAD")
     return output
+
+
+def is_close(root, to_check, threshold: float) -> bool:
+    rows = len(root) + 1
+    cols = len(to_check) + 1
+    distance = np.zeros((rows, cols), dtype=int)
+
+    for i in range(1, rows):
+        for k in range(1, cols):
+            distance[i][0] = i
+            distance[0][k] = k
+
+
+    for col in range(1, cols):
+        for row in range(1, rows):
+            if root[row-1] == to_check[col-1]:
+                cost = 0
+            else:
+                cost = 2
+            
+            distance[row][col] = min(distance[row-1][col] + 1, distance[row][col-1] + 1, distance[row-1][col-1] + cost)
+
+    ratio = ((len(root) + len(to_check)) - distance[row][col]) / (len(root) + len(to_check)) * 100
+    return ratio >= threshold

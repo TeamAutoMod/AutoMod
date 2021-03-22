@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import asyncio
 
 from i18n import Translator
 from Utils import Logging, Utils
@@ -15,6 +16,25 @@ db = Connector.Database()
 class Custom(BaseCog):
     def __init__(self, bot):
         super().__init__(bot)
+        self.command_cache = dict()
+        self.bot.loop.create_task(self.cache_commands())
+
+    
+    async def cache_commands(self):
+        while len(self.command_cache) < len([_ for _ in db.commands.find()]):
+            await asyncio.sleep(10)
+            for doc in db.commands.find():
+                gid = doc["cmdId"].split("-")[0]
+                trigger = doc["cmdId"].split("-")[1]
+                reply = doc["reply"]
+                if not gid in self.command_cache:
+                    self.command_cache[gid] = [{"trigger": trigger, "reply": reply}]
+                else:
+                    if not trigger in [x["trigger"] for x in self.command_cache[gid]]:
+                        self.command_cache[gid].append({"trigger": trigger, "reply": reply})
+                    else:
+                        pass
+
 
     
     @commands.group(name="commands", aliases=["command", "cmd"])
@@ -38,7 +58,7 @@ class Custom(BaseCog):
 
     @command.command(aliases=["new", "add"])
     @commands.guild_only()
-    async def create(self, ctx, trigger:str, *, reply: str = None):
+    async def create(self, ctx, trigger: str, *, reply: str = None):
         """create_help"""
         if len(trigger) == 0:
             await ctx.send(Translator.translate(ctx.guild, "no_trigger", _emote="THINK"))
@@ -52,7 +72,12 @@ class Custom(BaseCog):
                 await ctx.send(Translator.translate(ctx.guild, "command_already_exists"))
             else:
                 DBUtils.insert(db.commands, Schemas.command_schema(ctx.guild, trigger, reply, ctx.message.author))
-                await ctx.send(Translator.translate(ctx.guild, "command_added", _emote="YES", command=trigger))
+                try:
+                    self.command_cache[str(ctx.guild.id)].append({"trigger": trigger, "reply": reply})
+                except Exception:
+                    self.command_cache[str(ctx.guild.id)] = [{"trigger": trigger, "reply": reply}]
+                finally:
+                    await ctx.send(Translator.translate(ctx.guild, "command_added", _emote="YES", command=trigger))
 
 
 
@@ -66,9 +91,20 @@ class Custom(BaseCog):
         elif len([x for x in db.commands.find() if x["cmdId"].split("-")[0] == str(ctx.guild.id)]) == 0:
             await ctx.send(Translator.translate(ctx.guild, "no_custom_commands"))
         elif trigger not in [x["cmdId"].split("-")[1] for x in db.commands.find() if x["cmdId"].split("-")[0] == str(ctx.guild.id)]:
-            await ctx.send(Translator.translate(ctx.guild, "command_does_not_exist"))
+            possible = []
+            for cmd in [x["cmdId"].split("-")[1].lower() for x in db.commands.find() if x["cmdId"].split("-")[0] == str(ctx.guild.id)]:
+                if Utils.is_close(trigger, cmd, 75.0):
+                    possible.append(cmd)
+                else:
+                    pass
+            if len(possible) > 0:
+                await ctx.send(Translator.translate(ctx.guild, "command_does_not_exist_but_possible", possible="\n".join(possible)))
+            else:
+                await ctx.send(Translator.translate(ctx.guild, "command_does_not_exist"))
+
         else:
             DBUtils.delete(db.commands, "cmdId", f"{ctx.guild.id}-{trigger}")
+            self.command_cache[str(ctx.guild.id)] = [_ for _ in self.command_cache[str(ctx.guild.id)] if _["trigger"].lower() != trigger]
             await ctx.send(Translator.translate(ctx.guild, "command_removed", _emote="YES", command=trigger))
 
     
@@ -88,15 +124,20 @@ class Custom(BaseCog):
             return
         if not (perms.read_messages and perms.send_messages and perms.embed_links):
             return
+        if message.author.id == self.bot.user.id:
+            return
 
         prefix = DBUtils.get(db.configs, "guildId", f"{message.guild.id}", "prefix")
-        cmds = ["{}<*>{}".format(x["cmdId"].split("-")[1], x["reply"]) for x in db.commands.find() if x["cmdId"].split("-")[0] == str(message.guild.id)]
+        try:
+            cmds = self.command_cache[str(message.guild.id)]
+        except KeyError:
+            return
         if message.content.startswith(prefix, 0) and len(cmds) > 0:
-            for cmd in cmds:
-                trigger = cmd.split("<*>")[0]
+            for entry in cmds:
+                trigger = entry["trigger"]
                 if message.content.lower() == prefix + trigger or (message.content.lower().startswith(trigger, len(prefix)) and message.content.lower()[len(prefix + trigger)] == " "):
-                    reply = cmd.split("<*>")[1]
-                    await message.channel.send(f"{reply}")
+                    reply = entry["reply"]
+                    return await message.channel.send(f"{reply}")
 
             
             

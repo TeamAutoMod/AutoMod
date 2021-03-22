@@ -61,6 +61,7 @@
     "command_added": "{emote} Command ``{command}`` has been created!",
     "command_removed": "{emote} Command ``{command}`` has been deleted.",
     "command_does_not_exist": "Hmm, I can't find a command with that name. Maybe you made a little typo.",
+    "command_does_not_exist_but_possible": "I couldn't find that command. Did you mean... \n{possible}",
     "current_prefix": "The current prefix for this server is ``{prefix}``",
     "prefix_too_long": "{emote} This prefix is too long.",
     "prefix_updated": "{emote} Changed the server prefix to ``{prefix}``",
