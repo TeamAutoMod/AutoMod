@@ -20,6 +20,3 @@ Yes:
 - [Website](https://automod-beta.ezzz1337.repl.co/) currently just more of a playground (aka beta)
 - [Support Server](https://discord.gg/S9BEBux) for news, updates, downtimes and general help with the bot
 - [Top.gg Page](https://top.gg/bot/697487580522086431/vote) for voting and supporting the bot (free of course), thanks to everyone doing it! 
-=======
-# AutoMod
-Discord moderation bot
