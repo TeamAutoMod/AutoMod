@@ -100,8 +100,6 @@ async def on_ready(bot):
         if bot.loading_task is not None:
             bot.loading_task.cancel()
         bot.loading_task = asyncio.create_task(fill_cache(bot))
-
-        asyncio.create_task(check_mutes(bot))
     except Exception as e:
         log.error(f"[Booting Up] Error while starting, aborting! \n{e}")
 
@@ -168,37 +166,35 @@ async def cache_guild(bot, guild_id):
         bot.missing_guilds.remove(guild_id)
 
 
+now = None
 
 async def check_mutes(bot):
-    while True:
+    while True: # all guilds need to be fetched for this
         await asyncio.sleep(10)
         try:
-            if len([_ for _ in db.mutes.find()]) < 1:
-                return
-            for mute in db.mutes.find():
-                now = datetime.utcnow()
-                if now >= mute["ending"]:
-                    try:
-                        guild = bot.get_guild(int(mute["mute_id"].split("-")[0]))
+            if len([_ for _ in db.mutes.find()]) > 0:   
+                for mute in db.mutes.find():
+                    guild = bot.get_guild(int(mute["mute_id"].split("-")[0]))
+                    target = discord.utils.get(guild.members, id=int(mute["mute_id"].split("-")[1]))
 
-                        mute_role_id = DBUtils.get(db.configs, "guildId", f"{guild.id}", "muteRole")
-                        mute_role = guild.get_role(int(mute_role_id))
-
-                        target = discord.utils.get(guild.members, id=int(mute["mute_id"].split("-")[1]))
-                        if mute_role in target.roles:
+                    if datetime.utcnow() > mute["ending"]:
+                        try:
+                            mute_role_id = DBUtils.get(db.configs, "guildId", f"{guild.id}", "muteRole")
+                            mute_role = guild.get_role(int(mute_role_id))
+                            
                             await target.remove_roles(mute_role)
-
-                            DBUtils.delete(db.mutes, "mute_id", f"{guild.id}-{target.id}")
-                            on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_unmute", _emote="ANGEL",on_time=on_time, user=target, user_id=target.id))
-                        else:
+                        except Exception:
                             pass
-                    except Exception:
+                        else:
+                            on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+                            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_unmute", _emote="ANGEL", on_time=on_time, user=target, user_id=target.id))
+                            DBUtils.delete(db.mutes, "mute_id", f"{mute['mute_id'].split('-')[0]}-{mute['mute_id'].split('-')[1]}")
+                    else:
                         pass
-                else:
-                    pass
-        except Exception as e:
-            log.error("[Tasks] Error in check_mutes task: %s" % (e))
+        except AttributeError:
+            # this happens if the guild object is a NoneType (most likely because it hasn't been cached yet)
+            pass
+
 
 
 

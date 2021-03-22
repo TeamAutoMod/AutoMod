@@ -3,7 +3,7 @@ from pymongo import MongoClient
 
 
 
-db_host = "mongodb+srv://automod:secret1337@webdb.iktex.mongodb.net/" # somehow we can't fetch this from master.json without breaking everything (circular import stuff)
+db_host = "" # somehow we can't fetch this from master.json without breaking everything (circular import stuff)
 
 class Database(MongoClient):
     def __init__(self, host=db_host, port=None, **kwargs):

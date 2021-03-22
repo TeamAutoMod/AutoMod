@@ -16,6 +16,7 @@ from Utils.Converters import DiscordUser, Duration, RangedInt
 from Utils.Constants import RED_TICK, GREEN_TICK
 
 from Cogs.Base import BaseCog
+from Bot.Handlers import check_mutes
 from Database import Connector, DBUtils
 from Database.Schemas import warn_schema, mute_schema, new_infraction
 from Bot.Handlers import PostParseError
@@ -34,6 +35,8 @@ class Arguments(argparse.ArgumentParser):
 class Moderation(BaseCog):
     def __init__(self, bot):
         super().__init__(bot)
+        self.bot.loop.create_task(check_mutes(bot))
+
 
 
     @commands.guild_only()
@@ -222,6 +225,7 @@ class Moderation(BaseCog):
             if role is None:
                 return await ctx.send(Translator.translate(ctx.guild, "no_mute_role", _emote="NO", prefix=ctx.prefix))
             if role in user.roles:
+                # TODO make it, so that this extends the mute
                 return await ctx.send(Translator.translate(ctx.guild, "user_already_muted", _emote="NO_MOUTH", user=user.name))
             else:
                 if (ctx.author != user and user != ctx.bot.user and ctx.author.top_role > user.top_role) or ctx.guild.owner == ctx.author:
