@@ -1,9 +1,15 @@
 import os
+import json
 from pymongo import MongoClient
 
 
 
-db_host = "" # somehow we can't fetch this from master.json without breaking everything (circular import stuff)
+def get_db_host() -> str:
+    with open("./Config/config.json", "r", encoding="utf8") as f:
+        i = json.load(f)
+        return i["DB_HOST"]
+
+db_host = get_db_host() # somehow we can't fetch this from config.json without breaking everything (circular import stuff)
 
 class Database(MongoClient):
     def __init__(self, host=db_host, port=None, **kwargs):
