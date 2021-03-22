@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <div align="center">
 
 ![GitHub](https://img.shields.io/discord/697814384197632050?label=Discord&logo=Discord&logoColor=white)
@@ -24,4 +23,3 @@ Yes:
 =======
 # AutoMod
 Discord moderation bot
->>>>>>> c83bba84105b02b08bbb51e62c5956420d3bcc02
