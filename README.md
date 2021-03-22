@@ -1,8 +1,8 @@
 <div align="center">
 
 ![GitHub](https://img.shields.io/discord/697814384197632050?label=Discord&logo=Discord&logoColor=white)
-![Github](https://img.shields.io/github/issues/automoddiscord/AutoMod?color=red&label=Active%20issues&logo=github)
-![Github](https://img.shields.io/github/stars/automoddiscord/AutoMod?color=yellow&label=Stars&logo=github)
+![Github](https://img.shields.io/github/issues/xezzz/AutoMod?color=red&label=Active%20issues&logo=github)
+![Github](https://img.shields.io/github/stars/xezzz/AutoMod?color=yellow&label=Stars&logo=github)
 
 </div>
 
