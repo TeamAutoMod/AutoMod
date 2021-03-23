@@ -4,6 +4,7 @@ import json
 import traceback
 import datetime
 import logging
+import unicodedata
 
 import discord
 from discord import Guild
@@ -66,6 +67,19 @@ class Admin(BaseCog):
         else:
             await ctx.send(f"{RED_TICK} I can't find a cog with that name.")
 
+
+
+    @commands.command()
+    async def charinfo(self, ctx, *, chars: str):
+        def to_str(c):
+            digit = f'{ord(c):x}'
+            name = unicodedata.name(c, "Name not found")
+            return f"`\\U{digit:>08}`: {name} - {c} \N{EM DASH} <https://fileformat.info/info/unicode/char/{digit}>"
+            
+        msg = "\n".join(map(to_str, chars))
+        if len(msg) > 2000:
+            return await ctx.send("Output is too long to display!")
+        await ctx.send(msg)
 
     @commands.command(aliases=["eval"], hidden=True)
     async def _eval(self, ctx, *, cmd):

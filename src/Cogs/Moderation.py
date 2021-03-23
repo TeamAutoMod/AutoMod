@@ -205,6 +205,20 @@ class Moderation(BaseCog):
             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_unban", _emote="ANGEL", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
 
 
+
+    def is_muted(self, guild, user):
+        _ = DBUtils.get(
+            db.mutes,
+            "mute_id",
+            f"{guild.id}-{user.id}",
+            "ending"
+        )
+        if _ is None:
+            return False
+        else:
+            return True
+
+
     @commands.guild_only()
     @commands.command()
     @commands.has_permissions(ban_members=True)
@@ -224,9 +238,29 @@ class Moderation(BaseCog):
             role = ctx.guild.get_role(int(mute_role_id))
             if role is None:
                 return await ctx.send(Translator.translate(ctx.guild, "no_mute_role", _emote="NO", prefix=ctx.prefix))
-            if role in user.roles:
-                # TODO make it, so that this extends the mute
-                return await ctx.send(Translator.translate(ctx.guild, "user_already_muted", _emote="NO_MOUTH", user=user.name))
+            if self.is_muted(ctx.guild, user):
+                # user is already muted, should we extend their mute?
+                confirm = await ctx.prompt(f"{user} is already muted. Do you want to extend their mute?", timeout=15)
+                if not confirm:
+                    return await ctx.send(Translator.translate(ctx.guild, "aborting"))
+
+                until = (DBUtils.get(db.mutes, "mute_id", f"{ctx.guild.id}-{user.id}", "ending") + datetime.timedelta(seconds=length.to_seconds(ctx)))
+                DBUtils.update(
+                    db.mutes,
+                    "mute_id",
+                    f"{ctx.guild.id}-{user.id}",
+                    "ending",
+                    until
+                )
+                await ctx.send(Translator.translate(ctx.guild, "mute_extended", _emote="YES", user=user, user_id=user.id, length=length.length, unit=length.unit, reason=reason))
+                on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute_extended", _emote="NO_MOUTH", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason))
+                if not role in user.roles:
+                    try:
+                        await user.add_roles(role)
+                    except Exception:
+                        return
+                return
             else:
                 if (ctx.author != user and user != ctx.bot.user and ctx.author.top_role > user.top_role) or ctx.guild.owner == ctx.author:
                     if ctx.guild.me.top_role.position > role.position:
