@@ -219,7 +219,7 @@ class Infractions(BaseCog):
                             if raw_target is None:
                                 target = "Unkown User"
                             else:
-                                target = f"{raw_target.name}#{raw_target.discriminator}"
+                                target = f"{raw_target.name if len(raw_target.name) <= 10 else raw_target.name[:10] + '...'}#{raw_target.discriminator}"
                             self.cached_targets[doc["target_id"]] = target
                         
                         mod = None
@@ -230,7 +230,7 @@ class Infractions(BaseCog):
                             if raw_mod is None:
                                 mod = "Unkown Mod"
                             else:
-                                mod = f"{raw_mod.name}#{raw_mod.discriminator}"
+                                mod = f"{raw_mod.name if len(raw_mod.name) <= 10 else raw_mod.name[:10] + '...'}#{raw_mod.discriminator}"
                             self.cached_mods[doc["moderator_id"]] = mod
 
                         timestamp = doc["timestamp"]
