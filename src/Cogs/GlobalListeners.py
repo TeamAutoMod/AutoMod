@@ -68,11 +68,15 @@ class GlobalListeners(BaseCog):
             return
 
         ignored_users = DBUtils.get(db.configs, "guildId", f"{c.guild.id}", "ignored_users")
-        if message.author.id in ignored_users:
-            return
-        else:
+        if ignored_users is None:
             on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(c.guild.id, "messageLogChannel", Translator.translate(message.guild, "log_message_deletion", _emote="BIN", user=message.author, user_id=message.author.id, channel=c.mention, on_time=on_time, content=message.content))
+        else:
+            if message.author.id in ignored_users:
+                return
+            else:
+                on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+                await Logging.log_to_guild(c.guild.id, "messageLogChannel", Translator.translate(message.guild, "log_message_deletion", _emote="BIN", user=message.author, user_id=message.author.id, channel=c.mention, on_time=on_time, content=message.content))
         
 
     @commands.Cog.listener()
