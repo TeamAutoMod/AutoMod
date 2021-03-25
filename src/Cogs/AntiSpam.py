@@ -78,10 +78,8 @@ class AntiSpam(BaseCog):
             await guild.kick(user=member, reason="[AutoMod] Spam")
         except discord.HTTPException:
             log.info(f"[Anti Spam] Error while trying to kick {member} ({member.id}) from server {guild} via the anti spam system")
-            self.handling.remove(member.id)
         else:
             log.info(f"[Anti Spam] Kicked {member} ({member.id}) from server {guild} via the anti spam system")
-            self.handling.remove(member.id)
 
             case = DBUtils.new_case()
             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
@@ -90,7 +88,9 @@ class AntiSpam(BaseCog):
 
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_spam", _emote="SHOE", on_time=on_time, user=member, user_id=member.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=msg.channel.mention))
-
+        finally:
+            self.handling.remove(member.id)
+            
 
     
     @commands.Cog.listener()
