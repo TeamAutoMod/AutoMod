@@ -79,6 +79,10 @@ def init_logger():
 
 
 if __name__ == "__main__":
+    description = """
+    Discord moderation bot
+    """
+    
     p = argparse.ArgumentParser()
     p.add_argument("--total_shards", help="The total amount of shards to use")
     cl_args = p.parse_args()
@@ -96,7 +100,7 @@ if __name__ == "__main__":
             reactions=True
         ),
         "chunk_guilds_at_startup": False,
-        "description": "Discord moderation/utility bot!"
+        "description": 
     }
 
     if cl_args.total_shards:
