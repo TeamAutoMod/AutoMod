@@ -10,7 +10,7 @@ from discord.ext.commands import AutoShardedBot
 
 from Bot import Handlers
 from Utils import Utils
-from Database import Connector
+from Database import Connector, DBUtils
 
 
 db = Connector.Database()
@@ -29,6 +29,7 @@ def prefix_callable(bot, message):
                 prefixes.append("+")
         except Exception:
             prefixes.append("+")
+    return prefixes
 
 class AutoMod(AutoShardedBot):
     """
