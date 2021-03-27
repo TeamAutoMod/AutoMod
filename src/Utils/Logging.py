@@ -31,7 +31,7 @@ async def init(actual_bot):
 
 
 def before_send(event, hint):
-    if event['level'] == "error" and event['logger'] == 'automod' and 'logger' in event.keys():
+    if event['level'] == "error" and 'logger' in event.keys() and event['logger'] == 'automod':
         return None 
     if 'exc_info' in hint:
         error_type, error_value, _traceback = hint['exc_info']
