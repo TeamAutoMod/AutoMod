@@ -864,6 +864,15 @@ class Moderation(BaseCog):
             log.error(f"[Commands] {_ex}")
 
 
+    # TODO Add a permaban command (instantly bans a user after getting unbanned)
+    # @commands.command()
+    # @commands.guild_only()
+    # @commands.has_permissions(administrator=True)
+    # async def permaban(self, ctx, user: DiscordUser, *, reason = None):
+    #     pass
+
+
+
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

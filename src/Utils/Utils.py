@@ -5,6 +5,7 @@ import os
 import json
 import asyncio
 import datetime
+import argparse
 import numpy as np
 
 from Utils import Logging
@@ -148,3 +149,11 @@ def is_close(root, to_check, threshold: float) -> bool:
 
     ratio = ((len(root) + len(to_check)) - distance[row][col]) / (len(root) + len(to_check)) * 100
     return ratio >= threshold
+
+
+def parse_args():
+    p = argparse.ArgumentParser()
+    p.add_argument(
+        "--total_shards", "-shards", help="Amount of shards to start the bot with"
+    )
+    return p.parse_args()

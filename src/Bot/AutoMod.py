@@ -4,14 +4,31 @@ import aiohttp
 from prometheus_client import CollectorRegistry
 from collections import deque, defaultdict
 
+import discord
+from discord import Intents
 from discord.ext.commands import AutoShardedBot
 
 from Bot import Handlers
 from Utils import Utils
+from Database import Connector
 
 
+db = Connector.Database()
 
 
+def prefix_callable(bot, message):
+    prefixes = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
+    if message.guild is None:
+        prefixes.append("+")
+    elif bot.READY:
+        try:
+            prefix = DBUtils.get(db.configs, "guildId", f"{message.guild.id}", "prefix")
+            if prefix is not None:
+                prefixes.append(prefix)
+            else:
+                prefixes.append("+")
+        except Exception:
+            prefixes.append("+")
 
 class AutoMod(AutoShardedBot):
     """
@@ -44,9 +61,20 @@ class AutoMod(AutoShardedBot):
     last_reload = None
     
     
-    def __init__(self, *args, loop=None, **kwargs):
-        super().__init__(*args, loop=loop, **kwargs)
-        self.total_shards = kwargs.get("shard_count", 1)
+    def __init__(self, shards=1):
+        intents = Intents(
+            guilds=True,
+            members=True,
+            bans=True,
+            emojis=True,
+            messages=True,
+            reactions=True
+        )
+        super().__init__(
+            command_prefix=prefix_callable, intents=intents, description="Discord moderation bot",
+            case_insensitive=True, max_messages=1000, chunk_guilds_at_startup=False, shard_count=shards
+        )
+        self.total_shards = shards
 
         self.session = aiohttp.ClientSession(loop=self.loop)
         self.prev_events = deque(maxlen=10)

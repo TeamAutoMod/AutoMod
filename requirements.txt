@@ -17,3 +17,4 @@ pymongo==3.11.0
 requests==2.24.0
 sentry-sdk==0.19.5
 numpy=1.20.1
+mypy==0.812

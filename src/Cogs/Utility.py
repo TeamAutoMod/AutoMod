@@ -81,7 +81,7 @@ class Utility(BaseCog):
                     roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
                     e.add_field(
                         name="**Roles**",
-                        value=", ".join(roles) if len(roles) < 1000 else f"{len(roles)} roles",
+                        value=", ".join(roles) if len(roles) < 20 else f"{len(roles)} roles",
                         inline=False
                     )
                 except Exception as e:
