@@ -5,7 +5,6 @@ import sentry_sdk
 import sys
 import os
 
-from logging.handlers import TimedRotatingFileHandler
 from aiohttp import ClientOSError, ServerDisconnectedError
 from discord import ConnectionClosed
 
@@ -15,8 +14,6 @@ from Database import Connector, DBUtils
 
 log = logging.getLogger(__name__)
 
-LOGGER = logging.getLogger("automod")
-DISCORD_LOGGER = logging.getLogger("discord")
 BOT_LOG = None
 BOT = None
 
