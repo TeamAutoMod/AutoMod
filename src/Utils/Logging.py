@@ -31,12 +31,12 @@ async def init(actual_bot):
 
 
 def before_send(event, hint):
-    if event['level'] == "error" and 'logger' in event.keys() and event['logger'] == 'automod':
-        return None  # we send errors manually, in a much cleaner way
+    if event['level'] == "error" and event['logger'] == 'automod' and 'logger' in event.keys():
+        return None 
     if 'exc_info' in hint:
-        exc_type, exc_value, tb = hint['exc_info']
+        error_type, error_value, _traceback = hint['exc_info']
         for t in [ConnectionClosed, ClientOSError, ServerDisconnectedError]:
-            if isinstance(exc_value, t):
+            if isinstance(error_value, t):
                 return
     return event
 
