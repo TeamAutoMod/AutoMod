@@ -3,7 +3,6 @@ discord.http.Route.BASE = "https://discordapp.com/api/v6" #v6 > v7
 
 from Bot.AutoMod import AutoMod
 from log_setup import setup_logging 
-import os
 import sys
 import asyncio
 
@@ -13,10 +12,6 @@ except ImportError:
     pass
 else:
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-
-
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 
 
