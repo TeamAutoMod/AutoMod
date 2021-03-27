@@ -57,7 +57,6 @@ class AutoMod(AutoShardedBot):
     running_unbans = set()
     running_msg_deletions = set()
     running_removals = set()
-    metrics_registry = CollectorRegistry()
     last_reload = None
     
     
