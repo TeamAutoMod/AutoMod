@@ -8,7 +8,7 @@
 
 # AutoMod
 
-AutoMod is a moderation/utility bot for both large & small servers written in Python3!
+AutoMod is a moderation/utility bot for both large & small servers, written in Python3!
 
 ### How can I add the bot?
 
