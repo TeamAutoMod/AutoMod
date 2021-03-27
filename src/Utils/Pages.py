@@ -1,20 +1,6 @@
 import discord
 from discord import NotFound, Forbidden
 
-page_handlers = dict()
-
-
-def register(type, init, update):
-    page_handlers[type] = {
-        "init": init,
-        "update": update,
-    }
-
-
-def unregister(type_handler):
-    if type_handler in page_handlers.keys():
-        del page_handlers[type_handler]
-
 
 
 
