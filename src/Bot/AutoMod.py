@@ -29,7 +29,10 @@ def prefix_callable(bot, message):
         except Exception:
             prefixes.append("+")
     return prefixes
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6fc1d1800ce108e51c717f472b28662b6807ca1a
 
 class AutoMod(AutoShardedBot):
     """
