@@ -18,6 +18,7 @@
     "log_inf_claim": "``[{on_time} UTC]`` {emote} **{moderator}** (``{moderator_id)``} claimed infraction **#{case}**. Reason: \n```\n{reason}\n```",
     "log_manual_unban": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) was manually unbanned",
     "log_reapplied_mute": "``[{on_time} UTC]`` {emote} Reapplied active mute for **{user}** (``{user_id}``) on rejoin",
+    "log_manual_unmute": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) was manually unmuted by **{moderator}** (``{moderator_id}``)",
 
     "user_banned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was banned for ``{reason}`` (``#{case}``)",
     "user_unbanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was unbanned for ``{reason}`` (``#{case}``)",
@@ -30,6 +31,7 @@
     "user_warned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was warned for ``{reason}`` (``#{case}``)",
     "user_warns_cleared": "{emote} Cleared warnings of {user.name}#{user.discriminator} (``{user_id}``) for ``{reason}``",
     "inf_claimed": "{emote} Claimed infraction ``{case}``!",
+    "mute_lifted": "{emote} {user.name}{user.discriminator} (``{user_id}``)'s mute was lifted",
 
     "ban_not_allowed": "{emote} Either you or I lack correct permissions to ban ``{user}``",
     "target_not_on_server": "{emote} User is not on the server.",
@@ -37,7 +39,8 @@
     "ban_failed": "{emote} An error occurred while trying to perform the ban: \n```\n{error}\n```",
     "kick_failed": "{emote} An error occurred while trying to perform the kick: \n```\n{error}\n```",
     "unban_failed": "{emote} An error occurred while trying to perform the unban: \n```\n{error}\n```",
-    
+    "not_muted": "{emote} ``{user}`` is not muted.",
+
     "kick_not_allowed": "{emote} Either you or I lack correct permissions to ban ``{user}``",
     "mute_not_allowed": "{emote} Either you or I lack correct permissions to mute ``{user}``",
     "warn_not_allowed": "{emote} Either you or I lack correct permissions to warn ``{user}``",

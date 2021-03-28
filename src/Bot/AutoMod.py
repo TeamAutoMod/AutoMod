@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import aiohttp
-from prometheus_client import CollectorRegistry
 from collections import deque, defaultdict
 
 import discord
@@ -10,7 +9,7 @@ from discord.ext.commands import AutoShardedBot
 
 from Bot import Handlers
 from Utils import Utils
-from Database import Connector
+from Database import Connector, DBUtils
 
 
 db = Connector.Database()
@@ -29,6 +28,8 @@ def prefix_callable(bot, message):
                 prefixes.append("+")
         except Exception:
             prefixes.append("+")
+    return prefixes
+
 
 class AutoMod(AutoShardedBot):
     """
@@ -57,7 +58,6 @@ class AutoMod(AutoShardedBot):
     running_unbans = set()
     running_msg_deletions = set()
     running_removals = set()
-    metrics_registry = CollectorRegistry()
     last_reload = None
     
     

@@ -285,6 +285,31 @@ class Moderation(BaseCog):
                     await ctx.send(Translator.translate(ctx.guild, "mute_not_allowed", _emote="NO", user=user.name))
     
 
+
+    @commands.guild_only()
+    @commands.command()
+    @commands.has_permissions(ban_members=True)
+    async def unmute(self, ctx, user: discord.Member):
+        if not self.is_muted(ctx.guild, user):
+            return await ctx.send(Translator.translate(ctx.guild, "not_muted", _emote="NO", user=user.name))
+        DBUtils.delete(db.mutes, "mute_id", f"{ctx.guild.id}-{user.id}")
+        await ctx.send(Translator.translate(ctx.guild, "mute_lifted", _emote="YES", user=user, user_id=user.id))
+        
+        # check if we can remove the role
+        try:
+            mute_role_id = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "muteRole")
+            role = ctx.guild.get_role(int(mute_role_id))
+            await user.remove_roles(role)
+        except Exception:
+            pass
+        finally:
+            on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_manual_unmute", _emote="ANGEL", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id))
+
+
+
+
+
     @commands.guild_only()
     @commands.command(aliases=["multiban"], usage="<targets> [reason]")
     @commands.has_permissions(ban_members=True)
