@@ -70,11 +70,10 @@ async def on_ready(bot):
             
             await init_bot(bot)
             try:
-                for signame in ("SIGINT", "SIGTERM"):
+                for signame in ("SIGTERM", "SIGINT"):
                     asyncio.get_event_loop().add_signal_handler(getattr(signal, signame), lambda: asyncio.ensure_future(Utils.clean_shutdown(bot, signame)))
-                
             except Exception:
-                pass # doesn't work on Windows
+                pass
 
 
             if not hasattr(bot, "uptime"):
