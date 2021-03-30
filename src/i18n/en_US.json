@@ -31,7 +31,7 @@
     "user_warned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was warned for ``{reason}`` (``#{case}``)",
     "user_warns_cleared": "{emote} Cleared warnings of {user.name}#{user.discriminator} (``{user_id}``) for ``{reason}``",
     "inf_claimed": "{emote} Claimed infraction ``{case}``!",
-    "mute_lifted": "{emote} {user.name}{user.discriminator} (``{user_id}``)'s mute was lifted",
+    "mute_lifted": "{emote} {user.name}#{user.discriminator} (``{user_id}``)'s mute was lifted",
 
     "ban_not_allowed": "{emote} Either you or I lack correct permissions to ban ``{user}``",
     "target_not_on_server": "{emote} User is not on the server.",
