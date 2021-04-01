@@ -29,10 +29,7 @@ log = logging.getLogger(__name__)
 db = Connector.Database()
 
 
-Utils.init_config()
 cogs = Utils.from_config("COGS")
-
-
 async def init_bot(bot):
     bot.locked = True
     try:
@@ -51,8 +48,6 @@ async def init_bot(bot):
         now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         bot.last_reload = f"{now} UTC"
 
-        if bot.aiosession is None:
-            bot.aiosession = aiohttp.ClientSession
 
     except Exception as ex:
         bot.locked = False

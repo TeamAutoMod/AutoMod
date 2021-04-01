@@ -48,7 +48,6 @@ class AutoMod(AutoShardedBot):
     missing_guilds = []
     loading_task = None
     initial_fill_complete = False
-    aiosession = None
     errors = 0
     own_messages = 0
     bot_messages = 0

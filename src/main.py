@@ -16,7 +16,8 @@ else:
 
 
 def run_bot(shards):
-    from Utils.Utils import clean_shutdown
+    from Utils.Utils import clean_shutdown, init_config
+    init_config()
     bot = AutoMod(shards=shards)
     bot.remove_command("help")
 
