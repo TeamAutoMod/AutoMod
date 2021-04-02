@@ -603,7 +603,7 @@ class Moderation(BaseCog):
     @commands.has_permissions(ban_members=True)
     async def massban(self, ctx, *, args):
         """massban_help"""
-        if not isinstance(ctx.author, discord.Member): # sometime discord just thinks the author isn't a guild member, wtf?
+        if not isinstance(ctx.author, discord.Member): # sometimes discord just thinks the author isn't a guild member, wtf?
             try:
                 author = await ctx.guild.fetch_member(ctx.author.id)
             except discord.HTTPException:
