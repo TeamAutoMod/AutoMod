@@ -26,6 +26,11 @@ def run_bot(shards):
         bot.run()
     except KeyboardInterrupt:
         asyncio.run(clean_shutdown(bot, "KeyboardInterrupt"))
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
+        
 
 
 
@@ -33,11 +38,5 @@ if __name__ == "__main__":
     from Utils.Utils import parse_args
     shards = parse_args().total_shards
 
-    with setup_logging() as log:
-        try:
-            run_bot(shards)
-        except KeyboardInterrupt:
-            try:
-                sys.exit(0)
-            except SystemExit:
-                os._exit(0)
+    with setup_logging():
+        run_bot(shards)
