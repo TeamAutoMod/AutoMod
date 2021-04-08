@@ -31,13 +31,6 @@ def prefix_callable(bot, message):
     return prefixes
 
 class AutoMod(AutoShardedBot):
-    """
-    A subclass of AutoShardedBot
-    The handling of initial events 
-    through the Handlers.py file
-    is inspired by GearBot
-    (https://github.com/gearbot/GearBot)
-    """
     READY = False
     version = ""
     command_count = 0
@@ -88,10 +81,12 @@ class AutoMod(AutoShardedBot):
             for i in reversed(needs_removal):
                 del dates[i]
 
+
         for sid, dates in self.resumes.items():
             needs_removal = [i for i, dt in enumerate(dates) if dt < ago]
             for i in reversed(needs_removal):
                 del dates[i]
+
 
     async def _run_event(self, coro, event_name, *args, **kwargs):
         while (self.locked or not self.READY) and event_name != "on_ready":
@@ -112,8 +107,43 @@ class AutoMod(AutoShardedBot):
         self._clear_gateway_data()
         self.identifies[sid].append(datetime.datetime.utcnow())
         await super().before_identify_hook(sid, initial=initial)
-        
 
+
+    async def on_ready(self):
+        await Handlers.on_ready(self)
+
+
+    async def on_message(self, message):
+        await Handlers.on_message(self, message)
+
+
+    async def on_guild_join(self, guild):
+        await Handlers.on_guild_join(self, guild)
+
+
+    async def on_guild_remove(self, guild):
+        await Handlers.on_guild_remove(self, guild)
+
+
+    async def on_command_error(self, ctx, error):
+        await Handlers.on_command_error(self, ctx, error)
+
+
+    async def on_guild_update(self, before, after):
+        await Handlers.on_guild_update(before, after)
+
+
+    async def on_shard_connect(self, shard_id):
+        await Handlers.on_shard_connect(self, shard_id)
+
+
+    async def on_shard_disconnect(self, shard_id):
+        await Handlers.on_shard_disconnect(self, shard_id)
+    
+
+    async def on_shard_ready(self, shard_id):
+        await Handlers.on_shard_ready(self, shard_id)
+        
 
     def run(self): # a custom run function
         try:
@@ -127,31 +157,3 @@ class AutoMod(AutoShardedBot):
                         f.write(f"{data}\n")
                     else:
                         f.write(f"{x}\n")
-    
-    """Events handled through Handlers.py"""
-    async def on_ready(self):
-        await Handlers.on_ready(self)
-
-    async def on_message(self, message):
-        await Handlers.on_message(self, message)
-
-    async def on_guild_join(self, guild):
-        await Handlers.on_guild_join(self, guild)
-
-    async def on_guild_remove(self, guild):
-        await Handlers.on_guild_remove(self, guild)
-
-    async def on_command_error(self, ctx, error):
-        await Handlers.on_command_error(self, ctx, error)
-
-    async def on_guild_update(self, before, after):
-        await Handlers.on_guild_update(before, after)
-
-    async def on_shard_connect(self, shard_id):
-        await Handlers.on_shard_connect(self, shard_id)
-
-    async def on_shard_disconnect(self, shard_id):
-        await Handlers.on_shard_disconnect(self, shard_id)
-    
-    async def on_shard_ready(self, shard_id):
-        await Handlers.on_shard_ready(self, shard_id)
