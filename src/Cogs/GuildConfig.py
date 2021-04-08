@@ -110,6 +110,24 @@ class GuildConfig(BaseCog):
         await ctx.send(Translator.translate(ctx.guild, "updated_mute_role", _emote="YES", role=role.mention))
 
 
+    # TODO: finish building this
+    # @config.command()
+    # async def max_pings(self, ctx, amount: int):
+    #     """max_pings_help"""
+    #     if amount < 3 or 50 < amount:
+    #         return await ctx.send(Translator.translate(ctx.guild, "max_pings", _emote="NO"))
+
+    #     DBUtils.update(
+    #         db.configs,
+    #         "guildId",
+    #         f"{ctx.guild.id}",
+    #         "max_pings",
+    #         amount
+    #     )
+    #     await ctx.send(Translator.translate(ctx.guild, "set_max_pings", _emote="YES", amount=str(amount)))
+
+
+
     @commands.command()
     @commands.guild_only()
     async def action_log(self, ctx, channel: discord.TextChannel):

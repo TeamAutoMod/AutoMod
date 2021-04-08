@@ -66,6 +66,10 @@ class GlobalListeners(BaseCog):
             return
         if DBUtils.get(db.configs, "guildId", f"{c.guild.id}", "messageLogging") is False:
             return
+        if len(message.attachments) > 0:
+            return
+        if message.type != discord.MessageType.default:
+            return
 
         ignored_users = DBUtils.get(db.configs, "guildId", f"{c.guild.id}", "ignored_users")
         if ignored_users is None:

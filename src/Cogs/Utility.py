@@ -98,7 +98,7 @@ class Utility(BaseCog):
                     inline=True
                 )
                 
-                joined = member.created_at.strftime("%d/%m/%Y")
+                joined = member.joined_at.strftime("%d/%m/%Y")
                 e.add_field(
                     name="**Joined**",
                     value=f"{joined} \n({(datetime.fromtimestamp(time.time()) - member.joined_at).days} days ago)",

@@ -4,6 +4,7 @@ discord.http.Route.BASE = "https://discordapp.com/api/v6" #v6 > v7
 from Bot.AutoMod import AutoMod
 from log_setup import setup_logging 
 import sys
+import os
 import asyncio
 
 try:
@@ -32,5 +33,11 @@ if __name__ == "__main__":
     from Utils.Utils import parse_args
     shards = parse_args().total_shards
 
-    with setup_logging():
-        run_bot(shards)
+    with setup_logging() as log:
+        try:
+            run_bot(shards)
+        except KeyboardInterrupt:
+            try:
+                sys.exit(0)
+            except SystemExit:
+                os._exit(0)

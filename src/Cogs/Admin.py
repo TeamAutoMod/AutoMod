@@ -180,5 +180,16 @@ class Admin(BaseCog):
             await ctx.send(f"Error while reloading i18n stuff: \n{ex}")
 
 
+
+    @commands.command()
+    async def snowflake(self, ctx, arg: int):
+        try:
+            dt_object = datetime.datetime.fromtimestamp((round(arg / 4194304 + 1420070400000) / 1000))
+            await ctx.send(f"{dt_object}")
+        except Exception as ex:
+            await ctx.send(f"There was an error trying to convert this snowflake to a datetime object: \n```\n{ex}\n```")
+
+
+
 def setup(bot):
     bot.add_cog(Admin(bot))
