@@ -106,8 +106,7 @@ class Moderation(BaseCog):
         if member is not None:
             if await self.can_act(ctx, member, ctx.author):
                 self.bot.running_removals.add(member.id)
-                await self._ban(ctx, member, reason, 1)
-                await self._unban(ctx, member, "Clean Ban")
+                await self._ban(ctx, member, reason, 7)
 
                 case = DBUtils.new_case()
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
@@ -134,7 +133,7 @@ class Moderation(BaseCog):
         if member is not None:
             if await self.can_act(ctx, member, ctx.author):
                 self.bot.running_removals.add(member.id)
-                await self._ban(ctx, member, reason, 1)
+                await self._ban(ctx, member, reason)
                 await self._unban(ctx, member, "Soft Ban")
 
                 case = DBUtils.new_case()
