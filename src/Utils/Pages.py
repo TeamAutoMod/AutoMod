@@ -13,7 +13,6 @@ def paginate(input, max_lines=23, max_chars=1200, prefix="", suffix=""):
     for line in lines:
         if len(page) + len(line) > max_chars or count == max_lines:
             if page == "":
-                # single 2k line, split smaller
                 words = line.split(" ")
                 for word in words:
                     if len(page) + len(word) > max_chars:
