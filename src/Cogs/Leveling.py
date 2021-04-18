@@ -66,8 +66,9 @@ class Leveling(BaseCog):
             after = lvl + 1
             DBUtils.update(db.levels, "levelId", lvl_id, "lvl", after)
             try:
-                await message.channel.send(Translator.translate(ctx.guild, "lvl_up", _emote="PARTY", user=user, lvl=after))
-            except Exception:
+                await message.channel.send(Translator.translate(message.guild, "lvl_up", _emote="PARTY", user=user, lvl=after))
+            except Exception as ex:
+                print(ex)
                 pass
 
             lvl_roles = DBUtils.get(db.configs, "guildId", f"{message.guild.id}", "level_roles")
@@ -79,7 +80,7 @@ class Leveling(BaseCog):
                         role = discord.utils.get(message.guild.roles, id=int(l.split("-")[1]))
                         await user.add_roles(role)
                         try:
-                            await user.send(Translator.translate(ctx.guild, "role_added", user=user.name, role=role.name, guild_name=message.guild.name, lvl=after))
+                            await user.send(Translator.translate(message.guild, "role_added", user=user.name, role=role.name, guild_name=message.guild.name, lvl=after))
                         except Exception:
                             pass
                     except Exception:

@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 EMOTES = None
 
 async def init_emotes():
-    with open("./src/emotes.json", "r", encoding="utf8", errors="ignore") as f:
+    with open("src/emotes.json", "r", encoding="utf8", errors="ignore") as f:
         global EMOTES
         EMOTES = json.load(f)
     log.info("[Emotes] Loaded the emotes")

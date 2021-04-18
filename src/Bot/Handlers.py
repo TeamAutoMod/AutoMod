@@ -62,6 +62,7 @@ async def on_ready(bot):
     try:
         if not bot.READY:
             log.info(f"[Booting Up] AutoMod is starting up with {bot.total_shards} shards")
+            bot.fetch_guilds()
             
             await init_bot(bot)
             try:
@@ -88,7 +89,7 @@ async def on_ready(bot):
             bot.READY = True
         else:
             pass # bot is ready
-
+        
         bot.missing_guilds = []
         bot.missing_guilds = {g.id for g in bot.guilds}
         if bot.loading_task is not None:

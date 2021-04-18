@@ -191,7 +191,7 @@
     "no_inf": "I couldn't find any infractions here.",
     "inf_for": "Infractions for",
 
-    "lvl_up": "Hey {user}, you just advanced to level **{lvl}**, congrats! {emote}",
+    "lvl_up": "Hey {user.mention}, you just advanced to level **{lvl}**, congrats! {emote}",
     "role_added": "Hey {user}, you just got the ``{role}`` role in the server ``{guild_name}`` for reaching level ``{lvl}``, congrats! 🎉",
     "not_enough_for_lb": "{emote} There have to be at least 2 ranked people in order to display a leaderboard.",
     "fetching_lb": "{emote} Fetching leaderboard...",

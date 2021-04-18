@@ -67,7 +67,7 @@ class AutoMod(AutoShardedBot):
         )
         self.total_shards = shards
 
-        self.session = aiohttp.ClientSession(loop=self.loop)
+        #self.session = aiohttp.ClientSession(loop=self.loop)
         self.prev_events = deque(maxlen=10)
 
         self.resumes = defaultdict(list)

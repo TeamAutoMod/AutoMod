@@ -58,6 +58,8 @@ class GlobalListeners(BaseCog):
         channel_id = c.id
         if isinstance(c, DMChannel):
             return
+        if not isinstance(c, TextChannel):
+            return
         if c is None or str(channel_id) == str(DBUtils.get(db.configs, "guildId", f"{c.guild.id}", "memberLogChannel")) or not isinstance(c, TextChannel):
             return
         if message.author.id == self.bot.user.id:

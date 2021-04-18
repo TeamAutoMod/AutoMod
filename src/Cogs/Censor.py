@@ -26,7 +26,7 @@ class Censor(BaseCog):
     async def on_message(self, message: Message):
         if message.guild is None or message.webhook_id is not None or message.channel is None or isinstance(message.channel, DMChannel) or message.author.bot is True or self.bot.user.id == message.author.id:
             return
-        if DBUtils.get(db.configs, "guildID", f"{message.guild.id}", "automod") is False:
+        if DBUtils.get(db.configs, "guildId", f"{message.guild.id}", "automod") is False:
             return
         user = message.guild.get_member(message.author.id)
         if user is None:
@@ -39,7 +39,7 @@ class Censor(BaseCog):
         channel = self.bot.get_channel(int(before.channel.id))
         if channel is None or isinstance(channel, DMChannel) or channel.guild is None:
             return
-        if DBUtils.get(db.configs, "guildID", f"{channel.guild.id}", "automod") is False:
+        if DBUtils.get(db.configs, "guildId", f"{channel.guild.id}", "automod") is False:
             return
         try:
             message = after

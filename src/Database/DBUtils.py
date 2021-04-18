@@ -18,7 +18,7 @@ def delete(collection, filter_field, filter_value):
 
     
 def insert(collection, schema):
-    collection.insert(schema)
+    collection.insert_one(schema)
 
 
 def new_case():
