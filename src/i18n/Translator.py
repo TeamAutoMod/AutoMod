@@ -19,7 +19,6 @@ LANG_CACHE = dict()
 async def init_translator(langs):
     log.info("[Translator] Initiating translator")
     global LANGS
-    print(pathlib.Path().absolute())
     for l in langs:
         with open(f"src/i18n/{l}.json", "r", encoding="utf8", errors="ignore") as f:
             LANGS[l] = json.load(f)

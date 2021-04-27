@@ -140,7 +140,10 @@ class GuildConfig(BaseCog):
     async def enable(self, ctx):
         """enable_help"""
         if ctx.invoked_subcommand is None:
-            await ctx.invoke(self.bot.get_command("help"), query="configuration_add")
+            normal = [f'{ctx.prefix}config enable {x}' for x in ["automod", "lvlsystem"]]
+            with_arg = [f'{ctx.prefix}config enable {x} <channel>' for x in ["message_logging", "member_logging"]]
+            to_send = [*normal, *with_arg]
+            await ctx.send("**Valid modules** \n```\n{}\n```".format("\n".join(to_send)))
 
 
     @enable.command()
@@ -175,7 +178,8 @@ class GuildConfig(BaseCog):
     async def disable(self, ctx):
         """disable_help"""
         if ctx.invoked_subcommand is None:
-            await ctx.invoke(self.bot.get_command("help"), query="log_remove")
+            modules = [f'{ctx.prefix}config disable {x}' for x in ["automod", "lvlsystem", "message_logging", "member_logging"]]
+            await ctx.send("**Valid Modules** \n```\n{}\n```".format("\n".join(modules)))
 
 
     @disable.command(name="message_logging")
@@ -285,7 +289,8 @@ class GuildConfig(BaseCog):
             _censor_list = [x.strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "censored_words") if x != "--------------"]
             if len(_censor_list) < 1:
                     return ctx.send(Translator.translate(ctx.guild, "black_list_empty", _emote="NO", prefix=ctx.prefix))
-            await ctx.send(Translator.translate(ctx.guild, "censor_list", guild_name=ctx.guild.name, words=_censor_list))
+            words = "\n".join(_censor_list)
+            await ctx.send(Translator.translate(ctx.guild, "censor_list", guild_name=ctx.guild.name, words=words))
 
 
     @black_list.command(name="add")

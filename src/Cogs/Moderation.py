@@ -479,10 +479,7 @@ class Moderation(BaseCog):
     @commands.has_permissions(manage_messages=True)
     async def clean_until(self, ctx, message: discord.Message):
         """clean_until_help"""
-        try:
-            await self.perform_cleaning(ctx, 500, lambda x: True, after=message)
-        except Exception as ex:
-            print(ex)
+        await self.perform_cleaning(ctx, 500, lambda x: True, after=message)
 
 
     @commands.guild_only()

@@ -72,6 +72,8 @@ class Leveling(BaseCog):
                 pass
 
             lvl_roles = DBUtils.get(db.configs, "guildId", f"{message.guild.id}", "level_roles")
+            if not isinstance(lvl_roles, list):
+                return
             if len(lvl_roles) < 1:
                 return
             for l in lvl_roles:

@@ -82,7 +82,7 @@
     "not_existing_ignored_user": "{emote} ``{user}`` is not on the ignored users list.",
     "ignored_user_added": "{emote} Added ``{user}`` to the ignored users list!",
     "ignored_user_removed": "{emote} Removed ``{user}`` from the ignored users list",
-    "black_list_disabled": "{emote} The ``automod`` module is disabled for this guild, therefore a black list can't be displayed. To enable it, run {prefix}configure add automod",
+    "black_list_disabled": "{emote} The ``automod`` module is disabled for this guild, therefore a black list can't be displayed. To enable it, run {prefix}configure enable automod",
     "black_list_empty": "{emote} The black list for this guild is empty. You can add something by running {prefix}configure black_list add <word>",
     "added_to_black_list": "{emote} Added ``{word}`` to the censor list!",
     "removed_from_black_list": "{emote} Removed ``{word}`` from the censor list.",

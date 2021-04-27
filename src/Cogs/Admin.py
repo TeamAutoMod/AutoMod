@@ -41,7 +41,10 @@ class Admin(BaseCog):
     @commands.command(hidden=True)
     async def load(self, ctx, cog):
         if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./Cogs/src/{cog}.py"):
-            self.bot.load_extension("Cogs.%s" % (cog))
+            try:
+                self.bot.load_extension("Cogs.%s" % (cog))
+            except Exception as ex:
+                return await ctx.send(f"{RED_TICK} Error! {ex}")
             await ctx.send(f"**{cog}** has been loaded!")
             await Logging.bot_log(self.bot, f"**{cog}** has been loaded by {ctx.message.author.name}.", None)
         else:
@@ -61,7 +64,10 @@ class Admin(BaseCog):
     @commands.command(hidden=True)
     async def reload(self, ctx, cog):
         if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./src/Cogs/{cog}.py"):
-            self.bot.reload_extension("Cogs.%s" % (cog))
+            try:
+                self.bot.reload_extension("Cogs.%s" % (cog))
+            except Exception as ex:
+                return await ctx.send(f"{RED_TICK} Error! {ex}")
             await ctx.send(f"**{cog}** has been reloaded!")
             await Logging.bot_log(self.bot, f"**{cog}** has been reloaded by {ctx.message.author.name}.", None)
         else:
