@@ -9,7 +9,7 @@ def is_owner():
 
 
 def is_mod(member):
-    return (hasattr(member, "roles") and member.guild_permissions.ban_members)
+    return member.guild_permissions.ban_members
 
 
 def is_admin(member):

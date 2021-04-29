@@ -179,14 +179,16 @@ class Infractions(BaseCog):
                 filter_option = "guild"
                 filter_value = f"{ctx.guild.id}"
                 _for = f"{ctx.guild.name}"
-            elif PermCheckers.is_mod(user):
-                filter_option = "mod"
-                filter_value = f"{user.id}"
-                _for = f"{user.name}"
             else:
-                filter_option = "user"
-                filter_value = f"{user.id}"
-                _for = f"{user.name}"
+                user = await commands.MemberConverter().convert(ctx, str(user.id))
+                if PermCheckers.is_mod(user):
+                    filter_option = "mod"
+                    filter_value = f"{user.id}"
+                    _for = f"{user.name}"
+                else:
+                    filter_option = "user"
+                    filter_value = f"{user.id}"
+                    _for = f"{user.name}"
             
             dest = search_by[filter_option]
 
