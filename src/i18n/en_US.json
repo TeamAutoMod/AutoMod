@@ -9,7 +9,7 @@
     "log_unban": "``[{on_time} UTC]`` ``[#{case}]`` {emote} **{user}** (``{user_id}``) was unbanned by **{moderator}** (``{moderator_id}``). Reason: \n```\n{reason}\n```",
     "log_mute": "``[{on_time} UTC]`` ``[#{case}]`` {emote} **{user}** (``{user_id}``) has been muted by **{moderator}** (``{moderator_id}``) for **{length} {unit}**. Reason: \n```\n{reason}\n```",
     "log_mute_extended": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s mute was extended by **{moderator}** (``{moderator_id}``) for **{length} {unit}**. Reason: \n```\n{reason}\n```",
-    "log_unmute": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) was automatically unmuted since their mute expired",
+    "log_unmute": "``[{on_time} UTC]`` ``[]`` {emote} **{user}** (``{user_id}``) was automatically unmuted since their mute expired",
     "log_warn": "``[{on_time} UTC]`` ``[#{case}]`` {emote} **{user}** (``{user_id}``) was warned by **{moderator}** (``{moderator_id}``). Reason: \n```\n{reason}\n```",
     "log_censor": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted by **{moderator}** (``{moderator_id}``). \nReason: \n```\n[Automod] Found censored words: {words} \n \n{content}\n```",
     "log_zalgo": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted by **{moderator}** (``{moderator_id}``). Reason: \n```\n[Automod] Illegible message formatting (Zalgo chars) at position {position}\n```",
@@ -18,7 +18,7 @@
     "log_inf_claim": "``[{on_time} UTC]`` {emote} **{moderator}** (``{moderator_id)``} claimed infraction **#{case}**. Reason: \n```\n{reason}\n```",
     "log_manual_unban": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) was manually unbanned",
     "log_reapplied_mute": "``[{on_time} UTC]`` {emote} Reapplied active mute for **{user}** (``{user_id}``) on rejoin",
-    "log_manual_unmute": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) was manually unmuted by **{moderator}** (``{moderator_id}``)",
+    "log_manual_unmute": "``[{on_time} UTC]`` ``[]`` {emote} **{user}** (``{user_id}``) was manually unmuted by **{moderator}** (``{moderator_id}``)",
 
     "user_banned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was banned for ``{reason}`` (``#{case}``)",
     "user_unbanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was unbanned for ``{reason}`` (``#{case}``)",
@@ -128,7 +128,6 @@
     
     "enable_help": "Enable a module/logging option",
     "disable_help": "Disable a module/logging option",
-    "show_help": "Shows the current server config",
     "black_list_help": "Shows the censor list. Subcommands are add & remove",
     "prefix_help": "Sets the servers prefix",
     "mute_role_help": "Sets the role for mutes",

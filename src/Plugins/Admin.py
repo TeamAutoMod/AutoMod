@@ -11,7 +11,7 @@ from discord import Guild
 from discord.ext import commands
 
 import i18n
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Utils import Utils, Logging, Pages, Reload
 from Utils.Constants import GREEN_TICK, RED_TICK
 from Database.Connector import Database
@@ -22,7 +22,7 @@ from Utils.Converters import UserID
 log = logging.getLogger(__name__)
 
 
-class Admin(BaseCog):
+class Admin(BasePlugin):
     """No translation needed here"""
     def __init__(self, bot):
         super().__init__(bot)
@@ -40,9 +40,9 @@ class Admin(BaseCog):
 
     @commands.command(hidden=True)
     async def load(self, ctx, cog):
-        if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./Cogs/src/{cog}.py"):
+        if os.path.isfile(f"src/Plugins/{cog}.py") or os.path.isfile(f"./Plugins/src/{cog}.py"):
             try:
-                self.bot.load_extension("Cogs.%s" % (cog))
+                self.bot.load_extension("Plugins.%s" % (cog))
             except Exception as ex:
                 return await ctx.send(f"{RED_TICK} Error! {ex}")
             await ctx.send(f"**{cog}** has been loaded!")
@@ -53,8 +53,8 @@ class Admin(BaseCog):
 
     @commands.command(hidden=True)
     async def unload(self, ctx, cog):
-        if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./src/Cogs/{cog}.py"):
-            self.bot.unload_extension("Cogs.%s" % (cog))
+        if os.path.isfile(f"src/Plugins/{cog}.py") or os.path.isfile(f"./src/Plugins/{cog}.py"):
+            self.bot.unload_extension("Plugins.%s" % (cog))
             await ctx.send(f"**{cog}** has been unloaded!")
             await Logging.bot_log(self.bot, f"**{cog}** has been unloaded by {ctx.message.author.name}.", None)
         else:
@@ -63,9 +63,9 @@ class Admin(BaseCog):
 
     @commands.command(hidden=True)
     async def reload(self, ctx, cog):
-        if os.path.isfile(f"src/Cogs/{cog}.py") or os.path.isfile(f"./src/Cogs/{cog}.py"):
+        if os.path.isfile(f"src/Plugins/{cog}.py") or os.path.isfile(f"./src/Plugins/{cog}.py"):
             try:
-                self.bot.reload_extension("Cogs.%s" % (cog))
+                self.bot.reload_extension("Plugins.%s" % (cog))
             except Exception as ex:
                 return await ctx.send(f"{RED_TICK} Error! {ex}")
             await ctx.send(f"**{cog}** has been reloaded!")

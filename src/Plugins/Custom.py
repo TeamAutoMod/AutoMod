@@ -5,7 +5,7 @@ import asyncio
 from i18n import Translator
 from Utils import Logging, Utils
 
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Database import Connector, DBUtils, Schemas
 
 
@@ -13,7 +13,7 @@ from Database import Connector, DBUtils, Schemas
 db = Connector.Database()
 
 
-class Custom(BaseCog):
+class Custom(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
         self.command_cache = dict()

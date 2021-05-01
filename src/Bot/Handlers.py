@@ -78,7 +78,7 @@ async def on_ready(bot):
             loaded = 0
             for cog in cogs:
                 try:
-                    bot.load_extension("Cogs.%s" % (cog))
+                    bot.load_extension("Plugins.%s" % (cog))
                     loaded += 1
                     log.info(f"[Booting Up] Successfully loaded {cog}")
                 except Exception as e:
@@ -182,7 +182,7 @@ async def check_mutes(bot):
                             pass
                         else:
                             on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_unmute", _emote="ANGEL", on_time=on_time, user=target, user_id=target.id))
+                            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_unmute", _emote="UNMUTE", on_time=on_time, user=target, user_id=target.id))
                             DBUtils.delete(db.mutes, "mute_id", f"{mute['mute_id'].split('-')[0]}-{mute['mute_id'].split('-')[1]}")
                     else:
                         pass
@@ -200,7 +200,7 @@ async def on_message(bot, message: Message):
         else:
             bot.bot_messages += 1
         return
-    ctx = await bot.get_context(message, cls=context.Context) # turn ctx into our custom one
+    ctx = await bot.get_context(message, cls=context.Context)
     bot.user_messages += 1
     if ctx.valid and ctx.command is not None:
         bot.command_count = bot.command_count + 1
@@ -240,39 +240,12 @@ async def on_guild_update(before, after):
         DBUtils.update(db.configs, "guildId", f"{before.id}", "guildName", f"{after.name}")
 
 
-
-async def on_shard_connect(bot, shard_id):
-    t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-    await Logging.bot_log(msg=f"``[{t} UTC]`` {SALUTE} Shard {shard_id} is connecting to Discord")
-
-
-async def on_shard_disconnect(bot, shard_id):
-    t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-    await Logging.bot_log(msg=f"``[{t} UTC]`` {RED_TICK} Gateway invalidated our session unrecoverably for shard {shard_id}!")
-
-
-async def on_shard_ready(bot, shard_id):
-    t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-    await Logging.bot_log(msg=f"``[{t} UTC]`` {SALUTE} Shard {shard_id} is ready to go!")
-
-
-async def on_shard_resumed(bot, shard_id):
-    t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-    await Logging.bot_log(msg=f"``[{t} UTC]`` {SALUTE} Shard {shard_id} successfully resumed")
-
-
-
 class NotCachedException(commands.CheckFailure):
     pass
 
 
-
-replacements = {
-    "`": "ˋ"
-}
-
 def replace_lookalikes(text):
-    for k, v in replacements.items():
+    for k, v in {"`": "ˋ"}.items():
         text = text.replace(k, v)
     return text
 

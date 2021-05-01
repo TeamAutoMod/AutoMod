@@ -7,12 +7,12 @@ import discord
 from discord.ext import commands
 
 from i18n import Translator
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Database import Connector, DBUtils
 from Utils import Pages, Generators, Logging
 
 
-class Basic(BaseCog):
+class Basic(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
 
@@ -35,28 +35,33 @@ class Basic(BaseCog):
 
         e = discord.Embed(
             color=discord.Color.blurple(),
-            description=f"""
-            **{Translator.translate(ctx.guild, "about")}**
-            {Translator.translate(
-                ctx.guild, 
-                "about_text",
-                days=days,
-                hours=hours,
-                minutes=minutes,
-                seconds=seconds,
-                user_messages=user_messages,
-                bot_messages=bot_messages,
-                own_messages=own_messages,
-                command_count=command_count,
-                custom_command_count=custom_command_count,
-                guilds=len(self.bot.guilds),
-                total_users=total_users,
-                unique_users=unique_users,
-                version=self.bot.version
-            )}
-            """
+            title=Translator.translate(ctx.guild, "about")
         )
-        e.add_field(name="Support", value="[Here](https://discord.gg/S9BEBux)")
+        e.set_thumbnail(url=self.bot.user.avatar_url)
+        e.add_field(
+            name="Status",
+            value=f"""
+            Uptime: **{days}d, {hours}h, {minutes}m & {seconds}s**
+            Version: **{self.bot.version}**
+            Latency: **{round(self.bot.latency * 1000)}**
+            Timezone: **UTC**
+            """,
+            inline=False
+        )
+        e.add_field(
+            name="Stats",
+            value=f"""
+            Guilds: **{len(self.bot.guilds)}**
+            Users: **{total_users} ({unique_users} unique)**
+            Bot Messages: **{bot_messages}**
+            Own Messages: **{own_messages}**
+            User Messages: **{user_messages}**
+            Commands Used: **{command_count} (Custom: {custom_command_count})**
+            """,
+            inline=False
+        )
+
+        e.add_field(name="Links", value="[Support](https://discord.gg/S9BEBux) \n[GitHub](https://github.com/xezzz/AutoMod)")
         e.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         await ctx.send(embed=e)
 

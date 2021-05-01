@@ -12,7 +12,7 @@ from discord.ext import commands
 from i18n import Translator
 from Database import Connector, DBUtils
 from Database.Schemas import new_infraction
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Utils import Logging, PermCheckers
 
 
@@ -27,13 +27,6 @@ class CooldownContentMapping(commands.CooldownMapping):
 
 
 class SpamChecker:
-    """
-    This checks the following things:
-    1. If the same content has been sent 15 times within the last 17 seconds
-    2. If a user has sent 10 messages within the last 12 seconds
-
-    From experience these rquirements are just met when an actual spam is happening
-    """
     def __init__(self):
         self.check_content = CooldownContentMapping.from_cooldown(15, 17.0, commands.BucketType.member)
         self.check_user = commands.CooldownMapping.from_cooldown(10, 12.0, commands.BucketType.user)
@@ -56,7 +49,7 @@ class SpamChecker:
 
 
 
-class AntiSpam(BaseCog):
+class AntiSpam(BasePlugin):
     def __init__(self, bot):
         super(AntiSpam, self).__init__(bot)
 

@@ -10,14 +10,14 @@ from i18n import Translator
 from Utils import Logging, PermCheckers, Utils
 from Database import Connector, DBUtils
 
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Utils.Constants import get_censor_pattern, ZALGO_RE
 
 
 db = Connector.Database()
 
 
-class Censor(BaseCog):
+class Censor(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
 

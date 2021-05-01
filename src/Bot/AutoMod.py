@@ -67,7 +67,6 @@ class AutoMod(AutoShardedBot):
         )
         self.total_shards = shards
 
-        #self.session = aiohttp.ClientSession(loop=self.loop)
         self.prev_events = deque(maxlen=10)
 
         self.resumes = defaultdict(list)
@@ -133,19 +132,7 @@ class AutoMod(AutoShardedBot):
         await Handlers.on_guild_update(before, after)
 
 
-    async def on_shard_connect(self, shard_id):
-        await Handlers.on_shard_connect(self, shard_id)
-
-
-    async def on_shard_disconnect(self, shard_id):
-        await Handlers.on_shard_disconnect(self, shard_id)
-    
-
-    async def on_shard_ready(self, shard_id):
-        await Handlers.on_shard_ready(self, shard_id)
-        
-
-    def run(self): # a custom run function
+    def run(self):
         try:
             super().run(Utils.from_config("TOKEN"), reconnect=True)
         finally:

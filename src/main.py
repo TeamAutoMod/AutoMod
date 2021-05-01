@@ -16,7 +16,7 @@ else:
 
 
 
-def run_bot(shards):
+def boot_bot(shards):
     from Utils.Utils import clean_shutdown, init_config
     init_config()
     bot = AutoMod(shards=shards)
@@ -25,11 +25,21 @@ def run_bot(shards):
     try:
         bot.run()
     except KeyboardInterrupt:
-        asyncio.run(clean_shutdown(bot, "KeyboardInterrupt"))
         try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
+            for t in asyncio.all_tasks():
+                try:
+                    t.cancel()
+                except:
+                    continue
+        except RuntimeError:
+            pass
+        try:
+            asyncio.run(bot.logout())
+            self.loop.stop()
+            self.loop.close()
+        except:
+            pass
+        quit()
         
 
 
@@ -39,4 +49,4 @@ if __name__ == "__main__":
     shards = parse_args().total_shards
 
     with setup_logging():
-        run_bot(shards)
+        boot_bot(shards)

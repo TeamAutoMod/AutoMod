@@ -15,7 +15,7 @@ from Utils import Logging, Utils, PermCheckers
 from Utils.Converters import DiscordUser, Duration, RangedInt
 from Utils.Constants import RED_TICK, GREEN_TICK
 
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Bot.Handlers import check_mutes
 from Database import Connector, DBUtils
 from Database.Schemas import warn_schema, mute_schema, new_infraction
@@ -32,7 +32,7 @@ class Arguments(argparse.ArgumentParser):
         raise RuntimeError(message)
 
 
-class Moderation(BaseCog):
+class Moderation(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
         self.bot.loop.create_task(check_mutes(bot))
@@ -201,7 +201,7 @@ class Moderation(BaseCog):
 
             await ctx.send(Translator.translate(ctx.guild, "user_unbanned", _emote="YES", user=user, user_id=user.id, reason=reason, case=case))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_unban", _emote="ANGEL", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_unban", _emote="UNLOCK", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
 
 
 
@@ -253,7 +253,7 @@ class Moderation(BaseCog):
                 )
                 await ctx.send(Translator.translate(ctx.guild, "mute_extended", _emote="YES", user=user, user_id=user.id, length=length.length, unit=length.unit, reason=reason))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute_extended", _emote="NO_MOUTH", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute_extended", _emote="MUTE", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason))
                 if not role in user.roles:
                     try:
                         await user.add_roles(role)
@@ -275,7 +275,7 @@ class Moderation(BaseCog):
                             
                             await ctx.send(Translator.translate(ctx.guild, "user_muted", _emote="YES", user=user, user_id=user.id, length=length.length, unit=length.unit, reason=reason, case=case))
                             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute", _emote="NO_MOUTH", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason, case=case))
+                            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute", _emote="MUTE", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason, case=case))
                         else:
                             raise commands.BadArgument("number_too_small")
                     else:
@@ -303,7 +303,7 @@ class Moderation(BaseCog):
             pass
         finally:
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_manual_unmute", _emote="ANGEL", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id))
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_manual_unmute", _emote="UNMUTE", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id))
 
 
 

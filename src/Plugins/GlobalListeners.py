@@ -9,7 +9,7 @@ from discord.ext import commands
 from i18n import Translator
 from Utils import Logging
 
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Database import Connector, DBUtils
 
 
@@ -17,7 +17,7 @@ from Database import Connector, DBUtils
 db = Connector.Database()
 
 
-class GlobalListeners(BaseCog):
+class GlobalListeners(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
 
@@ -143,7 +143,7 @@ class GlobalListeners(BaseCog):
             return
         else:
             on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_manual_unban", _emote="ANGEL", on_time=on_time, user=user, user_id=user.id))
+            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_manual_unban", _emote="UNLOCK", on_time=on_time, user=user, user_id=user.id))
 
 
 

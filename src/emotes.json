@@ -12,6 +12,7 @@
     "BIN": "🗑️",
     "PEN": "✏️",
     "LOCK": "🔒",
+    "UNLOCK": "🔓",
 
     "JOIN": "📤",
     "LEAVE": "📥",
@@ -21,5 +22,8 @@
     "WARN": "⚠️",
     "CENSOR": "🚫",
     "EYES": "👀",
-    "WRENCH": "🔧"
+    "WRENCH": "🔧",
+
+    "MUTE": "🔇",
+    "UNMUTE": "🔊"
 }

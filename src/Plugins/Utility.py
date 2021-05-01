@@ -12,14 +12,14 @@ from Utils import Logging, Utils, guild_info
 from Utils.Converters import DiscordUser, Guild
 
 from Database import Connector, DBUtils
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 
 
 db = Connector.Database()
 
 
 
-class Utility(BaseCog):
+class Utility(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
 

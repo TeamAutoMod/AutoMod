@@ -9,7 +9,7 @@ from i18n import Translator
 from Utils import Logging
 from Utils.Constants import GREEN_TICK
 
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 from Database import Connector, DBUtils
 
 
@@ -17,7 +17,7 @@ db = Connector.Database()
 
 
 
-class GuildConfig(BaseCog):
+class GuildConfig(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
 
@@ -30,9 +30,31 @@ class GuildConfig(BaseCog):
     @commands.group(aliases=["configure"])
     async def config(self, ctx):
         "config_help"
-        prefix = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")
         if ctx.subcommand_passed is None:
-            await ctx.invoke(self.bot.get_command("help"), query="config")
+            enabled_modules, disabled_modules = DBUtils.get_module_config(ctx.guild.id)
+            general, messages, members = DBUtils.get_log_channels(ctx.guild.id)
+
+            e = discord.Embed(
+                color=discord.Color.blurple(),
+                title="Configuration for {}".format(ctx.guild.name)
+            )
+            e.set_thumbnail(url=ctx.guild.icon_url)
+            e.add_field(
+                name=Translator.translate(ctx.guild, "log_channels"),
+                value=Translator.translate(ctx.guild, "log_actions", general=general, messages=messages, members=members),
+                inline=False
+            )
+            e.add_field(
+                name=Translator.translate(ctx.guild, "enabled_modules"),
+                value=", ".join(enabled_modules if len(enabled_modules) > 0 else ["None"]),
+                inline=False
+            )
+            e.add_field(
+                name=Translator.translate(ctx.guild, "disabled_modules"),
+                value=", ".join(disabled_modules if len(disabled_modules) > 0 else ["None"]),
+                inline=False
+            )
+            await ctx.send(embed=e)
 
 
     @config.command()
@@ -246,38 +268,6 @@ class GuildConfig(BaseCog):
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users", ignored_users)
         await ctx.send(Translator.translate(ctx.guild, "ignored_user_removed", _emote="YES", user=user.name))
 
-
-
-    @config.command()
-    async def show(self, ctx):
-        """show_help"""
-        try:
-            enabled_modules, disabled_modules = DBUtils.get_module_config(ctx.guild.id)
-            general, messages, members = DBUtils.get_log_channels(ctx.guild.id)
-
-            e = discord.Embed(
-                color=discord.Color.blurple(),
-                title="Configuration for {}".format(ctx.guild.name)
-            )
-            e.set_thumbnail(url=ctx.guild.icon_url)
-            e.add_field(
-                name=Translator.translate(ctx.guild, "log_channels"),
-                value=Translator.translate(ctx.guild, "log_actions", general=general, messages=messages, members=members),
-                inline=False
-            )
-            e.add_field(
-                name=Translator.translate(ctx.guild, "enabled_modules"),
-                value=", ".join(enabled_modules if len(enabled_modules) > 0 else ["None"]),
-                inline=False
-            )
-            e.add_field(
-                name=Translator.translate(ctx.guild, "disabled_modules"),
-                value=", ".join(disabled_modules if len(disabled_modules) > 0 else ["None"]),
-                inline=False
-            )
-            await ctx.send(embed=e)
-        except Exception:
-            pass
 
 
     @config.group(aliases=["censor_list"])

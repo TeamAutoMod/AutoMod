@@ -11,13 +11,13 @@ from Utils.Converters import RangedInt
 
 from Database import Connector, DBUtils
 from Database.Schemas import level_schema
-from Cogs.Base import BaseCog
+from Plugins.Base import BasePlugin
 
 
 db = Connector.Database()
 
 
-class Leveling(BaseCog):
+class Leveling(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
         self.running = True
@@ -49,8 +49,6 @@ class Leveling(BaseCog):
         xp = DBUtils.get(db.levels, "levelId", lvl_id, "xp")
         lvl = DBUtils.get(db.levels, "levelId", lvl_id, "lvl")
 
-        # calculations
-        #TODO: It's way to easy to level up, migth have to change that
         starting_xp = 10
         counter = 0
         while counter < lvl:

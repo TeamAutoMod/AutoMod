@@ -12,8 +12,8 @@ from Utils.Converters import DiscordUser
 from Database import Connector, DBUtils
 from Database.Schemas import warn_schema, new_infraction
 
-from Cogs.Base import BaseCog
-from Cogs.Moderation import Moderation
+from Plugins.Base import BasePlugin
+from Plugins.Moderation import Moderation
 
 
 
@@ -22,7 +22,7 @@ db = Connector.Database()
 
 
 
-class Infractions(BaseCog):
+class Infractions(BasePlugin):
     def __init__(self, bot):
         super().__init__(bot)
         self.cached_targets = dict()

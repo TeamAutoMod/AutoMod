@@ -29,9 +29,9 @@ async def _reload(admin, bot):
         for cog in bot.cogs:
             temp.append(cog)
         for cog in temp:
-            bot.unload_extension("Cogs.%s" % (cog))
+            bot.unload_extension("Plugins.%s" % (cog))
             log.info(f"[Hot Reload] Unloaded module {cog}")
-            bot.load_extension("Cogs.%s" % (cog))
+            bot.load_extension("Plugins.%s" % (cog))
             log.info(f"[Hot Reload] Loaded module {cog}")
             
         log.info("[Hot Reload] Calling init_bot() method from Handlers file")
