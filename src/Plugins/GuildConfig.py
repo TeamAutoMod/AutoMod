@@ -41,17 +41,18 @@ class GuildConfig(BasePlugin):
             e.set_thumbnail(url=ctx.guild.icon_url)
             e.add_field(
                 name=Translator.translate(ctx.guild, "log_channels"),
-                value=Translator.translate(ctx.guild, "log_actions", general=general, messages=messages, members=members),
+                value="```\n• Mod Actions: {} \n• Messages: {} \n• Join/Leave: {} \n```"\
+                .format(general, messages, members),
                 inline=False
             )
             e.add_field(
                 name=Translator.translate(ctx.guild, "enabled_modules"),
-                value=", ".join(enabled_modules if len(enabled_modules) > 0 else ["None"]),
+                value="```\n{}\n```".format("\n".join(enabled_modules) if len(enabled_modules) > 0 else "None"),
                 inline=False
             )
             e.add_field(
                 name=Translator.translate(ctx.guild, "disabled_modules"),
-                value=", ".join(disabled_modules if len(disabled_modules) > 0 else ["None"]),
+                value="```\n{}\n```".format("\n".join(disabled_modules) if len(disabled_modules) > 0 else "None"),
                 inline=False
             )
             await ctx.send(embed=e)
@@ -231,22 +232,19 @@ class GuildConfig(BasePlugin):
     @config.group()
     async def ignored_users(self, ctx):
         """ignored_users_help"""
-        try:
-            if ctx.invoked_subcommand is None:
-                ignored_users = []
-                for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users"):
-                    ignored_users.append(str(x))
-                if len(ignored_users) < 1:
-                    ignored_users.append(Translator.translate(ctx.guild, "no_ignored_users"))
-                e = discord.Embed(
-                    color=discord.Color.blurple(),
-                    title=Translator.translate(ctx.guild, "ignored_users", guild_name=ctx.guild.name),
-                    description="\n".join(ignored_users)
-                )
-                e.set_thumbnail(url=ctx.guild.icon_url)
-                return await ctx.send(embed=e)
-        except Exception:
-            pass
+        if ctx.invoked_subcommand is None:
+            ignored_users = []
+            for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users"):
+                ignored_users.append(str(x))
+            ignored_users = [f"• {x}" for x in ignored_users]
+            if len(ignored_users) < 1:
+                ignored_users.append(Translator.translate(ctx.guild, "no_ignored_users"))
+            e = discord.Embed(
+                color=discord.Color.blurple(),
+                title=Translator.translate(ctx.guild, "ignored_users"),
+                description="```\n{}\n```".format("\n".join(ignored_users))
+            )
+            await ctx.send(embed=e)
 
 
     @ignored_users.command(name="add")
@@ -280,7 +278,13 @@ class GuildConfig(BasePlugin):
             if len(_censor_list) < 1:
                     return ctx.send(Translator.translate(ctx.guild, "black_list_empty", _emote="NO", prefix=ctx.prefix))
             words = "\n".join(_censor_list)
-            await ctx.send(Translator.translate(ctx.guild, "censor_list", guild_name=ctx.guild.name, words=words))
+            e = discord.Embed(color=discord.Color.blurple(), title="Censor List", description="• Add a phrase: ``{}config black_list add <phrase>`` \n• Remove a phrase: ``{}config black_list remove <phrase>``".format(ctx.prefix, ctx.prefix))
+            e.add_field(
+                name="Phrases",
+                value="```\n{}\n```".format(words),
+                inline=False
+            )
+            await ctx.send(embed=e)
 
 
     @black_list.command(name="add")
