@@ -41,28 +41,31 @@ class Basic(BasePlugin):
         e.add_field(
             name="Status",
             value=f"""
-            Uptime: **{days}d, {hours}h, {minutes}m & {seconds}s**
-            Version: **{self.bot.version}**
-            Latency: **{round(self.bot.latency * 1000)}**
-            Timezone: **UTC**
+            ```
+            • Uptime: **{days}d, {hours}h, {minutes}m & {seconds}s**
+            • Version: **{self.bot.version}**
+            • Latency: **{round(self.bot.latency * 1000)}**
+            • Timezone: **UTC**
+            ```
             """,
             inline=False
         )
         e.add_field(
             name="Stats",
             value=f"""
-            Guilds: **{len(self.bot.guilds)}**
-            Users: **{total_users} ({unique_users} unique)**
-            Bot Messages: **{bot_messages}**
-            Own Messages: **{own_messages}**
-            User Messages: **{user_messages}**
-            Commands Used: **{command_count} (Custom: {custom_command_count})**
+            ```
+            • Guilds: **{len(self.bot.guilds)}**
+            • Users: **{total_users} ({unique_users} unique)**
+            • Bot Messages: **{bot_messages}**
+            • Own Messages: **{own_messages}**
+            • User Messages: **{user_messages}**
+            • Commands Used: **{command_count} (Custom: {custom_command_count})**
+            ```
             """,
             inline=False
         )
 
-        e.add_field(name="Links", value="[Support](https://discord.gg/S9BEBux) \n[GitHub](https://github.com/xezzz/AutoMod)")
-        e.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        e.add_field(name="Links", value="• [Support](https://discord.gg/S9BEBux) \n• [GitHub](https://github.com/xezzz/AutoMod)")
         await ctx.send(embed=e)
 
 
@@ -74,9 +77,16 @@ class Basic(BasePlugin):
         t2 = time.perf_counter()
         rest = round((t2 - t1) * 1000)
         latency = round(self.bot.latency * 1000, 2)
-        await message.edit(
-            content=f"🏓 Pong! Client Latency: {latency} ms | REST API ping: {rest} ms"
+        shard_latency =  round([x for i, x in self.bot.shards.items() if i == ctx.guild.shard_id][0].latency * 1000, 2)
+
+        e = discord.Embed(
+            title="🏓 Pong!",
+            color=discord.Color.blurple(),
+            description="```• Client Latency: {}ms \n• REST API Ping: {}ms \n• Shard Latency: {}ms \n```".format(latency, rest, shard_latency)
         )
+        await message.edit(content=None, embed=e)
+        
+
 
 
     @commands.command()
@@ -115,7 +125,7 @@ class Basic(BasePlugin):
                     await message.clear_reactions()
                     break
         else:
-            get_aliases = lambda t: [i for s in t for i in s] # [["1"], ["2"]] = ["1", "2"]
+            get_aliases = lambda t: [i for s in t for i in s] # [["1"], ["2"]] -> ["1", "2"]
 
             all_commands = [*[x.name for x in self.bot.commands], *get_aliases([y.aliases for y in self.bot.commands])]
             if not query in all_commands:
@@ -137,8 +147,14 @@ class Basic(BasePlugin):
                 commands = ["{}".format(Generators.generate_help(ctx, y)) for y in group[0].commands]
             except Exception:
                 commands = []
+
+            e = discord.Embed(color=discord.Color.blurple(), title="Command Help")
+            e.add_field(name="Description", value=f"```\n{help_message}\n```", inline=False)
+            e.add_field(name="Usage", value=f"```\n{usage}\n```", inline=False)
+            e.add_field(name="Subcommands", value="{}".format("\n".join(commands if len(commands) > 0 else "None")), inline=False)
+            await ctx.send(embed=e)
                 
-            await ctx.send("```diff\n{}\n\n{}\n{}```".format(usage, help_message, "\n{}\n{}".format("Subcommands: " if len(commands) >= 1 else "", "\n".join(commands if len(commands) > 0 else ""))))
+            #await ctx.send("```diff\n{}\n\n{}\n{}```".format(usage, help_message, "\n{}\n{}".format("Subcommands: " if len(commands) >= 1 else "", "\n".join(commands if len(commands) > 0 else ""))))
 
 
 
