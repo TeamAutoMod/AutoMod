@@ -52,7 +52,6 @@ class Custom(BasePlugin):
                     title=Translator.translate(ctx.guild, "custom_commands", guild_name=ctx.guild.name),
                     description="```\n{}\n```".format("\n".join(custom_commands))
                 )
-                e.set_thumbnail(url=ctx.guild.icon_url)
                 await ctx.send(embed=e)
 
 

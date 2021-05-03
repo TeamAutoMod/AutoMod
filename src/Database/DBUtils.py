@@ -49,31 +49,31 @@ def get_module_config(guild_id):
                 disabled.append("%s" % (mod[_]))
             else:
                 pass
-    return enabled, disabled
+    return [f"• {x}" for x in enabled], [f"• {x}" for x in disabled]
 
 
-def get_log_channels(guild_id):
-    general = ""
-    messages = ""
-    members = ""
+async def get_log_channels(bot, guild_id):
+    general = None
+    messages = None
+    members = None
 
     g = get(db.configs, "guildId", f"{guild_id}", "memberLogChannel")
     msg = get(db.configs, "guildId", f"{guild_id}", "messageLogChannel")
     m = get(db.configs, "guildId", f"{guild_id}", "joinLogChannel")
 
     if g != "":
-        general += "<#{}>".format(str(g))
+        general = await bot.fetch_channel(int(g))
     else:
-        general += "Not set yet"
+        general = "Not set yet"
     
     if msg != "":
-        messages += "<#{}>".format(str(msg))
+        messages = await bot.fetch_channel(int(msg))
     else:
-        messages += "Not set yet"
+        messages = "Not set yet"
 
     if m != "":
-        members += "<#{}>".format(str(m))
+        members = await bot.fetch_channel(int(m))
     else:
-        members += "Not set yet"
+        members = "Not set yet"
 
     return general, messages, members

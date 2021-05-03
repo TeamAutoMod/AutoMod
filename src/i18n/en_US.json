@@ -175,10 +175,9 @@
     "custom_commands": "**Custom Commands for {guild_name}**",
     "log_mod_actions": "{emote} I will now log any mod actions to {channel}!",
     "no_ignored_users": "There aren't any ignored users configured, all users will be logged",
-    "ignored_users": "Ignored users for **{guild_name}**",
+    "ignored_users": "Ignored Users",
 
     "log_channels": "**Log Channels**",
-    "log_actions": "Mod Actions: {general} \nMessages: {messages} \nJoin/Leave: {members}",
     "enabled_modules": "**Enabled Modules**",
     "disabled_modules": "**Disabled Modules**",
 
