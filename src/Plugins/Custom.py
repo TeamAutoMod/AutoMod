@@ -50,7 +50,7 @@ class Custom(BasePlugin):
                 e = discord.Embed(
                     color=discord.Color.blurple(),
                     title=Translator.translate(ctx.guild, "custom_commands", guild_name=ctx.guild.name),
-                    description="\n".join(custom_commands)
+                    description="```\n{}\n```".format("\n".join(custom_commands))
                 )
                 e.set_thumbnail(url=ctx.guild.icon_url)
                 await ctx.send(embed=e)
@@ -77,7 +77,8 @@ class Custom(BasePlugin):
                 except Exception:
                     self.command_cache[str(ctx.guild.id)] = [{"trigger": trigger, "reply": reply}]
                 finally:
-                    await ctx.send(Translator.translate(ctx.guild, "command_added", _emote="YES", command=trigger))
+                    prefix = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")
+                    await ctx.send(Translator.translate(ctx.guild, "command_added", _emote="YES", prefix=prefix, command=trigger))
 
 
 
@@ -105,7 +106,7 @@ class Custom(BasePlugin):
         else:
             DBUtils.delete(db.commands, "cmdId", f"{ctx.guild.id}-{trigger}")
             self.command_cache[str(ctx.guild.id)] = [_ for _ in self.command_cache[str(ctx.guild.id)] if _["trigger"].lower() != trigger]
-            await ctx.send(Translator.translate(ctx.guild, "command_removed", _emote="YES", command=trigger))
+            await ctx.send(Translator.translate(ctx.guild, "command_removed", _emote="YES"))
 
     
 
