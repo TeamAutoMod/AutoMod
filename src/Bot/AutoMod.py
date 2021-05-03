@@ -99,7 +99,6 @@ class AutoMod(AutoShardedBot):
 
     async def on_shard_resumed(self, sid):
         self.resumes[sid].append(datetime.datetime.utcnow())
-        await Handlers.on_shard_resumed(self, sid)
     
 
     async def before_identify_hook(self, sid, *, initial):

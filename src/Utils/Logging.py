@@ -64,7 +64,10 @@ async def log_to_guild(guild_id, log_type, text):
     if log_channel is None:
         return
 
-    await log_channel.send(text)
+    try:
+        await log_channel.send(text)
+    except Exception:
+        pass
 
 
 

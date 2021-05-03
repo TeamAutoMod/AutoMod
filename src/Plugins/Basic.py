@@ -43,7 +43,7 @@ class Basic(BasePlugin):
             value=f"""
             Uptime: **{days}d, {hours}h, {minutes}m & {seconds}s**
             Version: **{self.bot.version}**
-            Latency: **{round(self.bot.latency * 1000)}**
+            Latency: **{round(self.bot.latency * 1000)}ms**
             Timezone: **UTC**
             """,
             inline=False
@@ -61,7 +61,7 @@ class Basic(BasePlugin):
             inline=False
         )
 
-        e.add_field(name="Links", value="[Support](https://discord.gg/S9BEBux) \n[GitHub](https://github.com/xezzz/AutoMod)")
+        e.add_field(name="Links", value="[Support](https://discord.gg/S9BEBux) | [GitHub](https://github.com/xezzz/AutoMod)")
         e.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         await ctx.send(embed=e)
 
