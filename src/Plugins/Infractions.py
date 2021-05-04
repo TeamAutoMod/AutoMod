@@ -288,7 +288,7 @@ class Infractions(BasePlugin):
                 try:
                     reaction, u = await self.bot.wait_for("reaction_add", timeout=60, check=check)
 
-                    if str(reaction.emoji) == "▶️" and cur_page != pages:
+                    if str(reaction.emoji) == "▶️" and cur_page != page_count:
                         cur_page += 1
                         await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
