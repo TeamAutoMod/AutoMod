@@ -33,10 +33,12 @@ class GuildConfig(BasePlugin):
         if ctx.subcommand_passed is None:
             enabled_modules, disabled_modules = DBUtils.get_module_config(ctx.guild.id)
             general, messages, members = DBUtils.get_log_channels(ctx.guild.id)
+            welcome_channel, welcome_msg = DBUtils.get_welcome_config(self.bot, ctx.guild.id)
+            mute_role = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "muteRole")
 
             e = discord.Embed(
                 color=discord.Color.blurple(),
-                title="Configuration for {}".format(ctx.guild.name)
+                title="Server Config"
             )
             e.set_thumbnail(url=ctx.guild.icon_url)
             e.add_field(
@@ -53,6 +55,16 @@ class GuildConfig(BasePlugin):
             e.add_field(
                 name=Translator.translate(ctx.guild, "disabled_modules"),
                 value="```\n{}\n```".format("\n".join(disabled_modules) if len(disabled_modules) > 0 else "None"),
+                inline=False
+            )
+            e.add_field(
+                name="Welcome System",
+                value="```\n• Channel: {} \n• Message: {}\n```".format(welcome_channel, welcome_msg),
+                inline=False
+            )
+            e.add_field(
+                name="Mute Role",
+                value="```\n{}\n```".format("@" + mute_role.name if mute_role != "" else "Not set yet"),
                 inline=False
             )
             await ctx.send(embed=e)

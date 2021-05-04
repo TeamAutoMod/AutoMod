@@ -77,3 +77,23 @@ async def get_log_channels(bot, guild_id):
         members = "Not set yet"
 
     return general, messages, members
+
+
+
+def get_welcome_config(bot, guild_id):
+    message = None
+    channel = None
+
+    msg = get(db.configs, "guildId", f"{guild_id}", "welcomeMessage")
+    welcome_id = get(db.configs, "guildId", f"{guild_id}", "welcomeChannel")
+
+    if msg == None or msg == "":
+        message = "Not set yet"
+    else:
+        message = msg
+    if welcome_id == None or welcome_id == "":
+        channel = "Not set yet"
+    else:
+        channel = await bot.fetch_channel(int(welcome_id))
+
+    return channel, message
