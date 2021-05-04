@@ -194,7 +194,7 @@ class Infractions(BasePlugin):
 
             out = []
             pages = []
-            basic_table = f"Case{' '*3}| Target{' '*14}| Moderator{' '*10}| Timestamp{' '*11}| Type{' '*7}| Reason\n{'='*105}"
+            #basic_table = f"Case{' '*3}| Target{' '*14}| Moderator{' '*10}| Timestamp{' '*11}| Type{' '*7}| Reason\n{'='*105}"
 
             counters = {
                 "Ban": 0,
@@ -206,6 +206,9 @@ class Infractions(BasePlugin):
                 "Clean Ban": 0,
                 "Mute": 0
             }
+
+
+
 
 
             for doc in db.inf.find():
@@ -243,14 +246,20 @@ class Infractions(BasePlugin):
 
                         reason = doc["reason"]
 
-                        output = "{}| {}| {}| {}| {}| {}".format(
-                            f"{case}{' '*abs(len(case) - 7)}",
-                            f"{target}{' '*abs(len(target) - 20)}",
-                            f"{mod}{' '*abs(len(mod) - 19)}",
-                            f"{timestamp}{' '*abs(len(timestamp) - 20)}",
-                            f"{inf_type}{' '*abs(len(inf_type) - 11)}",
-                            f"{reason}"
-                        )
+                        # output = "{}| {}| {}| {}| {}| {}".format(
+                        #     f"{case}{' '*abs(len(case) - 7)}",
+                        #     f"{target}{' '*abs(len(target) - 20)}",
+                        #     f"{mod}{' '*abs(len(mod) - 19)}",
+                        #     f"{timestamp}{' '*abs(len(timestamp) - 20)}",
+                        #     f"{inf_type}{' '*abs(len(inf_type) - 11)}",
+                        #     f"{reason}"
+                        # )
+
+                        output = {
+                            f"{case}": "• Target: {} \n• Mod: {} \n• Timestamp: {} \n• Type: {} \n• Reason: {}"\
+                            .format(target, mod, timestamp, inf_type, reason)
+                        }
+
                         out.append(output)
                     else:
                         pass
@@ -258,14 +267,38 @@ class Infractions(BasePlugin):
                     pass
             if len(out) < 1:
                 return await msg.edit(content=Translator.translate(ctx.guild, "no_inf"))
-            for page in Pages.paginate("\n".join(out), max_chars=1900, prefix="```md\n{}\n".format(basic_table), suffix="\n```"):
-                pages.append(page)
-            
+
+
             count_string = ', '.join('{} {}{}'.format(counters[x], x.lower(), "" if int(counters[x]) == 1 else "s") for x in counters if counters[x] != 0)
+            start = discord.Embed(color=discord.Color.blurple(), title="Infractions", description=count_string)
+            fields = 0
+            for inp in out:
+                if fields >= 5:
+                    pages.append(start)
+                    start.clear_fields()
+                    fields = 0
+                else:
+                    fields += 1
+                    start.add_field(
+                        name=list(inp.keys())[0],
+                        value="```\n{}\n```".format(list(inp.values())[0]),
+                        inline=False
+                    )
+            for i, em in pages:
+                em.set_footer("Page: {}/{}".format(i+1, len(pages)))
+            
+
+
+
+
+            # for page in Pages.paginate("\n".join(out), max_chars=1900, prefix="```md\n{}\n".format(basic_table), suffix="\n```"):
+            #     pages.append(page)
+            
 
             page_count = len(pages)
             cur_page = 1
-            await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
+            #await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
+            await msg.edit(embed=pages[cur_page-1])
             if page_count <= 1:
                 return
             await msg.add_reaction("◀️") 
@@ -280,12 +313,14 @@ class Infractions(BasePlugin):
 
                     if str(reaction.emoji) == "▶️" and cur_page != pages:
                         cur_page += 1
-                        await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
+                        #await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
+                        await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
 
                     elif str(reaction.emoji) == "◀️" and cur_page > 1:
                         cur_page -= 1
-                        await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
+                        #await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
+                        await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
 
                     else:
