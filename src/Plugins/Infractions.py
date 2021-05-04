@@ -194,7 +194,6 @@ class Infractions(BasePlugin):
 
             out = []
             pages = []
-            #basic_table = f"Case{' '*3}| Target{' '*14}| Moderator{' '*10}| Timestamp{' '*11}| Type{' '*7}| Reason\n{'='*105}"
 
             counters = {
                 "Ban": 0,
@@ -207,11 +206,7 @@ class Infractions(BasePlugin):
                 "Mute": 0
             }
 
-
-
-
-
-            for doc in db.inf.find():
+            for doc in reversed([_ for _ in db.inf.find()]):
                 if doc["guild"] == str(ctx.guild.id): # we only want infractions from this guild
                     if doc[dest] == filter_value:
                         case = doc["case"]
@@ -239,21 +234,9 @@ class Infractions(BasePlugin):
                             self.cached_mods[doc["moderator_id"]] = mod
 
                         timestamp = doc["timestamp"]
-
                         inf_type = doc["type"]
                         counters[inf_type] = int(counters[inf_type]) + 1
-
-
                         reason = doc["reason"]
-
-                        # output = "{}| {}| {}| {}| {}| {}".format(
-                        #     f"{case}{' '*abs(len(case) - 7)}",
-                        #     f"{target}{' '*abs(len(target) - 20)}",
-                        #     f"{mod}{' '*abs(len(mod) - 19)}",
-                        #     f"{timestamp}{' '*abs(len(timestamp) - 20)}",
-                        #     f"{inf_type}{' '*abs(len(inf_type) - 11)}",
-                        #     f"{reason}"
-                        # )
 
                         output = {
                             f"{case}": "• Target: {} \n• Mod: {} \n• Timestamp: {} \n• Type: {} \n• Reason: {}"\
@@ -270,35 +253,29 @@ class Infractions(BasePlugin):
 
 
             count_string = ', '.join('{} {}{}'.format(counters[x], x.lower(), "" if int(counters[x]) == 1 else "s") for x in counters if counters[x] != 0)
-            start = discord.Embed(color=discord.Color.blurple(), title="Infractions", description=count_string)
+            start = discord.Embed(color=discord.Color.blurple(), title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
             fields = 0
             for inp in out:
                 if fields >= 5:
                     pages.append(start)
-                    start.clear_fields()
+                    start = discord.Embed(color=discord.Color.blurple(), title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
                     fields = 0
                 else:
                     fields += 1
                     start.add_field(
-                        name=list(inp.keys())[0],
+                        name=f"Case #{}".format(list(inp.keys())[0]),
                         value="```\n{}\n```".format(list(inp.values())[0]),
                         inline=False
                     )
-            for i, em in pages:
-                em.set_footer("Page: {}/{}".format(i+1, len(pages)))
             
-
-
-
-
-            # for page in Pages.paginate("\n".join(out), max_chars=1900, prefix="```md\n{}\n".format(basic_table), suffix="\n```"):
-            #     pages.append(page)
+            for i, em in enumerate(pages):
+                em.set_footer(text="Page: {}/{}".format(i+1, len(pages)))
+            
             
 
             page_count = len(pages)
             cur_page = 1
-            #await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
-            await msg.edit(embed=pages[cur_page-1])
+            await msg.edit(content=None, embed=pages[cur_page-1])
             if page_count <= 1:
                 return
             await msg.add_reaction("◀️") 
@@ -313,13 +290,11 @@ class Infractions(BasePlugin):
 
                     if str(reaction.emoji) == "▶️" and cur_page != pages:
                         cur_page += 1
-                        #await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
                         await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
 
                     elif str(reaction.emoji) == "◀️" and cur_page > 1:
                         cur_page -= 1
-                        #await msg.edit(content=f"**🔎 {Translator.translate(ctx.guild, 'inf_for')} {_for}** ({cur_page}/{page_count})\n{count_string}\n{pages[cur_page-1]}")
                         await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
 
@@ -329,7 +304,9 @@ class Infractions(BasePlugin):
                     await msg.clear_reactions()
                     break
         except Exception:
-            pass
+            ex = traceback.format_exc()
+            print(ex)
+            await ctx.send("This is weird, seems like there as an error... Please join the support server and report this.")
         
     
     @commands.guild_only()
@@ -379,48 +356,36 @@ class Infractions(BasePlugin):
             target_av = DBUtils.get(db.inf, "case", f"{case}", "target_av")
 
 
-            embed = discord.Embed(
-                color=discord.Color.blurple()
-            )
-            embed.set_thumbnail(
+            e = discord.Embed(color=discord.Color.blurple(), title="Infraction Info")
+            e.set_thumbnail(
                 url=f"{target_av}"
             )
-            embed.add_field(
-                name="**Type**",
+            e.add_field(
+                name="Type",
                 value=inf_type,
                 inline=False
             )
-            embed.add_field(
-                name="**Reason**",
+            e.add_field(
+                name="Target",
+                value="{} ({})".format(target, target_id),
+                inline=False
+            )
+            e.add_field(
+                name="Moderator",
+                value="{} ({})".format(mod, mod_id),
+                inline=False
+            )
+            e.add_field(
+                name="Reason",
                 value=reason,
-                inline=True
+                inline=False
             )
-            embed.add_field(
-                name="**Moderator**",
-                value=mod,
-                inline=True
-            )
-            embed.add_field(
-                name="**Target**",
-                value=target,
-                inline=True
-            )
-            embed.add_field(
-                name="**Moderator ID**",
-                value=mod_id,
-                inline=True
-            )
-            embed.add_field(
-                name="**Target ID**",
-                value=target_id,
-                inline=True
-            )
-            embed.add_field(
-                name="**Timestamp**",
+            e.add_field(
+                name="Timestamp",
                 value=timestamp,
-                inline=True
+                inline=False
             )
-            await ctx.send(embed=embed)
+            await ctx.send(embed=e)
         except Exception:
             await ctx.send(Translator.translate(ctx.guild, "case_not_on_this_server", _emote="NO", case=case))
 
