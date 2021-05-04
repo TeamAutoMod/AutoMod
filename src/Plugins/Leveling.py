@@ -162,31 +162,54 @@ class Leveling(BasePlugin):
             lvl_strings = await self._position_or_lb(ctx, user=None, position=False) # we don't want to get a users position, we want the entire thing
             if len(lvl_strings) < 2:
                 return await ctx.send(Translator.translate(ctx.guild, "not_enough_for_lb", _emote="NO"))
-            basic_table = "Rank | Level | Experience | User \n======================================================="
             
             msg = await ctx.send(Translator.translate(ctx.guild, "fetching_lb", _emote="LOAD"))
 
-            rank = 0
-            for s in lvl_strings:
-                rank += 1
-                lvl = s.split("-")[0]
-                xp = s.split("-")[1]
-                uid = s.split("-")[2] # fun note: I'm stupid and actually put 3 here, right after I wanted to add a note that python lists are 0 index
+            start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found".format(len(lvl_strings)))
+            fields = 0
+            pages = []
+
+            for _str in lvl_strings:
+                lvl = _str.split("-")[0]
+                xp = _str.split("-")[1]
+                uid = _str.split("-")[2]
                 if uid in self.rank_cache:
                     user = self.rank_cache[uid]
                 else:
                     user = ctx.guild.get_member(int(uid))
                     self.rank_cache[uid] = f"{user.name}#{user.discriminator}"
-                output = f"{rank}.{' '*abs(len(str(rank)) - 4)}| {lvl}{' '*abs(len(str(lvl)) - 6)}| {xp}{' '*abs(len(str(xp)) - 11)}| {user}"
-                out.append("{}".format(output))
+                ouput = "```\n• User: {} n• Level: {} \n• XP: {} \n```".format(xp, lvl, user)
+                out.append(ouput)
 
+            for i, inp in enumerate(lvl_strings):
+                i = i+1
+                if i == 1:
+                    i = "🥇"
+                if i == 2:
+                    i = "🥈"
+                if i == 3:
+                    i = "🥉"
+                else:
+                    i = f"{i}."
+    
+                if fields >= 6:
+                    pages.append(start)
+                    start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found".format(len(lvl_strings)))
+                    fields = 0
+                else:
+                    fields += 1
+                    start.add_field(
+                        name=str(i),
+                        value=inp,
+                        inline=False
+                    )
 
-            for page in Pages.paginate("\n".join(out), prefix="```md\n{}\n".format(basic_table), suffix="\n```"):
-                pages.append(page)
+            for i, em in enumerate(pages):
+                em.set_footer(text="Page: {}/{}".format(i+1, len(pages)))
 
             page_count = len(pages)
             cur_page = 1
-            await msg.edit(content=f"**🏆 {Translator.translate(ctx.guild, 'lb')} {ctx.guild.name} ({cur_page}/{page_count}) 🏆**\n{pages[cur_page-1]}")
+            await msg.edit(content=None, embed=pages[cur_page-1])
             if page_count <= 1:
                 return
             await msg.add_reaction("◀️") 
@@ -201,12 +224,12 @@ class Leveling(BasePlugin):
 
                     if str(reaction.emoji) == "▶️" and cur_page != page_count:
                         cur_page += 1
-                        await msg.edit(content=f"**🏆  {Translator.translate(ctx.guild, 'lb')} {ctx.guild.name} ({cur_page}/{page_count}) 🏆**\n{pages[cur_page-1]}")
+                        await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
 
                     elif str(reaction.emoji) == "◀️" and cur_page > 1:
                         cur_page -= 1
-                        await msg.edit(content=f"**🏆  {Translator.translate(ctx.guild, 'lb')} {ctx.guild.name} ({cur_page}/{page_count}) 🏆**\n{pages[cur_page-1]}")
+                        await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
 
                     else:
@@ -322,24 +345,24 @@ class Leveling(BasePlugin):
     async def _rank(self, ctx, user, xp, lvl, needed_xp):
         embed = discord.Embed(
             color=discord.Color.blurple(),
-            title="{}".format(user)
+            title="User Rank"
         )
         embed.set_thumbnail(
             url=user.avatar_url_as()
         )
         embed.add_field(
-            name="**Rank**",
-            value="#{}".format(await self._position_or_lb(ctx, user, position=True)),
+            name="Rank",
+            value="```\n#{}\n```".format(await self._position_or_lb(ctx, user, position=True)),
             inline=False
         )
         embed.add_field(
-            name="**Level**",
-            value="{}".format(lvl),
+            name="Level",
+            value="```\n{}\n```".format(lvl),
             inline=False
         )
         embed.add_field(
-            name="**Experience**",
-            value="{}/{} XP ({}%)".format(xp, needed_xp, round(((42 - (needed_xp - xp - 2)) / 42) * 100, 1)),
+            name="Experience",
+            value="```\n{}/{} XP ({}%)\n```".format(xp, needed_xp, round(((42 - (needed_xp - xp - 2)) / 42) * 100, 1)),
             inline=False
         )
         return embed
