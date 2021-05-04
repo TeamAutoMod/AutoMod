@@ -209,6 +209,7 @@ class Infractions(BasePlugin):
             for doc in reversed([_ for _ in db.inf.find()]):
                 if doc["guild"] == str(ctx.guild.id): # we only want infractions from this guild
                     if doc[dest] == filter_value:
+
                         case = doc["case"]
 
                         target = None
@@ -255,8 +256,15 @@ class Infractions(BasePlugin):
             count_string = ', '.join('{} {}{}'.format(counters[x], x.lower(), "" if int(counters[x]) == 1 else "s") for x in counters if counters[x] != 0)
             start = discord.Embed(color=discord.Color.blurple(), title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
             fields = 0
+            max_fields = 5 if len(out) >= 5 else len(out)
+            max_fields -= 1
             for inp in out:
-                if fields >= 5:
+                if fields == max_fields:
+                    start.add_field(
+                        name="Case #{}".format(list(inp.keys())[0]),
+                        value="```\n{}\n```".format(list(inp.values())[0]),
+                        inline=False
+                    )
                     pages.append(start)
                     start = discord.Embed(color=discord.Color.blurple(), title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
                     fields = 0
@@ -275,9 +283,11 @@ class Infractions(BasePlugin):
 
             page_count = len(pages)
             cur_page = 1
-            await msg.edit(content=None, embed=pages[cur_page-1])
-            if page_count <= 1:
+            if page_count == 1:
+                await msg.edit(content=None, embed=pages[0])
                 return
+            
+            await msg.edit(content=None, embed=pages[0])
             await msg.add_reaction("◀️") 
             await msg.add_reaction("▶️")
 

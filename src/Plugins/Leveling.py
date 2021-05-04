@@ -157,16 +157,17 @@ class Leveling(BasePlugin):
         try:
             if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem") is False:
                 return await ctx.send(Translator.translate(ctx.guild, "lvlsystem_disabled", _emote="NO"))
-            pages = []
-            out = []
             lvl_strings = await self._position_or_lb(ctx, user=None, position=False) # we don't want to get a users position, we want the entire thing
             if len(lvl_strings) < 2:
                 return await ctx.send(Translator.translate(ctx.guild, "not_enough_for_lb", _emote="NO"))
             
             msg = await ctx.send(Translator.translate(ctx.guild, "fetching_lb", _emote="LOAD"))
 
-            start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found".format(len(lvl_strings)))
+            start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found \nYou can check your own rank by using the ``rank`` command".format(len(lvl_strings)))
             fields = 0
+            max_fields = 6 if len(lvl_strings) >= 6 else len(lvl_strings)
+            max_fields -= 1
+            out = []
             pages = []
 
             for _str in lvl_strings:
@@ -178,23 +179,28 @@ class Leveling(BasePlugin):
                 else:
                     user = ctx.guild.get_member(int(uid))
                     self.rank_cache[uid] = f"{user.name}#{user.discriminator}"
-                ouput = "```\n• User: {} n• Level: {} \n• XP: {} \n```".format(xp, lvl, user)
+                ouput = "```\n• User: {} \n• Level: {} \n• XP: {} \n```".format(xp, lvl, user)
                 out.append(ouput)
 
-            for i, inp in enumerate(lvl_strings):
+            for i, inp in enumerate(out):
                 i = i+1
                 if i == 1:
                     i = "🥇"
-                if i == 2:
+                elif i == 2:
                     i = "🥈"
-                if i == 3:
+                elif i == 3:
                     i = "🥉"
                 else:
                     i = f"{i}."
     
-                if fields >= 6:
+                if fields == max_fields:
+                    start.add_field(
+                        name=str(i),
+                        value=inp,
+                        inline=False
+                    )
                     pages.append(start)
-                    start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found".format(len(lvl_strings)))
+                    start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found \nYou can check your own rank by using the ``rank`` command".format(len(lvl_strings)))
                     fields = 0
                 else:
                     fields += 1
@@ -209,9 +215,11 @@ class Leveling(BasePlugin):
 
             page_count = len(pages)
             cur_page = 1
-            await msg.edit(content=None, embed=pages[cur_page-1])
-            if page_count <= 1:
+            if page_count == 1:
+                await msg.edit(content=None, embed=pages[0])
                 return
+
+            await msg.edit(content=None, embed=pages[cur_page-1])
             await msg.add_reaction("◀️") 
             await msg.add_reaction("▶️")
 
@@ -237,8 +245,11 @@ class Leveling(BasePlugin):
                 except asyncio.TimeoutError:
                     await msg.clear_reactions()
                     break
-        except Exception:
+        except IndexError:
             pass
+        except Exception:
+            ex = traceback.format_exc()
+            print(ex)
 
 
 
