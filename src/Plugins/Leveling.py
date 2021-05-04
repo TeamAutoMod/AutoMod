@@ -322,24 +322,24 @@ class Leveling(BasePlugin):
     async def _rank(self, ctx, user, xp, lvl, needed_xp):
         embed = discord.Embed(
             color=discord.Color.blurple(),
-            title="{}".format(user)
+            title="User Rank"
         )
         embed.set_thumbnail(
             url=user.avatar_url_as()
         )
         embed.add_field(
-            name="**Rank**",
-            value="#{}".format(await self._position_or_lb(ctx, user, position=True)),
+            name="Rank",
+            value="```\n#{}\n```".format(await self._position_or_lb(ctx, user, position=True)),
             inline=False
         )
         embed.add_field(
-            name="**Level**",
-            value="{}".format(lvl),
+            name="Level",
+            value="```\n{}\n```".format(lvl),
             inline=False
         )
         embed.add_field(
-            name="**Experience**",
-            value="{}/{} XP ({}%)".format(xp, needed_xp, round(((42 - (needed_xp - xp - 2)) / 42) * 100, 1)),
+            name="Experience",
+            value="```\n{}/{} XP ({}%)\n```".format(xp, needed_xp, round(((42 - (needed_xp - xp - 2)) / 42) * 100, 1)),
             inline=False
         )
         return embed
