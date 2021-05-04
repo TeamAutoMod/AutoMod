@@ -32,11 +32,11 @@ class GuildConfig(BasePlugin):
         "config_help"
         if ctx.subcommand_passed is None:
             enabled_modules, disabled_modules = DBUtils.get_module_config(ctx.guild.id)
-            general, messages, members = DBUtils.get_log_channels(ctx.guild.id)
+            general, messages, members = await DBUtils.get_log_channels(self.bot, ctx.guild.id)
 
             e = discord.Embed(
                 color=discord.Color.blurple(),
-                title="Configuration for {}".format(ctx.guild.name)
+                title="Server Config"
             )
             e.set_thumbnail(url=ctx.guild.icon_url)
             e.add_field(

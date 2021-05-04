@@ -35,44 +35,20 @@ class Basic(BasePlugin):
 
         e = discord.Embed(
             color=discord.Color.blurple(),
-            title=Translator.translate(ctx.guild, "about")
+            title=Translator.translate(ctx.guild, "about"),
+            description="• [Support](https://discord.gg/S9BEBux) \n• [GitHub](https://github.com/xezzz/AutoMod)"
         )
         e.set_thumbnail(url=self.bot.user.avatar_url)
         e.add_field(
             name="Status",
-            value=f"""
-<<<<<<< HEAD
-            Uptime: **{days}d, {hours}h, {minutes}m & {seconds}s**
-            Version: **{self.bot.version}**
-            Latency: **{round(self.bot.latency * 1000)}ms**
-            Timezone: **UTC**
-=======
-            ```
-            • Uptime: **{days}d, {hours}h, {minutes}m & {seconds}s**
-            • Version: **{self.bot.version}**
-            • Latency: **{round(self.bot.latency * 1000)}**
-            • Timezone: **UTC**
-            ```
->>>>>>> 9944d09c307ffa06c86aeec2453c71055c88e73e
-            """,
+            value=f"""```\n• Uptime: {days}d, {hours}h, {minutes}m & {seconds}s \n• Version: {self.bot.version} \n• Latency: {round(self.bot.latency * 1000)}ms \n• Timezone: UTC \n```""",
             inline=False
         )
         e.add_field(
             name="Stats",
-            value=f"""
-            ```
-            • Guilds: **{len(self.bot.guilds)}**
-            • Users: **{total_users} ({unique_users} unique)**
-            • Bot Messages: **{bot_messages}**
-            • Own Messages: **{own_messages}**
-            • User Messages: **{user_messages}**
-            • Commands Used: **{command_count} (Custom: {custom_command_count})**
-            ```
-            """,
+            value=f"```\n• Guilds: {len(self.bot.guilds)} \n• Users: {total_users} ({unique_users} unique) \n• Bot Messages: {bot_messages} \n• Own Messages: {own_messages} \n• User Messages: {user_messages} \n• Commands Used: {command_count} (Custom: {custom_command_count}) \n```",
             inline=False
         )
-
-        e.add_field(name="Links", value="• [Support](https://discord.gg/S9BEBux) \n• [GitHub](https://github.com/xezzz/AutoMod)")
         await ctx.send(embed=e)
 
 
@@ -151,17 +127,16 @@ class Basic(BasePlugin):
             try:
                 query = self.bot.get_command(query).name # get the actual command name
                 group = [x for x in self.bot.get_command(query.lower()).cog.walk_commands() if x.name == f"{query.lower()}"]
-                commands = ["{}".format(Generators.generate_help(ctx, y)) for y in group[0].commands]
+                commands = [y.name for y in group[0].commands]
             except Exception:
                 commands = []
 
             e = discord.Embed(color=discord.Color.blurple(), title="Command Help")
             e.add_field(name="Description", value=f"```\n{help_message}\n```", inline=False)
             e.add_field(name="Usage", value=f"```\n{usage}\n```", inline=False)
-            e.add_field(name="Subcommands", value="{}".format("\n".join(commands if len(commands) > 0 else "None")), inline=False)
+            e.add_field(name="Subcommands", value="```\n{}\n```".format("\n".join(commands) if len(commands) > 0 else "None"), inline=False)
             await ctx.send(embed=e)
                 
-            #await ctx.send("```diff\n{}\n\n{}\n{}```".format(usage, help_message, "\n{}\n{}".format("Subcommands: " if len(commands) >= 1 else "", "\n".join(commands if len(commands) > 0 else ""))))
 
 
 
