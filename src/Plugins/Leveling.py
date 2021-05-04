@@ -199,7 +199,7 @@ class Leveling(BasePlugin):
                 try:
                     reaction, u = await self.bot.wait_for("reaction_add", timeout=60, check=check)
 
-                    if str(reaction.emoji) == "▶️" and cur_page != pages:
+                    if str(reaction.emoji) == "▶️" and cur_page != page_count:
                         cur_page += 1
                         await msg.edit(content=f"**🏆  {Translator.translate(ctx.guild, 'lb')} {ctx.guild.name} ({cur_page}/{page_count}) 🏆**\n{pages[cur_page-1]}")
                         await msg.remove_reaction(reaction, u)

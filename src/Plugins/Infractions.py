@@ -219,7 +219,7 @@ class Infractions(BasePlugin):
                             if raw_target is None:
                                 target = "Unkown User"
                             else:
-                                target = f"{raw_target.name if len(raw_target.name) <= 10 else raw_target.name[:10] + '...'}#{raw_target.discriminator}"
+                                target = f"{raw_target.name}#{raw_target.discriminator}"
                             self.cached_targets[doc["target_id"]] = target
                         
                         mod = None
@@ -230,7 +230,7 @@ class Infractions(BasePlugin):
                             if raw_mod is None:
                                 mod = "Unkown Mod"
                             else:
-                                mod = f"{raw_mod.name if len(raw_mod.name) <= 10 else raw_mod.name[:10] + '...'}#{raw_mod.discriminator}"
+                                mod = f"{raw_mod.name}#{raw_mod.discriminator}"
                             self.cached_mods[doc["moderator_id"]] = mod
 
                         timestamp = doc["timestamp"]
@@ -263,7 +263,7 @@ class Infractions(BasePlugin):
                 else:
                     fields += 1
                     start.add_field(
-                        name=f"Case #{}".format(list(inp.keys())[0]),
+                        name="Case #{}".format(list(inp.keys())[0]),
                         value="```\n{}\n```".format(list(inp.values())[0]),
                         inline=False
                     )
@@ -288,7 +288,7 @@ class Infractions(BasePlugin):
                 try:
                     reaction, u = await self.bot.wait_for("reaction_add", timeout=60, check=check)
 
-                    if str(reaction.emoji) == "▶️" and cur_page != pages:
+                    if str(reaction.emoji) == "▶️" and cur_page != page_count:
                         cur_page += 1
                         await msg.edit(embed=pages[cur_page-1])
                         await msg.remove_reaction(reaction, u)
@@ -303,11 +303,11 @@ class Infractions(BasePlugin):
                 except asyncio.TimeoutError:
                     await msg.clear_reactions()
                     break
+        except IndexError:
+            pass
         except Exception:
             ex = traceback.format_exc()
-            print(ex)
-            await ctx.send("This is weird, seems like there as an error... Please join the support server and report this.")
-        
+            print(ex)        
     
     @commands.guild_only()
     @inf.command()
@@ -362,27 +362,27 @@ class Infractions(BasePlugin):
             )
             e.add_field(
                 name="Type",
-                value=inf_type,
+                value="```\n{}\n```".format(inf_type),
                 inline=False
             )
             e.add_field(
                 name="Target",
-                value="{} ({})".format(target, target_id),
+                value="```\n{} ({})\n```".format(target, target_id),
                 inline=False
             )
             e.add_field(
                 name="Moderator",
-                value="{} ({})".format(mod, mod_id),
+                value="```\n{} ({})\n```".format(mod, mod_id),
                 inline=False
             )
             e.add_field(
                 name="Reason",
-                value=reason,
+                value="```\n{}\n```".format(reason),
                 inline=False
             )
             e.add_field(
                 name="Timestamp",
-                value=timestamp,
+                value="```\n{}\n```".format(timestamp),
                 inline=False
             )
             await ctx.send(embed=e)

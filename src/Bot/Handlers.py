@@ -132,7 +132,7 @@ async def fill_cache(bot):
 
             # check for guilds that aren't in the DB for some reason (added during downtime etc)
             log.info("[Caching] Filling up missing guilds")
-            for g in bot.guilds:
+            for g in [x for x in bot.guilds if isinstance(x, discord.Guild)]:
                 if not DBUtils.get(db.configs, "guildId", f"{g.id}", "prefix"):
                     try:
                         DBUtils.insert(db.configs, Schemas.guild_schema(g))
