@@ -47,7 +47,7 @@ class Utility(BasePlugin):
                 color=discord.Color.blurple()
             )
 
-            e.set_thumbnail(url=user.avatar_url)
+            e.set_author(name=f"User: {user.name}#{user.discriminator}", url=user.avatar_url)
 
             created = user.created_at.strftime("%d/%m/%Y %H:%M")
             e.add_field(
