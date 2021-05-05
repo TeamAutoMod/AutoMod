@@ -49,10 +49,11 @@ class Utility(BasePlugin):
 
             e.set_thumbnail(url=user.avatar_url)
 
-            created = user.created_at.strftime("%d/%m/%Y")
+            created = user.created_at.strftime("%d/%m/%Y %H:%M")
             e.add_field(
                 name="User Information",
-                value=f"Name: **{user.name}#{user.discriminator}** \nUser ID: {user.id} \n**Created: ({(datetime.fromtimestamp(time.time()) - user.created_at).days} days ago** (``{created}``) \nProfile: {user.mention}",
+                value=f"Name: **{user.name}#{user.discriminator}** \nUser ID: {user.id} \n**Created: ({(datetime.fromtimestamp(time.time()) - user.created_at).days} days ago** (``{created} UTC``) \nProfile: {user.mention} \n ",
+                inline=False
             )
 
             if member is not None:
@@ -61,18 +62,18 @@ class Utility(BasePlugin):
                 except Exception:
                     roles = ["No roles"]
                 
-                joined = member.joined_at.strftime("%d/%m/%Y")
+                joined = member.joined_at.strftime("%d/%m/%Y %H:%M")
                 e.add_field(
                     name="Member Information",
-                    value=f"Joined: **{(datetime.fromtimestamp(time.time()) - member.joined_at).days} days ago** (``{joined}``) \nRoles: {', '.join(roles) if len(roles) < 20 else f'{len(roles)} roles'}",
-                    inline=True
+                    value=f"Joined: **{(datetime.fromtimestamp(time.time()) - member.joined_at).days} days ago** (``{joined} UTC``) \nRoles: {', '.join(roles) if len(roles) < 20 else f'{len(roles)} roles'} \n ",
+                    inline=False
                 )
 
                 warns = len([x for x in db.warns.find() if str(x["warnId"].split("-")[1]) == str(member.id)])
                 e.add_field(
                     name="Cases",
                     value="Total: **{}**".format(warns if warns >= 1 else "0 😇"),
-                    inline=True
+                    inline=False
                 )
 
             await ctx.send(embed=e)
