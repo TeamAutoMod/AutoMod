@@ -17,6 +17,11 @@ def get_censor_pattern(guild_id):
     return re.compile(r"|".join(words))
 
 
+def get_invite_whitelist(guild_id):
+    links = [x.strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{guild_id}", "whitelisted_invites")]
+    return links
+
+
 ZALGO = [
     u'\u030d',
     u'\u030e',
@@ -133,6 +138,8 @@ ZALGO = [
 ]
 
 ZALGO_RE = re.compile(u'|'.join(ZALGO))
+
+INVITE_RE = re.compile(r"(?:https?://)?(?:www\.)?(?:discord(?:\.| |\[?\(?\"?'?dot'?\"?\)?\]?)?(?:gg|io|me|li)|discord(?:app)?\.com/invite)/+((?:(?!https?)[\w\d-])+)", flags=re.IGNORECASE)
 
 
 

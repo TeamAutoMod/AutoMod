@@ -69,6 +69,53 @@ class GuildConfig(BasePlugin):
             )
             await ctx.send(embed=e)
 
+
+    @config.group()
+    async def allowed_invites(self, ctx):
+        """allowed_invites_help"""
+        if ctx.invoked_subcommand is None:
+            allowed = [x.strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
+            prefix = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")
+            if len(allowed) < 1:
+                return await ctx.send(
+                    embed=discord.Embed(
+                        color=discord.Color.blurple(), 
+                        title="Censor List", 
+                        description="Currently all invites are blacklisted \n• Whitelist one by using ``{}config allowed_invites add <server>``".format(prefix)
+                    )
+                )
+            else:
+                e = discord.Embed(
+                    color=discord.Color.blurple(),
+                    title="Censor List",
+                    description="Currently ``{}`` invites are whitelisted \n• Whitelist another one by using ``{}config allowed_invites add <server>``".format(len(allowed), prefix)
+                )
+                e.add_field(
+                    name="Whitelisted Servers (By ID)",
+                    value="```\n{}\n```".format("\n".join(allowed))
+                )
+                await ctx.send(embed=e)
+    
+    @config.command(name="add")
+    async def add_invite(self, ctx, server: int):
+        allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
+        if str(server) in allowed:
+            return await ctx.send(Translator.translate(ctx.guild, "already_whitelisted", _emote="NO", server=server))
+        allowed.append(str(server))
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites", allowed)
+        await ctx.send(Translator.translate(ctx.guild, "added_invite", _emote="YES", server=server))
+
+    
+    @config.command(name="remove")
+    async def remove_invite(self, ctx, server: int):
+        allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
+        if str(server) not in allowed:
+            return await ctx.send(Translator.translate(ctx.guild, "not_whitelisted", _emote="NO", server=server))
+        allowed.remove(str(server))
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites", allowed)
+        await ctx.send(Translator.translate(ctx.guild, "removed_invite", _emote="YES", server=server))
+
+
     @config.command()
     async def welcome_msg(self, ctx, *, msg: str):
         """welcome_msg_help"""

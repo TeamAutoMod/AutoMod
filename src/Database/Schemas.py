@@ -41,6 +41,7 @@ def guild_schema(guild):
         "censored_words": default_censored_words,
         "level_roles": [],
         "ignored_users": [],
+        "whitelisted_invites": [],
         "lang": "en_US",
         "guildName": f"{guild.name}"
     }
