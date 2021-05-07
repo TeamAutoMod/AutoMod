@@ -93,8 +93,8 @@
     "lvlsystem_disabled": "{emote} The rank system is disabled here.",
     "already_whitelisted": "{emote} ``{server}`` is already on the allowed invite list.",
     "not_whitelisted": "{emote} ``{server}`` is not on the allowed invite list.",
-    "added_invite": "{emote} Added ``{}`` as an allowed server! Invites for it won't be deleted.",
-    "removed_invite": "{emote} Removed ``{}`` as an allowed server. Invites for it will be deleted.",
+    "added_invite": "{emote} Added ``{server}`` as an allowed server! Invites for it won't be deleted.",
+    "removed_invite": "{emote} Removed ``{server}`` as an allowed server. Invites for it will be deleted.",
 
     "NaN": "Not a number",
     "number_too_small": "Number too small, must be at least {min}",
@@ -134,6 +134,7 @@
     "enable_help": "Enable a module/logging option",
     "disable_help": "Disable a module/logging option",
     "black_list_help": "Shows the censor list. Subcommands are add & remove",
+    "allowed_invites_help": "Shows whitelisted invits. Subcommands are add & remove",
     "prefix_help": "Sets the servers prefix",
     "mute_role_help": "Sets the role for mutes",
     "action_log_help": "Sets a log channel for mod actions",

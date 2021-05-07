@@ -96,7 +96,7 @@ class GuildConfig(BasePlugin):
                 )
                 await ctx.send(embed=e)
     
-    @config.command(name="add")
+    @allowed_invites.command(name="add")
     async def add_invite(self, ctx, server: int):
         allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
         if str(server) in allowed:
@@ -106,7 +106,7 @@ class GuildConfig(BasePlugin):
         await ctx.send(Translator.translate(ctx.guild, "added_invite", _emote="YES", server=server))
 
     
-    @config.command(name="remove")
+    @allowed_invites.command(name="remove")
     async def remove_invite(self, ctx, server: int):
         allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
         if str(server) not in allowed:
