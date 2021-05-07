@@ -12,7 +12,8 @@ from Utils import Logging, PermCheckers, Utils
 from Database import Connector, DBUtils
 
 from Plugins.Base import BasePlugin
-from Utils.Constants import get_censor_pattern, ZALGO_RE, get_invite_whitelist, INVITE_RE
+from Utils.Constants import get_censor_pattern, ZALGO_RE, get_invite_whitelist
+from Utils.Matchers import INVITE_RE, URL_RE
 
 
 db = Connector.Database()
@@ -95,16 +96,16 @@ class Censor(BasePlugin):
                         invite = discord.Invite = await self.bot.fetch_invite(found_link)
                     except discord.NotFound:
                         self.bot.running_msg_deletions.add(message.id)
-                        await self.censor_invites(message, target, content, found_link, channel)
+                        await self.censor_invites(message, target, found_link, channel)
                         return
                     if invite.guild is None:
                         self.bot.running_msg_deletions.add(message.id)
-                        await self.censor_invites(message, target, content, found_link, channel)
+                        await self.censor_invites(message, target, found_link, channel)
                         return
                     else:
                         if invite.guild is None or (not invite.guild.id in allowed_invites and invite.guild.id != target.guild.id):
                             self.bot.running_msg_deletions.add(message.id)
-                            await self.censor_invites(message, target, content, found_link, channel)
+                            await self.censor_invites(message, target, found_link, channel)
                             return
         except Exception:
             pass
@@ -134,14 +135,15 @@ class Censor(BasePlugin):
             await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_censor", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=channel.mention, words=", ".join(found_words), content=content))
     
 
-    async def censor_invites(self, message, target, content, found_link, channel):
+    async def censor_invites(self, message, target, found_link, channel):
         if channel.permissions_for(channel.guild.me).manage_messages:
             try:
                 await message.delete()
             except discord.NotFound:
                 pass
+            
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_invite", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=channel.mention, link=found_link, content=content))
+            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_invite", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=channel.mention, link=found_link))
 
 
 

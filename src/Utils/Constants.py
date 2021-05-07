@@ -139,8 +139,6 @@ ZALGO = [
 
 ZALGO_RE = re.compile(u'|'.join(ZALGO))
 
-INVITE_RE = re.compile(r"(?:https?://)?(?:www\.)?(?:discord(?:\.| |\[?\(?\"?'?dot'?\"?\)?\]?)?(?:gg|io|me|li)|discord(?:app)?\.com/invite)/+((?:(?!https?)[\w\d-])+)", flags=re.IGNORECASE)
-
 
 
 default_censored_words = [

@@ -157,3 +157,11 @@ def parse_args():
         "--total_shards", "-shards", help="Amount of shards to start the bot with"
     )
     return p.parse_args()
+
+
+
+def escape_markdown(inp):
+    inp = str(inp)
+    for char in ["*", "_", "\\", "~", "|", "{", ">"]:
+        inp = inp.replace(char, f"\\{char}")
+    return inp.replace("@", "@\u200b")
