@@ -96,6 +96,8 @@ class GuildConfig(BasePlugin):
                 )
                 await ctx.send(embed=e)
     
+
+    
     @allowed_invites.command(name="add")
     async def add_invite(self, ctx, server: int):
         allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]

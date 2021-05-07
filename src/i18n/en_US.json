@@ -12,7 +12,7 @@
     "log_unmute": "``[{on_time} UTC]`` ``[]`` {emote} **{user}** (``{user_id}``) was automatically unmuted since their mute expired",
     "log_warn": "``[{on_time} UTC]`` ``[#{case}]`` {emote} **{user}** (``{user_id}``) was warned by **{moderator}** (``{moderator_id}``). Reason: \n```\n{reason}\n```",
     "log_censor": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted by **{moderator}** (``{moderator_id}``). \nReason: \n```\n[Automod] NSFW language (Using slurs): {words} \n \n{content}\n```",
-    "log_link": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted by **{moderator}** (``{moderator_id}``). \nReason: \n```\n[Automod] Advertising (Sending Discord invite): {found_link} \n \n{content}\n```",
+    "log_invite": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted by **{moderator}** (``{moderator_id}``). \nReason: \n```\n[Automod] Advertising (Sending Discord invite): {found_link} \n \n{content}\n```",
     "log_zalgo": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted by **{moderator}** (``{moderator_id}``). Reason: \n```\n[Automod] Illegible message formatting (Zalgo chars) at position {position}\n```",
     "log_spam": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) was kicked by **{moderator}** (``{moderator_id}``). Reason: \n```\nAuto-kick from spam\n```",
     "log_warn_clearing": "``[{on_time} UTC]`` {emote} Warnings of **{user}** (``{user_id}``) were cleared by **{moderator}** (``{moderator_id}``). Reason: \n```\n{reason}\n```",
