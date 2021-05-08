@@ -111,8 +111,7 @@ class Censor(BasePlugin):
             pass
 
                 
-
-                
+  
 
 
     async def censor_zalgo(self, message, target, content, found_zalgo, channel):

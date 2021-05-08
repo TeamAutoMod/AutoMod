@@ -92,7 +92,7 @@ class Basic(BasePlugin):
                 try:
                     reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
 
-                    if str(reaction.emoji) == "▶️" and cur_page != page_count:
+                    if str(reaction.emoji) == "▶️" and cur_page != pages:
                         cur_page += 1
                         await message.edit(content=f"**{Translator.translate(ctx.guild, 'command_list')} {cur_page}/{pages}:**\n{contents[cur_page-1]}")
                         await message.remove_reaction(reaction, user)
