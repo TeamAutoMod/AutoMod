@@ -33,7 +33,7 @@ async def get_all_command_help_embed(ctx, bot):
     valid_cogs = [bot.get_cog(x) for x in bot.cogs if x not in ["Admin", "AntiSpam", "Censor", "GlobalListeners"]]
     for c in valid_cogs:
         output = {
-            f"{c.qualified_name}": "\n".join([x.name for x in c.get_commands])
+            f"{c.qualified_name}": "```\n{}\n```".format("\n".join([x.name for x in c.get_commands()]))
         }
         out.append(output)
 
@@ -46,9 +46,10 @@ async def get_all_command_help_embed(ctx, bot):
 
     pages = []
     fields = 0
-    max_fields = 3
-    for inp in out:
-        if fields == max_fields:
+    max_fields = 4
+    max_fields -= 1
+    for i, inp in enumerate(out):
+        if fields >= max_fields:
             _def.add_field(
                 name=list(inp.keys())[0],
                 value=list(inp.values())[0],
@@ -63,11 +64,19 @@ async def get_all_command_help_embed(ctx, bot):
             fields = 0
         else:
             fields += 1
-            _def.add_field(
-                name=list(inp.keys())[0],
-                value=list(inp.values())[0],
-                inline=False
-            )
+            if len(out) <= i+1:
+                _def.add_field(
+                    name=list(inp.keys())[0],
+                    value=list(inp.values())[0],
+                    inline=False
+                )
+                pages.append(_def)
+            else:
+                _def.add_field(
+                    name=list(inp.keys())[0],
+                    value=list(inp.values())[0],
+                    inline=False
+                )
     
     for i, e in enumerate(pages):
         e.set_footer(text="Page: {}/{}".format(i+1, len(pages)))

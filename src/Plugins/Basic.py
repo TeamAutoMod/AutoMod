@@ -80,7 +80,7 @@ class Basic(BasePlugin):
             contents = await Generators.get_all_command_help_embed(ctx, self.bot)
             pages = len(contents)
             cur_page = 1
-            message = await ctx.send(f"**{Translator.translate(ctx.guild, 'command_list')} {cur_page}/{pages}**:\n{contents[cur_page-1]}")
+            message = await ctx.send(embed=contents[cur_page-1])
 
             await message.add_reaction("◀️") 
             await message.add_reaction("▶️")
@@ -94,12 +94,12 @@ class Basic(BasePlugin):
 
                     if str(reaction.emoji) == "▶️" and cur_page != pages:
                         cur_page += 1
-                        await message.edit(content=f"**{Translator.translate(ctx.guild, 'command_list')} {cur_page}/{pages}:**\n{contents[cur_page-1]}")
+                        await message.edit(embed=contents[cur_page-1])
                         await message.remove_reaction(reaction, user)
 
                     elif str(reaction.emoji) == "◀️" and cur_page > 1:
                         cur_page -= 1
-                        await message.edit(content=f"**{Translator.translate(ctx.guild, 'command_list')} {cur_page}/{pages}:**\n{contents[cur_page-1]}")
+                        await message.edit(embed=contents[cur_page-1])
                         await message.remove_reaction(reaction, user)
 
                     else:

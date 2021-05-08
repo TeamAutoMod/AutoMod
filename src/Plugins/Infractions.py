@@ -258,7 +258,7 @@ class Infractions(BasePlugin):
             fields = 0
             max_fields = 5 if len(out) >= 5 else len(out)
             max_fields -= 1
-            for inp in out:
+            for i, inp in enumerate(out):
                 if fields == max_fields:
                     start.add_field(
                         name="Case #{}".format(list(inp.keys())[0]),
@@ -270,11 +270,19 @@ class Infractions(BasePlugin):
                     fields = 0
                 else:
                     fields += 1
-                    start.add_field(
-                        name="Case #{}".format(list(inp.keys())[0]),
-                        value="```\n{}\n```".format(list(inp.values())[0]),
-                        inline=False
-                    )
+                    if len(out) <= i+1:
+                        start.add_field(
+                            name="Case #{}".format(list(inp.keys())[0]),
+                            value="```\n{}\n```".format(list(inp.values())[0]),
+                            inline=False
+                        )
+                        pages.append(start)
+                    else:
+                        start.add_field(
+                            name="Case #{}".format(list(inp.keys())[0]),
+                            value="```\n{}\n```".format(list(inp.values())[0]),
+                            inline=False
+                        )
             
             for i, em in enumerate(pages):
                 em.set_footer(text="Page: {}/{}".format(i+1, len(pages)))

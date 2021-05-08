@@ -204,11 +204,19 @@ class Leveling(BasePlugin):
                     fields = 0
                 else:
                     fields += 1
-                    start.add_field(
-                        name=str(i),
-                        value=inp,
-                        inline=False
-                    )
+                    if len(out) <= i:
+                        start.add_field(
+                            name=str(i),
+                            value=inp,
+                            inline=False
+                        )
+                        pages.append(start)
+                    else:
+                        start.add_field(
+                            name=str(i),
+                            value=inp,
+                            inline=False
+                        )
 
             for i, em in enumerate(pages):
                 em.set_footer(text="Page: {}/{}".format(i+1, len(pages)))
