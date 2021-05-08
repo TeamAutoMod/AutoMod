@@ -110,29 +110,6 @@ class Basic(BasePlugin):
         else:
             query = "".join(query.splitlines())
 
-            # get_aliases = lambda t: [i for s in t for i in s] # [["1"], ["2"]] -> ["1", "2"]
-
-            # all_commands = [*[x.name for x in self.bot.commands], *get_aliases([y.aliases for y in self.bot.commands])]
-            # if not query in all_commands:
-            #     return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
-            
-            # help_message = Translator.translate(ctx.guild, f"{self.bot.get_command(query).name.lower()}_help")
-            # if help_message is None:
-            #     return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
-                
-            # self.bot.help_command.context = ctx
-            # try:
-            #     usage = self.bot.help_command.get_command_signature(command=self.bot.get_command(query.lower()))
-            # except Exception:
-            #     return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
-                
-            # try:
-            #     query = self.bot.get_command(query).name # get the actual command name
-            #     group = [x for x in self.bot.get_command(query.lower()).cog.walk_commands() if x.name == f"{query.lower()}"]
-            #     commands = [y.name for y in group[0].commands]
-            # except Exception:
-            #     commands = []
-
             cmd_help_embed = Generators.get_command_help_embed(self.bot, ctx, query)
             if cmd_help_embed is None:
                 return await ctx.send(Translator.translate(ctx.guild, "invalid_command"))
