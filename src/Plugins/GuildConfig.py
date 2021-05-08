@@ -146,6 +146,7 @@ class GuildConfig(BasePlugin):
 
     @allowed_invites.command(name="add")
     async def add_invite(self, ctx, server: int):
+        """allowed_invites_add_help"""
         allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
         if str(server) in allowed:
             return await ctx.send(Translator.translate(ctx.guild, "already_whitelisted", _emote="NO", server=server))
@@ -156,6 +157,7 @@ class GuildConfig(BasePlugin):
     
     @allowed_invites.command(name="remove")
     async def remove_invite(self, ctx, server: int):
+        """allowed_invites_remove_help"""
         allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
         if str(server) not in allowed:
             return await ctx.send(Translator.translate(ctx.guild, "not_whitelisted", _emote="NO", server=server))
@@ -225,6 +227,7 @@ class GuildConfig(BasePlugin):
 
     @enable.command()
     async def message_logging(self, ctx, channel: discord.TextChannel):
+        """message_logging_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "messageLogChannel", int(channel.id))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "messageLogging", True)
         await ctx.send(Translator.translate(ctx.guild, "enabled_module_channel", _emote="YES", module="message_logging", channel=channel.mention))
@@ -232,6 +235,7 @@ class GuildConfig(BasePlugin):
 
     @enable.command()
     async def member_logging(self, ctx, channel: discord.TextChannel):
+        """member_logging_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "joinLogChannel", int(channel.id))
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "memberLogging", True)
         await ctx.send(Translator.translate(ctx.guild, "enabled_module_channel", _emote="YES", module="join_leave_logging", channel=channel.mention))
@@ -239,12 +243,21 @@ class GuildConfig(BasePlugin):
     
     @enable.command()
     async def automod(self, ctx):
+        """automod_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "automod", True)
         await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", _emote="YES", module="automod"))
+
+
+    @enable.command()
+    async def antispam(self, ctx):
+        """antispam_help"""
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "antispam", True)
+        await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", _emote="YES", module="antispam"))
 
     
     @enable.command()
     async def lvlsystem(self, ctx):
+        """lvlsystem_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem", True)
         await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", _emote="YES", module="rank_system"))
 
@@ -261,24 +274,35 @@ class GuildConfig(BasePlugin):
 
     @disable.command(name="message_logging")
     async def _message_logging(self, ctx):
+        """message_logging_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "messageLogging", False)
         await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="message_logging"))
 
 
     @disable.command(name="member_logging")
     async def _member_logging(self, ctx):
+        """member_logging_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "memberLogging", False)
         await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="join_leave_logging"))    
 
 
     @disable.command(name="automod")
     async def _automod(self, ctx):
+        """automod_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "automod", False)
         await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="automod"))
 
     
+    @disable.command(name="antispam")
+    async def _antispam(self, ctx):
+        """antispam_help"""
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "antispam", False)
+        await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="antispam"))
+
+    
     @disable.command(name="lvlsystem")
     async def _lvlsystem(self, ctx):
+        """lvlsystem_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem", False)
         await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="rank_system"))
 
@@ -303,6 +327,7 @@ class GuildConfig(BasePlugin):
 
     @ignored_users.command(name="add")
     async def _add(self, ctx, member: discord.Member):
+        """ignored_users_add_help"""
         ignored_users = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users")
         if member.id in ignored_users:
             return await ctx.send(Translator.translate(ctx.guild, "already_ignored_user", _emote="YES", user=member.name))
@@ -313,6 +338,7 @@ class GuildConfig(BasePlugin):
 
     @ignored_users.command(name="remove")
     async def _remove(self, ctx, user: discord.User):
+        """ignored_users_remove_help"""
         ignored_users = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "ignored_users")
         if not user.id in ignored_users:
             return await ctx.send(Translator.translate(ctx.guild, "not_existing_ignored_user", _emote="NO", user=user.name))

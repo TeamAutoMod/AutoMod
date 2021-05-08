@@ -139,6 +139,8 @@
     "prefix_help": "Sets the servers prefix",
     "mute_role_help": "Sets the role for mutes",
     "action_log_help": "Sets a log channel for mod actions",
+    "allowed_invites_add_help": "Whitelists invites for a server. Use the server ID",
+    "allowed_invites_remove_help": "Removes a invites for a server from the whitelist. Use the server ID",
 
     "ban_help": "Bans a user from the server",
     "kick_help": "Kicks a user from the server",
@@ -151,6 +153,18 @@
     "mkick_help": "Kicks multiple users for the same reason (targets should be defined by their user IDs)",
     "massban_help": "A more advanced ban command with multiple argument options",
     
+    "message_logging_help": "Module for message edit/deletion logs",
+    "member_logging_help": "Modules for join/leave logs",
+    "automod_help": "Automod including message censoring, invite filter",
+    "lvlsystem_help": "Levelsystem rewarding users that are active in the server",
+    "antispam_help": "Module for antispam. Kicks users that are being detected spamming",
+
+    "ignored_users_add_help": "Excludes someone from the message logs",
+    "ignored_users_remove_help": "Includes an excluded user from the message logs",
+
+    "black_list_add_help": "Adds a phrase to the censor list",
+    "black_list_remove_help": "Removes a phrase from the censor list",  
+
     "purge_help": "Purges up to 200 messages in a channel",
     "clean_help": "Base command for message cleaning. View the subcommands for more info.",
     "clean_until_help": "Clean message up to the given one",
