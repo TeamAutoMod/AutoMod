@@ -45,7 +45,7 @@ def generate_command_help(bot, ctx, command):
 
     commands = []
     if isinstance(command, GroupMixin) and hasattr(command, "all_commands"):
-        commands = [x.name for x in command.all_commands.values()]
+        commands = set([x.name for x in command.all_commands.values()])
     e.add_field(name="Subcommands", value="```\n{}\n```".format("\n".join(commands) if len(commands) > 0 else "None"), inline=False)
 
     return e
