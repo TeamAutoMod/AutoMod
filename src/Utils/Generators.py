@@ -28,6 +28,54 @@ async def generate_help_pages(ctx, bot):
     return pages
 
 
+async def get_all_command_help_embed(ctx, bot):
+    out = []
+    valid_cogs = [bot.get_cog(x) for x in bot.cogs if x not in ["Admin", "AntiSpam", "Censor", "GlobalListeners"]]
+    for c in valid_cogs:
+        output = {
+            f"{c.qualified_name}": "\n".join([x.name for x in c.get_commands])
+        }
+        out.append(output)
+
+    prefix = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")
+    _def = discord.Embed(
+        color=discord.Color.blurple(), 
+        title="Help Page", 
+        description=f"All commands start with ``{prefix}`` \n• Use ``{prefix}help <command>`` for more info about a command (subcommands & args)"
+    )
+
+    pages = []
+    fields = 0
+    max_fields = 3
+    for inp in out:
+        if fields == max_fields:
+            _def.add_field(
+                name=list(inp.keys())[0],
+                value=list(inp.values())[0],
+                inline=False
+            )
+            pages.append(_def)
+            _def = discord.Embed(
+                color=discord.Color.blurple(), 
+                title="Help Page", 
+                description=f"All commands start with ``{prefix}`` \n• Use ``{prefix}help <command>`` for more info about a command (subcommands & args)"
+            )
+            fields = 0
+        else:
+            fields += 1
+            _def.add_field(
+                name=list(inp.keys())[0],
+                value=list(inp.values())[0],
+                inline=False
+            )
+    
+    for i, e in enumerate(pages):
+        e.set_footer(text="Page: {}/{}".format(i+1, len(pages)))
+
+    return pages
+
+
+
 
 def generate_help(ctx, command):
     help_message = Translator.translate(ctx.guild, command.short_doc)

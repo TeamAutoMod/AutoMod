@@ -77,7 +77,7 @@ class Basic(BasePlugin):
     async def help(self, ctx, *, query: str = None):
         """help_help"""
         if query is None:
-            contents = await Generators.generate_help_pages(ctx, self.bot)
+            contents = await Generators.get_all_command_help_embed(ctx, self.bot)
             pages = len(contents)
             cur_page = 1
             message = await ctx.send(f"**{Translator.translate(ctx.guild, 'command_list')} {cur_page}/{pages}**:\n{contents[cur_page-1]}")
