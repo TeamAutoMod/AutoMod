@@ -132,3 +132,4 @@ config.json
 package.json
 package-lock.json
 push.bat
+pull.bat

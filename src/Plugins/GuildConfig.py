@@ -70,6 +70,52 @@ class GuildConfig(BasePlugin):
             await ctx.send(embed=e)
 
 
+    @config.command()
+    async def prefix(self, ctx, new_prefix: str = None):
+        """prefix_help"""
+        if new_prefix is None:
+            await ctx.send(Translator.translate(ctx.guild, "current_prefix", prefix=DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")))
+        elif len(new_prefix) > 15:
+            await ctx.send(Translator.translate(ctx.guild, "prefix_too_long", _emote="NO"))
+        else:
+            DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "prefix", f"{new_prefix}")
+            await ctx.send(Translator.translate(ctx.guild, "prefix_updated", _emote="YES", prefix=new_prefix))
+
+
+    @config.command()
+    async def mute_role(self, ctx, role: discord.Role):
+        """mute_role_help"""
+        if role == ctx.guild.default_role:
+            return await ctx.send(Translator.translate(ctx.guild, "default_role_forbidden", _emote="NO"))
+        guild: discord.Guild = ctx.guild
+        perms = guild.me.guild_permissions
+        if not perms.manage_roles:
+            return await ctx.send(Translator.translate(ctx.guild, "mute_missing_perm", _emote="NO"))
+        if not guild.me.top_role > role:
+            return await ctx.send(Translator.translate(ctx.guild, "role_too_high"))
+        DBUtils.update(db.configs, "guildId", f"{guild.id}", "muteRole", int(role.id))
+        await ctx.send(Translator.translate(ctx.guild, "updated_mute_role", _emote="YES", role=role.mention))
+
+
+    @commands.command()
+    @commands.guild_only()
+    async def action_log(self, ctx, channel: discord.TextChannel):
+        """action_log_help"""
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "memberLogChannel", int(channel.id))
+        await ctx.send(Translator.translate(ctx.guild, "log_mod_actions", _emote="YES", channel=channel.mention))
+
+    
+    @config.command()
+    async def dm_on_actions(self, ctx):
+        """dm_on_actions_help"""
+        state = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "dm_on_actions")
+        state = not state
+        if state is False:
+            return Translator.translate(ctx.guild, "dm_on_actions_false", _emote="YES")
+        else:
+            return Translator.translate(ctx.guild, "dm_on_actions_true", _emote="YES")
+
+
     @config.group()
     async def allowed_invites(self, ctx):
         """allowed_invites_help"""
@@ -97,7 +143,7 @@ class GuildConfig(BasePlugin):
                 await ctx.send(embed=e)
     
 
-    
+
     @allowed_invites.command(name="add")
     async def add_invite(self, ctx, server: int):
         allowed = [str(x).strip().lower() for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "whitelisted_invites")]
@@ -165,58 +211,6 @@ class GuildConfig(BasePlugin):
         await ctx.send(Translator.translate(ctx.guild, "off_success", _emote="YES"))
 
 
-    
-    @config.command()
-    async def prefix(self, ctx, new_prefix: str = None):
-        """prefix_help"""
-        if new_prefix is None:
-            await ctx.send(Translator.translate(ctx.guild, "current_prefix", prefix=DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")))
-        elif len(new_prefix) > 15:
-            await ctx.send(Translator.translate(ctx.guild, "prefix_too_long", _emote="NO"))
-        else:
-            DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "prefix", f"{new_prefix}")
-            await ctx.send(Translator.translate(ctx.guild, "prefix_updated", _emote="YES", prefix=new_prefix))
-    
-
-    @config.command()
-    async def mute_role(self, ctx, role: discord.Role):
-        """mute_role_help"""
-        if role == ctx.guild.default_role:
-            return await ctx.send(Translator.translate(ctx.guild, "default_role_forbidden", _emote="NO"))
-        guild: discord.Guild = ctx.guild
-        perms = guild.me.guild_permissions
-        if not perms.manage_roles:
-            return await ctx.send(Translator.translate(ctx.guild, "mute_missing_perm", _emote="NO"))
-        if not guild.me.top_role > role:
-            return await ctx.send(Translator.translate(ctx.guild, "role_too_high"))
-        DBUtils.update(db.configs, "guildId", f"{guild.id}", "muteRole", int(role.id))
-        await ctx.send(Translator.translate(ctx.guild, "updated_mute_role", _emote="YES", role=role.mention))
-
-
-    # TODO: finish building this
-    # @config.command()
-    # async def max_pings(self, ctx, amount: int):
-    #     """max_pings_help"""
-    #     if amount < 3 or 50 < amount:
-    #         return await ctx.send(Translator.translate(ctx.guild, "max_pings", _emote="NO"))
-
-    #     DBUtils.update(
-    #         db.configs,
-    #         "guildId",
-    #         f"{ctx.guild.id}",
-    #         "max_pings",
-    #         amount
-    #     )
-    #     await ctx.send(Translator.translate(ctx.guild, "set_max_pings", _emote="YES", amount=str(amount)))
-
-
-
-    @commands.command()
-    @commands.guild_only()
-    async def action_log(self, ctx, channel: discord.TextChannel):
-        """action_log_help"""
-        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "memberLogChannel", int(channel.id))
-        await ctx.send(Translator.translate(ctx.guild, "log_mod_actions", _emote="YES", channel=channel.mention))
 
     
     @config.group()

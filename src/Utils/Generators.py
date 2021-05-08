@@ -1,5 +1,6 @@
 import collections
 
+import discord
 from discord.ext.commands import CommandError, Context, GroupMixin, Group
 
 from i18n import Translator
@@ -31,3 +32,36 @@ async def generate_help_pages(ctx, bot):
 def generate_help(ctx, command):
     help_message = Translator.translate(ctx.guild, command.short_doc)
     return "  {}{}{}".format(command.name, " "*abs(18 - len(command.name)), help_message)
+
+
+def generate_command_help(bot, ctx, command):
+    bot.help_command.context = ctx
+    usage = ctx.bot.help_command.get_command_signature(command)
+    help_message = Translator.translate(ctx.guild, f"{command.help}")
+    
+    e = discord.Embed(color=discord.Color.blurple(), title="Command Help")
+    e.add_field(name="Description", value=f"```\n{help_message}\n```", inline=False)
+    e.add_field(name="Usage", value=f"```\n{usage}\n```", inline=False)
+
+    commands = []
+    if isinstance(command, command.GroupMixin) and hasattr(command, "all_commands"):
+        commands = [x.name for x in command.group]
+    e.add_field(name="Subcommands", value="```\n{}\n```".format("\n".join(commands) if len(commands) > 0 else "None"), inline=False)
+
+    return e
+
+
+
+def get_command_help_embed(bot, ctx, query):
+    t = bot
+    layers = query.split(" ")
+    while len(layers) > 0:
+        layer = layers.pop(0)
+        if hasattr(t, "all_commands") and layer in t.all_commands.keys():
+            t = t.all_commands[layer]
+        else:
+            t = None
+            break
+    if t is not None and t is not bot.all_commands:
+        return generate_command_help(bot, ctx, t)
+    return None

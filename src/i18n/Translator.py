@@ -24,7 +24,8 @@ async def init_translator(langs):
             LANGS[l] = json.load(f)
             log.info(f"[Translator] Loaded strings for language {l}")
     log.info("[Translator] Initiated translator")
-    
+
+
 
 
 
