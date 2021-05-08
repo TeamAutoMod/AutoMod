@@ -119,7 +119,7 @@
     "configuration_log_help": "Base command for enabling/disabling log modules, by typing a module name after one of the subcommands",
     "ignored_users_help": "Base command for excluding users from the message delete/edit logs",
     "configuration_add_help": "Activates a module. Some require a channel paramater for its logging process",
-    "jumbo_help": "Shows a bigger version an emoji",
+    "jumbo_help": "Shows a bigger version of an emoji",
     "userinfo_help": "View some stats about the user",
     "server_help": "Informaton about the server",
     "avatar_help": "Sends out a bigger version of the users avatar",
@@ -127,6 +127,7 @@
     "welcome_msg_help": "Sets a welcome message",
     "welcome_channel_help": "Sets a channel for welcome messages",
     "welcome_off_help": "Removes the welcome channel & message",
+    "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
 
     "create_help": "Creates a command with the given trigger & reply",
     "delete_help": "Removes a custom command",
@@ -255,5 +256,10 @@
     "msg_too_long": "Sorry, but the message must not have more than 1500 chars.",
     "msg_success": "{emote} Successfully updated the welcome message!",
     "channel_success": "{emote} Successfully set the welcoming channel to {channel}!",
-    "off_success": "{emote} Successfully disabled the welcoming system!"
+    "off_success": "{emote} Successfully disabled the welcoming system!",
+
+    "dm_on_actions_false": "{emote} Set ``dm on actions`` to false. I will no longer dm users about actions taken on them.",
+    "dm_on_actions_true": "{emote} Set ``dm on actions`` to true. I will now dm users about actions taken on them.",
+
+    "ban_dm": ""
 }

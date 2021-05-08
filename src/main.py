@@ -16,6 +16,8 @@ else:
 
 
 
+
+
 def boot_bot(shards):
     from Utils.Utils import clean_shutdown, init_config
     init_config()
