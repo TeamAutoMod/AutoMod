@@ -179,10 +179,11 @@ class Leveling(BasePlugin):
                 else:
                     user = ctx.guild.get_member(int(uid))
                     self.rank_cache[uid] = f"{user.name}#{user.discriminator}"
-                ouput = "```\n• User: {} \n• Level: {} \n• XP: {} \n```".format(xp, lvl, user)
+                ouput = "```\n• User: {} \n• Level: {} \n• XP: {} \n```".format(user, lvl, xp)
                 out.append(ouput)
 
             for i, inp in enumerate(out):
+                ii = i+1
                 i = i+1
                 if i == 1:
                     i = "🥇"
@@ -204,7 +205,7 @@ class Leveling(BasePlugin):
                     fields = 0
                 else:
                     fields += 1
-                    if len(out) <= i:
+                    if len(out) <= ii:
                         start.add_field(
                             name=str(i),
                             value=inp,
