@@ -219,7 +219,7 @@ class GuildConfig(BasePlugin):
     async def enable(self, ctx):
         """enable_help"""
         if ctx.invoked_subcommand is None:
-            normal = [f'{ctx.prefix}config enable {x}' for x in ["automod", "lvlsystem"]]
+            normal = [f'{ctx.prefix}config enable {x}' for x in ["automod", "lvlsystem", "antispam"]]
             with_arg = [f'{ctx.prefix}config enable {x} <channel>' for x in ["message_logging", "member_logging"]]
             to_send = [*normal, *with_arg]
             await ctx.send("**Valid modules** \n```\n{}\n```".format("\n".join(to_send)))
@@ -268,7 +268,7 @@ class GuildConfig(BasePlugin):
     async def disable(self, ctx):
         """disable_help"""
         if ctx.invoked_subcommand is None:
-            modules = [f'{ctx.prefix}config disable {x}' for x in ["automod", "lvlsystem", "message_logging", "member_logging"]]
+            modules = [f'{ctx.prefix}config disable {x}' for x in ["automod", "lvlsystem", "antispam", "message_logging", "member_logging"]]
             await ctx.send("**Valid Modules** \n```\n{}\n```".format("\n".join(modules)))
 
 
