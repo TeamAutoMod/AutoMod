@@ -31,6 +31,7 @@ def prefix_callable(bot, message):
             prefixes.append("+")
     return prefixes
 
+
 class AutoMod(AutoShardedBot):
     READY = False
     version = ""

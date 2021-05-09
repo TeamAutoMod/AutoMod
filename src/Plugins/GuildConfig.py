@@ -268,7 +268,7 @@ class GuildConfig(BasePlugin):
     async def disable(self, ctx):
         """disable_help"""
         if ctx.invoked_subcommand is None:
-            modules = [f'{ctx.prefix}config disable {x}' for x in ["automod", "lvlsystem", "antispam", "message_logging", "member_logging"]]
+            modules = [f'{ctx.prefix}config disable {x}' for x in ["automod", "lvlsystem", "message_logging", "member_logging"]]
             await ctx.send("**Valid Modules** \n```\n{}\n```".format("\n".join(modules)))
 
 
@@ -369,6 +369,7 @@ class GuildConfig(BasePlugin):
 
     @black_list.command(name="add")
     async def add_to_censor_list(self, ctx, *, text: str):
+        """black_list_add_help"""
         if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "automod") is False:
             return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", _emote="NO", prefix=ctx.prefix))
         _censor_list = [x for x in DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "censored_words") if x != "--------------"]
@@ -381,6 +382,7 @@ class GuildConfig(BasePlugin):
 
     @black_list.command(name="remove")
     async def remove_from_censor_list(self, ctx, *, text: str):
+        """black_list_remove_help"""
         if DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "automod") is False:
             return await ctx.send(Translator.translate(ctx.guild, "black_list_disabled", _emote="NO", prefix=ctx.prefix))
         
