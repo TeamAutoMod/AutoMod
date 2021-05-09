@@ -194,6 +194,12 @@ async def check_mutes(bot):
 
 
 async def on_message(bot, message: Message):
+    if bot.initial_fill_complete and message.guild is not None:
+        try:
+            await message.guild.chunk(cache=True)
+            log.info("[Caching] Cached a missing guild: {}".format(str(guild.id)))
+        except Exception:
+            pass
     if message.author.bot:
         if message.author.id == bot.user.id:
             bot.own_messages += 1

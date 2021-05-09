@@ -50,7 +50,6 @@ class AutoMod(AutoShardedBot):
     running_msg_deletions = set()
     running_removals = set()
     last_reload = None
-    cache = dict()
     
     def __init__(self, shards=1):
         intents = Intents(

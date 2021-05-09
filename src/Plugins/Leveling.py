@@ -146,6 +146,8 @@ class Leveling(BasePlugin):
             needed_xp = needed + 2
             return await ctx.send(embed=await self._rank(ctx, user, xp, lvl, needed_xp))
         except Exception:
+            ex = traceback.format_exc()
+            print(ex)
             await ctx.send(Translator.translate(ctx.guild, "not_ranked", _emote="NO", user=user))
 
 
@@ -182,8 +184,9 @@ class Leveling(BasePlugin):
                 ouput = "```\n• User: {} \n• Level: {} \n• XP: {} \n```".format(user, lvl, xp)
                 out.append(ouput)
 
+            ii: int
             for i, inp in enumerate(out):
-                ii = i+1
+                ii = i
                 i = i+1
                 if i == 1:
                     i = "🥇"
@@ -205,7 +208,7 @@ class Leveling(BasePlugin):
                     fields = 0
                 else:
                     fields += 1
-                    if len(out) <= ii:
+                    if len(out) <= ii+1:
                         start.add_field(
                             name=str(i),
                             value=inp,
