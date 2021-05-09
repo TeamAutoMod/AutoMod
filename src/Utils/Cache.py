@@ -29,11 +29,16 @@ class CacheType(dict):
         except KeyError:
             return None
 
+
     def get_all(self, guild):
         try:
             return self[guild.id]
         except KeyError:
             return None
+
+
+    def get(self, guild, key):
+        return self.get_one_or_none(guild, key)
 
 
 
