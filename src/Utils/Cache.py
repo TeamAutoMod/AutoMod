@@ -1,13 +1,15 @@
 import discord
 from typing import Union
+from functools import lru_cache
 
 
 
 
 class CacheType(dict):
+
     def get_one_or_none(self, guild, key) -> Union[None, discord.Guild, discord.Member, discord.TextChannel, discord.VoiceChannel]:
         try:
-            _guild = self.__dict__[guild.id]
+            _guild = self[guild.id]
             if isinstance(key, int):
                 return discord.utils.get(_guild, id=key)
             else:
@@ -18,7 +20,7 @@ class CacheType(dict):
 
     def get_multi_or_none(self, guild, _filter) -> Union[None, list]:
         try:
-            _guild = self.__dict__[guild.id]
+            _guild = self[guild.id]
             found = filter(_filter, _guild)
             if len(found) == 0:
                 return None
@@ -27,12 +29,16 @@ class CacheType(dict):
         except KeyError:
             return None
 
-    
+
     def get_all(self, guild):
         try:
-            return self.__dict__[guild.id]
+            return self[guild.id]
         except KeyError:
             return None
+
+
+    def get(self, guild, key):
+        return self.get_one_or_none(guild, key)
 
 
 
@@ -50,14 +56,17 @@ class Cache:
 
     def build(self, _return=True):
         for guild in self.bot.guilds:
-            self.guilds[guild.id]: discord.Guild = guild
-            for cache_type, cache_obj in {x: getattr(self, x) for x in dir(self) if isinstance(x, CacheType)}.items():
-                cache_obj[guild.id] = getattr(guild, cache_type)
+            self.guilds[guild.id] = guild
+            self.members[guild.id] = guild.members
+            self.text_channels[guild.id] = guild.text_channels
+            self.voice_channels[guild.id] = guild.voice_channels
         
         if _return:
             return self
 
 
     def destroy(self):
-        for a in [getattr(self, x) for x in dir(self) if isinstance(x, CacheType)]:
-            a.clear()
+        self.guilds.clear()
+        self.members.clear()
+        self.text_channels.clear()
+        self.voice_channels.clear()

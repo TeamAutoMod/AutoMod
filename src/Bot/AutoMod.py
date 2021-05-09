@@ -31,6 +31,7 @@ def prefix_callable(bot, message):
             prefixes.append("+")
     return prefixes
 
+
 class AutoMod(AutoShardedBot):
     READY = False
     version = ""
@@ -72,7 +73,7 @@ class AutoMod(AutoShardedBot):
         self.resumes = defaultdict(list)
         self.identifies = defaultdict(list)
 
-        self.cache = Cache(self).build()
+        self.cache = Cache(self)
 
 
     def _clear_gateway_data(self):

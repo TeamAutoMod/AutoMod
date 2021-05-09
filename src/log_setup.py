@@ -19,19 +19,14 @@ class LogFilter(logging.Filter):
 @contextlib.contextmanager
 def setup_logging():
     try:
-        max_bytes = 32 * 1024 * 1012
         logging.getLogger("discord").setLevel(logging.INFO)
         logging.getLogger("discord.http").setLevel(logging.WARNING)
         logging.getLogger("discord.state").addFilter(LogFilter())
 
-        log = logging.getLogger()
-        log.setLevel(logging.INFO)
-        handler = RotatingFileHandler(filename="automod.log", encoding="utf-8", mode="w", maxBytes=max_bytes, backupCount=5)
         fmt = "%d/%M/%Y %H:%M:%S"
-        formatter = logging.Formatter("[{asctime}] [{levelname:<7}] {name}: {message}", fmt, style="{")
-        handler.setFormatter(formatter)
-        log.addHandler(handler)
-
+        logging.basicConfig(level=logging.INFO, format="[{asctime}] [{levelname:<7}] {name}: {message}", datefmt=fmt)
+        
+        log = logging.getLogger(__name__)
         yield
     finally:
         handlers = log.handlers[:]
