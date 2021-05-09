@@ -9,7 +9,7 @@ from discord.ext.commands import AutoShardedBot
 
 from Bot import Handlers
 from Utils import Utils
-from Utils.Cache impotz Cache
+from Utils.Cache import Cache
 from Database import Connector, DBUtils
 
 
@@ -51,7 +51,6 @@ class AutoMod(AutoShardedBot):
     running_msg_deletions = set()
     running_removals = set()
     last_reload = None
-    cache = dict()
     
     def __init__(self, shards=1):
         intents = Intents(
@@ -73,7 +72,7 @@ class AutoMod(AutoShardedBot):
         self.resumes = defaultdict(list)
         self.identifies = defaultdict(list)
 
-        self.cache = Cache().build()
+        self.cache = Cache(self).build()
 
 
     def _clear_gateway_data(self):
