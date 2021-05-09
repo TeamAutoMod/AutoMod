@@ -147,6 +147,7 @@ async def fill_cache(bot):
     except Exception as e:
         await log.error(f"[Caching] Guild fetching failed \n{e}")
     finally:
+        bot.cache.build(_return=False)
         bot.loading_task = None
 
 
