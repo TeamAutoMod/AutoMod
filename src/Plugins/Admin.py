@@ -46,7 +46,6 @@ class Admin(BasePlugin):
             except Exception as ex:
                 return await ctx.send(f"{RED_TICK} Error! {ex}")
             await ctx.send(f"**{cog}** has been loaded!")
-            await Logging.bot_log(self.bot, f"**{cog}** has been loaded by {ctx.message.author.name}.", None)
         else:
             await ctx.send(f"{RED_TICK} I can't find a cog with that name.")
 
@@ -56,7 +55,6 @@ class Admin(BasePlugin):
         if os.path.isfile(f"src/Plugins/{cog}.py") or os.path.isfile(f"./src/Plugins/{cog}.py"):
             self.bot.unload_extension("Plugins.%s" % (cog))
             await ctx.send(f"**{cog}** has been unloaded!")
-            await Logging.bot_log(self.bot, f"**{cog}** has been unloaded by {ctx.message.author.name}.", None)
         else:
             await ctx.send(f"{RED_TICK} I can't find a cog with that name.")
 
@@ -69,7 +67,6 @@ class Admin(BasePlugin):
             except Exception as ex:
                 return await ctx.send(f"{RED_TICK} Error! {ex}")
             await ctx.send(f"**{cog}** has been reloaded!")
-            await Logging.bot_log(self.bot, f"**{cog}** has been reloaded by {ctx.message.author.name}.", None)
         else:
             await ctx.send(f"{RED_TICK} I can't find a cog with that name.")
 
@@ -178,9 +175,9 @@ class Admin(BasePlugin):
         try:
             if langs is None:
                 langs = Utils.from_config("SUPPORTED_LANGS")
-            log.info("[Translator] Reloading translator")
+            log.info("Reloading translator")
             await i18n.Translator.init_translator(langs)
-            log.info("[Translator] Reloaded translator")
+            log.info("Reloaded translator")
             await ctx.send("<:greenTick:751915988143833118> Reloaded the translator & the i18n files!")
         except Exception as ex:
             await ctx.send(f"Error while reloading i18n stuff: \n{ex}")

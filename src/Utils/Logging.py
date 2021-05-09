@@ -76,4 +76,4 @@ async def bot_log(msg=None, embed=None):
     if BOT_LOG is not None:
         await BOT_LOG.send(content=msg, embed=embed)
     else:
-        log.error(f"[Booting Up] Bot log channel hasn't been fetched yet!")
+        log.error(f"Bot log channel hasn't been fetched yet!")

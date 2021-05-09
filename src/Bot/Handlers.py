@@ -39,7 +39,6 @@ async def init_bot(bot):
 
         await Logging.init(bot)
         t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        await Logging.bot_log(f"``[{t} UTC]`` {SALUTE} Initialized the Translator & i18n files!")
 
         Utils.init(bot)
 
@@ -51,7 +50,7 @@ async def init_bot(bot):
 
     except Exception as ex:
         bot.locked = False
-        log.error(f"[Booting Up] {ex}")
+        log.error(f"{ex}")
         raise ex
     bot.locked = False
 
@@ -61,7 +60,7 @@ async def init_bot(bot):
 async def on_ready(bot):
     try:
         if not bot.READY:
-            log.info(f"[Booting Up] AutoMod is starting up with {bot.total_shards} shards")
+            log.info(f"AutoMod is starting up with {bot.total_shards} shards")
             bot.fetch_guilds()
             
             await init_bot(bot)
@@ -80,12 +79,11 @@ async def on_ready(bot):
                 try:
                     bot.load_extension("Plugins.%s" % (cog))
                     loaded += 1
-                    log.info(f"[Booting Up] Successfully loaded {cog}")
+                    log.info(f"Successfully loaded {cog}")
                 except Exception as e:
-                    log.error("[Booting Up] Error while loading %s: %s" % (cog, e))
-            log.info(f"[Booting Up] AutoMod running at full speed, now starting cache filling!")
+                    log.error("Error while loading %s: %s" % (cog, e))
+            log.info(f"AutoMod running at full speed, now starting cache filling!")
             t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.bot_log(f"``[{t} UTC]`` {SALUTE} Starting to build the internal cache")
             bot.READY = True
         else:
             pass # bot is ready
@@ -96,7 +94,7 @@ async def on_ready(bot):
             bot.loading_task.cancel()
         bot.loading_task = asyncio.create_task(fill_cache(bot))
     except Exception as e:
-        log.error(f"[Booting Up] Error while starting, aborting! \n{e}")
+        log.error(f"Error while starting, aborting! \n{e}")
 
 
 
@@ -113,39 +111,39 @@ async def fill_cache(bot):
                     pass
                 except concurrent.futures._base.TimeoutError:
                     if old == len(bot.missing_guilds):
-                        log.info("[Caching] Timed out while fetching member chunks.")
+                        log.info("Timed out while fetching member chunks.")
                         for t in tasks:
                             t.cancel()
                         await asyncio.sleep(1)
                         continue
                 except Exception as e:
-                    log.error(f"[Caching] Fetching member info failed: \n{e}")
+                    log.error(f"Fetching member info failed: \n{e}")
                 else:
                     if old == len(bot.missing_guilds):
-                        log.error("[Caching] Timed out while fetching member chunks.")
+                        log.error("Timed out while fetching member chunks.")
                         for t in tasks:
                             t.cancel()
                         continue
             end_time = time.time()
             time_needed = (end_time - start_time)
-            log.info("[Caching] Finished fetching members in {}".format(time_needed))
+            log.info("Finished fetching members in {}".format(time_needed))
 
             # check for guilds that aren't in the DB for some reason (added during downtime etc)
-            log.info("[Caching] Filling up missing guilds")
+            log.info("Filling up missing guilds")
             for g in [x for x in bot.guilds if isinstance(x, discord.Guild)]:
                 if not DBUtils.get(db.configs, "guildId", f"{g.id}", "prefix"):
                     try:
                         DBUtils.insert(db.configs, Schemas.guild_schema(g))
-                        log.info(f"[Caching] Filled missing guild: {g}")
+                        log.info(f"Filled missing guild: {g}")
                     except Exception as ex:
-                        log.error(f"[Caching] Error while trying to fill up missing guild {g}: \n{ex}")
-            log.info("[Caching] Fill-up task completed!")
+                        log.error(f"Error while trying to fill up missing guild {g}: \n{ex}")
+            log.info("Fill-up task completed!")
             end_time2 = time.time()
             t = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.bot_log(f"``[{t} UTC]`` {SALUTE} Finished building the internal cache in {round(end_time2 - start_time, 2)} seconds")
+            log.info(f"Finished building the internal cache in {round(end_time2 - start_time, 2)} seconds")
             bot.initial_fill_complete = True
     except Exception as e:
-        await log.error(f"[Caching] Guild fetching failed \n{e}")
+        await log.error(f"Guild fetching failed \n{e}")
     finally:
         bot.cache.build(_return=False)
         bot.loading_task = None
@@ -198,7 +196,7 @@ async def on_message(bot, message: Message):
     if bot.initial_fill_complete and message.guild is not None:
         try:
             await message.guild.chunk(cache=True)
-            log.info("[Caching] Cached a missing guild: {}".format(str(guild.id)))
+            log.info("Cached a missing guild: {}".format(str(guild.id)))
         except Exception:
             pass
     if message.author.bot:
@@ -225,7 +223,7 @@ async def on_message(bot, message: Message):
 
 async def on_guild_join(bot, guild: Guild):
     if guild.id in Utils.from_config("BLOCKED_GUILDS"):
-        await Logging.bot_log(bot, f"Someone tried adding me to blocked guild {guild.name} ({guild.id})", None)
+        log.info(f"Someone tried adding me to blocked guild {guild.name} ({guild.id})")
         await guild.leave()
     else:
         bot.missing_guilds.add(guild.id)

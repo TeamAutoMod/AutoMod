@@ -21,15 +21,15 @@
     "log_reapplied_mute": "``[{on_time} UTC]`` {emote} Reapplied active mute for **{user}** (``{user_id}``) on rejoin",
     "log_manual_unmute": "``[{on_time} UTC]`` ``[]`` {emote} **{user}** (``{user_id}``) was manually unmuted by **{moderator}** (``{moderator_id}``)",
 
-    "user_banned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was banned for (``#{case}``) {dm}",
-    "user_unbanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was unbanned for (``#{case}``)",
-    "user_kicked": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was kicked for (``#{case}``) {dm}",
+    "user_banned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was banned (``#{case}``) {dm}",
+    "user_unbanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was unbanned (``#{case}``)",
+    "user_kicked": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was kicked (``#{case}``) {dm}",
     "user_cleanbanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was cleanbanned (``#{case}``) {dm}",
     "user_forcebanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was forcebanned (``#{case}``) {dm}",
-    "user_softbanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was softbanned for (``#{case}``) {dm}",
-    "user_muted": "{emote} {user.name}#{user.discriminator} (``{user_id}``) has been muted for {length} {unit} because of (``#{case}``) {dm}",
+    "user_softbanned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was softbanned (``#{case}``) {dm}",
+    "user_muted": "{emote} {user.name}#{user.discriminator} (``{user_id}``) has been muted for {length} {unit} (``#{case}``) {dm}",
     "mute_extended": "{emote} {user.name}#{user.discriminator} (``{user_id}``)'s mute has been extended for {length} {unit}",
-    "user_warned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was warned for (``#{case}``) {dm}",
+    "user_warned": "{emote} {user.name}#{user.discriminator} (``{user_id}``) was warned (``#{case}``) {dm}",
     "user_warns_cleared": "{emote} Cleared warnings of {user.name}#{user.discriminator} (``{user_id}``)",
     "inf_claimed": "{emote} Claimed infraction ``{case}``!",
     "mute_lifted": "{emote} {user.name}#{user.discriminator} (``{user_id}``)'s mute was lifted",
@@ -275,8 +275,8 @@
     "dm_on_actions_false": "{emote} Set ``dm on actions`` to false. I will no longer dm users about actions taken on them.",
     "dm_on_actions_true": "{emote} Set ``dm on actions`` to true. I will now dm users about actions taken on them.",
 
-    "ban_dm": "You have been banned from the {guild} server. Reason: \n```\n{reason}\n```",
-    "kick_dm": "You have been kicked from the {guild} server. Reason: \n```\n{reason}\n```",
-    "warn_dm": "You have received a warning on the {guild} server. Reason: \n```\n{reason}\n```",
-    "mute_dm": "You have been muted for {length} {unit} on the {guild} server. Reason: \n```\n{reason}\n```"
+    "ban_dm": "You have been banned from the {guild_name} server. Reason: \n```\n{reason}\n```",
+    "kick_dm": "You have been kicked from the {guild_name} server. Reason: \n```\n{reason}\n```",
+    "warn_dm": "You have received a warning on the {guild_name} server. Reason: \n```\n{reason}\n```",
+    "mute_dm": "You have been muted for {length} {unit} on the {guild_name} server. Reason: \n```\n{reason}\n```"
 }

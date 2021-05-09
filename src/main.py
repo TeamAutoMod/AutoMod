@@ -42,6 +42,8 @@ def boot_bot(shards):
         except:
             pass
         quit()
+    except Exception:
+        pass
         
 
 

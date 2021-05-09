@@ -17,13 +17,13 @@ LANG_CACHE = dict()
 
 
 async def init_translator(langs):
-    log.info("[Translator] Initiating translator")
+    log.info("Initiating translator")
     global LANGS
     for l in langs:
         with open(f"src/i18n/{l}.json", "r", encoding="utf8", errors="ignore") as f:
             LANGS[l] = json.load(f)
-            log.info(f"[Translator] Loaded strings for language {l}")
-    log.info("[Translator] Initiated translator")
+            log.info(f"Loaded strings for language {l}")
+    log.info("Initiated translator")
 
 
 

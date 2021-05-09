@@ -41,7 +41,8 @@ class Infractions(BasePlugin):
                 timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", reason))
                 
-                await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case))
+                dm = await Utils.dm_user(ctx, "warn", target, guild_name=ctx.guild.name, reason=reason)
+                await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", _emote="WARN", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
                 return
@@ -57,7 +58,8 @@ class Infractions(BasePlugin):
                     timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                     DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", reason))
 
-                    await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (seconds 4 warns)", case=case))
+                    dm = await Utils.dm_user(ctx, "ban", target, guild_name=ctx.guild.name, reason=reason)
+                    await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (seconds 4 warns)", case=case, dm=dm))
                     on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                     await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate("log_ban", _emote="ALERT", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (seconds 4 warns)", case=case))
                     return
@@ -71,7 +73,8 @@ class Infractions(BasePlugin):
                     timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                     DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Kick", reason))
 
-                    await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (first 4 warns)", case=case))
+                    dm = await Utils.dm_user(ctx, "kick", target, guild_name=ctx.guild.name, reason=reason)
+                    await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (first 4 warns)", case=case, dm=dm))
                     on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                     await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", _emote="SHOE", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (first 4 warns)", case=case))
                     return
@@ -82,7 +85,8 @@ class Infractions(BasePlugin):
             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
             DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Warn", reason))
 
-            await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case))
+            dm = await Utils.dm_user(ctx, "warn", target, guild_name=ctx.guild.name, reason=reason)
+            await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case, dm=dm))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", _emote="WARN", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             return

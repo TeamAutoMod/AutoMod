@@ -20,11 +20,10 @@ class LogFilter(logging.Filter):
 def setup_logging():
     try:
         logging.getLogger("discord").setLevel(logging.INFO)
-        logging.getLogger("discord.http").setLevel(logging.WARNING)
+        logging.getLogger("discord.http").setLevel(logging.WARN)
         logging.getLogger("discord.state").addFilter(LogFilter())
 
-        fmt = "%d/%M/%Y %H:%M:%S"
-        logging.basicConfig(level=logging.INFO, format="[{asctime}] [{levelname:<7}] {name}: {message}", datefmt=fmt, style="{")
+        logging.basicConfig(level=logging.INFO, format="[{levelname:<7}] - {message}", style="{")
         
         yield
     except Exception as ex:

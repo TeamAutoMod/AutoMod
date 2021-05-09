@@ -8,6 +8,7 @@ import datetime
 import argparse
 import numpy as np
 
+from i18n import Translator
 from Utils import Logging
 from Database import Connector, DBUtils
 
@@ -165,3 +166,16 @@ def escape_markdown(inp):
     for char in ["*", "_", "\\", "~", "|", "{", ">"]:
         inp = inp.replace(char, f"\\{char}")
     return inp.replace("@", "@\u200b")
+
+
+
+async def dm_user(ctx, _type, user, **kwargs):
+    msg = Translator.translate(ctx.guild, f"{_type}_dm", **kwargs)
+    out = ""
+    try:
+        await user.send(content=msg)
+        out += "(user notified with a direct message)"
+    except Exception:
+        out += "(failed to message user)"
+    finally:
+        return out
