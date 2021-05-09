@@ -24,12 +24,12 @@ def setup_logging():
         logging.getLogger("discord.state").addFilter(LogFilter())
 
         fmt = "%d/%M/%Y %H:%M:%S"
-        logging.basicConfig(level=logging.INFO, format="[{asctime}] [{levelname:<7}] {name}: {message}", datefmt=fmt)
+        logging.basicConfig(level=logging.INFO, format="[{asctime}] [{levelname:<7}] {name}: {message}", datefmt=fmt, style="{")
         
-        log = logging.getLogger(__name__)
+        #log = logging.getLogger(__name__)
         yield
     finally:
-        handlers = log.handlers[:]
+        handlers = logging.getLogger(__name__).handlers[:]
         for _handler in handlers:
             _handler.close()
             log.removeHandler(_handler)
