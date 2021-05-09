@@ -9,6 +9,7 @@ from discord.ext.commands import AutoShardedBot
 
 from Bot import Handlers
 from Utils import Utils
+from Utils.Cache impotz Cache
 from Database import Connector, DBUtils
 
 
@@ -70,6 +71,8 @@ class AutoMod(AutoShardedBot):
 
         self.resumes = defaultdict(list)
         self.identifies = defaultdict(list)
+
+        self.cache = Cache().build()
 
 
     def _clear_gateway_data(self):
