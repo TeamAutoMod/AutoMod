@@ -36,7 +36,7 @@ def boot_bot(shards):
         except RuntimeError:
             pass
         try:
-            asyncio.run(bot.logout())
+            asyncio.run(bot.close())
             self.loop.stop()
             self.loop.close()
         except:

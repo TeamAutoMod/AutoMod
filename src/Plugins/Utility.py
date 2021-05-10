@@ -44,15 +44,14 @@ class Utility(BasePlugin):
                 member = None if ctx.guild is None else await Utils.get_member(self.bot, ctx.guild, user.id)
             
             e = discord.Embed(color=self.bot.color)
-            e.set_author(name=f"{user.name}#{user.discriminator}", icon_url=user.avatar_url)
             e.set_thumbnail(url=user.avatar_url)
 
             created = user.created_at.strftime("%d/%m/%Y, %H:%M")
             e.add_field(
                 name="User Information",
-                value="ID: {} \nProfile: {} \nCreated: {}"\
+                value="```\n• ID: {} \n• Name: {}#{} \n• Created: {} \n```"\
                 .format(
-                    user.id, user.mention, 
+                    user.id, user.name, user.discriminator, 
                     f"{(datetime.fromtimestamp(time.time()) - user.created_at).days} days ago ({created})"
                 ),
                 inline=False
@@ -60,14 +59,14 @@ class Utility(BasePlugin):
 
             if member is not None:
                 try:
-                    roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
+                    roles = [r.name for r in reversed(member.roles) if r != ctx.guild.default_role]
                 except Exception:
                     roles = ["No roles"]
                 
                 joined = member.joined_at.strftime("%d/%m/%Y, %H:%M")
                 e.add_field(
                     name="Member Information",
-                    value="Joined: {} \nRoles: {}"\
+                    value="```\n• Joined: {} \n• Roles: {} \n```"\
                     .format(
                         f"{(datetime.fromtimestamp(time.time()) - member.joined_at).days} days ago ({joined})", 
                         f"{', '.join(roles) if len(roles) < 20 else f'{len(roles)} roles'}"
@@ -78,7 +77,7 @@ class Utility(BasePlugin):
             warns = len([x for x in db.warns.find() if str(x["warnId"].split("-")[1]) == str(member.id)])
             e.add_field(
                 name="Infractions", 
-                value="Total cases: {}".format(warns if warns >= 1 else "0"),
+                value="```\n• Total cases: {} \n```".format(warns if warns >= 1 else "0"),
                 inline=False
             )
 
