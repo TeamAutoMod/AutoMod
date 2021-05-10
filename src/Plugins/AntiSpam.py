@@ -70,9 +70,9 @@ class AntiSpam(BasePlugin):
         try:
             await guild.kick(user=member, reason="[AutoMod] Spam")
         except discord.HTTPException:
-            log.info(f"[Anti Spam] Error while trying to kick {member} ({member.id}) from server {guild} via the anti spam system")
+            log.info(f"Error while trying to kick {member} ({member.id}) from server {guild} via the anti spam system")
         else:
-            log.info(f"[Anti Spam] Kicked {member} ({member.id}) from server {guild} via the anti spam system")
+            log.info(f"Kicked {member} ({member.id}) from server {guild} via the anti spam system")
 
             case = DBUtils.new_case()
             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
@@ -80,7 +80,7 @@ class AntiSpam(BasePlugin):
             DBUtils.insert(db.inf, new_infraction(case, msg.guild.id, member, mod, timestamp, "Kick", "[AutoMod] Spam"))
 
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_spam", _emote="SHOE", on_time=on_time, user=member, user_id=member.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=msg.channel.mention))
+            await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_spam", _emote="SHOE", on_time=on_time, user=member, user_id=member.id, channel=msg.channel.mention))
         finally:
             self.handling.remove(member.id)
             
@@ -107,7 +107,7 @@ class AntiSpam(BasePlugin):
             await self.handle_spam(message.guild, message.author, message)
         except Exception:
             ex = traceback.format_exc()
-            log.info(f"[Anti Spam] Error in on_message listener: {ex}")
+            log.info(f"Error in on_message listener: {ex}")
             pass
         
 

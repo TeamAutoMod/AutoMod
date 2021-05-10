@@ -121,7 +121,7 @@ class Censor(BasePlugin):
             except discord.NotFound:
                 pass # guess someone was faster, but let's log it anyways
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_zalgo", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=channel.mention, position=found_zalgo.start()))
+            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_zalgo", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, channel=channel.mention, position=found_zalgo.start()))
 
 
     async def censor_message(self, message, target, content, found_words, channel):
@@ -131,7 +131,7 @@ class Censor(BasePlugin):
             except discord.NotFound:
                 pass
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_censor", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=channel.mention, words=", ".join(found_words), content=content))
+            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_censor", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, channel=channel.mention, words=", ".join(found_words), content=content))
     
 
     async def censor_invites(self, message, target, found_link, channel):
@@ -142,7 +142,7 @@ class Censor(BasePlugin):
                 pass
             
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_invite", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, moderator=self.bot.user, moderator_id=self.bot.user.id, channel=channel.mention, link=found_link))
+            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_invite", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, channel=channel.mention, link=found_link))
 
 
 
