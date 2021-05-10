@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://cdn.discordapp.com/attachments/709419287160553492/841426633810640936/zepbanner.png" alt="banner">
+<img src="https://cdn.discordapp.com/attachments/709419287160553492/841427242772594718/automodbanner.png" alt="banner">
 
 </div>
 
