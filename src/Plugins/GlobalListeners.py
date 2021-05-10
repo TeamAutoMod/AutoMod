@@ -146,6 +146,59 @@ class GlobalListeners(BasePlugin):
             await Logging.log_to_guild(guild.id, "memberLogChannel", Translator.translate(guild, "log_manual_unban", _emote="UNLOCK", on_time=on_time, user=user, user_id=user.id))
 
 
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        guild = member.guild
+        if guild is None:
+            return
+        status = DBUtils.get(db.configs, "guildId", f"{guild.id}", "voiceLogging")
+        if status is False:
+            return
+        
+        _type = "voice_"
+        emote = ""
+        kwargs = {
+            "on_time": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+            "user": member
+        }
+        if before.channel is None and after.channel is not None:
+            _type += "channel_join"
+            emote += "JOIN"
+            kwargs.update({
+                "afterChannel": after.channel
+            })
+        elif before.channel is not None and after.channel is None:
+            _type += "channel_leave"
+            emote += "LEAVE"
+            kwargs.update({
+                "beforeChannel": before.channel
+            })
+        elif before.channel is not None and after.channel is not None:
+            _type += "channel_switch"
+            emote += "SWITCH"
+            kwargs.update({
+                "beforeChannel": before.channel,
+                "afterChannel": after.channel
+            })
+
+        elif before.self_stream is False and after.self_stream is True:
+            _type += "stream_started"
+            emote += "CAMERA"
+            kwargs.update({
+                "afterChannel": after.channel
+            })
+        elif before.self_stream is True and after.self_stream is False:
+            _type += "stream_ended"
+            emote += "SLEEP"
+            kwargs.update({
+                "afterChannel": after.channel
+            })
+        else:
+            return
+
+        await Logging.log_to_guild(guild.id, "voiceLogChannel", Translator.translate(guild, f"{_type}", _emote=emote, **kwargs))
+
+        
 
 
 def setup(bot):

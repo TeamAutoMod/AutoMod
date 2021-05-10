@@ -61,7 +61,7 @@ class Infractions(BasePlugin):
                     dm = await Utils.dm_user(ctx, "ban", target, guild_name=ctx.guild.name, reason=reason)
                     await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=target, reason=f"{reason} (seconds 4 warns)", case=case, dm=dm))
                     on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                    await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate("log_ban", _emote="ALERT", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (seconds 4 warns)", case=case))
+                    await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate("log_ban", _emote="HAMMER", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (seconds 4 warns)", case=case))
                     return
                 else:
                     await ctx.guild.kick(user=target, reason=reason)
@@ -128,9 +128,9 @@ class Infractions(BasePlugin):
             if await Moderation.can_act(self, ctx, member, ctx.author):
                 await self._warn(ctx, member, reason)
             else:
-                await ctx.send(Translator.translate(ctx.guild, "warn_not_allowed", _emote="NO", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "warn_not_allowed", _emote="NO"))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="WARN"))
 
 
     @commands.guild_only()
@@ -146,9 +146,9 @@ class Infractions(BasePlugin):
             if await Moderation.can_act(self, ctx, member, ctx.author):
                 await self._clearwarns(ctx, member, reason)
             else:
-                await ctx.send(Translator.translate(ctx.guild, "warnclearing_not_allowed", _emote="NO", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "warnclearing_not_allowed", _emote="WARN"))
         else:
-            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
+            await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="WARN"))
 
 
 

@@ -2,6 +2,8 @@ import os
 import asyncio
 import time
 import traceback
+import argparse
+import shlex
 from datetime import datetime
 
 import discord
@@ -17,6 +19,10 @@ from Plugins.Base import BasePlugin
 
 db = Connector.Database()
 
+
+class Arguments(argparse.ArgumentParser):
+    def error(self, message):
+        raise RuntimeError(message)
 
 
 class Utility(BasePlugin):
@@ -127,6 +133,55 @@ class Utility(BasePlugin):
         deleted = await strategy(ctx, search)
         await ctx.send(Translator.translate(ctx.guild, "clean_success", _emote="YES", deleted=deleted, plural="" if deleted == 1 else "s"))
         
+
+    @commands.command()
+    @commands.has_permissions(manage_messages=True)
+    async def post(self, ctx, channel: discord.TextChannel, *, content):
+        if len(content) < 1:
+            return await ctx.send(Translator.translate(ctx.guild, "min_content", _emote="WARN"))
+        if len(content) > 2000:
+            return await ctx.send(Translator.translate(ctx.guild, "max_content", _emote="WARN"))
+        
+        try:
+            await channel.send(content=content)
+            await ctx.send(Translator.translate(ctx.guild, "message_posted", _emote="YES"))
+        except Exception as ex:
+            await ctx.send(Translator.translate(ctx.guild, "posting_failed", _emote="WARN", exc=ex))
+
+    
+    @commands.command(usage="post_embed <channel> <content> [-title] [-color]")
+    @commands.has_permissions(manage_messages=True)
+    async def post_embed(self, ctx, channel: discord.TextChannel, *, content):
+        if len(content) < 1:
+            return await ctx.send(Translator.translate(ctx.guild, "min_content"))
+        if len(content) > 2000:
+            return await ctx.send(Translator.translate(ctx.guild, "max_content"))
+
+        p = Arguments(add_help=False, allow_abbrev=False)
+        p.add_argument("-title", nargs="+")
+        p.add_argument("-color", type=int)
+
+        try:
+            args = p.parse_args(shlex.split(args))
+        except Exception as ex:
+            return await ctx.send(str(ex))
+        
+        e = discord.Embed(
+            color=args.color if args.color else self.bot.color, 
+            title=args.title,
+            description=content
+        )
+
+        try:
+            await channel.send(embed=e)
+            await ctx.send(Translator.translate(ctx.guild, "message_posted", _emote="YES"))
+        except Exception as ex:
+            await ctx.send(Translator.translate(ctx.guild, "posting_failed", _emote="WARN", exc=ex))
+        
+
+
+
+
 
 def setup(bot):
     bot.add_cog(Utility(bot))

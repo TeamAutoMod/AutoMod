@@ -8,6 +8,7 @@
     "NO_MOUTH": "😶",
     "PARTY": "🥳",
     "ANGEL": "😇",
+    "SLEEP": "😴",
 
     "BIN": "🗑️",
     "PEN": "✏️",
@@ -17,13 +18,16 @@
     "JOIN": "📤",
     "LEAVE": "📥",
 
-    "ALERT": "🚨",
+    "HAMMER": "🔨",
     "SHOE": "👢",
     "WARN": "⚠️",
-    "CENSOR": "🚫",
+    "CENSOR": "🛑",
     "EYES": "👀",
     "WRENCH": "🔧",
 
     "MUTE": "🔇",
-    "UNMUTE": "🔊"
+    "UNMUTE": "🔊",
+
+    "CAMERA": "🎥",
+    "SWITCH": "🔀"
 }

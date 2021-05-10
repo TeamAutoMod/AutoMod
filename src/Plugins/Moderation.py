@@ -61,9 +61,9 @@ class Moderation(BasePlugin):
                 dm = await Utils.dm_user(ctx, "ban", member, guild_name=ctx.guild.name, reason=reason)
                 await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=member, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_ban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_ban", _emote="HAMMER", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", _emote="NO", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", _emote="WARN"))
         else:
             await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
@@ -92,7 +92,7 @@ class Moderation(BasePlugin):
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", _emote="SHOE", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "kick_not_allowed", _emote="NO", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "kick_not_allowed", _emote="WARN"))
         else:
             await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
@@ -118,9 +118,9 @@ class Moderation(BasePlugin):
                 dm = await Utils.dm_user(ctx, "ban", member, guild_name=ctx.guild.name, reason=reason)
                 await ctx.send(Translator.translate(ctx.guild, "user_cleanbanned", _emote="YES", user=member, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_cleanban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_cleanban", _emote="HAMMER", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", _emote="WARN"))
         else:
             await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
@@ -147,9 +147,9 @@ class Moderation(BasePlugin):
                 dm = await Utils.dm_user(ctx, "ban", member, guild_name=ctx.guild.name, reason=reason)
                 await ctx.send(Translator.translate(ctx.guild, "user_softbanned", _emote="YES", user=member, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_softban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_softban", _emote="HAMMER", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", _emote="NO", user=member.name))
+                await ctx.send(Translator.translate(ctx.guild, "ban_not_allowed", _emote="WARN"))
         else:
             await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="NO_MOUTH"))
 
@@ -177,9 +177,9 @@ class Moderation(BasePlugin):
                 dm = await Utils.dm_user(ctx, "ban", user, guild_name=ctx.guild.name, reason=reason)
                 await ctx.send(Translator.translate(ctx.guild, "user_forcebanned", _emote="YES", user=user, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_forceban", _emote="ALERT", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
+                await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_forceban", _emote="HAMMER", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
-                await ctx.send(Translator.translate(ctx.guild, "target_already_banned", _emote="NO_MOUTH"))
+                await ctx.send(Translator.translate(ctx.guild, "target_already_banned", _emote="WARN"))
         else:
             await ctx.invoke(self.ban, user=user, reason=reason)
 
@@ -196,7 +196,7 @@ class Moderation(BasePlugin):
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
-            await ctx.send(Translator.translate(ctx.guild, "not_banned", _emote="NO", user=user.name))
+            await ctx.send(Translator.translate(ctx.guild, "not_banned", _emote="WARN"))
         else:
             self.bot.running_unbans.add(user.id)
             await self._unban(ctx, user, reason)
@@ -289,7 +289,7 @@ class Moderation(BasePlugin):
                     else:
                         await ctx.send(Translator.translate(ctx.guild, "role_too_high"))
                 else:
-                    await ctx.send(Translator.translate(ctx.guild, "mute_not_allowed", _emote="NO", user=user.name))
+                    await ctx.send(Translator.translate(ctx.guild, "mute_not_allowed", _emote="WARN"))
     
 
 
@@ -298,7 +298,7 @@ class Moderation(BasePlugin):
     @commands.has_permissions(ban_members=True)
     async def unmute(self, ctx, user: discord.Member):
         if not self.is_muted(ctx.guild, user):
-            return await ctx.send(Translator.translate(ctx.guild, "not_muted", _emote="NO", user=user.name))
+            return await ctx.send(Translator.translate(ctx.guild, "not_muted", _emote="WARN"))
         DBUtils.delete(db.mutes, "mute_id", f"{ctx.guild.id}-{user.id}")
         await ctx.send(Translator.translate(ctx.guild, "mute_lifted", _emote="YES", user=user))
         
@@ -371,7 +371,7 @@ class Moderation(BasePlugin):
         
         await ctx.send(Translator.translate(ctx.guild, "mban_success", _emote="YES", users=banned, total=len(to_ban)))
         on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_ban", _emote="ALERT", on_time=on_time, users=banned, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
+        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_ban", _emote="HAMMER", on_time=on_time, users=banned, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
 
 
     @commands.guild_only()
@@ -507,7 +507,7 @@ class Moderation(BasePlugin):
         try:
             await ctx.guild.ban(user=user, reason=reason, delete_message_days=days)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", _emote="NO", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", _emote="WARN", error=e))
 
 
 
@@ -515,7 +515,7 @@ class Moderation(BasePlugin):
         try:
             await ctx.guild.kick(user=user, reason=reason)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "kick_failed", _emote="NO", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "kick_failed", _emote="WARN", error=e))
 
 
 
@@ -523,18 +523,18 @@ class Moderation(BasePlugin):
         try:
             await ctx.guild.unban(user=user, reason=reason)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "unban_failed", _emote="NO", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "unban_failed", _emote="WARN", error=e))
 
 
 
     async def _forceban(self, ctx, user, reason):
         if user.discriminator == "0000":
-            return await ctx.send(Translator.translate(ctx.guild, "is_system_user", _emote="NO"))
+            return await ctx.send(Translator.translate(ctx.guild, "is_system_user", _emote="WARN"))
         
         try:
             await ctx.guild.ban(user=user, reason=reason)
         except Exception as e:
-            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", _emote="NO", error=e))
+            return await ctx.send(Translator.translate(ctx.guild, "ban_failed", _emote="WARN", error=e))
 
 
 
@@ -594,185 +594,12 @@ class Moderation(BasePlugin):
             return False
         try:
             await ctx.guild.fetch_ban(target)
-            await ctx.send(Translator.translate(ctx.guild, "target_already_banned", _emote="NO_MOUTH"))
+            await ctx.send(Translator.translate(ctx.guild, "target_already_banned", _emote="WARN"))
             return False
         except discord.NotFound:
             return True
         else:
             return True
-
-
-    ######## complex moderation commands
-
-    @commands.command()
-    @commands.guild_only()
-    @commands.has_permissions(ban_members=True)
-    async def massban(self, ctx, *, args):
-        """massban_help"""
-        if not isinstance(ctx.author, discord.Member): # sometimes discord just thinks the author isn't a guild member, wtf?
-            try:
-                author = await ctx.guild.fetch_member(ctx.author.id)
-            except discord.HTTPException:
-                return await ctx.send(Translator.translate(ctx.guild, "no_member_object"))
-        else:
-            author = ctx.author
-        
-
-        """Define arguments"""
-        p = Arguments(add_help=False, allow_abbrev=False)
-        p.add_argument("--channel", "-c")
-        p.add_argument("--reason", "-r")
-
-        p.add_argument("--search", type=int, default=100)
-        p.add_argument("--regex")
-
-        p.add_argument("--no-avatar", action="store_true")
-        p.add_argument("--no-roles", action="store_true")
-
-        p.add_argument("--created", type=int)
-        p.add_argument("--joined", type=int)
-        p.add_argument("--joined-before", type=str or int)
-        p.add_argument("--joined-after", type=str or int)
-
-        p.add_argument("--contains")
-        p.add_argument("--starts")
-        p.add_argument("--ends")
-        p.add_argument("--match")
-
-        p.add_argument("--show", action="store_true")
-
-        p.add_argument("--embeds", action="store_const", const=lambda m: len(m.embeds))
-        p.add_argument("--files", action="store_const", const=lambda m: len(m.attachments))
-
-        p.add_argument("--after", type=int)
-        p.add_argument("--before", type=int)
-
-        try:
-            args = p.parse_args(shlex.split(args))
-        except Exception as ex:
-            return await ctx.send(str(ex))
-
-        targets = []
-
-        if args.channel:
-            channel = await commands.TextChannelConverter().convert(ctx, args.channel)
-
-            before = args.before and discord.Object(id=args.before)
-            after = args.after and discord.Object(id=args.after)
-
-            pr = []
-            if args.contains:
-                pr.append(lambda m: args.contains.lower() in m.content.lower())
-            if args.starts:
-                pr.append(lambda m: m.content.startswith(args.starts))
-            if args.ends:
-                pr.append(lambda m: m.content.endswith(args.ends))
-            if args.match:
-                try:
-                    _match = re.compile(args.match)
-                except re.error as ex:
-                    return await ctx.send(Translator.translate(ctx.guild, "invalid_regex", ex=ex))
-                else:
-                    pr.append(lambda m, x = _match: x.match(m.content))
-            if args.embeds:
-                pr.append(args.embeds)
-            if args.files:
-                pr.append(args.files)
-            
-            async for message in channel.history(limit=min(max(1, args.search), 2000), before=before, after=after):
-                if all(_p(message) for _p in pr):
-                    targets.append(message.author)
-        else:
-            if ctx.guild.chunked:
-                targets = ctx.guild.members
-            else:
-                async with ctx.typing():
-                    await ctx.guild.chunk(cache=True)
-                targets = ctx.guild.members
-            
-        pr = [
-            lambda m: isinstance(m, discord.Member) and can_execute(ctx, author, m),
-            lambda m: not m.bot,
-            lambda m: m.discriminator != "0000"
-        ]
-
-        converter = commands.MemberConverter()
-
-        if args.regex:
-            try:
-                _regex = re.compile(args.regex)
-            except re.error as ex:
-                return await ctx.send(Translator.translate(ctx.guild, "invalid_regex", ex=ex))
-            else:
-                pr.append(lambda m, x = _regex: x.match(m.name))
-        
-        if args.no_avatar:
-            pr.append(lambda m: m.avatar is None)
-        if args.no_roles:
-            pr.append(lambda m: len(getattr(m, "roles", [])) <= 1)
-
-        now = datetime.datetime.utcnow()
-        if args.created:
-            def created(member, *, offset=now - datetime.timedelta(minutes=args.created)):
-                return member.created_at > offset
-            pr.append(created)
-        
-        if args.joined:
-            def joined(member, *, offset=now - datetime.timedelta(minutes=args.joined)):
-                if isinstance(member, discord.User):
-                    return True # in this case they already left the server
-                return member.joined_at > offset
-            pr.append(joined)
-        
-        if args.joined_after:
-            _joined_after_member = await converter.convert(ctx, args.joined_after)
-            def joined_after(member, *, _other=_joined_after_member):
-                return member.joined_at and _other.joined_at and member.joined_at > _other.joined_at
-            pr.append(joined_after)
-
-        if args.joined_before:
-            _joined_before_member = await converter.convert(ctx, args.joined_after)
-            def joined_before(member, *, _other=_joined_before_member):
-                return member.joined_at and _other.joined_at and member.joined_at < _other.joined_at
-            pr.append(joined_before)
-        
-        targets = {m for m in targets if all(_p(m) for _p in pr)}
-        if len(targets) == 0:
-            return await ctx.send(Translator.translate(ctx.guild, "no_targets_found", _emote="NO"))
-        
-        if args.show:
-            targets = sorted(targets, key=lambda m: m.joined_at or now)
-            fmt = "\n".join(f"{m.id}\tJoined: {m.joined_at}\tCreated: {m.created_at}\n{m}" for m in targets)
-            content = f"Time right now: {datetime.datetime.utcnow()}\nTotal targets: {len(targets)}\n{fmt}"
-            f = discord.File(io.BytesIO(content.encode("utf-8")), filename="members.txt")
-            return await ctx.send(file=f)
-
-        if args.reason is None:
-            return await ctx.send(Translator.translate(ctx.guild, "missing_reason_flag"))
-        else:
-            reason = await Reason().convert(ctx, args.reason)
-
-        confirm = await ctx.prompt(f'This action will ban {len(targets)} member{"" if len(targets) == 1 else "s"}. Are you sure?')
-        if not confirm:
-            return await ctx.send(Translator.translate(ctx.guild, "aborting"))
-        
-        banned = 0
-        for target in targets:
-            try:
-                await self._forceban(ctx, target, reason)
-                self.bot.running_removals.add(target.id)
-
-                case = DBUtils.new_case()
-                timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
-                DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", f"[Custom Ban] {reason}"))
-            except discord.HTTPException:
-                pass
-            else:
-                banned += 1
-        
-        await ctx.send(Translator.translate(ctx.guild, "mban_success", _emote="YES", users=banned, total=len(targets)))
-        on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mass_ban", _emote="ALERT", on_time=on_time, users=banned, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
 
 
 

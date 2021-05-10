@@ -220,9 +220,14 @@ class GuildConfig(BasePlugin):
         """enable_help"""
         if ctx.invoked_subcommand is None:
             normal = [f'{ctx.prefix}config enable {x}' for x in ["automod", "lvlsystem", "antispam"]]
-            with_arg = [f'{ctx.prefix}config enable {x} <channel>' for x in ["message_logging", "member_logging"]]
+            with_arg = [f'{ctx.prefix}config enable {x} <channel>' for x in ["message_logging", "member_logging", "voice_logging"]]
             to_send = [*normal, *with_arg]
-            await ctx.send("**Valid modules** \n```\n{}\n```".format("\n".join(to_send)))
+            e = discord.Embed(
+                color=self.bot.color, 
+                title="Valid Modules",
+                description="```\n{}\n```".format("\n".join(to_send))
+            )
+            await ctx.send(embed=e)
 
 
     @enable.command()
@@ -262,14 +267,29 @@ class GuildConfig(BasePlugin):
         await ctx.send(Translator.translate(ctx.guild, "enabled_module_no_channel", _emote="YES", module="rank_system"))
 
 
+    @enable.command()
+    async def voice_logging(self, ctx, channel: discord.TextChannel):
+        """voice_logging_help"""
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "voiceLogChannel", int(channel.id))
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "voiceLogging", True)
+        await ctx.send(Translator.translate(ctx.guild, "enabled_module_channel", _emote="YES", module="voice_logging", channel=channel.mention))
+
+
+
+
 
 
     @config.group()
     async def disable(self, ctx):
         """disable_help"""
         if ctx.invoked_subcommand is None:
-            modules = [f'{ctx.prefix}config disable {x}' for x in ["automod", "lvlsystem", "message_logging", "member_logging"]]
-            await ctx.send("**Valid Modules** \n```\n{}\n```".format("\n".join(modules)))
+            modules = [f'{ctx.prefix}config disable {x}' for x in ["automod", "lvlsystem", "message_logging", "member_logging", "voice_logging"]]
+            e = discord.Embed(
+                color=self.bot.color, 
+                title="Valid Modules",
+                description="```\n{}\n```".format("\n".join(modules))
+            )
+            await ctx.send(embed=e)
 
 
     @disable.command(name="message_logging")
@@ -305,6 +325,14 @@ class GuildConfig(BasePlugin):
         """lvlsystem_help"""
         DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "lvlsystem", False)
         await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="rank_system"))
+
+
+    @disable.command(name="voice_logging")
+    async def _voice_logging(self, ctx):
+        """voice_logging_help"""
+        DBUtils.update(db.configs, "guildId", f"{ctx.guild.id}", "voiceLogging", False)
+        await ctx.send(Translator.translate(ctx.guild, "disabled_module", _emote="YES", module="voice_logging"))    
+
 
 
     @config.group()

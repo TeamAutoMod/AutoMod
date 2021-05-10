@@ -276,7 +276,7 @@ async def on_command_error(bot, ctx, error):
         else:
             await ctx.send(Translator.translate(ctx.guild, "just_joined"))
     if isinstance(error, commands.BotMissingPermissions):
-        await ctx.send(Translator.translate(ctx.guild, "missing_bot_perms", _emote="LOCK"))
+        await ctx.send(Translator.translate(ctx.guild, "missing_bot_perms", _emote="WARN"))
     elif isinstance(error, commands.CommandNotFound):
         pass
     elif isinstance(error, commands.MissingRequiredArgument):
@@ -303,4 +303,4 @@ async def on_command_error(bot, ctx, error):
     elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(Translator.translate(ctx.guild, "on_cooldown", retry_after=round(error.retry_after)))
     elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(Translator.translate(ctx.guild, "missing_user_perms", _emote="LOCK"))
+        await ctx.send(Translator.translate(ctx.guild, "missing_user_perms", _emote="WARN"))
