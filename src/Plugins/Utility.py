@@ -135,8 +135,10 @@ class Utility(BasePlugin):
         
 
     @commands.command()
+    @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.has_permissions(manage_messages=True)
     async def post(self, ctx, channel: discord.TextChannel, *, content):
+        """post_help"""
         if len(content) < 1:
             return await ctx.send(Translator.translate(ctx.guild, "min_content", _emote="WARN"))
         if len(content) > 2000:
@@ -149,15 +151,14 @@ class Utility(BasePlugin):
             await ctx.send(Translator.translate(ctx.guild, "posting_failed", _emote="WARN", exc=ex))
 
     
-    @commands.command(usage="post_embed <channel> <content> [-title] [-color]")
+    @commands.command(usage="post_embed <channel> [-content] [-title] [-color]")
+    @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.has_permissions(manage_messages=True)
-    async def post_embed(self, ctx, channel: discord.TextChannel, *, content):
-        if len(content) < 1:
-            return await ctx.send(Translator.translate(ctx.guild, "min_content"))
-        if len(content) > 2000:
-            return await ctx.send(Translator.translate(ctx.guild, "max_content"))
-
+    async def post_embed(self, ctx, channel: discord.TextChannel, *, args):
+        """post_embed_help"""
         p = Arguments(add_help=False, allow_abbrev=False)
+
+        p.add_argument("-content", nargs="+")
         p.add_argument("-title", nargs="+")
         p.add_argument("-color", type=int)
 
@@ -166,6 +167,11 @@ class Utility(BasePlugin):
         except Exception as ex:
             return await ctx.send(str(ex))
         
+        content = args.content if args.content else ""
+        if len(content) < 1:
+            return await ctx.send(Translator.translate(ctx.guild, "min_content"))
+        if len(content) > 2000:
+            return await ctx.send(Translator.translate(ctx.guild, "max_content"))
         e = discord.Embed(
             color=args.color if args.color else self.bot.color, 
             title=args.title,
