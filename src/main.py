@@ -53,4 +53,7 @@ if __name__ == "__main__":
     shards = parse_args().total_shards
 
     with setup_logging():
-        boot_bot(shards)
+        try:
+            boot_bot(shards)
+        except Exception as ex:
+            print(ex)
