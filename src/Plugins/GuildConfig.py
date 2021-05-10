@@ -31,6 +31,7 @@ class GuildConfig(BasePlugin):
     async def config(self, ctx):
         "config_help"
         if ctx.subcommand_passed is None:
+            await ctx.trigger_typing()
             enabled_modules, disabled_modules = DBUtils.get_module_config(ctx.guild.id)
             general, messages, members, voices = await DBUtils.get_log_channels(self.bot, ctx.guild.id)
             welcome_channel, welcome_msg = await DBUtils.get_welcome_config(self.bot, ctx.guild.id)

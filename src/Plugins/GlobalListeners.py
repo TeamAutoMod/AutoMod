@@ -163,13 +163,13 @@ class GlobalListeners(BasePlugin):
         }
         if before.channel is None and after.channel is not None:
             _type += "channel_join"
-            emote += "REDDOT"
+            emote += "BLUEDOT"
             kwargs.update({
                 "afterChannel": after.channel
             })
         elif before.channel is not None and after.channel is None:
             _type += "channel_leave"
-            emote += "BLUEDOT"
+            emote += "REDDOT"
             kwargs.update({
                 "beforeChannel": before.channel
             })
