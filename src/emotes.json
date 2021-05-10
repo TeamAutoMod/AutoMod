@@ -28,6 +28,7 @@
     "MUTE": "🔇",
     "UNMUTE": "🔊",
 
-    "CAMERA": "🎥",
-    "SWITCH": "🔀"
+    "REDDOT": "🔴",
+    "BLUEDOT": "🔵",
+    "SWITCH": "↔️"
 }
