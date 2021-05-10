@@ -38,7 +38,7 @@ def init_config():
             CONFIG = json.load(f)
             LOADED_CONFIG = True
     except Exception as ex:
-        log.error(f"[Config] Error while trying to set the master variables: {ex}")
+        log.error(f"Error while trying to set the master variables: {ex}")
 
 
 
@@ -49,11 +49,11 @@ def from_config(key):
     try:
         return CONFIG[key]
     except KeyError:
-        log.error(f"[Config] Couldn't find anything for {key} in master.json")
+        log.error(f"Couldn't find anything for {key} in master.json")
 
 
 async def clean_shutdown(bot, trigger):
-    log.info(f"[Info] AutoMod is shutting down, triggered by {trigger}")
+    log.info(f"AutoMod is shutting down, triggered by {trigger}")
     await bot.logout()
     await bot.close()
 
