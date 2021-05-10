@@ -32,7 +32,7 @@ class GuildConfig(BasePlugin):
         "config_help"
         if ctx.subcommand_passed is None:
             enabled_modules, disabled_modules = DBUtils.get_module_config(ctx.guild.id)
-            general, messages, members = await DBUtils.get_log_channels(self.bot, ctx.guild.id)
+            general, messages, members, voices = await DBUtils.get_log_channels(self.bot, ctx.guild.id)
             welcome_channel, welcome_msg = await DBUtils.get_welcome_config(self.bot, ctx.guild.id)
             mute_role_id = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "muteRole")
 
@@ -43,8 +43,8 @@ class GuildConfig(BasePlugin):
             e.set_thumbnail(url=ctx.guild.icon_url)
             e.add_field(
                 name=Translator.translate(ctx.guild, "log_channels"),
-                value="```\n• Mod Actions: {} \n• Messages: {} \n• Join/Leave: {} \n```"\
-                .format(general, messages, members),
+                value="```\n• Mod Actions: {} \n• Messages: {} \n• Join/Leave: {} \n• Voices: {} \n```"\
+                .format(general, messages, members, voices),
                 inline=False
             )
             e.add_field(

@@ -180,25 +180,10 @@ class GlobalListeners(BasePlugin):
                 "beforeChannel": before.channel,
                 "afterChannel": after.channel
             })
-
-        elif before.self_stream is False and after.self_stream is True:
-            _type += "stream_started"
-            emote += "CAMERA"
-            kwargs.update({
-                "afterChannel": after.channel
-            })
-        elif before.self_stream is True and after.self_stream is False:
-            _type += "stream_ended"
-            emote += "SLEEP"
-            kwargs.update({
-                "afterChannel": after.channel
-            })
         else:
             return
 
         await Logging.log_to_guild(guild.id, "voiceLogChannel", Translator.translate(guild, f"{_type}", _emote=emote, **kwargs))
-
-        
 
 
 def setup(bot):

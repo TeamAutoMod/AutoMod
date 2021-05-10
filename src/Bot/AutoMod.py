@@ -60,7 +60,8 @@ class AutoMod(AutoShardedBot):
             bans=True,
             emojis=True,
             messages=True,
-            reactions=True
+            reactions=True,
+            voice_states=True
         )
         super().__init__(
             command_prefix=prefix_callable, intents=intents, description="Discord moderation bot",

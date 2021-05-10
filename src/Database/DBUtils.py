@@ -34,7 +34,8 @@ mod = {
     "automod": "automod",
     "lvlsystem": "lvlsystem",
     "memberLogging": "member_logging",
-    "messageLogging": "message_logging"
+    "messageLogging": "message_logging",
+    "voiceLogging": "voice_logging"
 }
 
 
@@ -56,10 +57,12 @@ async def get_log_channels(bot, guild_id):
     general = None
     messages = None
     members = None
+    voices = None
 
     g = get(db.configs, "guildId", f"{guild_id}", "memberLogChannel")
     msg = get(db.configs, "guildId", f"{guild_id}", "messageLogChannel")
     m = get(db.configs, "guildId", f"{guild_id}", "joinLogChannel")
+    v = get(db.configs, "guildId", f"{guild_id}", "voiceLogChannel")
 
     if g != "":
         general = await bot.fetch_channel(int(g))
@@ -76,7 +79,12 @@ async def get_log_channels(bot, guild_id):
     else:
         members = "Not set yet"
 
-    return general, messages, members
+    if v != "":
+        voices = await bot.fetch_channel(int(v))
+    else:
+        voices = "Not set yet"
+
+    return general, messages, members, voices
 
 
 
