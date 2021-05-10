@@ -23,11 +23,9 @@
     "log_reapplied_mute": "``[{on_time} UTC]`` {emote} Reapplied active mute for **{user}** (``{user_id}``) on rejoin",
     "log_manual_unmute": "``[{on_time} UTC]`` ``[]`` {emote} **{user}** (``{user_id}``) was manually unmuted by **{moderator}** (``{moderator_id}``)",
 
-    "voice_channel_join": "``[{on_time} UTC]`` {emote} **{user}** joined {afterChannel}",
-    "voice_channel_leave": "``[{on_time} UTC]`` {emote} **{user}** left {beforeChannel}",
-    "voice_channel_switch": "``[{on_time} UTC]`` {emote} **{user}** moved from {afterChannel} to {beforeChannel}",
-    "voice_stream_started": "``[{on_time} UTC]`` {emote} **{user}** Started streaming in {afterChannel}",
-    "voice_stream_ended": "``[{on_time} UTC]`` {emote} **{user}** Stopped streaming in {afterChannel}",
+    "voice_channel_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) joined voice channel ``{afterChannel}``",
+    "voice_channel_leave": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) left voice channel ``{beforeChannel}``",
+    "voice_channel_switch": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) moved from voice channel ``{afterChannel}`` to ``{beforeChannel}``",
 
     "user_banned": "{emote} Banned **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
     "user_unbanned": "{emote} Unbanned **{user.name}#{user.discriminator}** (Case #{case})",
