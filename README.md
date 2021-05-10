@@ -1,8 +1,6 @@
 <div align="center">
 
-![GitHub](https://img.shields.io/discord/697814384197632050?label=Discord&logo=Discord&logoColor=white)
-![Github](https://img.shields.io/github/issues/xezzz/AutoMod?color=red&label=Active%20issues&logo=github)
-![Github](https://img.shields.io/github/stars/xezzz/AutoMod?color=yellow&label=Stars&logo=github)
+<img src="https://cdn.discordapp.com/attachments/709419287160553492/841426633810640936/zepbanner.png" alt="banner">
 
 </div>
 
