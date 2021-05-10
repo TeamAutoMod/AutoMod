@@ -48,7 +48,7 @@ class Custom(BasePlugin):
                 await ctx.send(Translator.translate(ctx.guild, "no_custom_commands"))
             else:
                 e = discord.Embed(
-                    color=discord.Color.blurple(),
+                    color=self.bot.color,
                     title=Translator.translate(ctx.guild, "custom_commands", guild_name=ctx.guild.name),
                     description="```\n{}\n```".format("\n".join(custom_commands))
                 )

@@ -39,7 +39,7 @@ async def get_all_command_help_embed(ctx, bot):
 
     prefix = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "prefix")
     _def = discord.Embed(
-        color=discord.Color.blurple(), 
+        color=bot.color, 
         title="Help Page", 
         description=f"All commands start with ``{prefix}`` \n• Use ``{prefix}help <command>`` for more info about a command (subcommands & args)"
     )
@@ -57,7 +57,7 @@ async def get_all_command_help_embed(ctx, bot):
             )
             pages.append(_def)
             _def = discord.Embed(
-                color=discord.Color.blurple(), 
+                color=bot.color, 
                 title="Help Page", 
                 description=f"All commands start with ``{prefix}`` \n• Use ``{prefix}help <command>`` for more info about a command (subcommands & args)"
             )
@@ -96,7 +96,7 @@ def generate_command_help(bot, ctx, command):
     usage = ctx.bot.help_command.get_command_signature(command)
     help_message = Translator.translate(ctx.guild, f"{command.help}")
     
-    e = discord.Embed(color=discord.Color.blurple(), title="Command Help")
+    e = discord.Embed(color=bot.color, title="Command Help")
     e.add_field(name="Description", value=f"```\n{help_message}\n```", inline=False)
     e.add_field(name="Usage", value=f"```\n{usage}\n```", inline=False)
 

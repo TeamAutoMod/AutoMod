@@ -165,7 +165,7 @@ class Leveling(BasePlugin):
             
             msg = await ctx.send(Translator.translate(ctx.guild, "fetching_lb", _emote="LOAD"))
 
-            start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found \nYou can check your own rank by using the ``rank`` command".format(len(lvl_strings)))
+            start = discord.Embed(color=self.bot.color, title="Server Leaderboard", description="``{}`` ranked users found \nYou can check your own rank by using the ``rank`` command".format(len(lvl_strings)))
             fields = 0
             max_fields = 6 if len(lvl_strings) >= 6 else len(lvl_strings)
             max_fields -= 1
@@ -204,7 +204,7 @@ class Leveling(BasePlugin):
                         inline=False
                     )
                     pages.append(start)
-                    start = discord.Embed(color=discord.Color.blurple(), title="Server Leaderboard", description="``{}`` ranked users found \nYou can check your own rank by using the ``rank`` command".format(len(lvl_strings)))
+                    start = discord.Embed(color=self.bot.color, title="Server Leaderboard", description="``{}`` ranked users found \nYou can check your own rank by using the ``rank`` command".format(len(lvl_strings)))
                     fields = 0
                 else:
                     fields += 1
@@ -340,7 +340,7 @@ class Leveling(BasePlugin):
             return await ctx.send(Translator.translate(ctx.guild, "no_lvl_roles", _emote="NO"))
 
         embed = discord.Embed(
-            color=discord.Color.blurple(),
+            color=self.bot.color,
             title="{} {}".format(ctx.guild.name, Translator.translate(ctx.guild, "lvl_roles")),
         )
         embed.set_thumbnail(
@@ -367,7 +367,7 @@ class Leveling(BasePlugin):
 
     async def _rank(self, ctx, user, xp, lvl, needed_xp):
         embed = discord.Embed(
-            color=discord.Color.blurple(),
+            color=self.bot.color,
             title="User Rank"
         )
         embed.set_thumbnail(

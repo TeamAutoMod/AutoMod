@@ -42,7 +42,7 @@ class Infractions(BasePlugin):
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", reason))
                 
                 dm = await Utils.dm_user(ctx, "warn", target, guild_name=ctx.guild.name, reason=reason)
-                await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case, dm=dm))
+                await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", _emote="WARN", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
                 return
@@ -59,7 +59,7 @@ class Infractions(BasePlugin):
                     DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Ban", reason))
 
                     dm = await Utils.dm_user(ctx, "ban", target, guild_name=ctx.guild.name, reason=reason)
-                    await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (seconds 4 warns)", case=case, dm=dm))
+                    await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=target, reason=f"{reason} (seconds 4 warns)", case=case, dm=dm))
                     on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                     await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate("log_ban", _emote="ALERT", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (seconds 4 warns)", case=case))
                     return
@@ -74,7 +74,7 @@ class Infractions(BasePlugin):
                     DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Kick", reason))
 
                     dm = await Utils.dm_user(ctx, "kick", target, guild_name=ctx.guild.name, reason=reason)
-                    await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=target, user_id=target.id, reason=f"{reason} (first 4 warns)", case=case, dm=dm))
+                    await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=target, reason=f"{reason} (first 4 warns)", case=case, dm=dm))
                     on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                     await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", _emote="SHOE", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=f"{reason} (first 4 warns)", case=case))
                     return
@@ -86,7 +86,7 @@ class Infractions(BasePlugin):
             DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, target, ctx.author, timestamp, "Warn", reason))
 
             dm = await Utils.dm_user(ctx, "warn", target, guild_name=ctx.guild.name, reason=reason)
-            await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, user_id=target.id, reason=reason, case=case, dm=dm))
+            await ctx.send(Translator.translate(ctx.guild, "user_warned", _emote="YES", user=target, reason=reason, case=case, dm=dm))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn", _emote="WARN", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             return
@@ -100,7 +100,7 @@ class Infractions(BasePlugin):
         if not DBUtils.get(db.warns, "warnId", warn_id, "check"):
             case = DBUtils.new_case()
 
-            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", _emote="YES", user=target, user_id=target.id, reason=reason))
+            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", _emote="YES", user=target, reason=reason))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn_clearing", _emote="ANGEL", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
             return
@@ -110,7 +110,7 @@ class Infractions(BasePlugin):
 
             case = DBUtils.new_case()
 
-            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", _emote="YES", user=target, user_id=target.id, reason=reason))
+            await ctx.send(Translator.translate(ctx.guild, "user_warns_cleared", _emote="YES", user=target, reason=reason))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_warn_clearing", _emote="ANGEL", on_time=on_time, user=target, user_id=target.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason))
 
@@ -258,7 +258,7 @@ class Infractions(BasePlugin):
 
 
             count_string = ', '.join('{} {}{}'.format(counters[x], x.lower(), "" if int(counters[x]) == 1 else "s") for x in counters if counters[x] != 0)
-            start = discord.Embed(color=discord.Color.blurple(), title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
+            start = discord.Embed(color=self.bot.color, title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
             fields = 0
             max_fields = 5 if len(out) >= 5 else len(out)
             max_fields -= 1
@@ -270,7 +270,7 @@ class Infractions(BasePlugin):
                         inline=False
                     )
                     pages.append(start)
-                    start = discord.Embed(color=discord.Color.blurple(), title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
+                    start = discord.Embed(color=self.bot.color, title="Server Infractions", description="• " + count_string + "\n• You can also get info about an infraction by using the ``inf info <case>`` command")
                     fields = 0
                 else:
                     fields += 1
@@ -378,7 +378,7 @@ class Infractions(BasePlugin):
             target_av = DBUtils.get(db.inf, "case", f"{case}", "target_av")
 
 
-            e = discord.Embed(color=discord.Color.blurple(), title="Infraction Info")
+            e = discord.Embed(color=self.bot.color, title="Infraction Info")
             e.set_thumbnail(
                 url=f"{target_av}"
             )

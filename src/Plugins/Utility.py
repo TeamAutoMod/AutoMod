@@ -43,12 +43,21 @@ class Utility(BasePlugin):
             else:
                 member = None if ctx.guild is None else await Utils.get_member(self.bot, ctx.guild, user.id)
             
+            e = discord.Embed(color=self.bot.color)
+            e.set_author(name=f"{user.name}#{user.discriminator}", icon_url=user.avatar_url)
+            e.set_thumbnail(url=user.avatar_url)
 
             created = user.created_at.strftime("%d/%m/%Y, %H:%M")
-            uinfo = f"Name: **{user.name}#{user.discriminator}** \nUser ID: ``{user.id}`` \nCreated: **{(datetime.fromtimestamp(time.time()) - user.created_at).days} days ago** (``{created} UTC``) \nProfile: {user.mention}"
+            e.add_field(
+                name="User Information",
+                value="ID: {} \nProfile: {} \nCreated: {}"\
+                .format(
+                    user.id, user.mention, 
+                    f"{(datetime.fromtimestamp(time.time()) - user.created_at).days} days ago ({created})"
+                ),
+                inline=False
+            )
 
-            minfo = None
-            cinfo = None
             if member is not None:
                 try:
                     roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
@@ -56,18 +65,22 @@ class Utility(BasePlugin):
                     roles = ["No roles"]
                 
                 joined = member.joined_at.strftime("%d/%m/%Y, %H:%M")
-                minfo = f"Joined: **{(datetime.fromtimestamp(time.time()) - member.joined_at).days} days ago** (``{joined} UTC``) \nRoles: {', '.join(roles) if len(roles) < 20 else f'{len(roles)} roles'}"
+                e.add_field(
+                    name="Member Information",
+                    value="Joined: {} \nRoles: {}"\
+                    .format(
+                        f"{(datetime.fromtimestamp(time.time()) - member.joined_at).days} days ago ({joined})", 
+                        f"{', '.join(roles) if len(roles) < 20 else f'{len(roles)} roles'}"
+                    ),
+                    inline=False
+                )
 
-                warns = len([x for x in db.warns.find() if str(x["warnId"].split("-")[1]) == str(member.id)])
-                cinfo = "Total: **{}**".format(warns if warns >= 1 else "0 😇")
-
-            e = discord.Embed(
-                color=discord.Color.blurple(),
-                description="** ** \n**User Information** \n{} {}"\
-                .format(uinfo, "\n \n**Member Information** \n{} \n \n**Cases** \n{}".format(minfo, cinfo) if cinfo is not None else "")
+            warns = len([x for x in db.warns.find() if str(x["warnId"].split("-")[1]) == str(member.id)])
+            e.add_field(
+                name="Infractions", 
+                value="Total cases: {}".format(warns if warns >= 1 else "0"),
+                inline=False
             )
-
-            e.set_author(name=f"User: {user.name}#{user.discriminator}", icon_url=user.avatar_url)
 
             await ctx.send(embed=e)
         except Exception:
@@ -94,7 +107,7 @@ class Utility(BasePlugin):
         if user is None:
             user = ctx.author
         e = discord.Embed(
-            color=discord.Color.blurple(),
+            color=self.bot.color,
             title="{}'s Avatar".format(user.name)
         )
         e.set_image(

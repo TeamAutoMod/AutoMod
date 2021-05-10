@@ -34,7 +34,7 @@ class Basic(BasePlugin):
         custom_command_count = str(self.bot.custom_command_count)
 
         e = discord.Embed(
-            color=discord.Color.blurple(),
+            color=self.bot.color,
             title=Translator.translate(ctx.guild, "about"),
             description="• [Support](https://discord.gg/S9BEBux) \n• [GitHub](https://github.com/xezzz/AutoMod)"
         )
@@ -64,7 +64,7 @@ class Basic(BasePlugin):
 
         e = discord.Embed(
             title="🏓 Pong!",
-            color=discord.Color.blurple(),
+            color=self.bot.color,
             description="```• Client Latency: {}ms \n• REST API Ping: {}ms \n• Shard Latency: {}ms \n```".format(latency, rest, shard_latency)
         )
         await message.edit(content=None, embed=e)

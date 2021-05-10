@@ -37,7 +37,7 @@ class GuildConfig(BasePlugin):
             mute_role_id = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "muteRole")
 
             e = discord.Embed(
-                color=discord.Color.blurple(),
+                color=self.bot.color,
                 title="Server Config"
             )
             e.set_thumbnail(url=ctx.guild.icon_url)
@@ -125,14 +125,14 @@ class GuildConfig(BasePlugin):
             if len(allowed) < 1:
                 return await ctx.send(
                     embed=discord.Embed(
-                        color=discord.Color.blurple(), 
+                        color=self.bot.color, 
                         title="Censor List", 
                         description="Currently all invites are blacklisted \n• Whitelist one by using ``{}config allowed_invites add <server>``".format(prefix)
                     )
                 )
             else:
                 e = discord.Embed(
-                    color=discord.Color.blurple(),
+                    color=self.bot.color,
                     title="Censor List",
                     description="Currently ``{}`` invites are whitelisted \n• Whitelist another one by using ``{}config allowed_invites add <server>``".format(len(allowed), prefix)
                 )
@@ -318,7 +318,7 @@ class GuildConfig(BasePlugin):
             if len(ignored_users) < 1:
                 ignored_users.append(Translator.translate(ctx.guild, "no_ignored_users"))
             e = discord.Embed(
-                color=discord.Color.blurple(),
+                color=self.bot.color,
                 title=Translator.translate(ctx.guild, "ignored_users"),
                 description="```\n{}\n```".format("\n".join(ignored_users))
             )
@@ -358,7 +358,7 @@ class GuildConfig(BasePlugin):
             if len(_censor_list) < 1:
                     return ctx.send(Translator.translate(ctx.guild, "black_list_empty", _emote="NO", prefix=ctx.prefix))
             words = "\n".join(_censor_list)
-            e = discord.Embed(color=discord.Color.blurple(), title="Censor List", description="• Add a phrase: ``{}config black_list add <phrase>`` \n• Remove a phrase: ``{}config black_list remove <phrase>``".format(ctx.prefix, ctx.prefix))
+            e = discord.Embed(color=self.bot.color, title="Censor List", description="• Add a phrase: ``{}config black_list add <phrase>`` \n• Remove a phrase: ``{}config black_list remove <phrase>``".format(ctx.prefix, ctx.prefix))
             e.add_field(
                 name="Phrases",
                 value="```\n{}\n```".format(words),

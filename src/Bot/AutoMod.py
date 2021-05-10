@@ -67,6 +67,7 @@ class AutoMod(AutoShardedBot):
             case_insensitive=True, max_messages=1000, chunk_guilds_at_startup=False, shard_count=shards
         )
         self.total_shards = shards
+        self.color = 0x6a7fc8
 
         self.prev_events = deque(maxlen=10)
 

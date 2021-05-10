@@ -59,7 +59,7 @@ class Moderation(BasePlugin):
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Ban", reason))
                 
                 dm = await Utils.dm_user(ctx, "ban", member, guild_name=ctx.guild.name, reason=reason)
-                await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=member, user_id=member.id, reason=reason, case=case, dm=dm))
+                await ctx.send(Translator.translate(ctx.guild, "user_banned", _emote="YES", user=member, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_ban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
@@ -88,7 +88,7 @@ class Moderation(BasePlugin):
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Kick", reason))
 
                 dm = await Utils.dm_user(ctx, "kick", member, guild_name=ctx.guild.name, reason=reason)
-                await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=member, user_id=member.id, reason=reason, case=case, dm=dm))
+                await ctx.send(Translator.translate(ctx.guild, "user_kicked", _emote="YES", user=member, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_kick", _emote="SHOE", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
@@ -116,7 +116,7 @@ class Moderation(BasePlugin):
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Clean Ban", reason))
 
                 dm = await Utils.dm_user(ctx, "ban", member, guild_name=ctx.guild.name, reason=reason)
-                await ctx.send(Translator.translate(ctx.guild, "user_cleanbanned", _emote="YES", user=member, user_id=member.id, reason=reason, case=case, dm=dm))
+                await ctx.send(Translator.translate(ctx.guild, "user_cleanbanned", _emote="YES", user=member, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_cleanban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
@@ -145,7 +145,7 @@ class Moderation(BasePlugin):
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, member, ctx.author, timestamp, "Soft Ban", reason))
 
                 dm = await Utils.dm_user(ctx, "ban", member, guild_name=ctx.guild.name, reason=reason)
-                await ctx.send(Translator.translate(ctx.guild, "user_softbanned", _emote="YES", user=member, user_id=member.id, reason=reason, case=case, dm=dm))
+                await ctx.send(Translator.translate(ctx.guild, "user_softbanned", _emote="YES", user=member, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_softban", _emote="ALERT", on_time=on_time, user=member, user_id=member.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
@@ -175,7 +175,7 @@ class Moderation(BasePlugin):
                 DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, user, ctx.author, timestamp, "Force Ban", reason))
 
                 dm = await Utils.dm_user(ctx, "ban", user, guild_name=ctx.guild.name, reason=reason)
-                await ctx.send(Translator.translate(ctx.guild, "user_forcebanned", _emote="YES", user=user, user_id=user.id, reason=reason, case=case, dm=dm))
+                await ctx.send(Translator.translate(ctx.guild, "user_forcebanned", _emote="YES", user=user, reason=reason, case=case, dm=dm))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_forceban", _emote="ALERT", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
             else:
@@ -205,7 +205,7 @@ class Moderation(BasePlugin):
             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
             DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, user, ctx.author, timestamp, "Unban", reason))
 
-            await ctx.send(Translator.translate(ctx.guild, "user_unbanned", _emote="YES", user=user, user_id=user.id, reason=reason, case=case))
+            await ctx.send(Translator.translate(ctx.guild, "user_unbanned", _emote="YES", user=user, reason=reason, case=case))
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_unban", _emote="UNLOCK", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, reason=reason, case=case))
 
@@ -258,7 +258,7 @@ class Moderation(BasePlugin):
                     until
                 )
 
-                await ctx.send(Translator.translate(ctx.guild, "mute_extended", _emote="YES", user=user, user_id=user.id, length=length.length, unit=length.unit, reason=reason))
+                await ctx.send(Translator.translate(ctx.guild, "mute_extended", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason))
                 on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                 await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute_extended", _emote="MUTE", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason))
                 if not role in user.roles:
@@ -280,8 +280,8 @@ class Moderation(BasePlugin):
                             timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
                             DBUtils.insert(db.inf, new_infraction(case, ctx.guild.id, user, ctx.author, timestamp, "Mute", reason))
                             
-                            dm = await Utils.dm_user(ctx, "mute", member, guild_name=ctx.guild.name, length=length.length, unit=length.unit, reason=reason)
-                            await ctx.send(Translator.translate(ctx.guild, "user_muted", _emote="YES", user=user, user_id=user.id, length=length.length, unit=length.unit, reason=reason, case=case, dm=dm))
+                            dm = await Utils.dm_user(ctx, "mute", user, guild_name=ctx.guild.name, length=length.length, unit=length.unit, reason=reason)
+                            await ctx.send(Translator.translate(ctx.guild, "user_muted", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason, case=case, dm=dm))
                             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(ctx.guild, "log_mute", _emote="MUTE", on_time=on_time, user=user, user_id=user.id, moderator=ctx.author, moderator_id=ctx.author.id, length=length.length, unit=length.unit, reason=reason, case=case))
                         else:
@@ -300,7 +300,7 @@ class Moderation(BasePlugin):
         if not self.is_muted(ctx.guild, user):
             return await ctx.send(Translator.translate(ctx.guild, "not_muted", _emote="NO", user=user.name))
         DBUtils.delete(db.mutes, "mute_id", f"{ctx.guild.id}-{user.id}")
-        await ctx.send(Translator.translate(ctx.guild, "mute_lifted", _emote="YES", user=user, user_id=user.id))
+        await ctx.send(Translator.translate(ctx.guild, "mute_lifted", _emote="YES", user=user))
         
         # check if we can remove the role
         try:
