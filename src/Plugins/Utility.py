@@ -167,14 +167,14 @@ class Utility(BasePlugin):
         except Exception as ex:
             return await ctx.send(str(ex))
         
-        content = args.content if args.content else ""
+        content = " ".join(args.content) if args.content else ""
         if len(content) < 1:
             return await ctx.send(Translator.translate(ctx.guild, "min_content"))
         if len(content) > 2000:
             return await ctx.send(Translator.translate(ctx.guild, "max_content"))
         e = discord.Embed(
             color=args.color if args.color else self.bot.color, 
-            title=args.title,
+            title=" ".join(args.title) if args.title else None,
             description=content
         )
 
