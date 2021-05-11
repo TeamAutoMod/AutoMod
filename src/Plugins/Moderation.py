@@ -578,7 +578,7 @@ class Moderation(BasePlugin):
             plural = "" if len(deleted) == 1 else "s"
             await ctx.send(Translator.translate(ctx.guild, "clean_success", _emote="YES", deleted=len(deleted), plural=plural))
 
-            on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(
                 ctx.guild, 
                 "log_clean", 
