@@ -575,9 +575,23 @@ class Moderation(BasePlugin):
         self.bot.cleans_running[ctx.channel.id] = set()
         try:
             deleted = await ctx.channel.purge(limit=limit, before=before, after=after, check=check)
-            await ctx.send(Translator.translate(ctx.guild, "clean_success", _emote="YES", deleted=len(deleted), plural="" if len(deleted) == 1 else "s"))
+            plural = "" if len(deleted) == 1 else "s"
+            await ctx.send(Translator.translate(ctx.guild, "clean_success", _emote="YES", deleted=len(deleted), plural=plural))
+
+            on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            await Logging.log_to_guild(ctx.guild.id, "memberLogChannel", Translator.translate(
+                ctx.guild, 
+                "log_clean", 
+                _emote="CLEAN", 
+                on_time=on_time, 
+                moderator=ctx.author, 
+                moderator_id=ctx.author.id, 
+                count=len(deleted), 
+                plural=plural,
+                channel=ctx.channel.mention
+            ))
         except Exception as ex:
-            await ctx.send(Translator.translate(ctx.guild, "cleaning_error", _emote="NO", error=ex))
+            await ctx.send(Translator.translate(ctx.guild, "cleaning_error", _emote="WARN", error=ex))
             self.bot.loop.create_task(self.finish_purgings(ctx.channel.id))
         self.bot.loop.create_task(self.finish_purgings(ctx.channel.id))
 

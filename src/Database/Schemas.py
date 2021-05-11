@@ -38,6 +38,7 @@ def guild_schema(guild):
         "memberLogging": False,
         "messageLogging": False,
         "voiceLogging": False,
+        "dm_on_actions": False,
         "welcomeChannel": "", 
         "welcomeMessage": "",
         "censored_words": default_censored_words,

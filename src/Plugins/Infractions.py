@@ -128,7 +128,7 @@ class Infractions(BasePlugin):
             if await Moderation.can_act(self, ctx, member, ctx.author):
                 await self._warn(ctx, member, reason)
             else:
-                await ctx.send(Translator.translate(ctx.guild, "warn_not_allowed", _emote="NO"))
+                await ctx.send(Translator.translate(ctx.guild, "warn_not_allowed", _emote="WARN"))
         else:
             await ctx.send(Translator.translate(ctx.guild, "target_not_on_server", _emote="WARN"))
 

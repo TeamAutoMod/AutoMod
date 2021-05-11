@@ -11,7 +11,8 @@
     "log_mute_extended": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s mute was extended by **{moderator}** (``{moderator_id}``) for **{length} {unit}**. Reason: \n```\n{reason}\n```",
     "log_unmute": "``[{on_time} UTC]`` ``[]`` {emote} **{user}** (``{user_id}``) was automatically unmuted since their mute expired",
     "log_warn": "``[{on_time} UTC]`` ``[#{case}]`` {emote} **{user}** (``{user_id}``) was warned by **{moderator}** (``{moderator_id}``). Reason: \n```\n{reason}\n```",
-    
+    "log_clean": "``[{on_time} UTC]`` ``[]`` {emote} **{moderator}** (``{moderator_id}``) cleaned **{count}** message{plural} in {channel}",
+
     "log_censor": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been censored \nReason: \n```\n[Automod] NSFW language (Using slurs): {words} \n \n{content}\n```",
     "log_invite": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted \nReason: \n```\n[Automod] Advertising (Sending Discord invite): {link} \n```",
     "log_zalgo": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been deleted \nReason: \n```\n[Automod] Illegible message formatting (Zalgo chars) at position {position}\n```",
@@ -113,6 +114,7 @@
 
     "log_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) has joined, (created {age} days ago)",
     "log_leave": "``[{on_time} UTC]`` {emote} **{user}** (`{user_id}`) has left the server (joined {joined} days ago)",
+    "log_join_with_prior_cases": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) with prior cases has joined. Recent cases: \n```\n{cases}\n```",
 
     "about_help": "Shows some information about the bot",
     "ping_help": "Shows the client latency and the REST API ping",

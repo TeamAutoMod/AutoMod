@@ -91,7 +91,11 @@ class GlobalListeners(BasePlugin):
             created = (datetime.fromtimestamp(time.time()) - member.created_at).days
             try:
                 on_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                await Logging.log_to_guild(member.guild.id, "joinLogChannel", Translator.translate(member.guild, "log_join", _emote="JOIN", user=member, user_id=member.id, on_time=on_time, age=created))
+                prior_cases = [f"#{x['case']}" for x in list(filter(lambda x: x["guild"] == str(member.guild.id) and x["target_id"] == str(member.id), list(db.inf.find({}))))]
+                if len(prior_cases) < 1:
+                    await Logging.log_to_guild(member.guild.id, "joinLogChannel", Translator.translate(member.guild, "log_join", _emote="JOIN", user=member, user_id=member.id, on_time=on_time, age=created))
+                else:
+                    await Logging.log_to_guild(member.guild.id, "joinLogChannel", Translator.translate(member.guild, "log_join_with_prior_cases", _emote="WARN", user=member, user_id=member.id, on_time=on_time, cases="\n".join(prior_cases)))
             except Exception:
                 pass
 

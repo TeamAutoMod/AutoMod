@@ -36,6 +36,7 @@ class GuildConfig(BasePlugin):
             general, messages, members, voices = await DBUtils.get_log_channels(self.bot, ctx.guild.id)
             welcome_channel, welcome_msg = await DBUtils.get_welcome_config(self.bot, ctx.guild.id)
             mute_role_id = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "muteRole")
+            dm_on_actions = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "dm_on_actions")
 
             e = discord.Embed(
                 color=self.bot.color,
@@ -66,6 +67,11 @@ class GuildConfig(BasePlugin):
             e.add_field(
                 name="Mute Role",
                 value="```\n{}\n```".format("@" + (discord.utils.get(ctx.guild.roles, id=int(mute_role_id))).name + f" ({mute_role_id})" if mute_role_id != "" else "Not set yet"),
+                inline=False
+            )
+            e.add_field(
+                name="Dm On Actions",
+                value="True" if dm_on_actions is True else "False",
                 inline=False
             )
             await ctx.send(embed=e)
@@ -111,6 +117,13 @@ class GuildConfig(BasePlugin):
         """dm_on_actions_help"""
         state = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "dm_on_actions")
         state = not state
+        DBUtils.update(
+            db.configs, 
+            "guildId", 
+            f"{ctx.guild.id}", 
+            "dm_on_actions",
+            state
+        )
         if state is False:
             return Translator.translate(ctx.guild, "dm_on_actions_false", _emote="YES")
         else:

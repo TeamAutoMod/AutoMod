@@ -37,8 +37,8 @@ def boot_bot(shards):
             pass
         try:
             asyncio.run(bot.close())
-            self.loop.stop()
-            self.loop.close()
+            bot.loop.stop()
+            bot.loop.close()
         except:
             pass
         quit()

@@ -14,7 +14,7 @@ import i18n
 from Plugins.Base import BasePlugin
 from Utils import Utils, Logging, Pages, Reload
 from Utils.Constants import GREEN_TICK, RED_TICK
-from Database.Connector import Database
+from Database.Connector import Database, DBUtils
 from Utils.Converters import UserID
 
 
@@ -121,6 +121,7 @@ class Admin(BasePlugin):
                 "commands": commands,
                 "client": self.bot,
                 "ctx": ctx,
+                "DBUtils": DBUtils,
                 "__import__": __import__
             }
 
