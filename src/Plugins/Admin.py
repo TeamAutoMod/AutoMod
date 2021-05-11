@@ -14,7 +14,8 @@ import i18n
 from Plugins.Base import BasePlugin
 from Utils import Utils, Logging, Pages, Reload
 from Utils.Constants import GREEN_TICK, RED_TICK
-from Database.Connector import Database, DBUtils
+from Database.Connector import Database
+from Database import DBUtils
 from Utils.Converters import UserID
 
 

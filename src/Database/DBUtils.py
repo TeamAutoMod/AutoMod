@@ -48,9 +48,15 @@ def get_module_config(guild_id):
     for doc in db.configs.find({"guildId": f"{guild_id}"}):
         for _ in doc:
             if doc[_] is True:
-                enabled.append("%s" % (mod[_]))
+                try:
+                    enabled.append("%s" % (mod[_]))
+                except KeyError:
+                    pass
             if doc[_] is False:
-                disabled.append("%s" % (mod[_]))
+                try:
+                    disabled.append("%s" % (mod[_]))
+                except KeyError:
+                    pass
             else:
                 pass
     return [f"• {x}" for x in enabled], [f"• {x}" for x in disabled]

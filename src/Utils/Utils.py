@@ -172,10 +172,14 @@ def escape_markdown(inp):
 async def dm_user(ctx, _type, user, **kwargs):
     msg = Translator.translate(ctx.guild, f"{_type}_dm", **kwargs)
     out = ""
-    try:
-        await user.send(content=msg)
-        out += "(user notified with a direct message)"
-    except Exception:
-        out += "(failed to message user)"
-    finally:
-        return out
+    state = DBUtils.get(db.configs, "guildId", f"{ctx.guild.id}", "dm_on_actions")
+    if state is True:
+        try:
+            await user.send(content=msg)
+            out += "(user notified with a direct message)"
+        except Exception:
+            out += "(failed to message user)"
+        finally:
+            return out
+    else:
+        return ""

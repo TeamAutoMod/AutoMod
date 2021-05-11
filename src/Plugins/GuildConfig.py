@@ -71,7 +71,7 @@ class GuildConfig(BasePlugin):
             )
             e.add_field(
                 name="Dm On Actions",
-                value="True" if dm_on_actions is True else "False",
+                value="```\n{}\n```".format("True" if dm_on_actions is True else "False"),
                 inline=False
             )
             await ctx.send(embed=e)
