@@ -18,6 +18,30 @@ from Utils.Matchers import INVITE_RE, URL_RE
 
 db = Connector.Database()
 
+allowed_file_formats = [
+    # plain text/markdown
+    "txt",
+    "md",
+
+    # image
+    "jpg",
+    "jpeg",
+    "png",
+    "webp"
+    "gif",
+
+    # video
+    "mov",
+    "mp4",
+    "flv",
+    "mkv",
+
+    # audio
+    "mp3",
+    "wav",
+    "m4a"
+]
+
 
 class Censor(BasePlugin):
     def __init__(self, bot):
@@ -110,6 +134,21 @@ class Censor(BasePlugin):
         except Exception:
             pass
 
+
+        try:
+            _types = {x: x.split(".")[-1] for x in message.attachments}
+            unallowed = list(filter(lambda e: e[0] not in allowed, _types.items()))
+            if len(unallowed) > 0:
+                forbidden = [x[0] for x in unallowed]
+                self.bot.running_msg_deletions.add(message.id)
+                await self.censor_attachment(message, target, forbidden, channel)
+                return
+        except Exception:
+            pass
+
+
+
+
                 
   
 
@@ -143,6 +182,16 @@ class Censor(BasePlugin):
             
             on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_invite", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, channel=channel.mention, link=found_link))
+
+
+    async def censor_attachment(self, message, target, unallowed, channel):
+        if channel.permissions_for(channel.guild.me).manage_messages:
+            try:
+                await message.delete()
+            except discord.NotFound:
+                pass
+            on_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            await Logging.log_to_guild(channel.guild.id, "memberLogChannel", Translator.translate(message.guild, "log_unallowed_attachment", _emote="CENSOR", on_time=on_time, user=target, user_id=target.id, channel=channel.mention, unallowed=", ".join(unallowed)))
 
 
 
