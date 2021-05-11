@@ -52,7 +52,7 @@ class Utility(BasePlugin):
             e = discord.Embed(color=self.bot.color)
             e.set_thumbnail(url=user.avatar_url)
 
-            created = user.created_at.strftime("%d/%m/%Y, %H:%M")
+            created = user.created_at.strftime("%d/%m/%Y")
             e.add_field(
                 name="User Information",
                 value="```\n• ID: {} \n• Name: {}#{} \n• Created: {} \n```"\
@@ -69,7 +69,7 @@ class Utility(BasePlugin):
                 except Exception:
                     roles = ["No roles"]
                 
-                joined = member.joined_at.strftime("%d/%m/%Y, %H:%M")
+                joined = member.joined_at.strftime("%d/%m/%Y")
                 e.add_field(
                     name="Member Information",
                     value="```\n• Joined: {} \n• Roles: {} \n```"\

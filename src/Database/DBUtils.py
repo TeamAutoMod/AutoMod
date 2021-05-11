@@ -5,8 +5,11 @@ db = Database()
 
 
 def get(collection, filter_field, filter_value, field_to_get):
-    for _ in collection.find({f"{filter_field}": f"{filter_value}"}):
-        return _[f"{field_to_get}"]
+    try:
+        for _ in collection.find({f"{filter_field}": f"{filter_value}"}):
+            return _[f"{field_to_get}"]
+    except KeyError:
+        return None
 
 
 def update(collection, filter_field, filter_value, field_to_update, new_value):
