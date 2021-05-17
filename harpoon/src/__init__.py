@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 
 
-def prefix_callable(bot, message):
+def _prefix_callable(bot, message):
     base = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
     if message.guild is None:
         base.append(bot.config["default_prefix"])
@@ -46,7 +46,7 @@ class Harpoon(commands.AutoShardedBot):
             voice_states=True
         )
         super().__init__(
-           command_prefix="!!", intents=intents, case_insensitive=True, 
+           command_prefix=_prefix_callable, intents=intents, case_insensitive=True, 
            max_messages=1000, chunk_guilds_at_startup=False, shard_count=config["shards"] 
         )
         self.ready = False
@@ -127,6 +127,7 @@ class Harpoon(commands.AutoShardedBot):
             log.info("Finished building internal cache in {}".format(final_dur))
 
             self.ready = True
+            self.locked = False
 
 
 
