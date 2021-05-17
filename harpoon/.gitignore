@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 /shared
 /harpoon/config.json
+/src/config.json
