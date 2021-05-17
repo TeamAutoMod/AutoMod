@@ -27,6 +27,13 @@
     "log_reapplied_mute": "``[{on_time} UTC]`` {emote} Reapplied active mute for **{user}** (``{user_id}``) on rejoin",
     "log_manual_unmute": "``[{on_time} UTC]`` ``[]`` {emote} **{user}** (``{user_id}``) was manually unmuted by **{moderator}** (``{moderator_id}``)",
 
+    "log_message_deletion": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been manually deleted. \n```\n{content}\n```",
+    "log_message_edit": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been edited. \nBefore: \n```\n{before}\n``` After: \n```\n{after}\n```",
+
+    "log_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) has joined, (created {age} days ago)",
+    "log_leave": "``[{on_time} UTC]`` {emote} **{user}** (`{user_id}`) has left the server (joined {joined} days ago)",
+    "log_join_with_prior_cases": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) with prior cases has joined. Recent cases: \n```\n{cases}\n```",
+
     "voice_channel_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) joined voice channel ``{afterChannel}``",
     "voice_channel_leave": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) left voice channel ``{beforeChannel}``",
     "voice_channel_switch": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) moved from voice channel ``{afterChannel}`` to ``{beforeChannel}``",
@@ -65,56 +72,33 @@
     "mute_not_allowed": "{emote} Cannot mute: target permissions are qual or higher than yours/mine",
     "warn_not_allowed": "{emote} Cannot warn: target permissions are qual or higher than yours/mine",
     "warnclearing_not_allowed": "{emote} Cannot clear warns: target permissions are qual or higher than yours/mine",
-    
-    "not_banned": "{emote} User is not banned.",
 
-
-    "case_not_on_this_server": "{emote} I can't find an infraction with the case ID {case} on this server.",
     "case_already_owned": "{emote} Seems like you are already responsible for this case.",
     "case_target": "{emote} You can't take responsibility for a case that you are the target of.",
 
-    "command_canceled": "{emote} Command execution canceled",
-    "processing": "{emote} Processing...",
-
-    "not_ranked": "{emote} ``{user}`` is not ranked yet.",
-
-    "initiating_hot_reload": "{emote} Initiating hot reload...",
-    "hot_reload_done": "{emote} Hot reload completed, now running on version **{version}**",
-
-    "no_custom_commands": "This server doesn't have any custom commands yet.",
     "action_log_set": "{emote} Successfully set the action log channel to {channel}!",
-    "no_trigger": "{emote} You want to create a command without a trigger? I don't think that makes much sense.",
-    "no_reply": "{emote} You want to create a commands without a reply? If you want to delete a command you should use remove",
-    "trigger_too_long": "Sorry, but custom command triggers can only have up to 15 chars",
-    "command_already_exists": "A command with that trigger already exists. If you want to the reply, you have the delete the command and add it again.",
-    "command_added": "{emote} Command added! Use it with: ``{prefix}{command}``",
-    "command_removed": "{emote} Command deleted.",
-    "command_does_not_exist": "Hmm, I can't find a command with that name. Maybe you made a little typo.",
-    "command_does_not_exist_but_possible": "I couldn't find that command. Did you mean... \n{possible}",
+
     "current_prefix": "The current prefix for this server is: **{prefix}**",
     "already_is_prefix": "{emote} This already is the active prefix.",
     "prefix_too_long": "{emote} This prefix is too long (max chars are 10).",
     "prefix_updated": "{emote} Changed the server prefix to: **{prefix}**",
+
     "default_role_forbidden": "{emote} You can't use the default role as the mute role.",
-    "mute_missing_perm": ":redTick:751916874522034239> Hey, I don't have the ``manage roles`` permission on this server. Make sure I have this if you want to use this feature!",
     "role_too_high": "{emote} I can't assign roles to users that are above my highest role.",
-    "updated_mute_role": "{emote} Updated the mute role to {role}",
+
     "no_valid_module": "{emote} These don't seem to be valid modules.",
     "enabled_module_channel": "{emote} Enabled the **{module}** module and will log actions to {channel}!",
     "enabled_module_no_channel": "{emote} Enabled the **{module}** module!",
     "disabled_module": "{emote} Disabled the **{module}** module!",
-    "already_ignored_user": "{emote} ``{user}`` is already an ignored user.",
-    "not_existing_ignored_user": "{emote} ``{user}`` is not on the ignored users list.",
-    "ignored_user_added": "{emote} Added ``{user}`` to the ignored users list!",
-    "ignored_user_removed": "{emote} Removed ``{user}`` from the ignored users list",
-    "black_list_disabled": "{emote} The ``automod`` module is disabled for this guild, therefore a black list can't be displayed. To enable it, run {prefix}configure enable automod",
+    
     "black_list_empty": "{emote} The black list for this guild is empty. You can add something by running {prefix}configure black_list add <word>",
     "added_to_black_list": "{emote} Added **{word}** to the black list!",
     "removed_from_black_list": "{emote} Removed **{word}** from the black list!",
     "already_on_black_list": "{emote} This phrase is already blacklisted",
     "not_on_black_list": "{emote} This word isn't blacklisted.",
+
     "no_mute_role": "{emote} This server doesn't have a mute role setup yet. Do so by running {prefix}configure mute_role <role>",
-    "lvlsystem_disabled": "{emote} The rank system is disabled here.",
+    
     "already_whitelisted": "{emote} This is already a whitelisted server.",
     "not_whitelisted": "{emote} This isn't a whitelisted server.",
     "added_invite": "{emote} Added **{server}** as an allowed server! Invites for it won't be deleted.",
@@ -157,31 +141,14 @@
     "unknown_message": "I couldn't find that message. It has either been deleted or it's in a channel that I can't access.",
     "unknown_channel": "I couldn't find that channel",
 
-    "log_message_deletion": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been manually deleted. \n```\n{content}\n```",
-    "log_message_edit": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been edited. \nBefore: \n```\n{before}\n``` After: \n```\n{after}\n```",
-
-    "log_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) has joined, (created {age} days ago)",
-    "log_leave": "``[{on_time} UTC]`` {emote} **{user}** (`{user_id}`) has left the server (joined {joined} days ago)",
-    "log_join_with_prior_cases": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) with prior cases has joined. Recent cases: \n```\n{cases}\n```",
-
     "about_help": "Shows some information about the bot",
     "ping_help": "Shows the client latency and the REST API ping",
     "help_help": "Shows a full list of commands",
-    "commands_help": "List of all custom commands. View the subcommands for more info",
-    "command_create_help": "Creates a custom command",
-    "command_remove_help": "Deletes a custom command",
     "config_help": "Base command for bot configuration. View the subcommands for more info",
+
     "configuration_log_help": "Base command for enabling/disabling log modules, by typing a module name after one of the subcommands",
-    "ignored_users_help": "Base command for excluding users from the message delete/edit logs",
     "configuration_add_help": "Activates a module. Some require a channel paramater for its logging process",
-    "jumbo_help": "Shows a bigger version of an emoji",
-    "userinfo_help": "View some stats about the user",
-    "server_help": "Informaton about the server",
-    "avatar_help": "Sends out a bigger version of the users avatar",
-    "cleanup_help": "Deletes the bots (and possible invokation) messages from the channel",
-    "welcome_msg_help": "Sets a welcome message",
-    "welcome_channel_help": "Sets a channel for welcome messages",
-    "welcome_off_help": "Removes the welcome channel & message",
+
     "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
     "voice_logging_help": "Module for logging voice changes",
     "config_prefix_help": "Updates the server prefix",
@@ -197,16 +164,13 @@
     "config_punsishment_max_warns_help": "Updates the punishment for when a user gets the max amount of configured warns",
 
     "config_action_log_help": "Sets a channel for general moderation logs",
-    "create_help": "Creates a command with the given trigger & reply",
-    "delete_help": "Removes a custom command",
     
     "enable_help": "Enable a module/logging option",
     "disable_help": "Disable a module/logging option",
     "black_list_help": "Shows the censor list. Subcommands are add & remove",
     "allowed_invites_help": "Shows whitelisted invits. Subcommands are add & remove",
     "prefix_help": "Sets the servers prefix",
-    "mute_role_help": "Sets the role for mutes",
-    "action_log_help": "Sets a log channel for mod actions",
+
     "allowed_invites_add_help": "Whitelists invites for a server. Use the server ID",
     "allowed_invites_remove_help": "Removes a invites for a server from the whitelist. Use the server ID",
 
@@ -219,13 +183,11 @@
     "mute_help": "Mutes a user (mute role needs to be configured)",
     "mban_help": "Bans multiple users for the same reason (targets should be defined by their user IDs)",
     "mkick_help": "Kicks multiple users for the same reason (targets should be defined by their user IDs)",
-    "massban_help": "A more advanced ban command with multiple argument options",
     
     "message_logging_help": "Module for message edit/deletion logs",
     "member_logging_help": "Modules for join/leave logs",
     "automod_help": "Automod including message censoring, invite filter",
     "persist_help": "Re-applies roles and nicknames for users when they rejoin",
-    "lvlsystem_help": "Levelsystem rewarding users that are active in the server",
     "antispam_help": "Module for antispam. Kicks users that are being detected spamming",
 
     "ignored_users_add_help": "Excludes someone from the message logs",
@@ -234,29 +196,7 @@
     "black_list_add_help": "Adds a phrase to the censor list",
     "black_list_remove_help": "Removes a phrase from the censor list",  
 
-    "purge_help": "Purges up to 200 messages in a channel",
     "clean_help": "Cleans messages from the channel. All arguments besides the amount are optional.",
-    "clean_until_help": "Clean message up to the given one",
-    "clean_all_help": "Equivalent to the purge command",
-    "clean_last_help": "Clean the messages sent during the the given duration",
-    "clean_user_help": "Cleans the given amount of messages. Passing in multiple users is possible",
-    "clean_bots_help": "Cleans the given amount of messages sent by bots",
-    "clean_custom_help": "A more advanced cleaning command with multiple argument options",
-    "clean_between_help": "Cleans all messages between the two given ones",
-
-    "warn_help": "Warns a user (kicked on first 4 warns, banned on second 4 warns)",
-    "inf_help": "Base command for infractions. View the subcommands for more info",
-    "inf_find_help": "Finds all infractions either by user or server",
-    "inf_info_help": "Shows information about an infraction",
-    "inf_claim_help": "Claims an infraction",
-    "clearwarns_help": "Clears all warnings of a user",
-
-    "rank_help": "Shows a users rank (pass in no member to view your own)",
-    "leaderboard_help": "Shows the servers rank leaderboard",
-    "lvlrole_help": "Base command for configuring role rewards. View the subcommands for more info.",
-    "ranks_help": "Shows a list of all role rewards",
-    "add_help": "Sets up a role reward for the given level",
-    "remove_help": "Removes a role reward",
 
     "role_help": "Base command for granting/removing self roles. View the subcommands for more info",
     "role_add_help": "Grants yourself one or more selfroles. Seperate them by a space",
@@ -285,33 +225,6 @@
     "no_ignored_users": "There aren't any ignored users configured, all users will be logged",
     "ignored_users": "Ignored Users",
 
-    "log_channels": "**Log Channels**",
-    "enabled_modules": "**Enabled Modules**",
-    "disabled_modules": "**Disabled Modules**",
-
-    "censor_list": "**Censor List for {guild_name}** \n```\n{words}\n```",
-
-    "warn_error": "{emote} There was an error trying to warn ``{target}``: {error}",
-
-    "fetching_inf": "{emote} Fetching infractions...",
-    "no_inf": "I couldn't find any infractions here.",
-    "inf_for": "Infractions for",
-
-    "lvl_up": "Hey {user.mention}, you just advanced to level **{lvl}**, congrats! {emote}",
-    "role_added": "Hey {user}, you just got the ``{role}`` role in the server ``{guild_name}`` for reaching level ``{lvl}``, congrats! 🎉",
-    "not_enough_for_lb": "{emote} There have to be at least 2 ranked people in order to display a leaderboard.",
-    "fetching_lb": "{emote} Fetching leaderboard...",
-    "lb": "Leaderboard for",
-    "already_role_for_lvl": "{emote} A role reward for level ``{lvl}`` already exists.",
-    "already_lvl_role": "{emote} ``{role}`` is already registered as a role reward for a different level.",
-    "max_lvl_roles": "{emote} This server has reached max amount of role rewards (``10``)",
-    "added_lvl_role": "{emote} Added ``{role}`` as a role reward for level ``{lvl}``!",
-    "no_lvl_roles": "{emote} This server doesn't have any level roles yet.",
-    "invalid_lvl_role": "{emote} Hmm, seems like ``{role}`` isn't configured as a role reward.",
-    "removed_lvl_role": "{emote} Removed ``{role}`` as role reward",
-    "lvl_roles": "Role rewards for",
-    "deleted_role": "Deleted Role",
-
     "no_reason": "No reason provided",
     "no_ban_then": "{emote} Alright, I'll ban nobody then!",
     "max_ban": "{emote} Max targets to ban at once are 50",
@@ -323,7 +236,6 @@
     "cant_kick_anyone": "{emote} I can't kick any of the specified targets.",
     "mkick_success": "{emote} Successfully kicked {users}/{total} users!",
 
-    "no_delete_then": "{emote} Ok, so you want me to delete no messages? Alright, I think I'm done then!",
     "already_cleaning": "{emote} Already cleaning. Please wait until it's done before starting the next one.",
     "clean_error": "{emote} Error while trying to clean: {exc}",
     "zero_cleaned": "{emote} Zero messages were cleaned. Looks like nothing matched your passed arguments.",
@@ -331,40 +243,19 @@
     "too_many_messages": "{emote} Too many messages given ({limit}/500)",
     "clean_success": "{emote} Deleted {deleted} message{plural}!",
     "cleaning_error": "{emote} There was an error while trying perform this action: ``{error}``",
-
-    "no_member_object": "Weird, it seems like Discord thinks you are not in this server.",
-    "invalid_regex": "Invalid regex passed to `--match`: {ex}",
-    "no_targets_found": "{emote} No targets found matching your given criteria",
-    "missing_reason_flag": "The `--reason` flag is required.",
-    "already_deleted": "{emote} Hmmm, something went wrong here. Looks like the message I tried to delete has already been deleted.",
     
-    "working_on_action": "{emote} Processing action...",
     "prompt_text": "{message}\n\nReact with {yes} to confirm or {no} to deny.",
 
     "invalid_length_unit": "Invalid length unit",
     "max_length": "Max length is {max_length}",
     "advanced_invalid_length_unit": "Invalid length unit, Valid units: week/s, day/s, hour/s, minute/s, second/s, w, d, h, m, s",
-    "max_content": "{emote} Max content length is 2000 chars",
-    "min_content": "{emote} Min content length is 1 char",
-    "message_posted": "{emote} Message posted!",
-    "posting_failed": "{emote} Couldn't post message: {exc}",
 
-    "help_suffix": "\nUse {prefix}help <command> to get more information about a command (subcommands & args)\n```",
-
-    "still_caching": "The cached data for this guild is currently being rebuild. Try again in a few minutes.",
-    "still_getting_member_info": "Harpoon is currently starting up and is still receiving the initial member info for this guild. Try again in a few minutes.",
-    "just_joined": "Harpoon just joined this guild & is is still receiving the initial member info. Try again in a few seconds",
     "missing_bot_perms": "{emote} Cannot perform this: insufficient permissions",
     "missing_arg": "{emote} You are missing a required argument: ``{arg}`` \n🔧 Usage: ``{usage}``",
     "arg_parse_error": "{emote} Failed to parse the ``{arg}`` param: ``{error}`` \n🔧 Usage: ``{usage}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
     "missing_user_perms": "{emote} Cannot perform this: insufficient permissions",
     "cant_send_message": "Looks like you tried to use a command in a channel I'm not allowed to send messages in. Make sure I have the ``send messages`` permission in the channel.",
-
-    "msg_too_long": "Sorry, but the message must not have more than 1500 chars.",
-    "msg_success": "{emote} Successfully updated the welcome message!",
-    "channel_success": "{emote} Successfully set the welcoming channel to {channel}!",
-    "off_success": "{emote} Successfully disabled the welcoming system!",
 
     "dm_on_actions_false": "{emote} Set ``dm on actions`` to false. I will no longer dm users about actions taken on them.",
     "dm_on_actions_true": "{emote} Set ``dm on actions`` to true. I will now dm users about actions taken on them.",
