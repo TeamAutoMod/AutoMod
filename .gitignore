@@ -127,11 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-<<<<<<< HEAD
 /node_modules
 /shared
 /harpoon/config.json
 /harpoon/src/future
 /harpoon/src/migrations
-=======
->>>>>>> 474173b55cb7660ff675d8c199ae6a115c4e7863
