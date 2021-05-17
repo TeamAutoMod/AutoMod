@@ -14,7 +14,9 @@
         "ModerationPlugin",
         "SelfrolesPlugin",
         "CasesPlugin",
-        "ConfigPlugin"
+        "ConfigPlugin",
+        "LocateUserPlugin",
+        "CleanPlugin"
     ],
     
     "bot_admins": [123456789, 987654321],
