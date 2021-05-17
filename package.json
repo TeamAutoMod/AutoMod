@@ -1,0 +1,17 @@
+{
+  "name": "harpoon",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"./{backend}/{,!(node_modules)/**/}/*.py\"",
+    "lint": "tslint \"./{backend,dashboard}/{,!(node_modules)/**/}/*.py\"",
+    "codestyle-check": "prettier --check \"./{backend}/{,!(node_modules)/**/}/*.py\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^2.3.0"
+  }
+}
