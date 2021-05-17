@@ -1,2 +1,2 @@
 # Harpoon
-Private Discord moderation bot
+Discord moderation bot
