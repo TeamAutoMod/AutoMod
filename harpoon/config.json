@@ -1,0 +1,26 @@
+{
+    "default_prefix": "!",
+    "token": "NzMyOTUzNjY2MzE0NTY3NzYx.Xw8GSw._Jhjlsino8FO0NtuR1Tjwh0Y0gs",
+    "mongo_url": "mongodb+srv://automod:secret1337@webdb.iktex.mongodb.net/",
+    "shards": 1,
+    "langs": [
+        "en_US"
+    ],
+    "enabled_plugins_with_commands": [
+        "BasicPlugin",
+        "ModerationPlugin",
+        "SelfrolesPlugin",
+        "CasesPlugin",
+        "ConfigPlugin",
+        "LocateUserPlugin",
+        "CleanPlugin"
+    ],
+    "bot_admins": [
+        543056846601191508
+    ],
+    "allowed_guilds": [
+        708657755577253930,
+        612677204089765901,
+        701507539589660793
+    ]
+}

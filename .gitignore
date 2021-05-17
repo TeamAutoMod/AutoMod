@@ -127,6 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/node_modules
 /shared
 /automod/config.json
 /automod/src/future
