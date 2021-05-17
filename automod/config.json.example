@@ -1,0 +1,22 @@
+{
+    "default_prefix": "!",
+
+    "token": "YOUR_BOTS_TOKEN",
+    "mongo_url": "mongodb+srv://REST_OF_YOUR_MONGO_URL",
+    "shards": 1,
+
+    "langs": [
+        "en_US"
+    ],
+
+    "enabled_plugins_with_commands": [
+        "BasicPlugin",
+        "ModerationPlugin",
+        "SelfrolesPlugin",
+        "CasesPlugin",
+        "ConfigPlugin"
+    ],
+    
+    "bot_admins": [123456789, 987654321],
+    "allowed_guilds": [123456789, 987654321]
+}

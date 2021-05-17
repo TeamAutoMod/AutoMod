@@ -128,6 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /shared
-/automod/config.json
-/automod/src/future
-/automod/src/migrations
+/backend/config.json
