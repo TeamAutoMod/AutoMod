@@ -2,5 +2,5 @@
 
 
 git pull origin master
-cd ./automod
+cd ./harpoon
 py -3 ./start.py

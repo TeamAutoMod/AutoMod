@@ -4,9 +4,9 @@
   "description": "",
   "private": true,
   "scripts": {
-    "format": "prettier --write \"./{automod}/{,!(node_modules)/**/}/*.py\"",
-    "lint": "tslint \"./{automod,dashboard}/{,!(node_modules)/**/}/*.py\"",
-    "codestyle-check": "prettier --check \"./{automod}/{,!(node_modules)/**/}/*.py\""
+    "format": "prettier --write \"./{harpoon}/{,!(node_modules)/**/}/*.py\"",
+    "lint": "tslint \"./{harpoon,dashboard}/{,!(node_modules)/**/}/*.py\"",
+    "codestyle-check": "prettier --check \"./{harpoon}/{,!(node_modules)/**/}/*.py\""
   },
   "keywords": [],
   "author": "",

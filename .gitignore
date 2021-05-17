@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 /node_modules
 /shared
-/automod/config.json
-/automod/src/future
-/automod/src/migrations
+/harpoon/config.json
+/harpoon/src/future
+/harpoon/src/migrations
