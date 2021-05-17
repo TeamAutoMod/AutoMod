@@ -24,7 +24,7 @@ async def removeSelfroles(plugin, ctx, roles, role):
                 out.append(f"**{r}**")
         
     if len(out) == 0:
-        return await ctx.send(plugin.translator.translate(ctx.guild, "no_valid_selfroles", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_valid_selfroles", _emote="WARN"))
     
     await ctx.author.remove_roles(*can_be_removed, reason="Selfroles")
-    await ctx.send(plugin.translator.translate(ctx.guild, "removed_selfroles", _emote="YES", roles=", ".join(out), user=ctx.author.mention, plural="roles" if len(out) > 1 else "role"))
+    await ctx.send(plugin.t(ctx.guild, "removed_selfroles", _emote="YES", roles=", ".join(out), user=ctx.author.mention, plural="roles" if len(out) > 1 else "role"))

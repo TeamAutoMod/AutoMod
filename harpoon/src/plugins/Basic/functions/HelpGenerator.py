@@ -23,8 +23,8 @@ async def getHelpForAllCommands(plugin, ctx):
     
     prefix = plugin.bot.get_guild_prefix(ctx.guild)
     kwargs = {
-        "title": plugin.translator.translate(ctx.guild, "help_page"),
-        "description": plugin.translator.translate(ctx.guild, "help_description", prefix=prefix)
+        "title": plugin.t(ctx.guild, "help_page"),
+        "description": plugin.t(ctx.guild, "help_description", prefix=prefix)
     }
     main_embed = Embed(**kwargs)
 
@@ -60,9 +60,9 @@ async def getHelpForAllCommands(plugin, ctx):
 async def generateHelpForCommand(plugin, ctx, command):
     plugin.bot.help_command.context = ctx
     usage = ctx.bot.help_command.get_command_signature(command)
-    help_message = plugin.translator.translate(ctx.guild, f"{command.help}")
+    help_message = plugin.t(ctx.guild, f"{command.help}")
 
-    e = Embed(title=plugin.translator.translate(ctx.guild, "command_help"))
+    e = Embed(title=plugin.t(ctx.guild, "command_help"))
     e.add_field(name="Description", value=f"```\n{help_message}\n```")
     e.add_field(name="Usage", value=f"```\n{usage}\n```")
 

@@ -19,7 +19,7 @@ async def run(plugin, ctx, amount, args):
     try:
         amount = int(amount)
         if amount < 1 or amount > 200:
-            return await ctx.send(plugin.translator.translate(ctx.guild, "invalid_amount", _emote="WARN"))
+            return await ctx.send(plugin.t(ctx.guild, "invalid_amount", _emote="WARN"))
 
         if args is None:
             await runClean(plugin, ctx, amount)

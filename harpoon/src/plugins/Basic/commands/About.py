@@ -4,7 +4,7 @@ from ...Types import Embed
 
 async def run(plugin, ctx):
     bot = plugin.bot
-    e = Embed(title=plugin.translator.translate(ctx.guild, "about", bot=bot.user.name))
+    e = Embed(title=plugin.t(ctx.guild, "about", bot=bot.user.name))
     e.set_thumbnail(url=bot.user.avatar_url)
     e.add_field(
         name="Status",

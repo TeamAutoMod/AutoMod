@@ -18,6 +18,6 @@ async def run(plugin, ctx, query):
 
         help_message = await getHelpForCommand(plugin, ctx, query)
         if help_message is None:
-            return await ctx.send(plugin.translator.translate(ctx.guild, "invalid_command"))
+            return await ctx.send(plugin.t(ctx.guild, "invalid_command"))
         else:
             return await ctx.send(embed=help_message)

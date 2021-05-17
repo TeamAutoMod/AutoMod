@@ -19,3 +19,7 @@ class PluginBlueprint(commands.Cog):
 
     def set_path(self, path):
         self.path = path
+
+
+    def t(self, guild, key, _emote=None, **kwargs):
+        return self.translator.translate(guild, key, _emote=_emote, **kwargs)

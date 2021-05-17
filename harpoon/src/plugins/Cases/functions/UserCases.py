@@ -28,7 +28,7 @@ async def userCases(plugin, ctx, user):
 
     results = sorted([x for x in plugin.db.inf.find({option: f"{user.id}"})], key=lambda e: int(e['id'].split("-")[-1]), reverse=True)
     if len(results) < 1:
-        return await ctx.send(plugin.translator.translate(ctx.guild, "no_cases_found", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_cases_found", _emote="WARN"))
 
     out = list()
     for e in results:

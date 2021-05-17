@@ -20,9 +20,9 @@ async def warnUser(plugin, ctx, user, reason):
         plugin.db.warns.insert(plugin.schemas.Warn(warn_id, 1))
         await plugin.action_logger.log(ctx.guild, "warn", **kwargs)
     elif (warns+1) >= plugin.db.configs.get(ctx.guild.id, "warn_threshold"):
-        confirm = await ctx.prompt(plugin.translator.translate(ctx.guild, "max_warns_prompt", _emote="WARN", warns=warns), timeout=15)
+        confirm = await ctx.prompt(plugin.t(ctx.guild, "max_warns_prompt", _emote="WARN", warns=warns), timeout=15)
         if not confirm:
-            return await ctx.send(plugin.translator.translate(ctx.guild, "aborting"))
+            return await ctx.send(plugin.t(ctx.guild, "aborting"))
         
         plugin.db.warns.update(warn_id, "warns", 0)
 
@@ -39,4 +39,4 @@ async def warnUser(plugin, ctx, user, reason):
         await plugin.action_logger.log(ctx.guild, "warn", **kwargs)
     
     dm_result = await plugin.bot.utils.dmUser(ctx, "warn", user, guild_name=ctx.guild.name, reason=reason)
-    await ctx.send(plugin.translator.translate(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, dm=dm_result))
+    await ctx.send(plugin.t(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, dm=dm_result))

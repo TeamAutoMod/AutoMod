@@ -153,7 +153,7 @@ async def setPunishment(plugin, ctx, _type):
             except discord.NotFound:
                 pass
             finally:
-                await ctx.send(plugin.translator.translate(ctx.guild, "updated_punishment", _emote="YES", _type=t["pretty_name"]))
+                await ctx.send(plugin.t(ctx.guild, "updated_punishment", _emote="YES", _type=t["pretty_name"]))
                 break
 
         except asyncio.TimeoutError:
@@ -162,5 +162,5 @@ async def setPunishment(plugin, ctx, _type):
             except discord.NotFound:
                 pass
             finally:
-                await ctx.send(plugin.translator.translate(ctx.guild, "aborting"))
+                await ctx.send(plugin.t(ctx.guild, "aborting"))
                 break
