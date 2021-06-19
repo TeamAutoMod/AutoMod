@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+:root {
+    --main: #1a1c1e;
+    --w: #ffffff;
+}
+
+.config-modal .change-prefix {
+    border-bottom: 1px solid var(--w);
+    height: auto;
+    width: 917px;
+    background-color: var(--m);
+    padding-bottom: 20px;
+}
+
+.config-modal .change-muterole {
+    border-bottom: 1px solid var(--w);
+    height: auto;
+    width: 917px;
+    background-color: var(--m);
+    padding-bottom: 20px;
+}
+
+.config-modal .change-prefix h1 {
+    font-size: 25px;
+}
+
+.config-modal .change-muterole h1 {
+    padding-top: 12px;
+    font-size: 25px;
+}
+
+.config-modal ul {
+    padding-top: 10px;
+    display: table;
+    flex-wrap: wrap;
+    width: auto;
+    white-space: wrap;
+}
+
+.config-modal ul li {
+    display: inline-block;
+    flex-grow: 1;
+    text-decoration: none;
+    list-style: none;
+}
+
+.config-modal .btn {
+    width: 100%;
+    background-color: #101010;
+    color: var(--w);
+    border: 1px solid #000000;
+    padding: 10px 30px 10px 30px;
+    margin-top: 10px;
+    transition: border .1s;
+    font-size: 16px;
+    border-radius: 3%;
+    transition: border .5s;
+    transition: color .5s;
+}
+
+.config-modal .btn:hover {
+    border: 1px solid #7289da;
+    color: #7289da;
+    background-color: #101010;
+}
+
+.config-modal form {
+    padding-top: 10px;
+}
+
+.config-modal form input {
+    background-color: #101010;
+    border: 1px solid #000000;
+}
+
+.config-modal form input:focus {
+    border: 1px solid #000000;
+}
+
+.config-modal form input:hover {
+    border: 1px solid #000000;
+}
+
+
+.config-modal form select {
+    background-color: #101010;
+    border: 1px solid #000000;
+}
+
+.config-modal form select:focus {
+    border: 1px solid #000000;
+}
+
+.config-modal form select:hover {
+    border: 1px solid #000000;
+}

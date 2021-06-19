@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+:root {
+    --main: #1d1e22;
+    --w: #eef1f5;
+    --s: #bec3cd;
+}
+
+.menu {
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background: var(--main) !important;
+    color: var(--w);
+    font-family: 'Roboto', sans-serif;
+}
+
+.menu .top {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px;
+    padding: 10px;
+    overflow: auto;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.text h1 {
+    font-size: 30px;
+    font-weight: bold;
+    padding: 20px;
+}
+
+.selection {
+    border-top: 1px solid var(--s);
+    border-bottom: 1px solid var(--s);
+}
+
+.selection ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.selection ul li {
+    text-decoration: none;
+    list-style: none;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    flex-grow: 1;
+}
+
+.selection ul li .g {
+    width: 200px;
+    height: 184px;
+    margin: 0px 0px 0px 0px;
+    margin: 9px;
+    padding: 7px;
+    background: #101010;
+    border: 1px solid black;
+    text-align: center;
+    border-radius: 5%;
+    transition: .4s transform;
+}
+
+.selection ul li .g h1 {
+    margin: 0px 0px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--s);
+}
+
+.selection ul li .g img {
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+    transition: .4s border-radius;
+    margin: 0px 0px 14px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.selection ul li .g:hover {
+    transform: scale(1.04);
+}
+
+.selection ul li .g:hover img {
+    border-radius: 30%;
+}
+
+.selection ul li p {
+    background-color: #7286ce;
+    font-size: 14px;
+    color: var(--w);
+    padding: 5px 17px;
+    transition: background .2s;
+}
+
+.selection ul li p:hover {
+    background: #8f9ed7;
+}

@@ -1,2 +1,2 @@
-# Harpoon
+# AutoMod
 Discord moderation bot

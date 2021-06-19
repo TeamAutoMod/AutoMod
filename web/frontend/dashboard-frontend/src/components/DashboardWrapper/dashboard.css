@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+:root {
+    --main: #1a1c1e;
+    --w: #ffffff;
+}
+
+.dashboard {
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background: var(--main) !important;
+    color: var(--w);
+    font-family: 'Roboto', sans-serif;
+}
+
+.dashboard .dashboard-top {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px;
+    padding: 10px;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.dashboard-text h1 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.dashboard-text p {
+    font-size: 18px; 
+}
+
+.modules ul {
+    padding-top: 30px;
+    display: table;
+    flex-wrap: wrap;
+    width: auto;
+    white-space: wrap;
+}
+
+.modules ul li {
+    display: inline-block;
+    flex-grow: 1;
+    text-decoration: none;
+    list-style: none;
+}
+
+.modules ul li .option {
+    background-color: #101010;
+    margin: 10px;
+    width: 350px;
+    height: 150px;
+    border: 1px solid #000000;
+    border-radius: 2%;
+    padding: 10px;
+    transition: transform .4s;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000000;
+    transition: transform .2s;
+}
+
+.modules ul li .option:hover {
+    transform: scale(1.07);
+}
+
+.modules ul li .option .module-desc {
+    padding-left: 1px;
+    text-align: center;
+}
+
+.modules ul li .option .module-desc h1 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.modules ul li .option .module-desc p {
+    font-size: 15px;
+}
+
+.modules ul li .option i {
+    float: left;
+    padding-left: 5px;
+}
+
+.modal {
+    display: inline-block;
+    position: fixed;
+    left: 0%;
+    top: -10%;
+    width: 100%;
+    height: 900px;
+    overflow: hidden !important;
+}
+
+.modal-content {
+    background-color: var(--main);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #000000;
+    overflow: hidden !important;
+}
+
+.modal-content h1 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.close {
+    color: var(--w);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #7290da;
+    text-decoration: none;
+    cursor: pointer;
+}
