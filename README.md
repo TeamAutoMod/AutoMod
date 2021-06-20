@@ -1,0 +1,2 @@
+# AutoMod
+Discord moderation bot
