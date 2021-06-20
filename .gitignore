@@ -127,6 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< HEAD
 /shared
 /automod/config.json
 /src/config.json
+=======
+
+config.json
+package.json
+package-lock.json
+push.bat
+pull.bat
+>>>>>>> 30ac378abae756d6e4972221b006fb5e65e3bfbe
