@@ -1,0 +1,28 @@
+{
+    "default_prefix": "+",
+
+    "token": "NzMyOTUzNjY2MzE0NTY3NzYx.Xw8GSw.q0L9bmhdza1iyMMKjQq0zTywq6E",
+    "mongo_url": "mongodb+srv://admin_user:secret1337@webdb.iktex.mongodb.net/main?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",
+    "sentry_dsn": "https://e2991a32956c47c992131f09b4f154b0@o502503.ingest.sentry.io/5584921",
+    "shards": 1,
+
+    "langs": [
+        "en_US"
+    ],
+
+    "enabled_plugins_with_commands": [
+        "BasicPlugin",
+        "ModerationPlugin",
+        "CasesPlugin",
+        "ConfigPlugin",
+        "LocateUserPlugin",
+        "TagsPlugin",
+        "AutomodPlugin",
+        "WarnsPlugin",
+        "TagsPlugin",
+        "FiltersPlugin"
+    ],
+    
+    "bot_admins": [543056846601191508],
+    "blocked_guilds": []
+}
