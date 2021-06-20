@@ -2,50 +2,9 @@ import re
 
 
 
-yes = "<:greenTick:751915988143833118>" # green tick
-no = "<:redTick:751916874522034239>" # red tick
+yes = "<:greenTick:751915988143833118>"
+no = "<:redTick:751916874522034239>"
 
-default_censored_words = [
-    "nigga",
-    "bitch",
-    "negga",
-    "fuck you",
-    "son of a bitch",
-    "whore",
-    "fuck u",
-    "bastard",
-    "arse",
-    "ass",
-    "asshole",
-    "bitch",
-    "bollocks",
-    "bugger",
-    "child-fucker",
-    "cunt",
-    "effing",
-    "frigger",
-    "fuck",
-    "horseshit",
-    "jesus wept",
-    "motherfucker",
-    "prick",
-    "shit",
-    "shitass",
-    "shit ass",
-    "slut",
-    "son of a whore",
-    "twat",
-    "nigger",
-    "negger",
-    "nibber",
-    "nibba",
-    "n i g g a",
-    "n e g g a",
-    "n i g g e r",
-    "n e g g e r",
-    "n i b b a",
-    "n i b b e r"
-]
 
 ZALGO = [
     u'\u030d',
@@ -163,3 +122,47 @@ ZALGO = [
 ]
 
 ZALGO_RE = re.compile(u'|'.join(ZALGO))
+
+
+
+default_censored_words = [
+    "nigga",
+    "bitch",
+    "negga",
+    "fuck you",
+    "son of a bitch",
+    "whore",
+    "fuck u",
+    "bastard",
+    "arse",
+    "ass",
+    "asshole",
+    "bitch",
+    "bollocks",
+    "bugger",
+    "child-fucker",
+    "cunt",
+    "effing",
+    "frigger",
+    "fuck",
+    "horseshit",
+    "jesus wept",
+    "motherfucker",
+    "prick",
+    "shit",
+    "shitass",
+    "shit ass",
+    "slut",
+    "son of a whore",
+    "twat",
+    "nigger",
+    "negger",
+    "nibber",
+    "nibba",
+    "n i g g a",
+    "n e g g a",
+    "n i g g e r",
+    "n e g g e r",
+    "n i b b a",
+    "n i b b e r"
+]
