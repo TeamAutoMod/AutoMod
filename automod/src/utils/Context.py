@@ -3,7 +3,7 @@ from discord.ext import commands
 import asyncio
 import io
 
-from.Constants import yes, no
+from .Constants import yes, no
 
 
 
