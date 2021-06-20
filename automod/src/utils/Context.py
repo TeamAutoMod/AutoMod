@@ -3,34 +3,22 @@ from discord.ext import commands
 import asyncio
 import io
 
-from i18n import Translator
+from.Constants import yes, no
 
-
-yes = "<:greenTick:751915988143833118>" # green tick
-no = "<:redTick:751916874522034239>" # red tick
 
 
 class Context(commands.Context):
-    """A custom class for commands.Context"""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    def __repr__(self):
-        return "<Context>"
-
-    @property
-    def session(self):
-        return self.bot.session
 
 
     async def prompt(self, message, *, timeout=60.0, delete_after=True, author_id=None):
         if not self.channel.permissions_for(self.me).add_reactions:
             raise RuntimeError("AutoMod doesn't have add_reactions perms.")
 
-        fmt = Translator.translate(self.guild, "prompt_text", message=message, yes=yes, no=no)
 
         author_id = author_id or self.author.id
-        msg = await self.send(fmt)
+        msg = await self.send(f"{message} \n \n{yes} - Continue \n{no} - Cancel")
 
         confirm = None
 
