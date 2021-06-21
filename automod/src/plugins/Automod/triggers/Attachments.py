@@ -30,7 +30,6 @@ async def check(plugin, message):
     if len(message.attachments) > 0 and "files" in plugin.db.configs.get(message.guild.id, "automod"):
         attachments = {x: x.url.split(".")[-1] for x in message.attachments}
         unallowed = [k for k, v in attachments.items() if v.lower() not in allowed_file_formats]
-        print(unallowed)
         if len(unallowed) > 0:
             try:
                 await message.delete()
