@@ -96,7 +96,7 @@ class ActionValidator:
                     "length": int(action.split(" ")[-2]),
                     "unit": action.split(" ")[-1],
                     "reason": f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}",
-                    "context": f"\n**Context: ** [{last[0]}](Here!)" if last is not None else "",
+                    "context": f"\n**Context: ** [{last}](Here!)" if last is not None else "",
                     "case": case,
                 }
                 dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}")
