@@ -10,7 +10,7 @@ async def run(plugin, member):
     if plugin.db.configs.get(member.guild.id, "member_logging") is False:
         return
 
-    prior_cases = [f"#{x['id'].split('-')[0]}" for x in list(filter(lambda x: x['guild'] == str(member.guild.id) and x['target_id'] == str(member.id), list(plugin.db.inf.find({}))))]
+    prior_cases = [f"``#{x['id'].split('-')[1]}``" for x in list(filter(lambda x: x['guild'] == str(member.guild.id) and x['target_id'] == str(member.id), list(plugin.db.inf.find({}))))]
     ago = humanize.naturaldelta((datetime.datetime.fromtimestamp(time.time()) - member.created_at))
     created = member.created_at.strftime("%Y-%m-%d %H:%M:%S")
     
@@ -19,7 +19,7 @@ async def run(plugin, member):
     e.set_thumbnail(url=member.avatar_url)
     if len(prior_cases) > 0:
         e.color = 0xffff00
-        e.description = plugin.t(member.guild, "prior_cases", cases=prior_cases, profile=member.mention, created=created, ago=ago)
+        e.description = plugin.t(member.guild, "prior_cases", cases=", ".join(prior_cases), profile=member.mention, created=created, ago=ago)
         e.set_footer(text="User with prior cases joined")
         await plugin.action_logger.log(
             member.guild, 

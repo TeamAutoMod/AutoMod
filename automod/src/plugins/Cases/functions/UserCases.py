@@ -41,7 +41,7 @@ async def userCases(plugin, ctx, user):
         elif member.guild_permissions.kick_members:
             option = options["mod"]
         else:
-            option = options["mod"]
+            option = options["user"]
     else:
         option = options["guild"]
 
