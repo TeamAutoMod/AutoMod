@@ -89,7 +89,7 @@ async def userCases(plugin, ctx, user):
 
     pages = []
     lines = 0
-    max_lines = 15 if len(out) >= 15 else len(out)
+    max_lines = 12 if len(out) >= 12 else len(out)
     max_lines -= 1
     for i, inp in enumerate(out):
         if lines >= max_lines:
