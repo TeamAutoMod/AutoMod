@@ -10,14 +10,14 @@ async def run(plugin, ctx, users, warns, reason):
         warns = 1
 
     if warns < 1:
-        return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="NO"))
 
     if warns > 100:
-        return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="NO"))
     
     users = list(set(users))
     if len(users) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_member", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_member", _emote="NO"))
 
     for user in users:
         if not Permissions.is_allowed(ctx, ctx.author, user):
@@ -27,11 +27,11 @@ async def run(plugin, ctx, users, warns, reason):
             _id = f"{ctx.guild.id}-{user.id}"
             if not plugin.db.warns.exists(_id):
                 plugin.db.warns.insert(plugin.schemas.Warn(_id, 0))
-                return await ctx.send(plugin.t(ctx.guild, "no_warns", _emote="WARN"))
+                return await ctx.send(plugin.t(ctx.guild, "no_warns", _emote="NO"))
             else:
                 current = plugin.db.warns.get(_id, "warns")
                 if current < 1:
-                    return await ctx.send(plugin.t(ctx.guild, "no_warns", _emote="WARN"))
+                    return await ctx.send(plugin.t(ctx.guild, "no_warns", _emote="NO"))
                 new = (current - warns) if (current - warns) >= 0 else 0
                 plugin.db.warns.update(_id, "warns", new)
             

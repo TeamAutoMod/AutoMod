@@ -28,6 +28,8 @@ async def run(plugin, ctx, error):
         await ctx.send(plugin.t(ctx.guild, "missing_user_perms", _emote="NO"))
     elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(plugin.t(ctx.guild, "on_cooldown", retry_after=round(error.retry_after)))
+    elif isinstance(error.__cause__, discord.Forbidden):
+        await ctx.send(plugin.t(ctx.guild, "forbidden", _emote="NO", exc=error))
 
     elif isinstance(error, commands.MissingRequiredArgument):
         await MissingRequiredArgument.run(plugin, ctx)

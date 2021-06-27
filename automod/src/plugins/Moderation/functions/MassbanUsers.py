@@ -26,7 +26,7 @@ async def massbanUsers(plugin, ctx, targets, reason):
                 to_ban.append(t)
             
     if failing >= len(targets):
-        return await ctx.send(plugin.t(ctx.guild, "cant_ban_anyone", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "cant_ban_anyone", _emote="NO"))
     
     confirm = await ctx.prompt(f'This action will ban {len(to_ban)} member{"" if len(to_ban) == 1 else "s"}. Are you sure?', timeout=15)
     if not confirm:

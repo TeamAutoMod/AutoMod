@@ -7,10 +7,10 @@ from ..functions.AddTagToCache import addTagToCache
 async def run(plugin, ctx, trigger, reply):
     trigger = trigger.lower()
     if len(trigger) > 20:
-        return await ctx.send(plugin.t(ctx.guild, "trigger_too_long", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "trigger_too_long", _emote="NO"))
 
     if len(reply) > 700:
-        return await ctx.send(plugin.t(ctx.guild, "reply_too_long", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "reply_too_long", _emote="NO"))
     
     _id = f"{ctx.guild.id}-{trigger}"
     if plugin.db.tags.exists(_id):

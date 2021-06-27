@@ -125,7 +125,7 @@
     "no_follows": "{emote} You don't have any active alerts.",
     "cant_follow_yourself": "{emote} You can't set an alert for yourself.",
     "not_in_voice": "{emote} This user currently isn't connected to a voice channel.",
-    "error_invite": "{emote} Error while trying to create an invite for the channel: {exc}",
+    "error_invite": "{emote} Error while trying to create an invite for the channel ||{exc}||",
     "send_where": "``{user}`` is in channel ``{channel}``: {invite}",
 
     "invalid_amount": "{emote} The amount must be between 1 and 300.",
@@ -315,6 +315,7 @@
     "missing_arg": "{emote} You are missing a required argument: ``{arg}`` \n🔧 Usage: ``{usage}``",
     "arg_parse_error": "{emote} Failed to parse the ``{arg}`` param: ``{error}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
+    "forbidden": "{emote} {exc}",
     "missing_user_perms": "{emote} Cannot perform this: insufficient permissions",
     "cant_send_message": "Looks like you tried to use a command in a channel I'm not allowed to send messages in. Make sure I have the ``send messages`` permission in the channel.",
 
@@ -434,7 +435,7 @@
     "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are seperated by spaces. You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
     "filters": "Active filters for **{guild_name}**",
 
-    "prior_cases": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago) \n**Prior cases:** \n{cases}",
+    "prior_cases": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago) \n**Prior cases:** {cases}",
     "normal_join": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago)",
 
     "leave": "**Profile:** {profile} \n**Joined:** ``{joined}`` ({ago} ago)", 

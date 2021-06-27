@@ -11,6 +11,6 @@ async def run(plugin, ctx, users, reason):
     
     users = list(set(users))
     if len(users) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_member", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_member", _emote="NO"))
     for user in users:
         await banUser(plugin, ctx, user, reason, "forceban", "forcebanned")
