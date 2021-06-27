@@ -4,7 +4,9 @@ AutoMod is a Discord moderation bot designed for both large and small servers.
 ## What does the bot offer?
 - Multiple automoderator features, such as:
     - Spam detection
+    - Raid detection
     - Anti-invite system
+    - Anti-mention system
 - Different logging options for:
     - Message logs
     - Server logs
