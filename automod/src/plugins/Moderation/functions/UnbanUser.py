@@ -1,11 +1,14 @@
+from ....utils import Permissions
 
 
 
 async def unbanUser(plugin, ctx, user, reason, softban=False):
     try:
+        if not await Permissions.is_banned(ctx, user):
+            return await ctx.send(plugin.t(ctx.guild, "target_not_banned", _emote="WARN"))
         await ctx.guild.unban(user=user, reason="Softban")
     except Exception as ex:
-        return await ctx.send(plugin.t(ctx.guild, "unban_failed", _emote="WARN", error=ex))
+        return await ctx.send(plugin.t(ctx.guild, "unban_failed", _emote="NO", error=ex))
     else:
         if softban:
             plugin.bot.ignore_for_event.add("unbans", user.id)

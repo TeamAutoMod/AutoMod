@@ -21,7 +21,7 @@ async def run(plugin, ctx, users, warns, reason):
 
     for user in users:
         if not Permissions.is_allowed(ctx, ctx.author, user):
-            await ctx.send(plugin.t(ctx.guild, "unwarn_not_allowed", _emote="WARN"))
+            await ctx.send(plugin.t(ctx.guild, "unwarn_not_allowed", _emote="NO"))
 
         else:
             _id = f"{ctx.guild.id}-{user.id}"

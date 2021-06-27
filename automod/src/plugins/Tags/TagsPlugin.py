@@ -14,13 +14,7 @@ class TagsPlugin(PluginBlueprint):
         self.cached_tags = dict()
         self.bot.loop.create_task(cacheTags(self))
 
-
     
-    async def cog_check(self, ctx):
-        return ctx.author.guild_permissions.manage_messages
-
-    
-
     @commands.group(aliases=["tag"])
     async def tags(
         self, 
@@ -32,6 +26,7 @@ class TagsPlugin(PluginBlueprint):
 
 
     @tags.command(aliases=["create"])
+    @commands.has_permissions(manage_messages=True)
     async def add(
         self,
         ctx,
@@ -44,6 +39,7 @@ class TagsPlugin(PluginBlueprint):
 
 
     @tags.command(aliases=["delete", "del"])
+    @commands.has_permissions(manage_messages=True)
     async def remove(
         self,
         ctx,
@@ -54,6 +50,7 @@ class TagsPlugin(PluginBlueprint):
 
 
     @tags.command(aliases=["about"])
+    @commands.has_permissions(manage_messages=True)
     async def info(
         self,
         ctx,
@@ -64,6 +61,7 @@ class TagsPlugin(PluginBlueprint):
 
 
     @tags.command()
+    @commands.has_permissions(manage_messages=True)
     async def edit(
         self,
         ctx,

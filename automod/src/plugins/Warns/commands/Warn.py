@@ -22,7 +22,7 @@ async def run(plugin, ctx, users, warns, reason):
 
     for user in users:
         if not Permissions.is_allowed(ctx, ctx.author, user):
-            await ctx.send(plugin.t(ctx.guild, "warn_not_allowed", _emote="WARN"))
+            await ctx.send(plugin.t(ctx.guild, "warn_not_allowed", _emote="NO"))
 
         else:
             dm_result, case = await plugin.action_validator.add_warns(

@@ -13,4 +13,4 @@ async def run(plugin, ctx, error):
     usage = plugin.bot.help_command.get_command_signature(ctx.command)
     arg = param._name
     real_error = replace_lookalikes(str(error))
-    await ctx.send(plugin.t(ctx.guild, "arg_parse_error", _emote="WARN", arg=arg, error=real_error, usage=usage))
+    await ctx.send(plugin.t(ctx.guild, "arg_parse_error", _emote="NO", arg=arg, error=real_error, usage=usage))

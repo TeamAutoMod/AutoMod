@@ -18,11 +18,7 @@ async def run(plugin, ctx, users, reason):
             await ctx.send(plugin.t(ctx.guild, "target_not_on_server", _emote="WARN"))
         
         elif not Permissions.is_allowed(ctx, ctx.author, user):
-            await ctx.send(plugin.t(ctx.guild, "ban_not_allowed", _emote="WARN"))
-        
-        elif await Permissions.is_banned(ctx, user):
-            await ctx.send(plugin.t(ctx.guild, "target_already_banned", _emote="WARN"))
-
+            await ctx.send(plugin.t(ctx.guild, "ban_not_allowed", _emote="NO"))
         else:
             await banUser(plugin, ctx, user, reason, "ban", "banned")
     

@@ -55,7 +55,7 @@ async def muteUser(plugin, ctx, user, length, reason):
                 try:
                     await user.add_roles(mute_role)
                 except Exception as ex:
-                    await ctx.send(plugin.t(ctx.guild, "mute_failed", _emote="WARN", error=ex))
+                    await ctx.send(plugin.t(ctx.guild, "mute_failed", _emote="NO", error=ex))
                 else:
                     until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
                     plugin.db.mutes.insert(plugin.schemas.Mute(ctx.guild.id, user.id, until))
