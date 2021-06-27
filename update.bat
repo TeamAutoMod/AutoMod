@@ -2,4 +2,4 @@
 
 git pull origin master
 cd ./automod
-py -3 ./start.py
+npm run start-bot
