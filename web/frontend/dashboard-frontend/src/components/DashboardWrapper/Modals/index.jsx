@@ -1,1 +1,0 @@
-export { ConfigModal } from './ConfigModal';
