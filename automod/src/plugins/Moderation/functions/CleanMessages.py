@@ -10,6 +10,8 @@ async def finishCleaning(plugin, channel_id):
 
 
 async def cleanMessages(plugin, ctx, category, amount, predicate, before=None, after=None, check_amount=None):
+    if not hasattr(plugin, "cleaning"):
+        plugin.cleaning = dict()
     count = 0
 
     if ctx.channel.id in plugin.cleaning:

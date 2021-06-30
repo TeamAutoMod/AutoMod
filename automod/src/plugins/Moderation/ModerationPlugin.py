@@ -150,7 +150,7 @@ class ModerationPlugin(PluginBlueprint):
         await CleanUser.run(self, ctx, users, amount)
 
 
-    @clean.command()
+    @clean.command(usage="clean last <duration>")
     @commands.has_guild_permissions(manage_messages=True)
     async def last(
         self,

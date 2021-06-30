@@ -11,6 +11,6 @@ async def run(plugin, ctx, start, end):
         "Between", 
         500, 
         lambda m: True,
-        before=discord.Object(start.id),
-        after=discord.Object(end.id)
+        before=discord.Object(end.id),
+        after=discord.Object(start.id)
     )

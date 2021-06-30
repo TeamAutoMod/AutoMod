@@ -1,10 +1,7 @@
 import datetime
 import math
 import traceback
-<<<<<<< HEAD
-=======
 from collections import OrderedDict
->>>>>>> fcee25279c8c552c061b2c3a7260278c3f257df4
 
 
 
@@ -28,11 +25,7 @@ class ActionValidator:
         elif opt is "mention":
             warns = abs(int(opt["threshold"]) - int(kwargs.get("mentions")))
         else:
-<<<<<<< HEAD
-            warns = math.ceil((float)(len(message.content.split("\n")) - int(opt["thresold"])) / int(opt["threshold"]))
-=======
             warns = math.ceil((float)(len(message.content.split("\n")) - int(opt["threhsold"])) / int(opt["threshold"]))
->>>>>>> fcee25279c8c552c061b2c3a7260278c3f257df4
 
         if int(warns) < 1:
             return
@@ -55,11 +48,7 @@ class ActionValidator:
         else:
             self.bot.db.warns.update(_id, "warns", new_warns)
         
-<<<<<<< HEAD
-        punishments = {int(x): y for x, y in self.bot.db.configs.get(message.guild.id, "punishments").items() if int(x) <= new_warns}
-=======
         punishments = OrderedDict(sorted({int(x): y for x, y in self.bot.db.configs.get(message.guild.id, "punishments").items() if int(x) <= new_warns}.items()))
->>>>>>> fcee25279c8c552c061b2c3a7260278c3f257df4
         if len(punishments) > 0:
             action = list(punishments.values())[-1]
             _from = list(punishments.keys())[-2] if len(list(punishments.keys())) > 1 else 0
@@ -107,11 +96,7 @@ class ActionValidator:
                     "length": int(action.split(" ")[-2]),
                     "unit": action.split(" ")[-1],
                     "reason": f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}",
-<<<<<<< HEAD
-                    "context": f"\n**Context: ** [{last[0]}](Here!)" if last is not None else "",
-=======
                     "context": f"\n**Context: ** [{last.jump_url}](Here!)" if last is not None else "",
->>>>>>> fcee25279c8c552c061b2c3a7260278c3f257df4
                     "case": case,
                 }
                 dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}")
