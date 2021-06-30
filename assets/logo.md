@@ -1,0 +1,1 @@
+https://cdn.discordapp.com/emojis/855521723632844819.png?v=1

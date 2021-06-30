@@ -8,9 +8,6 @@ async def shouldPerformAutomod(plugin, message):
     if message.guild is None:
         return False
 
-    if len(message.content) < 1:
-        return False 
-
     if not isinstance(message.author, discord.Member):
         return
         

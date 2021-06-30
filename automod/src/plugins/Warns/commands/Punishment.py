@@ -22,10 +22,10 @@ async def run(plugin, ctx, warns, action, time):
         return await ctx.send(plugin.t(ctx.guild, "invalid_action", _emote="WARN", prefix=prefix))
 
     if warns < 1:
-        return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="NO"))
 
     if warns > 100:
-        return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="NO"))
 
     current = plugin.db.configs.get(ctx.guild.id, "punishments")
     if action == "none":
@@ -56,7 +56,7 @@ async def run(plugin, ctx, warns, action, time):
 
     else:
         if time is None:
-            return await ctx.send(plugin.t(ctx.guild, "time_needed", _emote="WARN", prefix=prefix))
+            return await ctx.send(plugin.t(ctx.guild, "time_needed", _emote="NO", prefix=prefix))
         
         as_seconds = time.to_seconds(ctx)
         if as_seconds > 0:

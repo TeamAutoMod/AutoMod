@@ -30,6 +30,7 @@ options = {
     "mod": "moderator_id"
 }
 async def userCases(plugin, ctx, user):
+    await ctx.trigger_typing()
     # Check what we should search by
     option = None
     if isinstance(user, discord.Guild):
@@ -41,13 +42,13 @@ async def userCases(plugin, ctx, user):
         elif member.guild_permissions.kick_members:
             option = options["mod"]
         else:
-            option = options["mod"]
+            option = options["user"]
     else:
         option = options["guild"]
 
     results = sorted([x for x in plugin.db.inf.find({option: f"{user.id}"})], key=lambda e: int(e['id'].split("-")[-1]), reverse=True)
     if len(results) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_cases_found", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_cases_found", _emote="NO"))
 
     out = list()
     counts = {
@@ -89,7 +90,7 @@ async def userCases(plugin, ctx, user):
 
     pages = []
     lines = 0
-    max_lines = 15 if len(out) >= 15 else len(out)
+    max_lines = 12 if len(out) >= 12 else len(out)
     max_lines -= 1
     for i, inp in enumerate(out):
         if lines >= max_lines:

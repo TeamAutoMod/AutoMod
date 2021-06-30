@@ -4,7 +4,7 @@ from ..functions.CleanMessages import cleanMessages
 
 async def run(plugin, ctx, amount):
     if amount is None:
-        amount = 10
+        amount = 50
     
     if amount < 1:
         return await ctx.send(plugin.t(ctx.guild, "amount_too_small", _emote="NO"))
@@ -15,8 +15,7 @@ async def run(plugin, ctx, amount):
     await cleanMessages(
         plugin, 
         ctx, 
-        "All", 
+        "Bots", 
         amount, 
-        lambda m: True, 
-        check_amount=amount
+        lambda m: m.author.bot
     )

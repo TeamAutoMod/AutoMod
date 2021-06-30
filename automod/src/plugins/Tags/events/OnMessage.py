@@ -20,4 +20,5 @@ async def run(plugin, message):
                 uses = plugin.db.tags.get(f"{message.guild.id}-{trigger}", "uses")
                 plugin.db.tags.update(f"{message.guild.id}-{trigger}", "uses", (uses+1))
                 reply = tag["reply"]
+                plugin.bot.used_tags += 1
                 return await message.channel.send(f"{reply}")

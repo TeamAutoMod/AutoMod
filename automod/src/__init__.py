@@ -58,7 +58,7 @@ class AutoMod(commands.AutoShardedBot):
         self.locked = True
 
         self.used_commands = 0
-        self.used_custom_commands = 0
+        self.used_tags = 0
         self.total_shards = config["shards"]
         self.version = "0.0.1"
 
@@ -74,15 +74,10 @@ class AutoMod(commands.AutoShardedBot):
         self.modify_config = ModifyConfig(self)
 
 
-    # async def _run_event(self, coro, event_name, *args, **kwargs):
-    #     while (self.locked or not self.ready) and event_name != "on_ready":
-    #         await asyncio.sleep(0.2)
-    #     await super()._run_event(coro, event_name, *args, **kwargs)
-
     
     async def on_ready(self):
         if not self.ready:
-            #await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="loading..."))
+            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="loading..."), status=discord.Status.dnd)
             log.info("Starting up as {}#{} ({})".format(self.user.name, self.user.discriminator, self.user.id))
             self.fetch_guilds()
 
@@ -107,7 +102,6 @@ class AutoMod(commands.AutoShardedBot):
             if not hasattr(self, "uptime"):
                 self.uptime = datetime.datetime.utcnow()
             
-            #await self.change_presence(activity=None)
             log.info("Ready!")
 
     
@@ -138,6 +132,8 @@ class AutoMod(commands.AutoShardedBot):
 
             self.ready = True
             self.locked = False
+
+            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="+help"), status=discord.Status.online)
 
 
     async def chunk_guild(self, guild_id, guild):

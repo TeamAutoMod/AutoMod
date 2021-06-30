@@ -8,7 +8,7 @@ async def run(plugin, ctx, user, length, reason):
         reason = plugin.t(ctx.guild, "no_reason")
     
     if not Permissions.is_allowed(ctx, ctx.author, user):
-        return await ctx.send(plugin.t(ctx.guild, "mute_not_allowed", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "mute_not_allowed", _emote="NO"))
     
 
     await muteUser(plugin, ctx, user, length, reason)

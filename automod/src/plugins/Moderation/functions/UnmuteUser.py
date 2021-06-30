@@ -4,7 +4,7 @@
 async def unmuteUser(plugin, ctx, user):
     mute_id = f"{ctx.guild.id}-{user.id}"
     if not plugin.db.mutes.exists(mute_id):
-        return await ctx.send(plugin.t(ctx.guild, "not_muted", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "not_muted", _emote="NO"))
 
     plugin.db.mutes.delete(mute_id)
     await ctx.send(plugin.t(ctx.guild, "mute_lifted", _emote="YES", user=user))

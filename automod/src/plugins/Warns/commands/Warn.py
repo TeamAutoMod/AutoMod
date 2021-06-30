@@ -11,18 +11,18 @@ async def run(plugin, ctx, users, warns, reason):
         warns = 1
 
     if warns < 1:
-        return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="NO"))
 
     if warns > 100:
-        return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="NO"))
     
     users = list(set(users))
     if len(users) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_member", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_member", _emote="NO"))
 
     for user in users:
         if not Permissions.is_allowed(ctx, ctx.author, user):
-            await ctx.send(plugin.t(ctx.guild, "warn_not_allowed", _emote="WARN"))
+            await ctx.send(plugin.t(ctx.guild, "warn_not_allowed", _emote="NO"))
 
         else:
             dm_result, case = await plugin.action_validator.add_warns(

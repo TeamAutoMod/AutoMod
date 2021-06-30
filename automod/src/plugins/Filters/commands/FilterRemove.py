@@ -6,10 +6,10 @@ async def run(plugin, ctx, name):
     filters = plugin.db.configs.get(ctx.guild.id, "filters")
 
     if len(filters) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_filters", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_filters", _emote="NO"))
 
     if name not in filters:
-        return await ctx.send(plugin.t(ctx.guild, "filter_doesnt_exist", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "filter_doesnt_exist", _emote="NO"))
     
     del filters[name]
     plugin.db.configs.update(ctx.guild.id, "filters", filters)

@@ -9,7 +9,7 @@ async def run(plugin, ctx):
     filters = plugin.db.configs.get(ctx.guild.id, "filters")
 
     if len(filters) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_filters", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_filters", _emote="NO"))
 
     e = Embed()
     footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None

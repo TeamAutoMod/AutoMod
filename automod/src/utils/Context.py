@@ -10,7 +10,7 @@ from .Constants import yes, no
 class Context(commands.Context):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
+ 
 
     async def prompt(self, message, *, timeout=60.0, delete_after=True, author_id=None):
         if not self.channel.permissions_for(self.me).add_reactions:

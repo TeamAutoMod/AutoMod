@@ -8,7 +8,7 @@ async def run(plugin, ctx, channel):
             plugin.db.configs.update(ctx.guild.id, "server_log", "")
             return await ctx.send(plugin.t(ctx.guild, "log_off", _emote="YES", opt="Server Logs"))
         else:
-            return await ctx.send(plugin.t(ctx.guild, "invalid_channel", _emote="WARN"))
+            return await ctx.send(plugin.t(ctx.guild, "invalid_channel", _emote="NO"))
     
     plugin.db.configs.update(ctx.guild.id, "server_logging", True)
     plugin.db.configs.update(ctx.guild.id, "server_log", f"{channel.id}")

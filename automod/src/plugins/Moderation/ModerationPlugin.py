@@ -3,7 +3,8 @@ from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
 from ..Types import Reason, DiscordUser, Duration
-from .commands import Ban, Softban, Forceban, Mute, Unmute, Unban, Kick, Clean
+from .commands import Ban, Softban, Forceban, Mute, Unmute, Unban, Kick, \
+Clean, CleanBots, CleanBetween, CleanUser, CleanUntil, CleanLast
 from .functions.UnmuteTask import unmuteTask
 
 
@@ -103,15 +104,85 @@ class ModerationPlugin(PluginBlueprint):
         await Unban.run(self, ctx, user, reason)
 
 
+
     @commands.command()
     @commands.has_guild_permissions(manage_messages=True)
-    async def clean(
+    async def purge(
         self,
         ctx,
         amount: int = None
     ):
-        """clean_help"""
+        """purge_help"""
         await Clean.run(self, ctx, amount)
+
+
+    @commands.group()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def clean(
+        self,
+        ctx,
+    ):
+        """clean_help"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.bot.get_command("help"), query="clean")
+            
+
+    @clean.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def bots(
+        self,
+        ctx,
+        amount: int = None
+    ):
+        """clean_bots_help"""
+        await CleanBots.run(self, ctx, amount)
+
+
+    @clean.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def user(
+        self,
+        ctx,
+        users: commands.Greedy[DiscordUser],
+        amount: int = None
+    ):
+        """clean_user_help"""
+        await CleanUser.run(self, ctx, users, amount)
+
+
+    @clean.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def last(
+        self,
+        ctx,
+        duration: Duration,
+        excess = ""
+    ):
+        """clean_last_help"""
+        await CleanLast.run(self, ctx, duration, excess)
+
+
+    @clean.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def until(
+        self,
+        ctx,
+        message: discord.Message
+    ):
+        """clean_until_help"""
+        await CleanUntil.run(self, ctx, message)
+
+
+    @clean.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def between(
+        self,
+        ctx,
+        start: discord.Message,
+        end: discord.Message
+    ):
+        """clean_between_help"""
+        await CleanBetween.run(self, ctx, start, end)
 
 
 

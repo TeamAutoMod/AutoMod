@@ -2,7 +2,7 @@
   "name": "automod",
   "version": "1.0.0",
   "description": "",
-  "private": true,
+  "private": false,
   "scripts": {
     "format": "prettier --write \"./{automod}/{,!(node_modules)/**/}/*.py\"",
     "lint": "tslint \"./{automod,dashboard}/{,!(node_modules)/**/}/*.py\"",

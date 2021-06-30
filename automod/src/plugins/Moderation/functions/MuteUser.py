@@ -14,11 +14,11 @@ async def muteUser(plugin, ctx, user, length, reason):
 
     mute_role_id = plugin.db.configs.get(ctx.guild.id, "mute_role")
     if mute_role_id is None:
-        return await ctx.send(plugin.t(ctx.guild, "no_mute_role", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_mute_role", _emote="NO"))
     
     mute_role = await plugin.bot.utils.getRole(ctx.guild, mute_role_id)
     if mute_role is None:
-        return await ctx.send(plugin.t(ctx.guild, "no_mute_role", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "no_mute_role", _emote="NO"))
 
     mute_id = f"{ctx.guild.id}-{user.id}"
     # Check if user is already muted. If so, should we extend their mute?
@@ -55,7 +55,7 @@ async def muteUser(plugin, ctx, user, length, reason):
                 try:
                     await user.add_roles(mute_role)
                 except Exception as ex:
-                    await ctx.send(plugin.t(ctx.guild, "mute_failed", _emote="WARN", error=ex))
+                    await ctx.send(plugin.t(ctx.guild, "mute_failed", _emote="NO", error=ex))
                 else:
                     until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
                     plugin.db.mutes.insert(plugin.schemas.Mute(ctx.guild.id, user.id, until))
@@ -82,4 +82,4 @@ async def muteUser(plugin, ctx, user, length, reason):
             else:
                 raise commands.BadArgument("number_too_small")
         else:
-            await ctx.send(plugin.t(ctx.guild, "role_too_high", _emote="WARN"))
+            await ctx.send(plugin.t(ctx.guild, "role_too_high", _emote="NO"))

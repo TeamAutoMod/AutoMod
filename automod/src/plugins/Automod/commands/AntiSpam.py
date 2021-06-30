@@ -15,10 +15,10 @@ async def run(plugin, ctx, warns):
     elif warns.isnumeric():
         warns = int(warns)
         if warns < 1:
-            return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="WARN"))
+            return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="NO"))
 
         if warns > 100:
-            return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="WARN"))
+            return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="NO"))
 
         automod.update({
             "spam": {"status": True, "warns": warns}

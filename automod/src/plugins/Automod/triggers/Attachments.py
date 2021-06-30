@@ -11,7 +11,7 @@ allowed_file_formats = [
     "jpg",
     "jpeg",
     "png",
-    "webp"
+    "webp",
     "gif",
 
     # video
@@ -29,14 +29,13 @@ allowed_file_formats = [
 async def check(plugin, message):
     if len(message.attachments) > 0 and "files" in plugin.db.configs.get(message.guild.id, "automod"):
         attachments = {x: x.url.split(".")[-1] for x in message.attachments}
-        unallowed = list(filter(lambda e: e[0] not in allowed_file_formats, attachments.items()))
-        print(unallowed)
+        unallowed = [k for k, v in attachments.items() if v.lower() not in allowed_file_formats]
         if len(unallowed) > 0:
             try:
                 await message.delete()
             except Exception:
                 pass
-            forbidden = [x[0].filename for x in unallowed]
+            forbidden = [x.filename for x in unallowed]
             plugin.bot.ignore_for_event.add("messages", message.id)
 
             await plugin.action_validator.figure_it_out(

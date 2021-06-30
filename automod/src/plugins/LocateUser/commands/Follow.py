@@ -4,10 +4,10 @@ import discord
 
 async def run(plugin, ctx, user_id):
     if discord.utils.get(ctx.guild.members, id=user_id) is None:
-        return await ctx.send(plugin.t(ctx.guild, "target_not_on_server", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "target_not_on_server", _emote="NO"))
 
     if user_id == ctx.author.id:
-        return await ctx.send(plugin.t(ctx.guild, "cant_follow_yourself", _emote="WARN"))
+        return await ctx.send(plugin.t(ctx.guild, "cant_follow_yourself", _emote="NO"))
 
     _id = f"{ctx.guild.id}-{ctx.author.id}"
     if not plugin.db.follows.exists(_id):

@@ -24,9 +24,11 @@ async def checkMessage(plugin, message):
     await plugin.action_validator.figure_it_out(
         message, 
         message.author,
-        "spam_detection",
+        "spam",
         moderator=plugin.bot.user,
         moderator_id=plugin.bot.user.id,
+        user=message.author,
+        user_id=message.author.id,
         reason="Spamming messages"
     )
     plugin.is_being_handled.remove(message.author.id)

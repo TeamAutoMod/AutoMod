@@ -13,7 +13,7 @@
     "log_unmute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unmute \n**Reason:** Mute expired",
     
     "log_warn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Warn ({old_warns} → {new_warns}) {context}\n**Reason:** {reason}",
-    "log_clean": "**Action:** Clean \n**Count:** {count} \n**Channel:** {channel}",
+    "log_clean": "**Action:** Clean \n**Category:** {category} \n**Count:** {count} \n**Channel:** {channel}",
     "log_warns_added": "**Member:** ``{user}`` ({user_id}) \n**Action:** Warn ({old_warns} → {new_warns}) {context}\n**Reason:** {reason}",
     "log_unwarn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unwarn ({old_warns} → {new_warns}) \n**Reason:** {reason}",
 
@@ -74,10 +74,10 @@
     "ban_not_allowed": "{emote} Cannot ban: target permissions are qual or higher than yours/mine",
     "target_not_on_server": "{emote} User not found in the server",
     "target_already_banned": "{emote} User is already banned.",
-    "ban_failed": "{emote} Failed to ban target: {error}",
-    "kick_failed": "{emote} Failed to kick target: {error}",
-    "unban_failed": "{emote} Failed to unban target: {error}",
-    "mute_failed": "{emote} Failed to mute target: {error}",
+    "ban_failed": "{emote} Failed to ban target ||{error}||",
+    "kick_failed": "{emote} Failed to kick target ||{error}||",
+    "unban_failed": "{emote} Failed to unban target ||{error}||",
+    "mute_failed": "{emote} Failed to mute target ||{error}||",
     "already_muted": "{emote} **{user}** is already muted. Do you want to extend their mute?",
     "threshold_too_low": "{emote} The treshold must be at least 5/5.",
 
@@ -125,7 +125,7 @@
     "no_follows": "{emote} You don't have any active alerts.",
     "cant_follow_yourself": "{emote} You can't set an alert for yourself.",
     "not_in_voice": "{emote} This user currently isn't connected to a voice channel.",
-    "error_invite": "{emote} Error while trying to create an invite for the channel: {exc}",
+    "error_invite": "{emote} Error while trying to create an invite for the channel ||{exc}||",
     "send_where": "``{user}`` is in channel ``{channel}``: {invite}",
 
     "invalid_amount": "{emote} The amount must be between 1 and 300.",
@@ -244,7 +244,13 @@
     "black_list_add_help": "Adds a phrase to the censor list",
     "black_list_remove_help": "Removes a phrase from the censor list",  
 
-    "clean_help": "Cleans up to 300 messages from the channel",
+    "clean_help": "Base command for cleaning messages",
+    "purge_help": "Purges up to 300 messages from the channel",
+    "clean_bots_help": "Cleans all bot messages from a channel",
+    "clean_user_help": "Cleans all messages sent by the specified users",
+    "clean_last_help": "Cleans all messages that have been sent within the giving time",
+    "clean_until_help": "Cleans all messages up to the specified one",
+    "clean_between_help": "Cleans all messages between the two given ones",
 
     "cases": "Recent cases in **{guild_name}**",
 
@@ -295,7 +301,8 @@
 
     "ignores": "Ignored roles & channels for **{guild_name}**",
 
-    "already_cleaning": "{emote} Already cleaning. Please wait until it's done before starting the next one.",
+    "already_cleaning": "{emote} There's already a clean going on in this channel. Wait until it's done before starting another one.",
+    "already_cleaned": "{emote} Looks like these messages were alrady cleaned.",
     "clean_error": "{emote} Error while trying to clean: {exc}",
     "zero_cleaned": "{emote} Zero messages were cleaned. Looks like nothing matched your passed arguments.",
     "cleaned": "{emote} Successfully cleaned **{amount}** message{plural}!",
@@ -315,6 +322,7 @@
     "missing_arg": "{emote} You are missing a required argument: ``{arg}`` \n🔧 Usage: ``{usage}``",
     "arg_parse_error": "{emote} Failed to parse the ``{arg}`` param: ``{error}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
+    "forbidden": "{emote} {exc}",
     "missing_user_perms": "{emote} Cannot perform this: insufficient permissions",
     "cant_send_message": "Looks like you tried to use a command in a channel I'm not allowed to send messages in. Make sure I have the ``send messages`` permission in the channel.",
 
@@ -357,6 +365,7 @@
     "category_fail": "{emote} Failed to overwrites permissions for category {category}: {exc}",
     "text_fail": "{emote} Failed to overwrites permissions for text channel {channel}: {exc}",
     "voice_fail": "{emote} Failed to overwrites permissions for voice channel {channel}: {exc}",
+    "clean_fail": "{emote} Failed to clean messages ||{exc}||",
     "mute_done": "{emote} Mute role setup complete!",
 
     "setup_commands": "You can use these commands to let the bot automatically setup the features. \n \n``{prefix}setup muted`` - Sets up a mute role \n``{prefix}setup automod`` - Sets up the basic automod config",
@@ -434,7 +443,7 @@
     "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are seperated by spaces. You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
     "filters": "Active filters for **{guild_name}**",
 
-    "prior_cases": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago) \n**Prior cases:** \n{cases}",
+    "prior_cases": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago) \n**Prior cases:** {cases}",
     "normal_join": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago)",
 
     "leave": "**Profile:** {profile} \n**Joined:** ``{joined}`` ({ago} ago)", 
