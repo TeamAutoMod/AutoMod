@@ -65,7 +65,10 @@ async def muteUser(plugin, ctx, user, length, reason):
                     dm_result = await plugin.bot.utils.dmUser(ctx.message, "mute", user, _emote="MUTE", guild_name=ctx.guild.name, length=length.length, unit=length.unit, reason=reason)
                     await ctx.send(plugin.t(ctx.guild, "user_muted", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason, case=case, dm=dm_result))
                     
-                    last = await ctx.message.channel.history(limit=20).find(lambda x: x.author.id == user.id)
+                    try:
+                        last = await ctx.message.channel.history(limit=20).find(lambda x: x.author.id == user.id)
+                    except Exception:
+                        last = None
                     await plugin.action_logger.log(
                         ctx.guild, 
                         "mute", 

@@ -86,7 +86,10 @@ class ActionValidator:
 
                 case = self.bot.utils.newCase(message.guild, "Mute", target, kwargs.get("moderator"), kwargs.get("reason"))
 
-                last = await message.channel.history(limit=20).find(lambda x: x.author.id == int(kwargs.get('user_id')))
+                try:
+                    last = await message.channel.history(limit=20).find(lambda x: x.author.id == int(kwargs.get('user_id')))
+                except Exception:
+                    last = None
 
                 new_kwargs = {
                     "user": target,
@@ -96,7 +99,7 @@ class ActionValidator:
                     "length": int(action.split(" ")[-2]),
                     "unit": action.split(" ")[-1],
                     "reason": f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}",
-                    "context": f"\n**Context: ** [{last.jump_url}](Here!)" if last is not None else "",
+                    "context": f"\n**Context: ** [Here!]({last.jump_url})" if last is not None else "",
                     "case": case,
                 }
                 dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}")
@@ -105,7 +108,10 @@ class ActionValidator:
         else:
             case = self.bot.utils.newCase(message.guild, "Warn", target, kwargs.get("moderator"), kwargs.get("reason"))
 
-            last = await message.channel.history(limit=20).find(lambda x: x.author.id == int(kwargs.get('user_id')))
+            try:
+                last = await message.channel.history(limit=20).find(lambda x: x.author.id == int(kwargs.get('user_id')))
+            except Exception:
+                last = None
             new_kwargs = {
                 "user": target,
                 "user_id": target.id,

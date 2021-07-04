@@ -1,16 +1,19 @@
 import discord
 from discord.ext import commands
 
+import topgg
+
 from ..PluginBlueprint import PluginBlueprint
 from ..Types import DiscordUserID
 from .commands import Shutdown, Load, Unload, Reload, Charinfo, Eval, Mutuals, Block, Unblock, Debug
-from .events import OnGuildJoin, OnGuildRemove
+from .events import OnGuildJoin, OnGuildRemove, OnAutopostSuccess
 
 
 
 class AdminPlugin(PluginBlueprint):
-    def __init__(self, bot):
+    def __init__(self, bot): 
         super().__init__(bot)
+        bot.topggpy = topgg.DBLClient(bot, bot.config["dbl_token"], autopost=True, post_shard_count=True)
 
     
     async def cog_check(self, ctx):
@@ -31,6 +34,14 @@ class AdminPlugin(PluginBlueprint):
         guild
     ):
         await OnGuildRemove.run(self, guild)
+
+
+    @commands.Cog.listener()
+    async def on_autopost_success(
+        self
+    ):
+        await OnAutopostSuccess.run(self)
+        
 
 
     @commands.command()
