@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://media.discordapp.net/attachments/746411872747520151/861381927218446356/1_oEsKvHEupyHLT1EmhUeVAA_1.png?width=1440&height=631" alt="banner"/>
+    <img src="https://cdn.discordapp.com/attachments/746411872747520151/861383138794405888/thumb-1920-909912_1.png" alt="banner"/>
     <h2 align="center">Discord moderation bot designed for both large and small servers</h2>
 </p>
 
