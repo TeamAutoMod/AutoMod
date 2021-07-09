@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
-from .commands import About, Ping, Help, Server, Userinfo
+from .commands import About, Ping, Help, Server, Userinfo, Asciify
 
 from ..Types import DiscordUser
 
@@ -64,6 +64,17 @@ class BasicPlugin(PluginBlueprint):
         """userinfo_help"""
         await Userinfo.run(self, ctx, user)
 
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_permissions(manage_nicknames=True)
+    async def asciify(
+        self,
+        ctx,
+        user: discord.Member
+    ):
+        """asciify_help"""
+        await Asciify.run(self, ctx, user)
 
 
 def setup(bot):

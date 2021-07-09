@@ -62,6 +62,7 @@
     "mute_lifted": "{emote} Successfully lifted **{user.name}#{user.discriminator}**'s mute",
     "not_muted": "{emote} User isn't muted",
     "messages_deleted": "{emote} Successfully deleted **{count}** message{plural}!",
+    "user_asciified": "{emote} Successfully asciified ``{old}`` to ``{new}``",
 
     "already_blocked": "{emote} This is already a blocked guild",
     "blocked_guild": "{emote} Successfully blocked guild **{guild_id}**",
@@ -78,6 +79,7 @@
     "kick_failed": "{emote} Failed to kick target ||{error}||",
     "unban_failed": "{emote} Failed to unban target ||{error}||",
     "mute_failed": "{emote} Failed to mute target ||{error}||",
+    "asciify_failed": "{emote} Failed to asciify name ||{error}||",
     "already_muted": "{emote} **{user}** is already muted. Do you want to extend their mute?",
     "threshold_too_low": "{emote} The treshold must be at least 5/5.",
 
@@ -160,6 +162,7 @@
     "help_help": "Shows a full list of commands or help for a specific command",
     "server_help": "Shows some basic info about the server",
     "userinfo_help": "Shows some basic info about a specific user",
+    "asciify_help": "Removes all non-ascii chars from a users name/nickname",
 
     "config_help": "Shows the current server config",
     "setup_help": "Shows commands for automatically setting up a feature",
@@ -319,7 +322,7 @@
     "server": "Info about **{guild_name}**",
 
     "missing_bot_perms": "{emote} Cannot perform this: insufficient permissions",
-    "missing_arg": "{emote} You are missing a required argument: ``{arg}`` \n🔧 Usage: ``{usage}``",
+    "missing_arg": "{emote} You are missing a required parameter. Usage: ``{usage}``",
     "arg_parse_error": "{emote} Failed to parse the ``{arg}`` param: ``{error}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
     "forbidden": "{emote} {exc}",
