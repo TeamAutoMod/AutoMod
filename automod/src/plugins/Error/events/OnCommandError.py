@@ -38,4 +38,5 @@ async def run(plugin, ctx, error):
     elif isinstance(error, commands.BadArgument):
         await BadArgument.run(plugin, ctx, error)
     else:
+        log.info([x for x in dir(error) if not x.startswith("__")])
         log.warn("Error in command {} - {}".format(ctx.command.name, error))

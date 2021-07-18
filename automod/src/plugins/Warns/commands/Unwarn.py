@@ -51,5 +51,6 @@ async def run(plugin, ctx, users, warns, reason):
                 moderator=ctx.author,
                 moderator_id=ctx.author.id,
                 reason=reason,
-                case=case
+                case=case,
+                dm=dm_result
             )

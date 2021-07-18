@@ -24,5 +24,6 @@ async def kickUser(plugin, ctx, user, reason):
             user=user,
             user_id=user.id,
             reason=reason,
-            case=case
+            case=case,
+            dm=dm_result
         )

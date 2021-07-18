@@ -91,6 +91,7 @@ class ActionValidator:
                 except Exception:
                     last = None
 
+                dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}")
                 new_kwargs = {
                     "user": target,
                     "user_id": target.id,
@@ -101,8 +102,8 @@ class ActionValidator:
                     "reason": f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}",
                     "context": f"\n**Context: ** [Here!]({last.jump_url})" if last is not None else "",
                     "case": case,
+                    "dm": dm
                 }
-                dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment escalation (warn {_to}): {kwargs.get('reason')}")
                 await self.bot.action_logger.log(message.guild, "mute", **new_kwargs)
                 return dm, case
         else:
@@ -112,6 +113,8 @@ class ActionValidator:
                 last = await message.channel.history(limit=20).find(lambda x: x.author.id == int(kwargs.get('user_id')))
             except Exception:
                 last = None
+
+            dm = await self.bot.utils.dmUser(message, "warn", target, _emote="WARN", warns=warns, guild_name=message.guild.name, reason=kwargs.get("reason"))
             new_kwargs = {
                 "user": target,
                 "user_id": target.id,
@@ -122,9 +125,9 @@ class ActionValidator:
                 "new_warns": new_warns,
                 "warns": warns,
                 "context": f"\n**Context: ** [Here!]({last.jump_url})" if last is not None else "",
-                "case": case
+                "case": case,
+                "dm": dm
             }
-            dm = await self.bot.utils.dmUser(message, "warn", target, _emote="WARN", warns=warns, guild_name=message.guild.name, reason=kwargs.get("reason"))
             await self.bot.action_logger.log(message.guild, "warns_added", **new_kwargs)
             return dm, case
 
@@ -139,15 +142,16 @@ class ActionValidator:
         else:
             
             case = self.bot.utils.newCase(guild, "Ban", target, kwargs.get("moderator"), kwargs.get("reason"))
+            dm = await self.bot.utils.dmUser(message, "ban", target, _emote="HAMMER", guild_name=message.guild.name, reason=kwargs.get("moderator"))
             new_kwargs = {
                 "user": target,
                 "user_id": target.id,
                 "moderator": kwargs.get("moderator"), 
                 "moderator_id": kwargs.get("moderator_id"), 
                 "reason": kwargs.get("reason"),
-                "case": case
+                "case": case,
+                "dm": dm
             }
-            dm = await self.bot.utils.dmUser(message, "ban", target, _emote="HAMMER", guild_name=message.guild.name, reason=kwargs.get("moderator"))
             await self.bot.action_logger.log(guild, "ban", **new_kwargs)
             return dm, case
 
@@ -161,15 +165,16 @@ class ActionValidator:
             return
         else:
             case = self.bot.utils.newCase(guild, "Kick", target, kwargs.get("moderator"), kwargs.get("reason"))
+            dm = await self.bot.utils.dmUser(message, "kick", target, _emote="SHOE", guild_name=message.guild.name, reason=kwargs.get("reason"))
             new_kwargs = {
                 "user": target,
                 "user_id": target.id,
                 "moderator": kwargs.get("moderator"), 
                 "moderator_id": kwargs.get("moderator_id"), 
                 "reason": kwargs.get("reason"), 
-                "case": case
+                "case": case,
+                "dm": dm
             }
 
-            dm = await self.bot.utils.dmUser(message, "kick", target, _emote="SHOE", guild_name=message.guild.name, reason=kwargs.get("reason"))
             await self.bot.action_logger.log(guild, "kick", **new_kwargs)
             return dm, case

@@ -80,7 +80,8 @@ async def muteUser(plugin, ctx, user, length, reason):
                         unit=length.unit,
                         context=f"\n**Context:** [Here!]({last.jump_url})" if last is not None else "",
                         reason=reason, 
-                        case=case
+                        case=case,
+                        dm=dm_result
                     )
             else:
                 raise commands.BadArgument("number_too_small")

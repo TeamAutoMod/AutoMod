@@ -312,9 +312,15 @@ class ActionLogger:
                 e.set_thumbnail(
                     url=(kwargs.get('user')).avatar_url_as()
                 )
+            dm = kwargs.get("dm", None)
+            if dm is not None:
+                if "failed" in dm:
+                    dm = " | No DM sent"
+                else:
+                    dm = " | DM sent"
             if "case" in kwargs:
                 e.set_footer(
-                    text=f"Case #{kwargs.get('case')}"
+                    text=f"Case #{kwargs.get('case')}{dm if dm is not None else ''}"
                 )
             e.description = self.t.translate(guild, log_key, _emote=log_emote, **kwargs)
         else:

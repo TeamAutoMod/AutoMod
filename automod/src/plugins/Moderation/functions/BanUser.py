@@ -23,5 +23,6 @@ async def banUser(plugin, ctx, user, reason, log_type, ban_type, days=0):
             user=user,
             user_id=user.id,
             reason=reason,
-            case=case
+            case=case,
+            dm=dm_result
         )
