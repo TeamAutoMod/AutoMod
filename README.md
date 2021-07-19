@@ -1,7 +1,6 @@
-<p align="center">
-    <img src="https://cdn.discordapp.com/attachments/746411872747520151/861383138794405888/thumb-1920-909912_1.png" alt="banner"/>
-    <h2 align="center">Discord moderation bot designed for both large and small servers</h2>
-</p>
+# AutoMod
+
+[![](https://discordapp.com/api/guilds/697814384197632050/embed.png?style=banner2)](https://discord.gg/S9BEBux)
 
 ## 💡 Information
 - Multiple automoderator features, such as:
