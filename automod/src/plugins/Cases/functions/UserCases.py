@@ -46,8 +46,12 @@ async def userCases(plugin, ctx, user):
     else:
         option = options["guild"]
 
+<<<<<<< HEAD
     raw = [x for x in plugin.db.inf.find({option: f"{user.id}"})]
     results = sorted(raw, key=lambda e: int(e['id'].split("-")[-1]), reverse=True)
+=======
+    results = sorted([x for x in plugin.db.inf.find({option: f"{user.id}"})], key=lambda e: int(e['id'].split("-")[-1]), reverse=True)
+>>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
     if len(results) < 1:
         return await ctx.send(plugin.t(ctx.guild, "no_cases_found", _emote="NO"))
 

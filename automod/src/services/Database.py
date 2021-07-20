@@ -126,7 +126,11 @@ class MongoSchemas:
 
 
     def GuildConfig(self, guild):
+<<<<<<< HEAD
         prefix = self.bot.config.default_prefix
+=======
+        prefix = self.bot.config['default_prefix']
+>>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
         schema = { 
             "id": f"{guild.id}", 
             "prefix": "{}".format(prefix if prefix != "" or prefix != None else "!"), 

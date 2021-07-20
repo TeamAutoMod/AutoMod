@@ -13,11 +13,19 @@ from .events import OnGuildJoin, OnGuildRemove, OnAutopostSuccess
 class AdminPlugin(PluginBlueprint):
     def __init__(self, bot): 
         super().__init__(bot)
+<<<<<<< HEAD
         bot.topggpy = topgg.DBLClient(bot, bot.config.dbl_token, autopost=True, post_shard_count=True)
 
     
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author) or ctx.author.id in self.bot.config.bot_admins
+=======
+        bot.topggpy = topgg.DBLClient(bot, bot.config["dbl_token"], autopost=True, post_shard_count=True)
+
+    
+    async def cog_check(self, ctx):
+        return await ctx.bot.is_owner(ctx.author) or ctx.author.id in self.bot.config["bot_admins"]
+>>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
 
 
     @commands.Cog.listener()

@@ -19,7 +19,11 @@ async def getHelpForAllCommands(plugin, ctx):
         "FiltersPlugin": f"❯ Filter Commands"
     }
 
+<<<<<<< HEAD
     valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
+=======
+    valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config['enabled_plugins_with_commands']]
+>>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
     e = Embed()
     e.add_field(
         name="❯ Commands", 
