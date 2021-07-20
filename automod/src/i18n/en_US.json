@@ -167,6 +167,7 @@
     "server_help": "Shows some basic info about the server",
     "userinfo_help": "Shows some basic info about a specific user",
     "asciify_help": "Removes all non-ascii chars from a users name/nickname",
+    "translate_help": "Translates a text to english. Also works by replying to a message",
 
     "config_help": "Shows the current server config",
     "setup_help": "Shows commands for automatically setting up a feature",
