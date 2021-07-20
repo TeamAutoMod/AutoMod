@@ -14,11 +14,7 @@ from src.logger import SetupLogging
 
 def run(bot):
     sentry_sdk.init(
-<<<<<<< HEAD
         bot.config.sentry_dsn,
-=======
-        bot.config["sentry_dsn"],
->>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
         traces_sample_rate=1.0
     )
     bot.remove_command("help")

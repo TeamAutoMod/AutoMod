@@ -1,15 +1,10 @@
 import discord
 from discord.ext import commands
 
-<<<<<<< HEAD
 import googletrans
 
 from ..PluginBlueprint import PluginBlueprint
 from .commands import About, Ping, Help, Server, Userinfo, Asciify, Translate
-=======
-from ..PluginBlueprint import PluginBlueprint
-from .commands import About, Ping, Help, Server, Userinfo, Asciify
->>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
 
 from ..Types import DiscordUser
 
@@ -18,10 +13,7 @@ from ..Types import DiscordUser
 class BasicPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
-<<<<<<< HEAD
         self.google = googletrans.Translator()
-=======
->>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
 
     
     @commands.command()
@@ -88,7 +80,6 @@ class BasicPlugin(PluginBlueprint):
         await Asciify.run(self, ctx, user)
 
 
-<<<<<<< HEAD
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
@@ -102,7 +93,5 @@ class BasicPlugin(PluginBlueprint):
         await Translate.run(self, ctx, text)
 
 
-=======
->>>>>>> f40ed3caff6b455cf03f56d37f925532425549d2
 def setup(bot):
     pass

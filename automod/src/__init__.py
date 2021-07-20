@@ -40,7 +40,7 @@ def _prefix_callable(bot, message):
 
 class AutoMod(commands.AutoShardedBot):
     def __init__(self, config: dict):
-        self.config = S(config)
+        self.config = config = S(config)
         intents = discord.Intents(
             guilds=True,
             members=True,
