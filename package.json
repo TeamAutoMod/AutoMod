@@ -1,0 +1,23 @@
+{
+  "name": "automod",
+  "version": "1.0.0",
+  "description": "",
+  "private": false,
+  "scripts": {
+    "format": "prettier --write \"./{automod}/{,!(node_modules)/**/}/*.py\"",
+    "lint": "tslint \"./{automod,dashboard}/{,!(node_modules)/**/}/*.py\"",
+    "codestyle-check": "prettier --check \"./{automod}/{,!(node_modules)/**/}/*.py\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^2.3.0"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^1.6.3",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "framer-motion": "^4.1.17"
+  }
+}
