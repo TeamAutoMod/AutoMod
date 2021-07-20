@@ -1,0 +1,49 @@
+{
+    "YES": "<:tick:858487159819337749>",
+    "NO": "<:cross:859084916755005490>",
+
+    "THINK": "🤔",
+    "NO_MOUTH": "😶",
+    "PARTY": "🥳",
+    "ANGEL": "😇",
+    "SLEEP": "😴",
+
+    "BIN": "🗑️",
+    "PEN": "✏️",
+    "LOCK": "🔒",
+    "UNLOCK": "🔓",
+
+    "JOIN": "📥",
+    "LEAVE": "📤",
+
+    "HAMMER": "🔨",
+    "HAMMER2": "⚒️",
+    "SHOE": "👢",
+    "WARN": "⚠️",
+    "CENSOR": "❌",
+    "EYES": "👀",
+    "WRENCH": "🔧",
+    "PONG": "🏓",
+    "PINGING": "⏳",
+    "LINK": "🔗",
+    "FOLDER": "📂",
+    "COG": "⚙️",
+    "SEARCH": "🔎",
+    "TAGS": "📬",
+
+    "MUTE": "🔇",
+    "UNMUTE": "🔊",
+
+    "REDDOT": "🔴",
+    "BLUEDOT": "🔵",
+    "SWITCH": "↔️",
+
+    "CLEAN": "🧹",
+
+    "RELOAD": "🔁",
+    "FLAG": "🚩",
+    "SHIELD": "🛡",
+    "WHITE_FLAG": "🏳️",
+    "MAIL": "📬",
+    "PIN": "📌"
+}
