@@ -1,4 +1,6 @@
-{
+{       
+    "dev": false,
+
     "default_prefix": "!",
 
     "token": "YOUR_BOTS_TOKEN",

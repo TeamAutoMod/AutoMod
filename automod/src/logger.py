@@ -2,6 +2,7 @@ import logging
 import contextlib
 
 
+
 class LogFilter(logging.Filter):
     def __init__(self):
         super().__init__(name="discord.state")
@@ -10,7 +11,6 @@ class LogFilter(logging.Filter):
         if r.levelname == "WARNING" and "referencing an unknown" in r.msg:
             return False
         return True
-
 
 
 @contextlib.contextmanager

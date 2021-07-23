@@ -28,7 +28,8 @@ from .events import (
 class AdminPlugin(PluginBlueprint):
     def __init__(self, bot): 
         super().__init__(bot)
-        bot.topggpy = topgg.DBLClient(bot, bot.config.dbl_token, autopost=True, post_shard_count=True)
+        if not bot.config.dev:
+            bot.topggpy = topgg.DBLClient(bot, bot.config.dbl_token, autopost=True, post_shard_count=True)
 
     
     async def cog_check(self, ctx):

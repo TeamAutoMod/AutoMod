@@ -78,7 +78,8 @@ class AutoMod(commands.AutoShardedBot):
     
     async def on_ready(self):
         if not self.ready:
-            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="loading..."), status=discord.Status.dnd)
+            if not self.config.dev:
+                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="loading..."), status=discord.Status.dnd)
             log.info("Starting up as {}#{} ({})".format(self.user.name, self.user.discriminator, self.user.id))
             self.fetch_guilds()
 
@@ -133,8 +134,8 @@ class AutoMod(commands.AutoShardedBot):
 
             self.ready = True
             self.locked = False
-
-            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="+help"), status=discord.Status.online)
+            if not self.config.dev:
+                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{self.config.default_prefix}help"), status=discord.Status.online)
 
 
     async def chunk_guild(self, guild_id, guild):

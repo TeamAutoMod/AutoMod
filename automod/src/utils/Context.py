@@ -17,6 +17,10 @@ class Context(commands.Context):
             raise RuntimeError("AutoMod doesn't have add_reactions perms.")
 
         author_id = author_id or self.author.id
+
+        if self.bot.config.dev:
+            yes = "👌"
+            no = "❌"
         msg = await self.send(f"{message} \n \n{yes} - Continue \n{no} - Cancel")
 
         confirm = None
