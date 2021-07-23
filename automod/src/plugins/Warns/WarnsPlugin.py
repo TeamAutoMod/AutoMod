@@ -3,7 +3,12 @@ from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
 from ..Types import Duration, Reason, DiscordUser
-from .commands import Punishment, Warn, Check, Unwarn
+from .commands import (
+    Punishment, 
+    Warn, 
+    Check, 
+    Unwarn
+)
 
 
 

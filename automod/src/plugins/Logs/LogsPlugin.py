@@ -2,7 +2,14 @@ import discord
 from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
-from .events import OnMessageDelete, OnMessageEdit, OnVoiceStateUpdate, OnMemberJoin, OnMemberRemove, OnMemberUnban
+from .events import (
+    OnMessageDelete, 
+    OnMessageEdit, 
+    OnVoiceStateUpdate, 
+    OnMemberJoin,
+    OnMemberRemove, 
+    OnMemberUnban
+)
 
 
 

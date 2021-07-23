@@ -6,7 +6,13 @@ from typing import Optional, Union
 from ..PluginBlueprint import PluginBlueprint
 from ..Types import Reason as _Reason
 from ..Types import DiscordUser
-from .commands import Cases, CaseInfo, CaseClaim, CaseDelete, Reason
+from .commands import (
+    Cases, 
+    CaseInfo, 
+    CaseClaim, 
+    CaseDelete, 
+    Reason
+)
 
 
 

@@ -3,8 +3,15 @@ from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
 from ..Types import DiscordUserID
-from .commands import Follow, FollowDelete, Follows, Where
-from .events import OnVoiceStateUpdate
+from .commands import (
+    Follow, 
+    FollowDelete, 
+    Follows, 
+    Where
+)
+from .events import (
+    OnVoiceStateUpdate
+)
 
 
 

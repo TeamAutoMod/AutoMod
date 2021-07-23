@@ -4,7 +4,15 @@ from discord.ext import commands
 import googletrans
 
 from ..PluginBlueprint import PluginBlueprint
-from .commands import About, Ping, Help, Server, Userinfo, Asciify, Translate
+from .commands import (
+    About, 
+    Ping, 
+    Help, 
+    Server, 
+    Userinfo, 
+    Asciify, 
+    Translate
+)
 
 from ..Types import DiscordUser
 

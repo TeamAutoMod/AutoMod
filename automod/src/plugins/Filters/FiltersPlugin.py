@@ -2,8 +2,15 @@ import discord
 from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
-from .commands import FilterAdd, FilterRemove, FilterHelp, FilterList
-from .events import OnMessage
+from .commands import (
+    FilterAdd, 
+    FilterRemove, 
+    FilterHelp, 
+    FilterList
+)
+from .events import (
+    OnMessage
+)
 
 
 

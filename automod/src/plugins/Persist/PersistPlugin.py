@@ -2,7 +2,10 @@ import discord
 from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
-from .events import OnMemberRemove, OnMemberJoin
+from .events import (
+    OnMemberRemove, 
+    OnMemberJoin
+)
 
 
 

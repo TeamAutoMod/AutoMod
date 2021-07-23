@@ -4,7 +4,19 @@ from discord.ext import commands
 from typing import Union
 
 from ..PluginBlueprint import PluginBlueprint
-from .commands import Config, Setup, SetupMuted, SetupAutomod, DMOnActions, Persist, ModLog, MessageLog, VoiceLog, ServerLog, Prefix
+from .commands import (
+    Config, 
+    Setup, 
+    SetupMuted, 
+    SetupAutomod, 
+    DMOnActions, 
+    Persist, 
+    ModLog, 
+    MessageLog, 
+    VoiceLog, 
+    ServerLog, 
+    Prefix
+)
 
 
 

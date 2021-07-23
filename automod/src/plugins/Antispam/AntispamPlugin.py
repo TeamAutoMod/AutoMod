@@ -4,7 +4,9 @@ from discord.ext import commands
 from collections import defaultdict
 
 from ..PluginBlueprint import PluginBlueprint
-from .events import OnMessage
+from .events import (
+    OnMessage
+)
 from .Types import SpamChecker
 
 

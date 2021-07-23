@@ -3,8 +3,16 @@ from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
 from .CacheTags import cacheTags
-from .commands import Tags, TagsAdd, TagsRemove, TagsInfo, TagsEdit
-from .events import OnMessage
+from .commands import (
+    Tags, 
+    TagsAdd, 
+    TagsRemove, 
+    TagsInfo, 
+    TagsEdit
+)
+from .events import (
+    OnMessage
+)
 
 
 

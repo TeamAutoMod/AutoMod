@@ -82,7 +82,7 @@
     "asciify_failed": "{emote} Failed to asciify name ||{error}||",
 
     "translation_failed": "{emote} Failed to translate text ||{error}||",
-    "no_text": "{emote} Missing message to translate.",
+    "no_text": "{emote} Message to translate is missing.",
 
     "already_muted": "{emote} **{user}** is already muted. Do you want to extend their mute?",
     "threshold_too_low": "{emote} The treshold must be at least 5/5.",

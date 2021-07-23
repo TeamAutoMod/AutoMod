@@ -3,9 +3,28 @@ import discord
 from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
-from .events import OnMessage, OnMessageEdit, OnMemberJoin
-from .commands import AntiCaps, AntiEveryone, AntiFiles, AntiInvite, AntiZalgo, AutoRaid, MaxLines, MaxMentions, AntiSpam, Ignore, Unignore, \
-RaidMode, AllowedInvites, AllowedInvitesAdd, AllowedInvitesRemove
+from .events import (
+    OnMessage, 
+    OnMessageEdit, 
+    OnMemberJoin
+)
+from .commands import (
+    AntiCaps, 
+    AntiEveryone, 
+    AntiFiles, 
+    AntiInvite, 
+    AntiZalgo, 
+    AutoRaid, 
+    MaxLines, 
+    MaxMentions, 
+    AntiSpam, 
+    Ignore, 
+    Unignore,
+    RaidMode, 
+    AllowedInvites, 
+    AllowedInvitesAdd, 
+    AllowedInvitesRemove
+)
 from ..Types import Reason
 
 
