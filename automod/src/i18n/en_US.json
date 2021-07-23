@@ -7,6 +7,7 @@
     "log_mass_ban": "**Member:** {users} ({user_id}) \n**Action:** Massban \n**Reason:** {reason}",
     "log_mass_kick": "**Member:** {users} \n**Action:** Masskick \n**Reason:** {reason}",
     "log_unban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unban \n**Reason:** {reason}",
+    "log_cybernuke": "**Member:** ``{user}`` ({user_id}) \n**Action:** Ban \n**Reason:** {reason}",
     
     "log_mute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute \n**Length:** {length} {unit} {context}\n**Reason:** {reason}",
     "log_mute_extended": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute extended \n**Length:** {length} {unit}\n**Reason:** {reason}",
@@ -63,6 +64,7 @@
     "not_muted": "{emote} User isn't muted",
     "messages_deleted": "{emote} Successfully deleted **{count}** message{plural}!",
     "user_asciified": "{emote} Successfully asciified ``{old}`` to ``{new}``",
+    "users_cybernuked": "{emote} Successfully cybernuked ``{banned}/{total}`` users (Case #{case})",
 
     "already_blocked": "{emote} This is already a blocked guild",
     "blocked_guild": "{emote} Successfully blocked guild **{guild_id}**",
@@ -232,6 +234,7 @@
     "unban_help": "Unbans a user from the server",
     "mute_help": "Mutes a user (mute role needs to be configured)",
     "unmute_help": "Manually unmutes a user",
+    "cybernuke_help": "Bans all users that have joined within the given join time and have a younger account age than the given one (both in minutes by default)",
     
     "message_logging_help": "Module for message edit/deletion logs",
     "member_logging_help": "Modules for join/leave logs",
@@ -289,7 +292,7 @@
     "reason_help": "Updates the reason of a case. Either by case ID or the last case without a reason",
 
     "about": "About {bot}",
-    "invalid_command": "This isn't a valid command.",
+    "invalid_command": "{emote} This isn't a valid command.",
     "command_list": "Command List",
     "custom_commands": "**Custom Commands for {guild_name}**",
     "log_mod_actions": "{emote} I will now log any mod actions to {channel}!",
@@ -344,6 +347,7 @@
     "warn_dm": "{emote} You have received ``{warns}`` warns in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "mute_dm": "{emote} You have been muted for {length} {unit} in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "unwarn_dm": "{emote} ``{warns}`` of your warns in **{guild_name}** have been removed. Reason: \n```\n{reason} \n```",
+    "cybernuke_dm": "{emote} You have been banned in **{guild_name}**. Reason: \n```\n{reason} \n```",
 
     "no_selfroles": "{emote} This server currently doesn't have any selfroles. Add one by using the ``role setup add`` command.",
     "no_valid_selfroles": "{emote} I couldn't give you any of the roles specified. Make sure to spell everything correctly.",
@@ -356,6 +360,10 @@
 
     "no_cases_found": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria.",
     "case_not_found": "{emote} I couldn't find a case with that ID.",
+
+    "no_targets": "{emote} I couldn't find any members matching your given criterias.",
+    "too_many_targets": "{emote} I found too many targets. I can only ban up 100 people during one cybernuke.",
+    "cybernuke_running": "{emote} There is already a cybernuke goind on, please wait until it's finished.", 
 
     "no_tags": "{emote} No tags found.",
     "trigger_too_long": "{emote} Trigger is too long. Max chars are 20.",

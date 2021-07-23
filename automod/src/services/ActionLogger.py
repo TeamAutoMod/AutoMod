@@ -75,6 +75,13 @@ class ActionLogger:
                 "color": 0xff8300,
                 "emote": "SHOE"
             },
+            "cybernuke": {
+                "channel": "mod_log",
+                "key": "log_cybernuke",
+                "on_time": True,
+                "color": 0x4569e1,
+                "emote": "HAMMER"
+            },
 
             "mute": {
                 "channel": "mod_log",

@@ -106,10 +106,10 @@ class DurationHolder:
             length = length * 60
             unit = 's'
         if unit != 's' and unit != 'second':
-            raise BadArgument('length', ctx.bot.translator.translate(ctx.guild, "invalid_lenth_unit"))
+            raise BadArgument(ctx.bot.translator.translate(ctx.guild, "invalid_lenth_unit"))
         max_length = 60 * 60 * 24 * 365
         if length > max_length:
-            raise BadArgument('length', ctx.bot.translator.translate(ctx.guild, "mex_lenth", max_length=max_length))
+            raise BadArgument(ctx.bot.translator.translate(ctx.guild, "max_length", max_length=max_length))
         else:
             return length
 

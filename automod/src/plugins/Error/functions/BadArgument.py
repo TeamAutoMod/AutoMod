@@ -8,7 +8,10 @@ def replace_lookalikes(text):
 
 
 async def run(plugin, ctx, error):
-    param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
+    try:
+        param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
+    except Exception:
+        return await ctx.send(f"{plugin.bot.emotes.get('NO')} There was an error trying to parse your given parameters.")
     plugin.bot.help_command.context = ctx
     usage = plugin.bot.help_command.get_command_signature(ctx.command)
     arg = param._name

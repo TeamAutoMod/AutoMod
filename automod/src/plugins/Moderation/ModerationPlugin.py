@@ -16,7 +16,8 @@ from .commands import (
     CleanBetween, 
     CleanUser, 
     CleanUntil, 
-    CleanLast
+    CleanLast,
+    CyberNuke
 )
 from .functions.UnmuteTask import unmuteTask
 
@@ -25,6 +26,7 @@ class ModerationPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
         self.bot.loop.create_task(unmuteTask(self.bot))
+        self.running_cybernukes = list()
 
     
     @commands.command()
@@ -198,7 +200,16 @@ class ModerationPlugin(PluginBlueprint):
         await CleanBetween.run(self, ctx, start, end)
 
 
-
+    @commands.command()
+    @commands.has_guild_permissions(ban_members=True)
+    async def cybernuke(
+        self, 
+        ctx, 
+        join: Duration,
+        age: Duration
+    ):
+        """cybernuke_help"""
+        await CyberNuke.run(self, ctx, join, age)
 
 
 def setup(bot):

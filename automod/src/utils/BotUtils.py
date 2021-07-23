@@ -122,6 +122,15 @@ class BotUtils:
         return case_id
 
 
+    def newCyberNukeCase(self, guild, _type, targets, mod):
+        case_id = self.bot.db.configs.get(guild.id, "cases")
+        case_id += 1
+        timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
+        self.bot.db.inf.insert(self.bot.schemas.CyberNukeInf(case_id, guild.id, targets, mod, timestamp, _type, "Cybernuke"))
+        self.bot.db.configs.update(guild.id, "cases", case_id)
+        return case_id
+
+
 
     async def dmUser(self, message, _type, user, **kwargs):
         msg = self.bot.translator.translate(message.guild, f"{_type}_dm", **kwargs)

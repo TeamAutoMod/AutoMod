@@ -38,19 +38,22 @@ async def getHelpForAllCommands(plugin, ctx):
 
 async def generateHelpForCommand(plugin, ctx, command):
     plugin.bot.help_command.context = ctx
-    usage = ctx.bot.help_command.get_command_signature(command)
+    name = ctx.bot.help_command.get_command_signature(command)
     help_message = plugin.t(ctx.guild, f"{command.help}")
+    if name[-1] == " ":
+        name = name[:-1]
 
-    e = Embed()
-    e.add_field(name="❯ Name", value=f"``{command}``")
-    e.add_field(name="❯ Description", value=f"``{help_message}``")
-    e.add_field(name="❯ Usage", value=f"``{usage.replace('...', '')}``")
-
-    commands = []
+    e = Embed(title=f"``{name.replace('...', '')}``")
+    e.add_field(name="❯ Description", value=help_message)
+    
     if isinstance(command, GroupMixin) and hasattr(command, "all_commands"):
-        commands = set(["{}".format(ctx.bot.help_command.get_command_signature(x)) for x in command.all_commands.values()])
-        if len(commands) > 0:
-            e.add_field(name="❯ Subcommands", value="{}".format("\n".join([f"``{x}``" for x in commands])))
+        actual_subcommands = {}
+        for k, v in command.all_commands.items():
+            if not v in actual_subcommands.values():
+                actual_subcommands[k] = v
+
+        if len(actual_subcommands.keys()) > 0:
+            e.add_field(name="❯ Subcommands", value=", ".join([f"``{x}``" for x in actual_subcommands.keys()]), inline=True)
 
     return e
 
