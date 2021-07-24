@@ -34,7 +34,7 @@ async def run(plugin, ctx):
     )
     e.add_field(
         name="❯ Links",
-        value="[Support Server](https://discord.gg/S9BEBux) \n[GitHub](https://github.com/TeamAutoMod/AutoMod) \n[Bot Invite](https://discord.com/oauth2/authorize?client_id=697487580522086431&scope=bot&permissions=403041534)"
+        value="[Support Server](https://discord.gg/S9BEBux) \n[GitHub](https://github.com/xezzz/AutoMod) \n[Bot Invite](https://discord.com/oauth2/authorize?client_id=697487580522086431&scope=bot&permissions=403041534)"
     )
 
     await ctx.send(embed=e)
