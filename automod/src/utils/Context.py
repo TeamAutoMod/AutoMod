@@ -3,8 +3,6 @@ from discord.ext import commands
 import asyncio
 import io
 
-from .Constants import yes, no
-
 
 
 class Context(commands.Context):
@@ -21,6 +19,9 @@ class Context(commands.Context):
         if self.bot.config.dev:
             yes = "👌"
             no = "❌"
+        else:
+            yes = "<:tick:858487159819337749>"
+            no = "<:cross:859084916755005490>"
         msg = await self.send(f"{message} \n \n{yes} - Continue \n{no} - Cancel")
 
         confirm = None

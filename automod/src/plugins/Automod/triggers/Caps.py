@@ -11,7 +11,7 @@ async def check(plugin, message):
     except ZeroDivisionError:
         return
 
-    if len(content) > 10 and up_percentage > 0.75:
+    if len(content) > 30 and up_percentage > 0.75:
         plugin.bot.ignore_for_event.add("messages", message.id)
         up_percentage = round(up_percentage * 100, 2)
         try:
