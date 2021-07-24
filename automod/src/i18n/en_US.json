@@ -119,7 +119,7 @@
     "already_on_black_list": "{emote} This phrase is already blacklisted",
     "not_on_black_list": "{emote} This word isn't blacklisted.",
 
-    "no_mute_role": "{emote} This server doesn't have a mute role setup yet. Do so by running {prefix}configure mute_role <role>",
+    "no_mute_role": "{emote} This server doesn't have a mute role setup yet. Do so by running ``{prefix}setup muted``",
     
     "already_whitelisted": "{emote} This is already a whitelisted server.",
     "not_whitelisted": "{emote} This isn't a whitelisted server.",
