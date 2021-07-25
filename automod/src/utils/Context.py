@@ -20,8 +20,8 @@ class Context(commands.Context):
             yes = "👌"
             no = "❌"
         else:
-            yes = "<:tick:858487159819337749>"
-            no = "<:cross:859084916755005490>"
+            yes = "<:tick:868946582316384278>"
+            no = "<:cross:868946614478307338>"
         msg = await self.send(f"{message} \n \n{yes} - Continue \n{no} - Cancel")
 
         confirm = None

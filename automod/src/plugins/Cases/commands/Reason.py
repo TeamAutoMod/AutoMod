@@ -10,6 +10,7 @@ async def run(plugin, ctx, case, reason):
         else:
             return await updateLogMessage(plugin, ctx, recent[-1]["log_id"], recent[-1]["id"].split("-")[1], reason)
     else:
+        case = str(case)
         case = case.split("#")[1] if len(case.split("#")) == 2 else case
         if not plugin.db.inf.exists(f"{ctx.guild.id}-{case}"):
             return await ctx.send(plugin.t(ctx.guild, "case_not_found", _emote="NO"))
