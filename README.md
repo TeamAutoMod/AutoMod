@@ -1,7 +1,5 @@
 # AutoMod
 
-[![](https://discordapp.com/api/guilds/697814384197632050/embed.png?style=banner2)](https://discord.gg/S9BEBux)
-
 ## 💡 Information
 - Multiple automoderator features, such as:
     - Spam detection
