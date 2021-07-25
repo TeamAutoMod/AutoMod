@@ -119,7 +119,7 @@ class AutoMod(commands.AutoShardedBot):
                     t.cancel()
             end = time.time()
             dur = (end - start)
-            log.info("Finished chunking guilds in {}".format(dur))
+            log.info("Finished chunking guilds in {}m".format(round(dur / 60, 1)))
 
             for g in [x for x in self.guilds if isinstance(x, discord.Guild)]:
                 if not self.db.configs.exists(f"{g.id}"):
@@ -130,7 +130,7 @@ class AutoMod(commands.AutoShardedBot):
 
             end2 = time.time()
             final_dur = (end2 - start)
-            log.info("Finished building internal cache in {}".format(final_dur))
+            log.info("Finished building internal cache in {}m".format(round(final_dur / 60, 1)))
 
             self.ready = True
             self.locked = False

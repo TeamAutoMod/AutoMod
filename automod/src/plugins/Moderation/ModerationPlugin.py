@@ -17,7 +17,8 @@ from .commands import (
     CleanUser, 
     CleanUntil, 
     CleanLast,
-    CyberNuke
+    CyberNuke,
+    Restrict
 )
 from .functions.UnmuteTask import unmuteTask
 
@@ -210,6 +211,20 @@ class ModerationPlugin(PluginBlueprint):
     ):
         """cybernuke_help"""
         await CyberNuke.run(self, ctx, join, age)
+
+
+    @commands.command()
+    @commands.has_guild_permissions(kick_members=True)
+    async def restrict(
+        self,
+        ctx,
+        restriction: str,
+        user: discord.Member,
+        *,
+        reason: Reason = None
+    ):
+        """restrict_help"""
+        await Restrict.run(self, ctx, restriction, user, reason)
 
 
 def setup(bot):

@@ -45,5 +45,7 @@
     "SHIELD": "🛡",
     "WHITE_FLAG": "🏳️",
     "MAIL": "📬",
-    "PIN": "📌"
+    "PIN": "📌",
+
+    "RESTRICT": "🚧"
 }

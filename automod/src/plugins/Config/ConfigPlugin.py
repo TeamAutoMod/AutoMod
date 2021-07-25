@@ -9,6 +9,7 @@ from .commands import (
     Setup, 
     SetupMuted, 
     SetupAutomod, 
+    SetupRestrict,
     DMOnActions, 
     Persist, 
     ModLog, 
@@ -55,6 +56,15 @@ class ConfigPlugin(PluginBlueprint):
     ):
         """setup_automod_help"""
         await SetupAutomod.run(self, ctx)
+
+
+    @setup.command()
+    async def restrict(
+        self,
+        ctx
+    ):
+        """setup_restrict_help"""
+        await SetupRestrict.run(self, ctx)
 
 
     @commands.command()

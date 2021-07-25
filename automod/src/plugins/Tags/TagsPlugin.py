@@ -58,7 +58,6 @@ class TagsPlugin(PluginBlueprint):
 
 
     @tags.command(aliases=["about"])
-    @commands.has_permissions(manage_messages=True)
     async def info(
         self,
         ctx,

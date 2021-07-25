@@ -46,6 +46,13 @@ class ActionLogger:
                 "color": 0xff1900,
                 "emote": "HAMMER"
             },
+            "restrict": {
+                "channel": "mod_log",
+                "key": "log_restrict",
+                "on_time": True,
+                "color": 0xffff00,
+                "emote": "RESTRICT"
+            },
             "unban": {
                 "channel": "mod_log",
                 "key": "log_unban",
@@ -323,8 +330,11 @@ class ActionLogger:
             if dm is not None:
                 if "failed" in dm:
                     dm = " | No DM sent"
+                elif dm == "":
+                    dm = " | No DM sent"
                 else:
                     dm = " | DM sent"
+
             if "case" in kwargs:
                 e.set_footer(
                     text=f"Case #{kwargs.get('case')}{dm if dm is not None else ''}"
@@ -334,7 +344,6 @@ class ActionLogger:
             e = kwargs.get("_embed")
         try:
             log_message = await log_channel.send(content=kwargs.get("content", None), embed=e)
-            # log_message = await log_channel.send(content=self.t.translate(guild, log_key, _emote=log_emote, **kwargs), embed=kwargs.get("_embed", None))
         except Exception:
             pass
         else:

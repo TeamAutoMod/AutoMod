@@ -11,6 +11,13 @@ async def run(plugin, message):
     if message.guild is None or not isinstance(message.channel, discord.TextChannel):
         return
 
+    role_id = plugin.db.configs.get(message.guild.id, "tag_role")
+    if role_id != "":
+        role = await plugin.bot.utils.getRole(message.guild, int(role_id))
+        if role is not None:
+            if role in message.author.roles:
+                return
+
     tags = await getTags(plugin, message)
     prefix = plugin.bot.get_guild_prefix(message.guild)
     if message.content.startswith(prefix, 0) and len(tags) > 0:

@@ -11,7 +11,6 @@ from .Cases.CasesPlugin import CasesPlugin
 from .Config.ConfigPlugin import ConfigPlugin
 from .Logs.LogsPlugin import LogsPlugin
 from .Persist.PersistPlugin import PersistPlugin
-from .LocateUser.LocateUserPlugin import LocateUserPlugin
 from .Warns.WarnsPlugin import WarnsPlugin
 from .Tags.TagsPlugin import TagsPlugin
 from .Filters.FiltersPlugin import FiltersPlugin
@@ -46,8 +45,6 @@ plugins = {
     PersistPlugin: "src.plugins.Persist.PersistPlugin",
 
     LogsPlugin: "src.plugins.Logs.LogsPlugin",
-
-    LocateUserPlugin: "src.plugins.LocateUser.LocateUserPlugin",
 
     TagsPlugin: "src.plugins.Tags.TagsPlugin"
 }

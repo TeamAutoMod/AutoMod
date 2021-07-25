@@ -154,6 +154,10 @@ class MongoSchemas:
 
             "filters": {},
 
+            "embed_role": "",
+            "emoji_role": "",
+            "tag_role": "",
+
             "lang": "en_US",
             "cases": 0,
             "guild_name": f"{guild.name}"

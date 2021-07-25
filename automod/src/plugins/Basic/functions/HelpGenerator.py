@@ -14,7 +14,6 @@ async def getHelpForAllCommands(plugin, ctx):
         "WarnsPlugin": f"❯ Warn Commands",
         "CasesPlugin": f"❯ Case Commands",
         "ConfigPlugin": f"❯ Configuration Commands",
-        "LocateUserPlugin": f"❯ Locate Commands",
         "TagsPlugin": f"❯ Tag Commands",
         "FiltersPlugin": f"❯ Filter Commands"
     }

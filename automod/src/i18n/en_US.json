@@ -8,6 +8,7 @@
     "log_mass_kick": "**Member:** {users} \n**Action:** Masskick \n**Reason:** {reason}",
     "log_unban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unban \n**Reason:** {reason}",
     "log_cybernuke": "**Member:** ``{user}`` ({user_id}) \n**Action:** Ban \n**Reason:** {reason}",
+    "log_restrict": "**Member:** ``{user}`` ({user_id}) \n**Action:** {action} \n**Reason:** {reason}",
     
     "log_mute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute \n**Length:** {length} {unit} {context}\n**Reason:** {reason}",
     "log_mute_extended": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute extended \n**Length:** {length} {unit}\n**Reason:** {reason}",
@@ -65,6 +66,7 @@
     "messages_deleted": "{emote} Successfully deleted **{count}** message{plural}!",
     "user_asciified": "{emote} Successfully asciified ``{old}`` to ``{new}``",
     "users_cybernuked": "{emote} Successfully cybernuked ``{banned}/{total}`` users (Case #{case})",
+    "user_restricted": "{emote} Successfully {success} **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
 
     "already_blocked": "{emote} This is already a blocked guild",
     "blocked_guild": "{emote} Successfully blocked guild **{guild_id}**",
@@ -94,6 +96,7 @@
     "warn_not_allowed": "{emote} Cannot warn: target permissions are qual or higher than yours/mine",
     "unwarn_not_allowed": "{emote} Cannot unwarn: target permissions are qual or higher than yours/mine",
     "warnclearing_not_allowed": "{emote} Cannot clear warns: target permissions are qual or higher than yours/mine",
+    "restrict_not_allowed": "{emote} Cannot restrict: target permissions are qual or higher than yours/mine",
 
     "case_already_owned": "{emote} Seems like you are already responsible for this case.",
     "case_target": "{emote} You can't take responsibility for a case that you are the target of.",
@@ -175,6 +178,7 @@
     "setup_help": "Shows commands for automatically setting up a feature",
     "setup_muted_help": "Automatically sets up a mute role or updates the configured one",
     "setup_automod_help": "Automatically sets up the deafult automod settings. Already set rules will be overwritten.",
+    "setup_restrict_help": "Automatically sets up the roles for the restrict command or updates the configured ones",
     "modlog_help": "Sets a log channel for moderation actions (bans, warns, etc.)",
     "voicelog_help": "Sets a log channel for voice events (joins, leaves etc.)",
     "serverlog_help": "Sets a log channel for server events (joins, leaves)",
@@ -235,6 +239,7 @@
     "mute_help": "Mutes a user (mute role needs to be configured)",
     "unmute_help": "Manually unmutes a user",
     "cybernuke_help": "Bans all users that have joined within the given join time and have a younger account age than the given one (both in minutes by default)",
+    "restrict_help": "Restricts a user. Valid restrictions are embed, emoji and tag",
     
     "message_logging_help": "Module for message edit/deletion logs",
     "member_logging_help": "Modules for join/leave logs",
@@ -348,6 +353,7 @@
     "mute_dm": "{emote} You have been muted for {length} {unit} in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "unwarn_dm": "{emote} ``{warns}`` of your warns in **{guild_name}** have been removed. Reason: \n```\n{reason} \n```",
     "cybernuke_dm": "{emote} You have been banned in **{guild_name}**. Reason: \n```\n{reason} \n```",
+    "restrict_dm": "{emote} You have been {success} in **{guild_name}**. Reason: \n```\n{reason} \n```",
 
     "no_selfroles": "{emote} This server currently doesn't have any selfroles. Add one by using the ``role setup add`` command.",
     "no_valid_selfroles": "{emote} I couldn't give you any of the roles specified. Make sure to spell everything correctly.",
@@ -384,7 +390,11 @@
     "clean_fail": "{emote} Failed to clean messages ||{exc}||",
     "mute_done": "{emote} Mute role setup complete!",
 
-    "setup_commands": "You can use these commands to let the bot automatically setup the features. \n \n``{prefix}setup muted`` - Sets up a mute role \n``{prefix}setup automod`` - Sets up the basic automod config",
+    "start_restrict": "{emote} Starting to setup the roles...",
+    "role_fail2": "{emote} Failed to create the {role} role: {exc}",
+    "restrict_done": "{emote} Restrict setup complete!",
+
+    "setup_commands": "You can use these commands to let the bot automatically setup the features. \n \n``{prefix}setup muted`` - Sets up a mute role \n``{prefix}setup automod`` - Sets up the basic automod config \n``{prefix}setup restrict`` - Sets up the roles for the restrict command",
 
     "start_automod": "{emote} Starting to setup the basic automod config...",
     "automod_done": "{emote} Basic automod setup complete! The following things have been configured: \n• Anti-invite has been set to ``1`` warns \n• Max-mentions have been set to ``10`` \n• Max-newlines have been set to ``15`` \n• Anti-caps has been set to ``1`` warn \n• Anti-zalgo has been set to ``1`` warn \n• Anti-everyone has been set to ``1`` warn \n• Anti-spam has been set to ``3`` warns \n⚠️ You can view all the server configurations, by using ``{prefix}config``",
@@ -468,5 +478,10 @@
     "tag_content_too_long": "{emote} The new tag content is too long. Max allowed chars are 1500.",
 
     "edit": "**Member:** ``{user}`` ({user_id}) \n**Channel:** {channel}",
-    "delete": "**Member:** ``{user}`` ({user_id}) \n**Channel:** {channel}"
+    "delete": "**Member:** ``{user}`` ({user_id}) \n**Channel:** {channel}",
+
+    "invalid_restriction": "This isn't a valid restriction option. Valid restrictions are: \n• ``embed`` \n• ``emoji`` \n• ``tag``",
+    "no_restrict_role": "Looks like the restrictions roles haven't been configured yet. Do so by running ``{prefix}setup restrict``",
+    "already_restricted": "{emote} This user is already {success}",
+    "restrict_failed": "{emote} Failed to restrict target ||{error}||"
 }
