@@ -87,7 +87,7 @@ class ActionValidator:
                 case = self.bot.utils.newCase(message.guild, "Mute", target, kwargs.get("moderator"), kwargs.get("reason"))
 
                 try:
-                    last = await message.channel.history(limit=20).find(lambda x: x.author.id == int(kwargs.get('user_id')))
+                    last = message
                 except Exception:
                     last = None
 
@@ -110,7 +110,7 @@ class ActionValidator:
             case = self.bot.utils.newCase(message.guild, "Warn", target, kwargs.get("moderator"), kwargs.get("reason"))
 
             try:
-                last = await message.channel.history(limit=20).find(lambda x: x.author.id == int(kwargs.get('user_id')))
+                last = message
             except Exception:
                 last = None
 

@@ -65,7 +65,7 @@ async def muteUser(plugin, ctx, user, length, reason):
                     await ctx.send(plugin.t(ctx.guild, "user_muted", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason, case=case, dm=dm_result))
                     
                     try:
-                        last = await ctx.message.channel.history(limit=20).find(lambda x: x.author.id == user.id)
+                        last = ctx.message
                     except Exception:
                         last = None
                     await plugin.action_logger.log(
