@@ -182,6 +182,8 @@
     "modlog_help": "Sets a log channel for moderation actions (bans, warns, etc.)",
     "voicelog_help": "Sets a log channel for voice events (joins, leaves etc.)",
     "serverlog_help": "Sets a log channel for server events (joins, leaves)",
+    "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
+    "prefix_help": "Sets the servers prefix",
 
     "antiinvite_help": "Sets the amount of warns a user should receive when posting an invite",
     "antieveryone_help": "Sets the amount of warns a user should receive when trying to ping @everyone/here",
@@ -195,12 +197,6 @@
     "ignore_help": "Ignores a channel or role from the automoderator",
     "unignore_help": "Unignores a channel or role from the automoderator",
 
-    "configuration_log_help": "Base command for enabling/disabling log modules, by typing a module name after one of the subcommands",
-    "configuration_add_help": "Activates a module. Some require a channel paramater for its logging process",
-
-    "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
-    "voice_logging_help": "Module for logging voice changes",
-    "config_prefix_help": "Updates the server prefix",
 
     "config_punsishment_help": "Base command for configuring punishments. View the subcommands for more info",
     "config_punsishment_invite_censor_help": "Updates the punishment for advertisers",
@@ -211,24 +207,17 @@
     "config_punsishment_spam_detection_help": "Updates the punishment for spam detection",
     "config_punsishment_mention_spam_help": "Updates the punishment for mention spammers",
     "config_punsishment_max_warns_help": "Updates the punishment for when a user gets the max amount of configured warns",
-
-    "config_action_log_help": "Sets a channel for general moderation logs",
     
-    "enable_help": "Enable a module/logging option",
-    "disable_help": "Disable a module/logging option",
-    "black_list_help": "Shows the censor list. Subcommands are add & remove",
     "allowed_invites_help": "Shows whitelisted invites. Subcommands are add & remove",
-    "prefix_help": "Sets the servers prefix",
+    "allowed_invites_add_help": "Whitelists invites for a server. Use the server ID",
+    "allowed_invites_remove_help": "Removes a invites for a server from the whitelist. Use the server ID",
 
     "punishment_help": "Sets a punishment for a specific amount of warns",
     "warn_help": "Applies a certain amount of warns to the specified users",
     "unwarn_help": "Removes a certain amount of warns to the specified users",
     "check_help": "Checks the current state of the user (warns, etc.)",
 
-    "allowed_invites_add_help": "Whitelists invites for a server. Use the server ID",
-    "allowed_invites_remove_help": "Removes a invites for a server from the whitelist. Use the server ID",
     "raidmode_help": "Enables/disables the raid mode. If enabled, new users will be kicked",
-    "invalid_raid_opt": "{emote} This isn't a valid parameter. Valid ones are ``on`` and ``off``",
 
     "ban_help": "Bans the specified users from the server",
     "kick_help": "Kicks the specified users from the server",
@@ -254,12 +243,6 @@
     "filter_remove_help": "Removes the filter with the given name",
     "filter_show_help": "Shows a list of all active filters",
 
-    "no_whiteslisted": "{emote} This server doesn't have any whitelisted invites yet. Whitelist a server by using ``{prefix}allowed_invites add <serverID>``",
-    "allowed_invites": "Allowed invites for **{guild_name}**",
-
-    "black_list_add_help": "Adds a phrase to the censor list",
-    "black_list_remove_help": "Removes a phrase from the censor list",  
-
     "clean_help": "Base command for cleaning messages",
     "purge_help": "Purges up to 300 messages from the channel",
     "clean_bots_help": "Cleans all bot messages from a channel",
@@ -268,26 +251,11 @@
     "clean_until_help": "Cleans all messages up to the specified one",
     "clean_between_help": "Cleans all messages between the two given ones",
 
-    "cases": "Recent cases in **{guild_name}**",
-
     "tags_help": "Base command for interacting with tags. View the subcommands for more info",
     "tags_add_help": "Adds a tag with the specified name and response",
     "tags_remove_help": "Removes the tag with the specified name",
     "tags_info_help": "Shows some information about a tag",
     "tags_edit_help": "Edits the content of the given tag",
-
-    "role_help": "Base command for granting/removing self roles. View the subcommands for more info",
-    "role_add_help": "Grants yourself one or more selfroles. Seperate them by a space",
-    "role_remove_help": "Remove one or more of your selfroles. Seperate them by a space",
-    "role_help_help": "Shows some help for selfroles & a full list of all availabe ones",
-    "role_setup_help": "Base command for setting up/deleting selfroles. View the subcommands for more info",
-    "role_setup_add_help": "Adds a selfrole for the given name",
-    "role_setup_remove_help": "Deletes the selfrole with the given name",
-
-    "follow_help": "Sets up an alert for when the user joins a channel. Your DMs must be open for this to work",
-    "follows_help": "Shows a list of all your active alerts",
-    "follows_delete_help": "Deletes an active alert",
-    "where_help": "Sends out an invite for the channel the user is currently in",
 
     "cases_help": "Searches for cases. Either by a user or a guild if no argument is passed",
     "case_help": "Base command for interacting with cases. View the subcommands for more info",
@@ -304,6 +272,9 @@
     "no_ignored_users": "There aren't any ignored users configured, all users will be logged",
     "ignored_users": "Ignored Users",
 
+    "no_whiteslisted": "{emote} This server doesn't have any whitelisted invites yet. Whitelist a server by using ``{prefix}allowed_invites add <serverID>``",
+    "allowed_invites": "Allowed invites for **{guild_name}**",
+
     "no_reason": "No reason provided",
     "no_ban_then": "{emote} Alright, I'll ban nobody then!",
     "max_ban": "{emote} Max targets to ban at once are 50",
@@ -316,6 +287,8 @@
     "mkick_success": "{emote} Successfully kicked {users}/{total} users!",
 
     "ignores": "Ignored roles & channels for **{guild_name}**",
+    "cases": "Recent cases in **{guild_name}**",
+    "invalid_raid_opt": "{emote} This isn't a valid parameter. Valid ones are ``on`` and ``off``",
 
     "already_cleaning": "{emote} There's already a clean going on in this channel. Wait until it's done before starting another one.",
     "already_cleaned": "{emote} Looks like these messages were alrady cleaned.",
