@@ -30,7 +30,7 @@ async def cleanMessages(plugin, ctx, category, amount, predicate, before=None, a
             deleted = await ctx.channel.purge(
                 limit=min(amount, 500) if check_amount is None else check_amount, 
                 check=check, 
-                before=ctx.message if before is None else before,
+                before=before if before else None,
                 after=after
             )
         except discord.Forbidden:
@@ -40,10 +40,6 @@ async def cleanMessages(plugin, ctx, category, amount, predicate, before=None, a
             await ctx.send(plugin.t(ctx.guild, "already_cleaned", _emote="WARN"))
         
         else:
-            try:
-                await ctx.message.delete()
-            except Exception:
-                pass
             await ctx.send(plugin.t(ctx.guild, "messages_deleted", _emote="YES", count=len(deleted), plural="" if len(deleted) == 1 else "s"), delete_after=5)
             await plugin.action_logger.log(
                 ctx.guild,
