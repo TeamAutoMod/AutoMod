@@ -13,10 +13,14 @@ async def run(plugin, message):
 
     role_id = plugin.db.configs.get(message.guild.id, "tag_role")
     if role_id != "":
-        role = await plugin.bot.utils.getRole(message.guild, int(role_id))
-        if role is not None:
-            if role in message.author.roles:
-                return
+        try:
+            role = await plugin.bot.utils.getRole(message.guild, int(role_id))
+        except Exception:
+            pass
+        else:
+            if role is not None:
+                if role in message.author.roles:
+                    return
 
     tags = await getTags(plugin, message)
     prefix = plugin.bot.get_guild_prefix(message.guild)

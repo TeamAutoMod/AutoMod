@@ -40,7 +40,11 @@ async def cleanMessages(plugin, ctx, category, amount, predicate, before=None, a
             await ctx.send(plugin.t(ctx.guild, "already_cleaned", _emote="WARN"))
         
         else:
-            await ctx.send(plugin.t(ctx.guild, "messages_deleted", _emote="YES", count=len(deleted), plural="" if len(deleted) == 1 else "s"))
+            try:
+                await ctx.message.delete()
+            except Exception:
+                pass
+            await ctx.send(plugin.t(ctx.guild, "messages_deleted", _emote="YES", count=len(deleted), plural="" if len(deleted) == 1 else "s"), delete_after=5)
             await plugin.action_logger.log(
                 ctx.guild,
                 "clean",
