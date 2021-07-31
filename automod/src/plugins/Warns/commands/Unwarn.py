@@ -8,6 +8,12 @@ async def run(plugin, ctx, users, warns, reason):
 
     if warns is None:
         warns = 1
+    else:
+        try:
+            warns = int(warns)
+        except Exception:
+            reason = warns
+            warns = 1
 
     if warns < 1:
         return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="NO"))

@@ -24,6 +24,8 @@ async def run(plugin, message):
 
     tags = await getTags(plugin, message)
     prefix = plugin.bot.get_guild_prefix(message.guild)
+    if prefix is None:
+        return
     if message.content.startswith(prefix, 0) and len(tags) > 0:
         for tag in tags:
             trigger = tag["trigger"]

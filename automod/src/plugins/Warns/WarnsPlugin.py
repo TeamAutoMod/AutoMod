@@ -36,7 +36,7 @@ class WarnsPlugin(PluginBlueprint):
         self,
         ctx,
         users: commands.Greedy[discord.Member],
-        warns: int = None,
+        warns = None,
         *,
         reason: Reason = None
     ):
@@ -50,7 +50,7 @@ class WarnsPlugin(PluginBlueprint):
         self,
         ctx,
         users: commands.Greedy[discord.Member],
-        warns: int = None,
+        warns = None,
         *,
         reason: Reason = None
     ):
