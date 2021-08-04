@@ -11,7 +11,7 @@ async def run(plugin, ctx, users, warns, reason):
     else:
         try:
             warns = int(warns)
-        except Exception:
+        except ValueError:
             reason = warns
             warns = 1
 

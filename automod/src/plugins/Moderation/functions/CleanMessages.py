@@ -26,9 +26,20 @@ async def cleanMessages(plugin, ctx, category, amount, predicate, before=None, a
                 count += 1
             return match
 
+        limit = min(amount, 500) if check_amount is None else check_amount
+        fetched = await ctx.channel.history(
+            limit=limit,
+            before=before if before else None,
+            after=after
+        ).flatten()
+        if len(fetched) <= limit:
+            limit = len(fetched)
+        else:
+            limit = limit
+            
         try:
             deleted = await ctx.channel.purge(
-                limit=min(amount, 500) if check_amount is None else check_amount, 
+                limit=limit, 
                 check=check, 
                 before=before if before else None,
                 after=after

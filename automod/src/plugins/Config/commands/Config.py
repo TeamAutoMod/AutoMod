@@ -44,7 +44,7 @@ async def run(plugin, ctx):
     am = cfg['automod']
     e.add_field(
         name=f"❯ Automoderator",
-        value="__Max-Mentions__ \n{} \n \n__Messages__ \n{} \n \n__Anti-Invites__ \n{} \n \n__Anti-Spam__ \n{} \n \n__Auto-Raid__ \n{}"\
+        value="__Max-Mentions__ \n{} \n \n__Messages__ \n{} \n \n__Anti-Invites__ \n{} \n \n__Anti-Spam__ \n{} \n \n__Anti-Raid__ \n{}"\
         .format(
             f"• Threshold: ``{am['mention']['threshold']}``" if "mention" in am else "Disabled",
 

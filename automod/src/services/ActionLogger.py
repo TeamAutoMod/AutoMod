@@ -253,7 +253,7 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_clean",
                 "on_time": True,
-                "color": 0x80f31f,
+                "color": 0xfb6300,
                 "emote": "CLEAN"
             },
 
