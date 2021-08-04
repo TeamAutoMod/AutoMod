@@ -3,6 +3,9 @@ from ....utils import Permissions
 
 
 async def checkMessage(plugin, message):
+    if message.guild is None:
+        return
+    
     if Permissions.is_mod(message.author) or message.author.discriminator == "0000" or message.author.id == plugin.bot.user.id:
         return
 
