@@ -1,4 +1,4 @@
-from ..functions.RemoveTagFromCache import removeTagFromCache
+from ..sub.RemoveTagFromCache import removeTagFromCache
 
 
 

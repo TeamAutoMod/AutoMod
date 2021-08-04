@@ -1,4 +1,4 @@
-from ..functions.UpdateLogMessage import updateLogMessage
+from ..sub.UpdateLogMessage import updateLogMessage
 
 
 

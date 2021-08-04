@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from ..functions.BanUser import banUser
+from ..sub.BanUser import banUser
 from ....utils import Permissions
 
 

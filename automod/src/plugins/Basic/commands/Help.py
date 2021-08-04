@@ -1,7 +1,7 @@
 import traceback
 
 from ....utils.MessageUtils import multiPage
-from ..functions.HelpGenerator import getHelpForAllCommands, getHelpForCommand
+from ..sub.HelpGenerator import getHelpForAllCommands, getHelpForCommand
 
 
 

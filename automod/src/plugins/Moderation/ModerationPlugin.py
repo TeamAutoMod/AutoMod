@@ -20,7 +20,7 @@ from .commands import (
     CyberNuke,
     Restrict
 )
-from .functions.UnmuteTask import unmuteTask
+from .sub.UnmuteTask import unmuteTask
 
 
 class ModerationPlugin(PluginBlueprint):

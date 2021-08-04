@@ -1,6 +1,6 @@
 from discord import PermissionOverwrite
 
-from ..functions.Overwrites import overwrite
+from ..sub.Overwrites import overwrite
 
 
 

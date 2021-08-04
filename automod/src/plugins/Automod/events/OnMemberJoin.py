@@ -1,7 +1,7 @@
 import datetime
 import time
 
-from ..functions.Raid import enableRaidMode, disableRaidMode
+from ..sub.Raid import enableRaidMode, disableRaidMode
 from ....utils import Permissions
 
 

@@ -1,4 +1,4 @@
-from ..functions.UnmuteUser import unmuteUser
+from ..sub.UnmuteUser import unmuteUser
 from ....utils import Permissions
 
 

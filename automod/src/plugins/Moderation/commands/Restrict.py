@@ -1,4 +1,4 @@
-from ..functions.RestrictUser import restrictUser
+from ..sub.RestrictUser import restrictUser
 from ....utils import Permissions
 
 

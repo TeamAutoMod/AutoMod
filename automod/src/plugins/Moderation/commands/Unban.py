@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from ..functions.UnbanUser import unbanUser
+from ..sub.UnbanUser import unbanUser
 
 
 

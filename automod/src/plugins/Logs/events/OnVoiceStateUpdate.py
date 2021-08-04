@@ -1,4 +1,4 @@
-from ..functions.LogNewVoiceState import logNewVoiceState
+from ..sub.LogNewVoiceState import logNewVoiceState
 
 
 

@@ -1,6 +1,6 @@
 import discord
 
-from ..functions.ShouldPerformAutomod import shouldPerformAutomod
+from ..sub.ShouldPerformAutomod import shouldPerformAutomod
 from ..triggers import Attachments, Invites, Zalgo, Mentions, Caps, Everyone, Lines
 
 

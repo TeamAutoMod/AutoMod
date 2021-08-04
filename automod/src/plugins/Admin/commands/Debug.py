@@ -1,7 +1,7 @@
 import psutil
 
 from ...Types import Embed
-from ..functions.ParseShardInfo import parseShardInfo
+from ..sub.ParseShardInfo import parseShardInfo
 
 
 

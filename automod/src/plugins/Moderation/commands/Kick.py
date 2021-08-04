@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from ..functions.KickUser import kickUser
+from ..sub.KickUser import kickUser
 from ....utils import Permissions
 
 

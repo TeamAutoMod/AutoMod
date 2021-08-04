@@ -1,4 +1,4 @@
-from ..functions.Raid import disableRaidMode, enableRaidMode
+from ..sub.Raid import disableRaidMode, enableRaidMode
 
 
 

@@ -1,6 +1,6 @@
 import datetime
 
-from ..functions.EditTag import editTag
+from ..sub.EditTag import editTag
 
 
 

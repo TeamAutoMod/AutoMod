@@ -1,4 +1,4 @@
-from ..functions.CheckMessage import checkMessage
+from ..sub.CheckMessage import checkMessage
 
 
 

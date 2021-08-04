@@ -1,7 +1,7 @@
 import discord
 
-from ..functions.ParseFilter import parseFilter
-from ...Automod.functions.ShouldPerformAutomod import shouldPerformAutomod
+from ..sub.ParseFilter import parseFilter
+from ...Automod.sub.ShouldPerformAutomod import shouldPerformAutomod
 
 
 

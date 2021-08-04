@@ -111,17 +111,6 @@
     "default_role_forbidden": "{emote} You can't use the default role as the mute role.",
     "role_too_high": "{emote} I can't assign roles to users that are above my highest role.",
 
-    "no_valid_module": "{emote} These don't seem to be valid modules.",
-    "enabled_module_channel": "{emote} Enabled the **{module}** module and will log actions to {channel}!",
-    "enabled_module_no_channel": "{emote} Enabled the **{module}** module!",
-    "disabled_module": "{emote} Disabled the **{module}** module!",
-    
-    "black_list_empty": "{emote} The black list for this guild is empty. You can add something by running {prefix}configure black_list add <word>",
-    "added_to_black_list": "{emote} Added **{word}** to the black list!",
-    "removed_from_black_list": "{emote} Removed **{word}** from the black list!",
-    "already_on_black_list": "{emote} This phrase is already blacklisted",
-    "not_on_black_list": "{emote} This word isn't blacklisted.",
-
     "no_mute_role": "{emote} This server doesn't have a mute role setup yet. Do so by running ``{prefix}setup muted``",
     
     "already_whitelisted": "{emote} This is already a whitelisted server.",
@@ -185,15 +174,15 @@
     "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
     "prefix_help": "Sets the servers prefix",
 
-    "antiinvite_help": "Sets the amount of warns a user should receive when posting an invite",
-    "antieveryone_help": "Sets the amount of warns a user should receive when trying to ping @everyone/here",
-    "anticaps_help": "Sets the amount of warns a user should receive when posting a message containing more than 75% caps",
-    "antifiles_help": "Sets the amount of warns a user should receive when sending an uncommon file-type",
-    "antizalgo_help": "Sets the amount of warns a user should receive when posting Zalgo characters",
-    "maxmentions_help": "Sets the amount of maximum mentions allowed per message",
-    "maxlines_help": "Sets the amount of maximum newlines allowed per message",
-    "antiraid_help": "Sets the threshold for when antiraid is triggered (10/10 = 10 users per 10 seconds). Use off as the argument to disable this",
-    "antispam_help": "Sets the amount of warns a user should receive when sending too many messages",
+    "invite_help": "Sets the amount of warns a user should receive when posting an invite. Use **off** as the argument to disable this",
+    "everyone_help": "Sets the amount of warns a user should receive when trying to ping @everyone/here. Use **off** as the argument to disable this",
+    "caps_help": "Sets the amount of warns a user should receive when posting a message containing more than 75% caps. Use **off** as the argument to disable this",
+    "files_help": "Sets the amount of warns a user should receive when sending an uncommon file-type. Use **off** as the argument to disable this",
+    "zalgo_help": "Sets the amount of warns a user should receive when posting Zalgo characters. Use **off** as the argument to disable this",
+    "mentions_help": "Sets the amount of maximum mentions allowed per message. Use **off** as the argument to disable this",
+    "lines_help": "Sets the amount of maximum newlines allowed per message. Use **off** as the argument to disable this",
+    "raid_help": "Sets the threshold for when antiraid is triggered (10/10 = 10 users per 10 seconds). Use **off** as the argument to disable this",
+    "spam_help": "Sets the amount of warns a user should receive when sending too many messages. Use **off** as the argument to disable this",
     "ignore_help": "Ignores a channel or role from the automoderator",
     "unignore_help": "Unignores a channel or role from the automoderator",
 
@@ -232,7 +221,7 @@
     
     "message_logging_help": "Module for message edit/deletion logs",
     "member_logging_help": "Modules for join/leave logs",
-    "automod_help": "Automod including message censoring, invite filter",
+    "automod_help": "Base command for configuring the automod. You can use **off** as the argument in all subcommands to disable the respective feature",
     "persist_help": "Enables/Disables persist mode (re-applies roles and nicknames for users when they rejoin)",
 
     "ignored_users_add_help": "Excludes someone from the message logs",
@@ -328,15 +317,6 @@
     "cybernuke_dm": "{emote} You have been banned in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "restrict_dm": "{emote} You have been {success} in **{guild_name}**. Reason: \n```\n{reason} \n```",
 
-    "no_selfroles": "{emote} This server currently doesn't have any selfroles. Add one by using the ``role setup add`` command.",
-    "no_valid_selfroles": "{emote} I couldn't give you any of the roles specified. Make sure to spell everything correctly.",
-    "granted_selfroles": "{emote} {user} Granted you the {roles} {plural}",
-    "removed_selfroles": "{emote} {user} Removed the {roles} {plural}",
-    "already_selfrole": "{emote} This is already a selfrole.",
-    "selfrole_added": "{emote} Selfrole {role} added! Users can get it, by using ``{prefix}role add {name}``",
-    "not_selfrole": "{emote} This isn't a selfrole.",
-    "selfrole_deleted": "{emote} Selfrole **{name}** deleted!",
-
     "no_cases_found": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria.",
     "case_not_found": "{emote} I couldn't find a case with that ID.",
 
@@ -386,7 +366,7 @@
 
     "raid_off": "{emote} Auto-raid is now ``off``.",
     "raid_on": "{emote} Auto-raid is now ``on``. It'll be triggered if more than ``{users}`` users join within the last ``{seconds}`` seconds.",
-    "raid_help": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic raidmode by using ``{prefix}antiraid <joins/seconds>``. \nFor example you could use ``{prefix}antiraid 10/10``, which would mean that if more than 10 users per 10 seconds join, the raid mode would be enabled. \nTo disable this feature, use ``{prefix}antiraid off``",
+    "raid_help_2": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic raidmode by using ``{prefix}automod antiraid <joins/seconds>``. \nFor example you could use ``{prefix}automod antiraid 10/10``, which would mean that if more than 10 users per 10 seconds join, the raid mode would be enabled. \nTo disable this feature, use ``{prefix}automod antiraid off``",
 
     "about_desc": "**AutoMod** is a customizable and easy-to-use Discord moderation bot. Its goal is to provide your moderators with powerful & efficient features, to keep moderating as simple and smooth as possible.",
 
@@ -400,7 +380,7 @@
     "channel_ignored": "{emote} Done! Automod is now ignoring messages in the ``{channel}`` channel.",
 
     "spam_off": "{emote} Turned off the automatic spam detection.",
-    "spam_help": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic spam detection by using ``{prefix}antispam <warns>``. \nFor example you could use ``{prefix}antiraid 3``, which would mean that if a user sends more than 10 messages within the last 10 seconds, they would receive 3 warns. \nTo disable this feature, use ``{prefix}antispam off``",
+    "spam_help_2": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic spam detection by using ``{prefix}automod antispam <warns>``. \nFor example you could use ``{prefix}automod antispam 3``, which would mean that if a user sends more than 10 messages within the last 10 seconds, they would receive 3 warns. \nTo disable this feature, use ``{prefix}automod antispam off``",
 
     "user": "Information about **{user}**",
 
@@ -456,5 +436,8 @@
     "invalid_restriction": "This isn't a valid restriction option. Valid restrictions are: \n• ``embed`` \n• ``emoji`` \n• ``tag``",
     "no_restrict_role": "Looks like the restrictions roles haven't been configured yet. Do so by running ``{prefix}setup restrict``",
     "already_restricted": "{emote} This user is already {success}",
-    "restrict_failed": "{emote} Failed to restrict target ||{error}||"
+    "restrict_failed": "{emote} Failed to restrict target ||{error}||",
+
+    "automod_feature_disabled": "{emote} Successfully disabled the ``{what}`` feature!",
+    "invalid_automod_feature_param": "{emote} This isn't a valid paramater. \n \nYou can use ``{prefix}automod {command}`` to configure this feature. \nYou can use ``{prefix}automod {off_command}`` to disable this feature."
 }

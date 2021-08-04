@@ -3,7 +3,7 @@ import discord
 import datetime
 import time
 
-from ..functions.BanUser import banUser
+from ..sub.BanUser import banUser
 from ....utils import Permissions
 
 

@@ -1,6 +1,6 @@
 import datetime
 
-from ..functions.AddTagToCache import addTagToCache
+from ..sub.AddTagToCache import addTagToCache
 
 
 

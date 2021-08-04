@@ -1,4 +1,4 @@
-from ..functions.CaseInfo import caseInfo
+from ..sub.CaseInfo import caseInfo
 
 
 

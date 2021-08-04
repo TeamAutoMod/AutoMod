@@ -9,15 +9,15 @@ from .events import (
     OnMemberJoin
 )
 from .commands import (
-    AntiCaps, 
-    AntiEveryone, 
-    AntiFiles, 
-    AntiInvite, 
-    AntiZalgo, 
-    AntiRaid, 
-    MaxLines, 
-    MaxMentions, 
-    AntiSpam, 
+    Caps, 
+    Everyone, 
+    Files, 
+    Invite, 
+    Zalgo, 
+    Raid, 
+    Lines, 
+    Mentions, 
+    Spam, 
     Ignore, 
     Unignore,
     RaidMode, 
@@ -65,94 +65,105 @@ class AutomodPlugin(PluginBlueprint):
         await OnMemberJoin.run(self, member)
 
 
-    @commands.command()
-    async def antiinvite(
-        self, 
-        ctx,
-        warns: int
-    ):
-        """antiinvite_help"""
-        await AntiInvite.run(self, ctx, warns)
+    @commands.group()
+    async def automod(
+        self,
+        ctx
+    ): 
+        """automod_help"""
+        if ctx.invoked_subcommand is None:
+            _help = self.bot.get_command("help")
+            await _help.__call__(ctx, query="automod")
 
 
-    @commands.command()
-    async def antieveryone(
-        self, 
-        ctx,
-        warns: int
-    ):
-        """antieveryone_help"""
-        await AntiEveryone.run(self, ctx, warns)
-
-
-    @commands.command()
-    async def anticaps(
-        self, 
-        ctx,
-        warns: int
-    ):
-        """anticaps_help"""
-        await AntiCaps.run(self, ctx, warns)
-
-
-    @commands.command()
-    async def antifiles(
-        self, 
-        ctx,
-        warns: int
-    ):
-        """antifiles_help"""
-        await AntiFiles.run(self, ctx, warns)
-
-
-    @commands.command()
-    async def antizalgo(
-        self, 
-        ctx,
-        warns: int
-    ):
-        """antizalgo_help"""
-        await AntiZalgo.run(self, ctx, warns)
-
-
-    @commands.command()
-    async def maxmentions(
-        self, 
-        ctx,
-        mentions: int
-    ):
-        """maxmentions_help"""
-        await MaxMentions.run(self, ctx, mentions)
-
-
-    @commands.command()
-    async def maxlines(
-        self, 
-        ctx,
-        lines: int
-    ):
-        """maxlines_help"""
-        await MaxLines.run(self, ctx, lines)
-
-
-    @commands.command()
-    async def antiraid(
-        self, 
-        ctx,
-        threshold: str
-    ):
-        """antiraid_help"""
-        await AntiRaid.run(self, ctx, threshold)
-
-
-    @commands.command()
-    async def antispam(
+    @automod.command()
+    async def invite(
         self, 
         ctx,
         warns: str
     ):
-        """antispam_help"""
-        await AntiSpam.run(self, ctx, warns)
+        """invite_help"""
+        await Invite.run(self, ctx, warns)
+
+
+    @automod.command()
+    async def everyone(
+        self, 
+        ctx,
+        warns: str
+    ):
+        """everyone_help"""
+        await Everyone.run(self, ctx, warns)
+
+
+    @automod.command()
+    async def caps(
+        self, 
+        ctx,
+        warns: str
+    ):
+        """caps_help"""
+        await Caps.run(self, ctx, warns)
+
+
+    @automod.command()
+    async def files(
+        self, 
+        ctx,
+        warns: str
+    ):
+        """files_help"""
+        await Files.run(self, ctx, warns)
+
+
+    @automod.command()
+    async def zalgo(
+        self, 
+        ctx,
+        warns: str
+    ):
+        """zalgo_help"""
+        await Zalgo.run(self, ctx, warns)
+
+
+    @automod.command()
+    async def mentions(
+        self, 
+        ctx,
+        mentions: str
+    ):
+        """mentions_help"""
+        await Mentions.run(self, ctx, mentions)
+
+
+    @automod.command()
+    async def lines(
+        self, 
+        ctx,
+        lines: str
+    ):
+        """lines_help"""
+        await Lines.run(self, ctx, lines)
+
+
+    @automod.command()
+    async def raid(
+        self, 
+        ctx,
+        threshold: str
+    ):
+        """raid_help"""
+        await Raid.run(self, ctx, threshold)
+
+
+    @automod.command()
+    async def spam(
+        self, 
+        ctx,
+        warns: str
+    ):
+        """spam_help"""
+        await Spam.run(self, ctx, warns)
 
     
     @commands.command()

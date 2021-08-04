@@ -2,7 +2,7 @@ from discord.ext import commands
 
 from ...Types import Embed
 
-from ..functions.GetNewPunishments import getNewPunishments
+from ..sub.GetNewPunishments import getNewPunishments
 
 
 

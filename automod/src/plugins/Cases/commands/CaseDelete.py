@@ -1,4 +1,4 @@
-from ..functions.CaseDelete import caseDelete
+from ..sub.CaseDelete import caseDelete
 
 
 

@@ -1,4 +1,4 @@
-from ..functions.CaseClaim import caseClaim
+from ..sub.CaseClaim import caseClaim
 
 
 

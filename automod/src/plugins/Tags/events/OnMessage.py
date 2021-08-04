@@ -1,6 +1,6 @@
 import discord
 
-from ..functions.GetTags import getTags
+from ..sub.GetTags import getTags
 
 
 

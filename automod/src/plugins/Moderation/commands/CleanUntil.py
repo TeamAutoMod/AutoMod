@@ -1,6 +1,6 @@
 import discord
 
-from ..functions.CleanMessages import cleanMessages
+from ..sub.CleanMessages import cleanMessages
 
 
 

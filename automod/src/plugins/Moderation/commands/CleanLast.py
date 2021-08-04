@@ -1,7 +1,7 @@
 import datetime
 import time
 
-from ..functions.CleanMessages import cleanMessages
+from ..sub.CleanMessages import cleanMessages
 
 
 

@@ -27,4 +27,4 @@ async def run(plugin, ctx, threshold):
 
     else:
         prefix = plugin.bot.get_guild_prefix(ctx.guild)
-        return await ctx.send(plugin.t(ctx.guild, "raid_help", _emote="WARN", prefix=prefix)) 
+        return await ctx.send(plugin.t(ctx.guild, "raid_help_2", _emote="WARN", prefix=prefix)) 
