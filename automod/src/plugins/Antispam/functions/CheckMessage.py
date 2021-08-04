@@ -6,7 +6,10 @@ async def checkMessage(plugin, message):
     if message.guild is None:
         return
     
-    if Permissions.is_mod(message.author) or message.author.discriminator == "0000" or message.author.id == plugin.bot.user.id:
+    author = message.guild.get_member(message.author)
+    if author is None:
+        return
+    if Permissions.is_mod(author) or message.author.discriminator == "0000" or message.author.id == plugin.bot.user.id:
         return
 
     if message.author.id in plugin.is_being_handled:

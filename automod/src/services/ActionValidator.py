@@ -26,7 +26,7 @@ class ActionValidator:
             warns = abs(int(opt["threshold"]) - int(kwargs.get("mentions")))
         else:
             if "threshold" in opt:
-                warns = math.ceil((float)(len(message.content.split("\n")) - int(opt["threhsold"])) / int(opt["threshold"]))
+                warns = math.ceil((float)(len(message.content.split("\n")) - int(opt["threshold"])) / int(opt["threshold"]))
             else:
                 print(f"{message.guild.id} - {opt}")
         if int(warns) < 1:
