@@ -192,7 +192,7 @@
     "antizalgo_help": "Sets the amount of warns a user should receive when posting Zalgo characters",
     "maxmentions_help": "Sets the amount of maximum mentions allowed per message",
     "maxlines_help": "Sets the amount of maximum newlines allowed per message",
-    "autoraid_help": "Sets the threshold for when autoraid is triggered (10/10 = 10 users per 10 seconds). Use off as the argument to disable this",
+    "antiraid_help": "Sets the threshold for when antiraid is triggered (10/10 = 10 users per 10 seconds). Use off as the argument to disable this",
     "antispam_help": "Sets the amount of warns a user should receive when sending too many messages",
     "ignore_help": "Ignores a channel or role from the automoderator",
     "unignore_help": "Unignores a channel or role from the automoderator",
@@ -386,7 +386,7 @@
 
     "raid_off": "{emote} Auto-raid is now ``off``.",
     "raid_on": "{emote} Auto-raid is now ``on``. It'll be triggered if more than ``{users}`` users join within the last ``{seconds}`` seconds.",
-    "raid_help": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic raidmode by using ``{prefix}autoraid <joins/seconds>``. \nFor example you could use ``{prefix}autoraid 10/10``, which would mean that if more than 10 users per 10 seconds join, the raid mode would be enabled. \nTo disable this feature, use ``{prefix}autoraid off``",
+    "raid_help": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic raidmode by using ``{prefix}antiraid <joins/seconds>``. \nFor example you could use ``{prefix}antiraid 10/10``, which would mean that if more than 10 users per 10 seconds join, the raid mode would be enabled. \nTo disable this feature, use ``{prefix}antiraid off``",
 
     "about_desc": "**AutoMod** is a customizable and easy-to-use Discord moderation bot. Its goal is to provide your moderators with powerful & efficient features, to keep moderating as simple and smooth as possible.",
 
@@ -400,7 +400,7 @@
     "channel_ignored": "{emote} Done! Automod is now ignoring messages in the ``{channel}`` channel.",
 
     "spam_off": "{emote} Turned off the automatic spam detection.",
-    "spam_help": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic spam detection by using ``{prefix}antispam <warns>``. \nFor example you could use ``{prefix}autoraid 3``, which would mean that if a user sends more than 10 messages within the last 10 seconds, they would receive 3 warns. \nTo disable this feature, use ``{prefix}antispam off``",
+    "spam_help": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic spam detection by using ``{prefix}antispam <warns>``. \nFor example you could use ``{prefix}antiraid 3``, which would mean that if a user sends more than 10 messages within the last 10 seconds, they would receive 3 warns. \nTo disable this feature, use ``{prefix}antispam off``",
 
     "user": "Information about **{user}**",
 

@@ -14,7 +14,7 @@ from .commands import (
     AntiFiles, 
     AntiInvite, 
     AntiZalgo, 
-    AutoRaid, 
+    AntiRaid, 
     MaxLines, 
     MaxMentions, 
     AntiSpam, 
@@ -136,13 +136,13 @@ class AutomodPlugin(PluginBlueprint):
 
 
     @commands.command()
-    async def autoraid(
+    async def antiraid(
         self, 
         ctx,
         threshold: str
     ):
-        """autoraid_help"""
-        await AutoRaid.run(self, ctx, threshold)
+        """antiraid_help"""
+        await AntiRaid.run(self, ctx, threshold)
 
 
     @commands.command()
