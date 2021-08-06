@@ -38,7 +38,7 @@ async def run(plugin, message):
         icon_url=message.author.avatar_url_as()
     )
     e.add_field(
-        name="❯ Content",
+        name="Content",
         value=content
     )
     e.set_footer(

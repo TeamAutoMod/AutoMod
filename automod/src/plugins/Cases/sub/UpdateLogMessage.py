@@ -6,7 +6,7 @@ async def updateLogMessage(plugin, ctx, log_id, case, reason):
     if log_id is None:
         return
     log_channel_id = plugin.db.configs.get(ctx.guild.id, "mod_log")
-    if log_channel_id is "":
+    if log_channel_id == "":
         return await ctx.send(plugin.t(ctx.guild, "no_mod_log_set", _emote="NO"))
 
     log_channel = await plugin.bot.utils.getChannel(ctx.guild, log_channel_id)
