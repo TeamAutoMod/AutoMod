@@ -31,7 +31,7 @@ async def run(plugin, member):
     if cfg["status"] is False:
         return
 
-    if cfg["threshold"] is "":
+    if cfg["threshold"] == "":
         return
 
     try:

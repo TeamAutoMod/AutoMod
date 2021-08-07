@@ -30,11 +30,11 @@ async def run(plugin, before, after):
             icon_url=after.author.avatar_url_as()
         )
         e.add_field(
-            name="❯ Before",
+            name="Before",
             value=before.content
         )
         e.add_field(
-            name="❯ After",
+            name="After",
             value=after.content
         )
         e.set_footer(text=f"#{after.channel.name}")

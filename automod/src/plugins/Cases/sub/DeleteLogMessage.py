@@ -5,7 +5,7 @@ async def deleteLogMessage(plugin, ctx, log_id):
     if log_id is None:
         return
     log_channel_id = plugin.db.configs.get(ctx.guild.id, "mod_log")
-    if log_channel_id is "":
+    if log_channel_id == "":
         return
 
     log_channel = await plugin.bot.utils.getChannel(ctx.guild, log_channel_id)
