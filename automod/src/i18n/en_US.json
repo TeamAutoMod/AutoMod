@@ -366,7 +366,7 @@
 
     "raid_off": "{emote} Auto-raid is now ``off``.",
     "raid_on": "{emote} Auto-raid is now ``on``. It'll be triggered if more than ``{users}`` users join within the last ``{seconds}`` seconds.",
-    "raid_help_2": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic raidmode by using ``{prefix}automod antiraid <joins/seconds>``. \nFor example you could use ``{prefix}automod antiraid 10/10``, which would mean that if more than 10 users per 10 seconds join, the raid mode would be enabled. \nTo disable this feature, use ``{prefix}automod antiraid off``",
+    "raid_help_2": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic raidmode by using ``{prefix}automod raid <joins/seconds>``. \nFor example you could use ``{prefix}automod antiraid 10/10``, which would mean that if more than 10 users per 10 seconds join, the raid mode would be enabled. \nTo disable this feature, use ``{prefix}automod antiraid off``",
 
     "about_desc": "**AutoMod** is a customizable and easy-to-use Discord moderation bot. Its goal is to provide your moderators with powerful & efficient features, to keep moderating as simple and smooth as possible.",
 
