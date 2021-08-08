@@ -4,10 +4,10 @@
 async def unmuteUser(plugin, ctx, user):
     mute_id = f"{ctx.guild.id}-{user.id}"
     if not plugin.db.mutes.exists(mute_id):
-        return await ctx.send(plugin.t(ctx.guild, "not_muted", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "not_muted", _emote="NO"))
 
     plugin.db.mutes.delete(mute_id)
-    await ctx.send(plugin.t(ctx.guild, "mute_lifted", _emote="YES", user=user))
+    await ctx.send(plugin.i18next.t(ctx.guild, "mute_lifted", _emote="YES", user=user))
 
     # Can we remove the role?
     try:

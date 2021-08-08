@@ -38,7 +38,7 @@ async def getHelpForAllCommands(plugin, ctx):
 async def generateHelpForCommand(plugin, ctx, command):
     plugin.bot.help_command.context = ctx
     name = ctx.bot.help_command.get_command_signature(command)
-    help_message = plugin.t(ctx.guild, f"{command.help}")
+    help_message = plugin.i18next.t(ctx.guild, f"{command.help}")
     if name[-1] == " ":
         name = name[:-1]
 

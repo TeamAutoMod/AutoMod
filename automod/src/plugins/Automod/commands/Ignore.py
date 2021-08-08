@@ -33,8 +33,8 @@ async def run(plugin, ctx, channel_role):
     if isinstance(cu, discord.Role):
         roles.append(cu.id)
         plugin.db.configs.update(ctx.guild.id, "ignored_roles", roles)
-        return await ctx.send(plugin.t(ctx.guild, "role_ignored", _emote="YES", role=cu.name))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "role_ignored", _emote="YES", role=cu.name))
     elif isinstance(cu, discord.TextChannel):
         channels.append(cu.id)
         plugin.db.configs.update(ctx.guild.id, "ignored_channels", channels)
-        return await ctx.send(plugin.t(ctx.guild, "channel_ignored", _emote="YES", channel=cu.name))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "channel_ignored", _emote="YES", channel=cu.name))

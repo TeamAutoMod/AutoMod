@@ -39,3 +39,7 @@ class Translator:
                 return str(string).format(emote=str(self.bot.emotes.get(_emote)), **kwargs)
             else:
                 return str(string).format(**kwargs)
+
+
+    def t(self, guild, key, _emote=None, **kwargs):
+        return self.translate(guild, key, _emote=_emote, **kwargs)

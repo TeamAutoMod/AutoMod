@@ -23,11 +23,11 @@ async def masskickUsers(plugin, ctx, targets, reason):
             failing += 1
             
     if failing >= len(targets):
-        return await ctx.send(plugin.t(ctx.guild, "cant_kick_anyone", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "cant_kick_anyone", _emote="NO"))
     
     confirm = await ctx.prompt(f'This action will kick {len(to_kick)} member{"" if len(to_kick) == 1 else "s"}. Are you sure?', timeout=15)
     if not confirm:
-        return await ctx.send(plugin.t(ctx.guild, "aborting"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "aborting"))
 
     kicked = 0
     for t in to_kick:
@@ -41,7 +41,7 @@ async def masskickUsers(plugin, ctx, targets, reason):
         else:
             kicked += 1
         
-    await ctx.send(plugin.t(ctx.guild, "mkick_success", _emote="YES", users=kicked, total=len(to_kick)))
+    await ctx.send(plugin.i18next.t(ctx.guild, "mkick_success", _emote="YES", users=kicked, total=len(to_kick)))
     await plugin.action_logger.log(
             ctx.guild, 
             "mass_kick", 

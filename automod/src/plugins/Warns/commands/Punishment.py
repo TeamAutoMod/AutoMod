@@ -19,13 +19,13 @@ async def run(plugin, ctx, warns, action, time):
     prefix = plugin.bot.get_guild_prefix(ctx.guild)
     e = Embed()
     if not action in valid_actions:
-        return await ctx.send(plugin.t(ctx.guild, "invalid_action", _emote="WARN", prefix=prefix))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "invalid_action", _emote="WARN", prefix=prefix))
 
     if warns < 1:
-        return await ctx.send(plugin.t(ctx.guild, "min_warns", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "min_warns", _emote="NO"))
 
     if warns > 100:
-        return await ctx.send(plugin.t(ctx.guild, "max_warns", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "max_warns", _emote="NO"))
 
     current = plugin.db.configs.get(ctx.guild.id, "punishments")
     if action == "none":
@@ -38,7 +38,7 @@ async def run(plugin, ctx, warns, action, time):
             value="{}".format("\n".join(desc) if len(desc) > 0 else "None")
         )
 
-        return await ctx.send(content=plugin.t(ctx.guild, "set_none", _emote="YES", warns=warns), embed=e)
+        return await ctx.send(content=plugin.i18next.t(ctx.guild, "set_none", _emote="YES", warns=warns), embed=e)
     
     elif action != "mute":
         current.update({
@@ -52,11 +52,11 @@ async def run(plugin, ctx, warns, action, time):
             value="{}".format("\n".join(desc) if len(desc) > 0 else "None")
         )
 
-        return await ctx.send(content=plugin.t(ctx.guild, f"set_{action}", _emote="YES", warns=warns), embed=e)
+        return await ctx.send(content=plugin.i18next.t(ctx.guild, f"set_{action}", _emote="YES", warns=warns), embed=e)
 
     else:
         if time is None:
-            return await ctx.send(plugin.t(ctx.guild, "time_needed", _emote="NO", prefix=prefix))
+            return await ctx.send(plugin.i18next.t(ctx.guild, "time_needed", _emote="NO", prefix=prefix))
         
         as_seconds = time.to_seconds(ctx)
         if as_seconds > 0:
@@ -74,7 +74,7 @@ async def run(plugin, ctx, warns, action, time):
                 value="{}".format("\n".join(desc) if len(desc) > 0 else "None")
             )
 
-            return await ctx.send(content=plugin.t(ctx.guild, f"set_{action}", _emote="YES", warns=warns, length=length, unit=unit), embed=e)
+            return await ctx.send(content=plugin.i18next.t(ctx.guild, f"set_{action}", _emote="YES", warns=warns, length=length, unit=unit), embed=e)
         
         else:
             raise commands.BadArgument("number_too_small")

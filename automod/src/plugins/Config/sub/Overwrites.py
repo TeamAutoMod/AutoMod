@@ -12,7 +12,7 @@ async def overwrite(plugin, ctx, msg, roles):
                 })
                 await c.edit(overwrites=ov)
         except Exception as ex:
-            return await msg.edit(content=plugin.t(ctx.guild, "category_fail", _emote="NO", category=c.name, exc=ex))
+            return await msg.edit(content=plugin.i18next.t(ctx.guild, "category_fail", _emote="NO", category=c.name, exc=ex))
         else:
             plugin.db.configs.update(ctx.guild.id, k, f"{role.id}")
     await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Category overwrites complete!")
@@ -27,9 +27,9 @@ async def overwrite(plugin, ctx, msg, roles):
                 })
                 await c.edit(overwrites=ov)
         except Exception as ex:
-            return await msg.edit(content=plugin.t(ctx.guild, "text_fail", _emote="NO", channel=c.name, exc=ex))
+            return await msg.edit(content=plugin.i18next.t(ctx.guild, "text_fail", _emote="NO", channel=c.name, exc=ex))
         else:
             plugin.db.configs.update(ctx.guild.id, k, f"{role.id}")
     await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Text channel overwrites complete!")
 
-    await msg.edit(content=plugin.t(ctx.guild, "restrict_done", _emote="YES"))
+    await msg.edit(content=plugin.i18next.t(ctx.guild, "restrict_done", _emote="YES"))

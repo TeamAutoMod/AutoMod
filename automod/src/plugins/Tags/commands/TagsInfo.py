@@ -9,11 +9,11 @@ async def run(plugin, ctx, tag):
     tag = tag.lower()
     tags = ["-".join(x["id"].split("-")[1:]) for x in plugin.db.tags.find({}) if x["id"].split("-")[0] == str(ctx.guild.id)]
     if len(tags) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_tags", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "no_tags", _emote="NO"))
 
     _id = f"{ctx.guild.id}-{tag}"
     if not plugin.db.tags.exists(_id):
-        return await ctx.send(plugin.t(ctx.guild, "tag_doesnt_exist", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "tag_doesnt_exist", _emote="NO"))
 
     entry = plugin.db.tags.get_doc(_id)
     e = Embed()

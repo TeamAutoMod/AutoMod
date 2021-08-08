@@ -5,7 +5,7 @@ from ...Types import Embed
 async def caseInfo(plugin, ctx, case):
     case_id = f"{ctx.guild.id}-{case}"
     if not plugin.db.inf.exists(case_id):
-        return await ctx.send(plugin.t(ctx.guild, "case_not_found", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "case_not_found", _emote="NO"))
     
     _case = [x for x in plugin.db.inf.find({"id": case_id})][0]
 

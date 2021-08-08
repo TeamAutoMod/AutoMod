@@ -125,7 +125,7 @@ class BotUtils:
 
 
     async def dmUser(self, message, _type, user, **kwargs):
-        msg = self.bot.translator.translate(message.guild, f"{_type}_dm", **kwargs)
+        msg = self.bot.i18next.translate(message.guild, f"{_type}_dm", **kwargs)
         res = ""
         state = self.bot.db.configs.get(message.guild.id, "dm_on_actions")
         if state is True:

@@ -7,9 +7,9 @@ from ..sub.Overwrites import overwrite
 async def run(plugin, ctx):
     confirm = await ctx.prompt("This will create (or edit) 3 roles (Embed restricted, Emoji restricted & Tag restricted)", timeout=15)
     if not confirm:
-        return await ctx.send(plugin.t(ctx.guild, "aborting"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "aborting"))
 
-    msg = await ctx.send(plugin.t(ctx.guild, "start_restrict", _emote="YES"))
+    msg = await ctx.send(plugin.i18next.t(ctx.guild, "start_restrict", _emote="YES"))
 
 
     global embed_role
@@ -20,7 +20,7 @@ async def run(plugin, ctx):
         try:
             embed_role = await ctx.guild.create_role(name="Embed restricted")
         except Exception as ex:
-            return await msg.edit(content=plugin.t(ctx.guild, "role_fail2", _emote="NO", role="Embed restricted", exc=ex))
+            return await msg.edit(content=plugin.i18next.t(ctx.guild, "role_fail2", _emote="NO", role="Embed restricted", exc=ex))
 
 
     global emoji_role
@@ -31,7 +31,7 @@ async def run(plugin, ctx):
         try:
             emoji_role = await ctx.guild.create_role(name="Emoji restricted")
         except Exception as ex:
-            return await msg.edit(content=plugin.t(ctx.guild, "role_fail2", _emote="NO", role="Emoji restricted", exc=ex))
+            return await msg.edit(content=plugin.i18next.t(ctx.guild, "role_fail2", _emote="NO", role="Emoji restricted", exc=ex))
 
 
     global tag_role
@@ -42,7 +42,7 @@ async def run(plugin, ctx):
         try:
             tag_role = await ctx.guild.create_role(name="Tag restricted")
         except Exception as ex:
-            return await msg.edit(content=plugin.t(ctx.guild, "role_fail2", _emote="NO", role="Tag restricted", exc=ex))
+            return await msg.edit(content=plugin.i18next.t(ctx.guild, "role_fail2", _emote="NO", role="Tag restricted", exc=ex))
         else:
             plugin.db.configs.update(ctx.guild.id, "tag_role", f"{tag_role.id}")
 

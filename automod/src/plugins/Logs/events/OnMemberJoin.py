@@ -19,7 +19,7 @@ async def run(plugin, member):
     e.set_thumbnail(url=member.avatar_url)
     if len(prior_cases) > 0:
         e.color = 0xffff00
-        e.description = plugin.t(member.guild, "prior_cases", cases=", ".join(prior_cases), profile=member.mention, created=created, ago=ago)
+        e.description = plugin.i18next.t(member.guild, "prior_cases", cases=", ".join(prior_cases), profile=member.mention, created=created, ago=ago)
         e.set_footer(text="User with prior cases joined")
         await plugin.action_logger.log(
             member.guild, 
@@ -28,7 +28,7 @@ async def run(plugin, member):
         )
     else:
         e.color = 0x5cff9d
-        e.description = plugin.t(member.guild, "normal_join", profile=member.mention, created=created, ago=ago)
+        e.description = plugin.i18next.t(member.guild, "normal_join", profile=member.mention, created=created, ago=ago)
         e.set_footer(text="User joined")
         await plugin.action_logger.log(
             member.guild, 

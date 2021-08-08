@@ -9,7 +9,7 @@ from ..plugins.Types import Embed
 class ActionLogger:
     def __init__(self, bot):
         self.bot = bot
-        self.t = bot.translator
+        self.i18next = bot.i18next
         self.log_configs = {
             "ban": {
                 "channel": "mod_log",
@@ -103,6 +103,28 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xffff00,
                 "emote": "WARN"
+            },
+
+            "voice_join": {
+                "channel": "voice_log",
+                "key": "voice_channel_join",
+                "on_time": True,
+                "color": 0x5cff9d,
+                "emote": "BLUEDOT"
+            },
+            "voice_leave": {
+                "channel": "voice_log",
+                "key": "voice_channel_leave",
+                "on_time": True,
+                "color": 0xff5c5c,
+                "emote": "REDDOT"
+            },
+            "voice_switch": {
+                "channel": "voice_log",
+                "key": "voice_channel_switch",
+                "on_time": True,
+                "color": 0xffdc5c,
+                "emote": "SWITCH"
             },
 
             "message_deleted": {
@@ -232,7 +254,7 @@ class ActionLogger:
                 e.set_footer(
                     text=f"Case #{kwargs.get('case')}{dm if dm is not None else ''}"
                 )
-            e.description = self.t.translate(guild, log_key, _emote=log_emote, **kwargs)
+            e.description = self.i18next.translate(guild, log_key, _emote=log_emote, **kwargs)
         else:
             e = kwargs.get("_embed")
         try:

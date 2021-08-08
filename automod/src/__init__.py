@@ -63,7 +63,7 @@ class AutoMod(commands.AutoShardedBot):
         self.total_shards = config.shards
         self.version = "0.0.1"
 
-        self.translator = Translator(self, config.langs)
+        self.i18next = Translator(self, config.langs)
         self.db = MongoDB(host=config.mongo_url).database
         self.schemas = MongoSchemas(self)
         self.cache = Cache(self)
@@ -162,7 +162,7 @@ class AutoMod(commands.AutoShardedBot):
                 return
             elif isinstance(ctx.channel, discord.TextChannel) and not ctx.channel.permissions_for(ctx.channel.guild.me).send_messages:
                 try:
-                    await ctx.author.send(self.translator.translate(ctx.guild, "cant_send_message"))
+                    await ctx.author.send(self.i18next.t(ctx.guild, "cant_send_message"))
                 except Exception:
                     pass
             else:

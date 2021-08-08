@@ -8,13 +8,13 @@ async def run(plugin, ctx, users, amount):
 
     users = list(set(users))
     if len(users) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_member", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "no_member", _emote="NO"))
     
     if amount < 1:
-        return await ctx.send(plugin.t(ctx.guild, "amount_too_small", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "amount_too_small", _emote="NO"))
 
     if amount > 300:
-        return await ctx.send(plugin.t(ctx.guild, "amount_too_big", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "amount_too_big", _emote="NO"))
 
     await cleanMessages(
         plugin, 

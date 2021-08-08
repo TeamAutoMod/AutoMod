@@ -109,10 +109,10 @@ class DurationHolder:
             length = length * 60
             unit = 's'
         if unit != 's' and unit != 'second':
-            raise BadArgument(ctx.bot.translator.translate(ctx.guild, "invalid_lenth_unit"))
+            raise BadArgument(ctx.bot.i18next.translate(ctx.guild, "invalid_lenth_unit"))
         max_length = 60 * 60 * 24 * 365
         if length > max_length:
-            raise BadArgument(ctx.bot.translator.translate(ctx.guild, "max_length", max_length=max_length))
+            raise BadArgument(ctx.bot.i18next.translate(ctx.guild, "max_length", max_length=max_length))
         else:
             return length
 
@@ -131,7 +131,7 @@ class DurationIdentifier(commands.Converter):
             argument = "seconds"
         if argument.lower() not in ["week", "weeks", "day", "days", "hour", "hours", "minute", "minutes", "second",
                                     "seconds", "w", "d", "h", "m", "s"]:
-            raise BadArgument(ctx.bot.translator.translate(ctx.guild, "advanced_invalid_length_unit"))
+            raise BadArgument(ctx.bot.i18next.translate(ctx.guild, "advanced_invalid_length_unit"))
         return argument
 
 

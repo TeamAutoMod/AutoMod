@@ -49,7 +49,7 @@ async def userCases(plugin, ctx, user):
     raw = [x for x in plugin.db.inf.find({option: f"{user.id}"})]
     results = sorted(raw, key=lambda e: int(e['id'].split("-")[-1]), reverse=True)
     if len(results) < 1:
-        return await ctx.send(plugin.t(ctx.guild, "no_cases_found", _emote="NO"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "no_cases_found", _emote="NO"))
 
     out = list()
     counts = {

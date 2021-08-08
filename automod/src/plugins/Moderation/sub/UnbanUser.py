@@ -5,10 +5,10 @@ from ....utils import Permissions
 async def unbanUser(plugin, ctx, user, reason, softban=False):
     try:
         if not await Permissions.is_banned(ctx, user):
-            return await ctx.send(plugin.t(ctx.guild, "target_not_banned", _emote="NO"))
+            return await ctx.send(plugin.i18next.t(ctx.guild, "target_not_banned", _emote="NO"))
         await ctx.guild.unban(user=user, reason="Softban")
     except Exception as ex:
-        return await ctx.send(plugin.t(ctx.guild, "unban_failed", _emote="NO", error=ex))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "unban_failed", _emote="NO", error=ex))
     else:
         if softban:
             plugin.bot.ignore_for_event.add("unbans", user.id)
@@ -16,7 +16,7 @@ async def unbanUser(plugin, ctx, user, reason, softban=False):
         else:
             plugin.bot.ignore_for_event.add("unbans", user.id)
             case = plugin.bot.utils.newCase(ctx.guild, "Unban", user, ctx.author, reason)
-            await ctx.send(plugin.t(ctx.guild, "user_unbanned", _emote="YES", user=user, reason=f"Softban (#{case})", case=case))
+            await ctx.send(plugin.i18next.t(ctx.guild, "user_unbanned", _emote="YES", user=user, reason=f"Softban (#{case})", case=case))
 
             await plugin.action_logger.log(
                 ctx.guild, 

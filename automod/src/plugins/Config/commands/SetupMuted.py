@@ -12,9 +12,9 @@ async def run(plugin, ctx):
 
     confirm = await ctx.prompt(text, timeout=15)
     if not confirm:
-        return await ctx.send(plugin.t(ctx.guild, "aborting"))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "aborting"))
 
-    msg = await ctx.send(plugin.t(ctx.guild, "start_mute", _emote="YES"))
+    msg = await ctx.send(plugin.i18next.t(ctx.guild, "start_mute", _emote="YES"))
 
     global role
     if role_id is not "":
@@ -23,7 +23,7 @@ async def run(plugin, ctx):
         try:
             role = await ctx.guild.create_role(name="Muted")
         except Exception as ex:
-            return await msg.edit(content=plugin.t(ctx.guild, "role_fail", _emote="NO", exc=ex))
+            return await msg.edit(content=plugin.i18next.t(ctx.guild, "role_fail", _emote="NO", exc=ex))
 
     await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Role initialized!")
     try:
@@ -34,7 +34,7 @@ async def run(plugin, ctx):
             })
             await c.edit(overwrites=ov)
     except Exception as ex:
-        return await msg.edit(content=plugin.t(ctx.guild, "category_fail", _emote="NO", category=c.name, exc=ex))
+        return await msg.edit(content=plugin.i18next.t(ctx.guild, "category_fail", _emote="NO", category=c.name, exc=ex))
     
     await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Category overwrites complete!")
     try:
@@ -45,7 +45,7 @@ async def run(plugin, ctx):
             })
             await c.edit(overwrites=ov)
     except Exception as ex:
-        return await msg.edit(content=plugin.t(ctx.guild, "text_fail", _emote="NO", channel=c.name, exc=ex))
+        return await msg.edit(content=plugin.i18next.t(ctx.guild, "text_fail", _emote="NO", channel=c.name, exc=ex))
 
     await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Text channel overwrites complete!")
     try:
@@ -56,9 +56,9 @@ async def run(plugin, ctx):
             })
             await c.edit(overwrites=ov)
     except Exception as ex:
-        return await msg.edit(content=plugin.t(ctx.guild, "voice_fail", _emote="NO", channel=c.name, exc=ex))
+        return await msg.edit(content=plugin.i18next.t(ctx.guild, "voice_fail", _emote="NO", channel=c.name, exc=ex))
 
     await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Voice channel overwrites complete!")
     if role_id is "":
         plugin.db.configs.update(ctx.guild.id, "mute_role", f"{role.id}")
-    await msg.edit(content=plugin.t(ctx.guild, "mute_done", _emote="YES"))
+    await msg.edit(content=plugin.i18next.t(ctx.guild, "mute_done", _emote="YES"))

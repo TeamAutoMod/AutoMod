@@ -23,7 +23,7 @@ async def run(plugin, member):
 
     e = Embed(
         color=0x2f3136,
-        description=plugin.t(member.guild, "leave", profile=member.mention, joined=joined, ago=ago)
+        description=plugin.i18next.t(member.guild, "leave", profile=member.mention, joined=joined, ago=ago)
     )
     e.set_author(name=f"{member} ({member.id})")
     e.set_thumbnail(url=member.avatar_url)

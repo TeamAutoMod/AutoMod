@@ -8,7 +8,7 @@ class PluginBlueprint(commands.Cog):
         self.bot = bot
         self.db = bot.db
         self.cache = bot.cache
-        self.translator = bot.translator
+        self.i18next = bot.i18next
         self.emotes = bot.emotes
         self.schemas = bot.schemas
         self.action_validator = bot.action_validator

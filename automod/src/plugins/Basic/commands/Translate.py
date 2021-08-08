@@ -12,12 +12,12 @@ async def run(plugin, ctx, text):
         if ref is not None and isinstance(ref.resolved, discord.Message):
             text = ref.resolved.content
         else:
-            return await ctx.send(plugin.t(ctx.guild, "no_text", _emote="NO"))
+            return await ctx.send(plugin.i18next.t(ctx.guild, "no_text", _emote="NO"))
     
     try:
         res = await plugin.bot.loop.run_in_executor(None, plugin.google.translate, text)
     except Exception as ex:
-        return await ctx.send(plugin.t(ctx.guild, "translation_failed", _emote="NO", error=ex))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "translation_failed", _emote="NO", error=ex))
     
     e = Embed()
     e.add_field(
