@@ -33,13 +33,13 @@ async def run(plugin, ctx, tag):
     )
     e.add_field(
         name="❯ Created",
-        value=f"``{entry['created'].strftime('%Y-%m-%d %H:%M:%S')}`` ({humanize.naturaldelta((datetime.datetime.utcnow() - entry['created']))} ago)"
+        value=f"<t:{round(entry['created'].timestamp())}>"
     )
 
     if entry["last_edited"] is not None:
         e.add_field(
             name="❯ Last edited",
-            value=f"``{entry['last_edited'].strftime('%Y-%m-%d %H:%M:%S')}`` ({humanize.naturaldelta((datetime.datetime.utcnow() - entry['last_edited']))} ago)"
+            value=f"<t:{round(entry['last_edited'].timestamp())}>"
         )
         editor = await plugin.bot.utils.getUser(int(entry["edited_by"]))
         e.add_field(

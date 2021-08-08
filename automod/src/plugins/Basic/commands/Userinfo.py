@@ -18,26 +18,22 @@ async def run(plugin, ctx, user):
     e.set_thumbnail(
         url=user.avatar_url_as()
     )
-    created_ago = humanize.naturaldelta((datetime.datetime.fromtimestamp(time.time()) - member.created_at))
     e.add_field(
         name="❯ Information",
-        value="• ID: {} \n• Profile: {} \n• Created at: {} ({} ago)"\
+        value="• ID: {} \n• Profile: {} \n• Created at: <t:{}>"\
         .format(
             user.id,
             user.mention, 
-            user.created_at.strftime("%Y-%m-%d"),
-            created_ago
+            round(member.created_at.timestamp())
         )
     )
     if member is not None:
-        joined_ago = humanize.naturaldelta((datetime.datetime.fromtimestamp(time.time()) - member.joined_at))
         roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
         e.add_field(
             name="❯ Server Information",
-            value="• Joined at: {} ({} ago) \n• Roles: {}"\
+            value="• Joined at: <t:{}> \n• Roles: {}"\
             .format(
-                member.joined_at.strftime("%Y-%m-%d"),
-                joined_ago,
+                round(member.joined_at.timestamp()),
                 len(roles)
             )
         )

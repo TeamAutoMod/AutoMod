@@ -37,15 +37,13 @@ async def run(plugin, ctx):
             len([x for x in g.members if x.bot])
         )
     )
-    created_ago = humanize.naturaldelta((datetime.datetime.fromtimestamp(time.time()) - g.created_at))
     e.add_field(
         name="❯ Other",
-        value="• Roles: {} \n• Emojis: {} \n• Created at: {} ({} ago)\n• Features: {}"\
+        value="• Roles: {} \n• Emojis: {} \n• Created at: <t:{}>\n• Features: {}"\
         .format(
             len(g.roles), 
             len(g.emojis), 
-            g.created_at.strftime("%Y-%m-%d"),
-            created_ago,
+            round(g.created_at.timestamp()),
             ", ".join(g.features) if len(g.features) > 0 else "None"
         )
     )

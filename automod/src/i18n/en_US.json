@@ -422,10 +422,10 @@
     "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are seperated by spaces. You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
     "filters": "Active filters for **{guild_name}**",
 
-    "prior_cases": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago) \n**Prior cases:** {cases}",
-    "normal_join": "**Profile:** {profile} \n**Created:** ``{created}`` ({ago} ago)",
+    "prior_cases": "**Profile:** {profile} \n**Created:** <t:{created}> \n**Prior cases:** {cases}",
+    "normal_join": "**Profile:** {profile} \n**Created:** <t:{created}>",
 
-    "leave": "**Profile:** {profile} \n**Joined:** ``{joined}`` ({ago} ago)", 
+    "leave": "**Profile:** {profile} \n**Joined:** <t:{joined}>", 
 
     "tag_edited": "{emote} Successfully edited the **{tag}** tag!",
     "tag_content_too_long": "{emote} The new tag content is too long. Max allowed chars are 1500.",

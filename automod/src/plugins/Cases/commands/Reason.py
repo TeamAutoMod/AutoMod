@@ -4,7 +4,7 @@ from ..sub.UpdateLogMessage import updateLogMessage
 
 async def run(plugin, ctx, case, reason):
     if case is None:
-        recent = sorted([x for x in plugin.db.inf.find({"guild": f"{ctx.guild.id}"}) if x["reason"] == plugin.i18next.t(ctx.guild, "no_reason")], key=lambda k: int(k['id'].split('-')[1]))
+        recent = sorted([x for x in plugin.db.inf.find({"guild": f"{ctx.guild.id}"}) if x["reason"] == plugin.i18next.t(ctx.guild, "no_reason") or x["reason"] == "No reason provided"], key=lambda k: int(k['id'].split('-')[1]))
         if len(recent) < 1:
             return await ctx.send(plugin.i18next.t(ctx.guild, "no_recent_case", _emote="NO"))
         else:

@@ -17,13 +17,10 @@ async def run(plugin, member):
 
     if plugin.db.configs.get(member.guild.id, "member_logging") is False:
         return
-    
-    ago = humanize.naturaldelta((datetime.datetime.fromtimestamp(time.time()) - member.joined_at))
-    joined = member.joined_at.strftime("%Y-%m-%d %H:%M:%S")
 
     e = Embed(
         color=0x2f3136,
-        description=plugin.i18next.t(member.guild, "leave", profile=member.mention, joined=joined, ago=ago)
+        description=plugin.i18next.t(member.guild, "leave", profile=member.mention, joined=round(member.joined_at.timestamp()))
     )
     e.set_author(name=f"{member} ({member.id})")
     e.set_thumbnail(url=member.avatar_url)

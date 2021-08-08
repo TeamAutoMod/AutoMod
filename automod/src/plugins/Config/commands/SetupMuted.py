@@ -17,7 +17,7 @@ async def run(plugin, ctx):
     msg = await ctx.send(plugin.i18next.t(ctx.guild, "start_mute", _emote="YES"))
 
     global role
-    if role_id is not "":
+    if role_id != "":
         role = await plugin.bot.utils.getRole(ctx.guild, int(role_id))
     else:
         try:
@@ -59,6 +59,6 @@ async def run(plugin, ctx):
         return await msg.edit(content=plugin.i18next.t(ctx.guild, "voice_fail", _emote="NO", channel=c.name, exc=ex))
 
     await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Voice channel overwrites complete!")
-    if role_id is "":
+    if role_id == "":
         plugin.db.configs.update(ctx.guild.id, "mute_role", f"{role.id}")
     await msg.edit(content=plugin.i18next.t(ctx.guild, "mute_done", _emote="YES"))
