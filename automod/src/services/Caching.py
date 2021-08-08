@@ -93,11 +93,12 @@ class Cache:
             self.text_channels.clear()
             self.voice_channels.clear()
         else:
-            del self.guilds[guild_id]
-            del self.members[guild_id]
-            del self.roles[guild_id]
-            del self.text_channels[guild_id]
-            del self.voice_channels[guild_id]
+            if guild_id in self.guilds():
+                del self.guilds[guild_id]
+                del self.members[guild_id]
+                del self.roles[guild_id]
+                del self.text_channels[guild_id]
+                del self.voice_channels[guild_id]
 
 
     def build_for_guild(self, guild):
