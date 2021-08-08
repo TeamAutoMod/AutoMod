@@ -12,7 +12,7 @@ async def run(plugin, ctx, state, reason):
             await ctx.send(plugin.t(ctx.guild, "disabled_raid", _emote="YES"))
     elif state == "on":
         if ctx.guild.id in plugin.raids:
-            return await ctx.send(plugin.t(ctx.guild, "already_raid", _emote="WARN"))
+            return await ctx.send(plugin.t(ctx.guild, "already_raid", _emote="NO"))
         else:
             await enableRaidMode(plugin, ctx.guild, ctx.author, reason)
             await ctx.send(plugin.t(ctx.guild, "enabled_raid", _emote="YES"))

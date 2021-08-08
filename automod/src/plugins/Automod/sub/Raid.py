@@ -31,7 +31,8 @@ async def disableRaidMode(plugin, guild, moderator, reason):
         pass
     finally:
         del plugin.raids[guild.id]
-        plugin.last_joiners[guild.id].clear()
+        if guild.id in plugin.last_joiners:
+            plugin.last_joiners[guild.id].clear()
 
         await plugin.action_logger.log(
             guild, 
