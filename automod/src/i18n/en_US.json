@@ -20,7 +20,7 @@
     "log_unwarn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unwarn ({old_warns} → {new_warns}) \n**Reason:** {reason}",
 
     "log_censor": "**Member:** ``{user}`` ({user_id}) \n**Action:** Message censorship \n**Channel:** {channel} \n**Reason:** NSFW language (Using slurs) \n**Words:** {words}",
-    "log_invite": "**Member:** ``{user}`` ({user_id}) \n**Action:** Invite censorship \n**Channel:** {channel} \n**Reason:** Advertising (Sending Discord invite) \n**Link:** {link}",
+    "log_invite": "**Member:** ``{user}`` ({user_id}) \n**Action:** Invite censorship \n**Channel:** {channel} \n**Reason:** Advertising (Invite) \n**Link:** {link}",
     "log_zalgo": "**Member:** ``{user}`` ({user_id}) \n**Action:** Zalgo censorship \n**Channel:** {channel} \n**Reason:** Illegible message formatting (Zalgo chars) \n**Position:** {position}",
     "log_file": "**Member:** ``{user}`` ({user_id}) \n**Action:** File censorship \n**Channel:** {channel} \n**Reason:** Sending forbidden attachment type (Was not plain/rich text, Markdown, or common image/video format) \n**Files:** {unallowed}",
     "log_mention": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mention censorship \n**Channel:** {channel} \n**Reason:** Spamming mentions \n**Count:** {all_mentions}",
@@ -264,7 +264,7 @@
     "no_whiteslisted": "{emote} This server doesn't have any whitelisted invites yet. Whitelist a server by using ``{prefix}allowed_invites add <serverID>``",
     "allowed_invites": "Allowed invites for **{guild_name}**",
 
-    "no_reason": "No reason provided",
+    "no_reason": "No reason",
     "no_ban_then": "{emote} Alright, I'll ban nobody then!",
     "max_ban": "{emote} Max targets to ban at once are 50",
     "cant_ban_anyone": "{emote} I can't ban any of the specified targets.",

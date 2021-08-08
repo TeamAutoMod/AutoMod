@@ -23,5 +23,5 @@ async def check(plugin, message):
             moderator_id=plugin.bot.user.id,
             user=message.author,
             user_id=message.author.id,
-            reason=f"Illegible message formatting (Zalgo chars) at position {found_zalgo.start()}"
+            reason=f"Zalgo at position {found_zalgo.start()}"
         )

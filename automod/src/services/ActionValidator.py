@@ -57,7 +57,7 @@ class ActionValidator:
             _to = list(punishments.keys())[-1]
             if len(action.split(" ")) == 1:
                 kwargs.update({
-                    "reason": f"Automatic punishment escalation ({_to}): {kwargs.get('reason')}", 
+                    "reason": f"Automatic punishment ({_to}): {kwargs.get('reason')}", 
                     "old_warns": _from,
                     "new_warns": _to
                 })
@@ -93,7 +93,7 @@ class ActionValidator:
                 except Exception:
                     last = None
 
-                dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment escalation ({_to}): {kwargs.get('reason')}")
+                dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment ({_to}): {kwargs.get('reason')}")
                 new_kwargs = {
                     "user": target,
                     "user_id": target.id,
@@ -101,7 +101,7 @@ class ActionValidator:
                     "moderator_id": kwargs.get("moderator_id"),
                     "length": int(action.split(" ")[-2]),
                     "unit": action.split(" ")[-1],
-                    "reason": f"Automatic punishment escalation ({_to}): {kwargs.get('reason')}",
+                    "reason": f"Automatic punishment ({_to}): {kwargs.get('reason')}",
                     "context": f"\n**Context: ** [Here!]({last.jump_url})" if last is not None else "",
                     "case": case,
                     "dm": dm

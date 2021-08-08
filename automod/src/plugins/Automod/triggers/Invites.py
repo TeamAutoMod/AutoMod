@@ -25,7 +25,7 @@ async def handleDeletion(plugin, message, found_invite):
         moderator_id=plugin.bot.user.id,
         user=message.author,
         user_id=message.author.id,
-        reason=f"Advertising (Sending Discord invite): {found_invite}"
+        reason=f"Advertising (Invite): {found_invite}"
     )
 
 
