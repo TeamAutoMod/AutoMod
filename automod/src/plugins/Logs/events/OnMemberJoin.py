@@ -27,7 +27,7 @@ async def run(plugin, member):
             _embed=e
         )
     else:
-        e.color = 0x80f31f
+        e.color = 0x5cff9d
         e.description = plugin.t(member.guild, "normal_join", profile=member.mention, created=created, ago=ago)
         e.set_footer(text="User joined")
         await plugin.action_logger.log(

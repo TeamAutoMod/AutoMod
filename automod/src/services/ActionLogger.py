@@ -15,35 +15,28 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_ban",
                 "on_time": True,
-                "color": 0xff1900,
+                "color": 0xff5c5c,
                 "emote": "HAMMER"
             },
             "kick": {
                 "channel": "mod_log",
                 "key": "log_kick",
                 "on_time": True,
-                "color": 0xff8300,
+                "color": 0xf79554,
                 "emote": "SHOE"
             },
             "forceban": {
                 "channel": "mod_log",
                 "key": "log_forceban",
                 "on_time": True,
-                "color": 0xff1900,
+                "color": 0xff5c5c,
                 "emote": "HAMMER"
             },
             "softban": {
                 "channel": "mod_log",
                 "key": "log_softban",
                 "on_time": True,
-                "color": 0xff1900,
-                "emote": "HAMMER"
-            },
-            "cleanban": {
-                "channel": "mod_log",
-                "key": "log_cleanban",
-                "on_time": True,
-                "color": 0xff1900,
+                "color": 0xff5c5c,
                 "emote": "HAMMER"
             },
             "restrict": {
@@ -57,30 +50,15 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_unban",
                 "on_time": True,
-                "color": 0x80f31f,
+                "color": 0x5cff9d,
                 "emote": "UNLOCK"
             },
             "manual_unban": {
                 "channel": "mod_log",
                 "key": "log_manual_unban",
                 "on_time": True,
-                "color": 0x80f31f,
+                "color": 0x5cff9d,
                 "emote": "UNLOCK"
-            },
-
-            "mass_ban": {
-                "channel": "mod_log",
-                "key": "log_mass_ban",
-                "on_time": True,
-                "color": 0xff1900,
-                "emote": "HAMMER2"
-            },
-            "mass_kick": {
-                "channel": "mod_log",
-                "key": "log_mass_kick",
-                "on_time": True,
-                "color": 0xff8300,
-                "emote": "SHOE"
             },
             "cybernuke": {
                 "channel": "mod_log",
@@ -94,35 +72,28 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_mute",
                 "on_time": True,
-                "color": 0xffcc00,
+                "color": 0xffdc5c,
                 "emote": "MUTE"
             },
             "mute_extended": {
                 "channel": "mod_log",
                 "key": "log_mute_extended",
                 "on_time": True,
-                "color": 0xffcc00,
+                "color": 0xffdc5c,
                 "emote": "MUTE"
             },
             "unmute": {
                 "channel": "mod_log",
                 "key": "log_unmute",
                 "on_time": True,
-                "color": 0x80f31f,
+                "color": 0x5cff9d,
                 "emote": "UNMUTE"
             },
             "manual_unmute": {
                 "channel": "mod_log",
                 "key": "log_manual_unmute",
                 "on_time": True,
-                "color": 0x80f31f,
-                "emote": "UNMUTE"
-            },
-            "reapplied_mute": {
-                "channel": "mod_log",
-                "key": "log_reapplied_mute",
-                "on_time": True,
-                "color": 0xffcc00,
+                "color": 0x5cff9d,
                 "emote": "UNMUTE"
             },
 
@@ -133,97 +104,19 @@ class ActionLogger:
                 "color": 0xffff00,
                 "emote": "WARN"
             },
-            "warn_clearing": {
-                "channel": "mod_log",
-                "key": "log_warn_clearing",
-                "on_time": True,
-                "emote": "UNLOCK"
-            },
-            "inf_claim": {
-                "channel": "mod_log",
-                "key": "log_inf_claim",
-                "on_time": True,
-                "color": 0xffff00,
-                "emote": "EYES"
-            },
-
-            "censor": {
-                "channel": "mod_log",
-                "key": "log_censor",
-                "on_time": True,
-                "emote": "CENSOR"
-            },
-            "invite": {
-                "channel": "mod_log",
-                "key": "log_invite",
-                "on_time": True,
-                "emote": "CENSOR"
-            },
-            "zalgo": {
-                "channel": "mod_log",
-                "key": "log_zalgo",
-                "on_time": True,
-                "emote": "CENSOR"
-            },
-            "file": {
-                "channel": "mod_log",
-                "key": "log_file",
-                "on_time": True,
-                "emote": "CENSOR"
-            },
-            "mention": {
-                "channel": "mod_log",
-                "key": "log_mention",
-                "on_time": True,
-                "emote": "CENSOR"
-            },
-            "caps": {
-                "channel": "mod_log",
-                "key": "log_caps",
-                "on_time": True,
-                "emote": "CENSOR"
-            },
-            "spam_detected": {
-                "channel": "mod_log",
-                "key": "log_spam",
-                "on_time": True,
-                "emote": "SHOE"
-            },
-
-            "voice_join": {
-                "channel": "voice_log",
-                "key": "voice_channel_join",
-                "on_time": True,
-                "color": 0x80f31f,
-                "emote": "BLUEDOT"
-            },
-            "voice_leave": {
-                "channel": "voice_log",
-                "key": "voice_channel_leave",
-                "on_time": True,
-                "color": 0xff1900,
-                "emote": "REDDOT"
-            },
-            "voice_switch": {
-                "channel": "voice_log",
-                "key": "voice_channel_switch",
-                "on_time": True,
-                "color": 0xffcc00,
-                "emote": "SWITCH"
-            },
 
             "message_deleted": {
                 "channel": "message_log",
                 "key": "log_message_deletion",
                 "on_time": True,
-                "color": 0xff1900,
+                "color": 0xff5c5c,
                 "emote": "BIN"
             },
             "message_edited": {
                 "channel": "message_log",
                 "key": "log_message_edit",
                 "on_time": True,
-                "color": 0xffcc00,
+                "color": 0xffdc5c,
                 "emote": "PEN"
             },
 
@@ -231,14 +124,14 @@ class ActionLogger:
                 "channel": "server_log",
                 "key": "log_join",
                 "on_time": True,
-                "color": 0x80f31f,
+                "color": 0x5cff9d,
                 "emote": "JOIN"
             },
             "member_leave": {
                 "channel": "server_log",
                 "key": "log_leave",
                 "on_time": True,
-                "color": 0xff1900,
+                "color": 0xff5c5c,
                 "emote": "LEAVE"
             },
             "member_join_cases": {
@@ -253,7 +146,7 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_clean",
                 "on_time": True,
-                "color": 0xfb6300,
+                "color": 0x202225,
                 "emote": "CLEAN"
             },
 
@@ -269,7 +162,7 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_unwarn",
                 "on_time": True,
-                "color": 0x80f31f,
+                "color": 0x5cff9d,
                 "emote": "ANGEL"
             },
 
@@ -277,14 +170,14 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_raid_on",
                 "on_time": True,
-                "color": 0xff1900,
+                "color": 0x202225,
                 "emote": "LOCK"
             },
             "raid_off": {
                 "channel": "mod_log",
                 "key": "log_raid_off",
                 "on_time": True,
-                "color": 0x80f31f,
+                "color": 0x202225,
                 "emote": "UNLOCK"
             }
         }

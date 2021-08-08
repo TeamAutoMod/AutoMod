@@ -38,7 +38,7 @@ async def run(plugin, ctx, user):
             .format(
                 member.joined_at.strftime("%Y-%m-%d"),
                 joined_ago,
-                ", ".join(roles) if len(roles) < 20 else len(roles) if len(roles) > 20 else "0"
+                len(roles)
             )
         )
     warns = plugin.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
