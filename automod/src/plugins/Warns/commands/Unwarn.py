@@ -12,7 +12,7 @@ async def run(plugin, ctx, users, warns, reason):
         try:
             warns = int(warns)
         except ValueError:
-            reason = " ".join(ctx.message.content.split("")[2:])
+            reason = " ".join(ctx.message.content.split(" ")[2:])
             warns = 1
 
     if warns < 1:
