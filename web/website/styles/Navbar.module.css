@@ -1,0 +1,32 @@
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 15px;
+    padding-top: 5px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    float: left;
+}
+
+.image {
+    flex-basis: 40%;
+}
+  
+.navbar li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.navbar li img {
+    width: 35px;
+    height: 35px;
+    max-width: 100%;
+}
