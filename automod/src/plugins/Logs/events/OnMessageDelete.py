@@ -30,7 +30,7 @@ async def run(plugin, message):
 
     content = " ".join([x.url for x in message.attachments]) + message.content
     e = Embed(
-        color=0xFF0000, 
+        color=0xff5c5c, 
         timestamp=datetime.datetime.utcnow()
     )
     e.set_author(

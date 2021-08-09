@@ -20,7 +20,7 @@ async def run(plugin, ctx, join, age):
     join = datetime.datetime.utcfromtimestamp(time.time() - join.to_seconds(ctx))
     age = datetime.datetime.utcfromtimestamp(time.time() - age.to_seconds(ctx))
 
-    targets = list(filter(lambda x: x.joined_at <= join and x.created_at <= age, ctx.guild.members))
+    targets = list(filter(lambda x: x.joined_at >= join and x.created_at >= age, ctx.guild.members))
     if len(targets) < 1:
         return await ctx.send(plugin.i18next.t(ctx.guild, "no_targets", _emote="NO"))
     if len(targets) > 100:

@@ -85,6 +85,14 @@ class Cache:
             return self
 
 
+    def build_for_guild(self, guild):
+        self.guilds[guild.id] = guild
+        self.members[guild.id] = guild.members
+        self.roles[guild.id] = guild.roles
+        self.text_channels[guild.id] = guild.text_channels
+        self.voice_channels[guild.id] = guild.voice_channels
+
+
     def destroy(self, guild_id=None):
         if guild_id is None:
             self.guilds.clear()
