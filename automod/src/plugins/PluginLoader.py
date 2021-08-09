@@ -14,6 +14,7 @@ from .Persist.PersistPlugin import PersistPlugin
 from .Warns.WarnsPlugin import WarnsPlugin
 from .Tags.TagsPlugin import TagsPlugin
 from .Filters.FiltersPlugin import FiltersPlugin
+from .Cache.CachePlugin import CachePlugin
 
 
 
@@ -46,7 +47,9 @@ plugins = {
 
     LogsPlugin: "src.plugins.Logs.LogsPlugin",
 
-    TagsPlugin: "src.plugins.Tags.TagsPlugin"
+    TagsPlugin: "src.plugins.Tags.TagsPlugin",
+
+    CachePlugin: "src.plugins.Cache.CachePlugin"
 }
 
 
