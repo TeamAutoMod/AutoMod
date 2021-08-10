@@ -1,3 +1,5 @@
+import datetime
+
 from ...Types import Embed
 
 
@@ -45,9 +47,12 @@ async def caseInfo(plugin, ctx, case):
         name="❯ Reason",
         value=f"``{reason}``"
     )
+    if not timestamp.startswith("<t"):
+        dt = datetime.datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
+        timestamp = f"<t:{round(dt.timestamp())}>"
     e.add_field(
         name="❯ Timestamp",
-        value=f"``{timestamp}``"
+        value=f"{timestamp}"
     )
 
     await ctx.send(embed=e)

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import {fetchUserDeatils, fetchGuilds} from "../../utils/Api";
+import { Guild } from "../types/Guild";
 
 
 
@@ -30,7 +31,7 @@ export default function Guilds() {
         <>
             <h1>Hey there, {user.discordTag}</h1>
             <ul>
-                {guilds.included.map((g: any) => (
+                {guilds.included.map((g: Guild) => (
                     <li>{g.name}</li>
                 ))}
             </ul>

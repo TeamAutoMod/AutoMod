@@ -264,3 +264,4 @@ class ActionLogger:
         else:
             if "case" in kwargs:
                 self.bot.db.inf.update(f"{guild.id}-{kwargs.get('case')}", "log_id", f"{log_message.id}")
+                self.bot.db.inf.update(f"{guild.id}-{kwargs.get('case')}", "jump_url", f"{log_message.jump_url}")

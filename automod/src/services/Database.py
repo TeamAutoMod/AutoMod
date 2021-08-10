@@ -158,9 +158,11 @@ class MongoSchemas:
             "emoji_role": "",
             "tag_role": "",
 
-            "lang": "en_US",
             "cases": 0,
-            "guild_name": f"{guild.name}"
+            "case_ids": {},
+
+            "lang": "en_US",
+            "guild_name": f"{guild.name}",
         }
         return schema
 
@@ -196,6 +198,7 @@ class MongoSchemas:
             "reason": f"{reason}",
             "target_av": f"{target.avatar_url_as()}",
             "moderator_av": f"{moderator.avatar_url_as()}",
-            "log_id": ""
+            "log_id": "",
+            "jump_url": ""
         }
         return schema

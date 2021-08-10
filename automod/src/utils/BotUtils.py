@@ -117,9 +117,22 @@ class BotUtils:
     def newCase(self, guild, _type, target, mod, reason):
         case_id = self.bot.db.configs.get(guild.id, "cases")
         case_id += 1
-        timestamp = datetime.datetime.utcnow().strftime("%d/%m/%Y %H:%M")
+
+        timestamp = f"<t:{round(datetime.datetime.utcnow().timestamp())}>"
+
         self.bot.db.inf.insert(self.bot.schemas.Infraction(case_id, guild.id, target, mod, timestamp, _type, reason))
         self.bot.db.configs.update(guild.id, "cases", case_id)
+
+        case_ids = self.bot.db.configs.get(guild.id, "case_ids")
+        case_ids.update({
+            f"{case_id}": {
+                "mod": f"{mod.id}",
+                "user": f"{target.id}",
+                "guild": f"{guild.id}"
+            }
+        })
+        self.bot.db.configs.update(guild.id, "case_ids", case_ids)
+
         return case_id
 
 

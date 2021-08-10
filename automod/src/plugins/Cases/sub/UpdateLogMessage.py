@@ -1,4 +1,3 @@
-import discord
 
 
 
@@ -15,7 +14,7 @@ async def updateLogMessage(plugin, ctx, log_id, case, reason):
 
     try:
         msg = await log_channel.fetch_message(int(log_id))
-    except discord.NotFound:
+    except Exception:
         return await ctx.send(plugin.i18next.t(ctx.guild, "log_not_found", _emote="NO"))
     if msg is None:
         return await ctx.send(plugin.i18next.t(ctx.guild, "log_not_found", _emote="NO"))
