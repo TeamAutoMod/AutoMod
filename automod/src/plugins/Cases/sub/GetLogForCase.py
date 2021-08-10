@@ -18,4 +18,4 @@ async def getLogForCase(plugin, ctx, case):
     if log_channel_id == "":
         return None
 
-    return f"https://discord.com/channels/701507539589660793/{log_channel_id}/{log_id}"
+    return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"

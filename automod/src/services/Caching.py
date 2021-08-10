@@ -101,7 +101,7 @@ class Cache:
             self.text_channels.clear()
             self.voice_channels.clear()
         else:
-            if guild_id in self.guilds():
+            if guild_id in self.guilds:
                 del self.guilds[guild_id]
                 del self.members[guild_id]
                 del self.roles[guild_id]
