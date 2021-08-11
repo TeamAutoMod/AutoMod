@@ -30,8 +30,8 @@ def update_embed(main_embed, inp):
 
 options = {
     "guild": "guild",
-    "user": "target_id",
-    "mod": "moderator_id"
+    "user": "user",
+    "mod": "mod"
 }
 async def userCases(plugin, ctx, user):
     await ctx.trigger_typing()
