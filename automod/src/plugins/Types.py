@@ -7,9 +7,6 @@ from ..utils.RegEx import getPattern
 
 
 
-
-# blue : 0x2295f3
-# yellow : 0xfbc31d
 class Embed(discord.Embed):
     def __init__(self, color=0x2295f3, **kwargs):
         super().__init__(color=color, **kwargs)

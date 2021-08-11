@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import ast
 import traceback
+import time
 
 
 
@@ -21,6 +22,7 @@ def insert_returns(body):
 
 async def run(plugin, ctx, cmd):
     try:
+        t1 = time.perf_counter()
         fn_name = "_eval_expr"
 
         cmd = cmd.strip("` ")
@@ -47,9 +49,10 @@ async def run(plugin, ctx, cmd):
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
         result = (await eval(f"{fn_name}()", env))
+        t2 = time.perf_counter()
 
         await ctx.message.add_reaction(plugin.bot.emotes.get("YES"))
-        await ctx.send("```py\n{}\n```".format(result))
+        await ctx.send("*Executed in {}ms* \n```py\n{}\n```".format(round((t2 - t1) * 1000, 6), result))
     except Exception:
         ex = traceback.format_exc()
         await ctx.message.add_reaction(plugin.bot.emotes.get("NO"))

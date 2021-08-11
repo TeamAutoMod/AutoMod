@@ -15,7 +15,7 @@ async def run(plugin, ctx, threshold):
         return await ctx.send(plugin.i18next.t(ctx.guild, "raid_off", _emote="YES"))
     
     elif len(threshold.split("/")) == 2 and re.match(r"^[-+]?[0-9]+$", threshold.split("/")[0]) is not None and re.match(r"^[-+]?[0-9]+$", threshold.split("/")[1]) is not None:
-        if int(threshold.split("/")[0]) > 5 or int(threshold.split("/")[1]) > 5:
+        if int(threshold.split("/")[0]) < 5 or int(threshold.split("/")[1]) < 5:
             return await ctx.send(plugin.i18next.t(ctx.guild, "threshold_too_low", _emote="NO"))
 
         automod.update({
