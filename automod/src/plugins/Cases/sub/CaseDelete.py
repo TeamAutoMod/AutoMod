@@ -16,6 +16,7 @@ async def caseDelete(plugin, ctx, case):
 
     case_ids = plugin.db.configs.get(f"{ctx.guild.id}", "case_ids")
     del case_ids[case_id.split("-")[1]]
-    
+    plugin.db.configs.update(f"{ctx.guild.id}", "case_ids", case_ids)
+
     await deleteLogMessage(plugin, ctx, log_id)
     await ctx.send(plugin.i18next.t(ctx.guild, "case_deleted", _emote="YES", case=case))
