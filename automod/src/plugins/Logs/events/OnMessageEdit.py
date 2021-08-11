@@ -1,7 +1,5 @@
 import discord
 
-import asyncio
-
 from ...Types import Embed
 
 

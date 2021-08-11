@@ -31,7 +31,7 @@ async def run(plugin, ctx):
 
     f = plugin.emotes.get('WARN')
     punishments = [f"• {x} {'warn' if int(x) == 1 else 'warns'}: ``{y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}``" for x, y in cfg["punishments"].items()]
-    punishments = sorted(punishments, key=lambda i: int(i.split(" ")[0]))
+    punishments = sorted(punishments, key=lambda i: int(i.split(" ")[1]))
     e.add_field(
         name="❯ Punishments",
         value="{}".format("\n".join(punishments) if len(punishments) > 0 else "• None"),

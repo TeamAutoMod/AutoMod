@@ -2,7 +2,7 @@ import discord
 import datetime
 import traceback
 
-from ...Types import Embed
+from ...Types import Embed, DiscordUser
 from ....utils import MessageUtils
 
 from ..sub.GetLogForCase import getLogForCase
@@ -37,9 +37,13 @@ async def userCases(plugin, ctx, user):
     await ctx.trigger_typing()
     # Check what we should search by
     option = None
+    print(user)
+    print(type(user))
     if isinstance(user, discord.Guild):
+        print("g")
         option = options["guild"]
-    if isinstance(user, discord.User):
+    if isinstance(user, discord.user.User) or isinstance(user, discord.User) or isinstance(discord.user.ClientUser):
+        print("u")
         member = ctx.guild.get_member(user.id)
         if member is None:
             option = options["user"]
@@ -48,6 +52,7 @@ async def userCases(plugin, ctx, user):
         else:
             option = options["user"]
     else:
+        print("e")
         option = options["guild"]
 
     raw = [
