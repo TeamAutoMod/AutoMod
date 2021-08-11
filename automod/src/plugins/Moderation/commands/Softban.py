@@ -22,4 +22,4 @@ async def run(plugin, ctx, users, reason):
             await ctx.send(plugin.i18next.t(ctx.guild, "ban_not_allowed", _emote="NO"))
         else:
             await banUser(plugin, ctx, user, reason, "softban", "softbanned", days=7)
-            await unbanUser(plugin, ctx, user, "Softban")
+            await unbanUser(plugin, ctx, user, "Softban", softban=True)

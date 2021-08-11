@@ -15,4 +15,9 @@ async def caseClaim(plugin, ctx, case):
 
     plugin.db.inf.update(case_id, "moderator_id", f"{ctx.author.id}")
     plugin.db.inf.update(case_id, "moderator_av", f"{ctx.author.avatar_url}")
+
+    case_ids = plugin.db.configs.get(f"{ctx.guild.id}", "case_ids")
+    case_ids[case_id.split("-")[1]]["mod"] = f"{ctx.author.id}"
+    plugin.db.configs.update(f"{ctx.guild.id}", "case_ids", case_ids)
+
     await ctx.send(plugin.i18next.t(ctx.guild, "case_claimed", _emote="YES", case=case))
