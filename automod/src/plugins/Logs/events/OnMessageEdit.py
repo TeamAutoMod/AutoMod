@@ -20,7 +20,7 @@ async def run(plugin, before, after):
     if before.content != after.content and len(after.content) > 0:
 
         e = Embed(
-            color=0xffcc00, 
+            color=0xffdc5c, 
             timestamp=after.created_at
         )
         e.set_author(

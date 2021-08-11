@@ -15,7 +15,6 @@
     "log_unmute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unmute \n**Reason:** Mute expired",
     
     "log_warn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Warn ({old_warns} → {new_warns}) {context}\n**Reason:** {reason}",
-    "log_clean": "**Action:** Clean \n**Category:** {category} \n**Count:** {count} \n**Channel:** {channel}",
     "log_warns_added": "**Member:** ``{user}`` ({user_id}) \n**Action:** Warn ({old_warns} → {new_warns}) {context}\n**Reason:** {reason}",
     "log_unwarn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unwarn ({old_warns} → {new_warns}) \n**Reason:** {reason}",
 

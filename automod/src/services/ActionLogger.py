@@ -36,14 +36,14 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_softban",
                 "on_time": True,
-                "color": 0xff5c5c,
+                "color": 0xf79554,
                 "emote": "HAMMER"
             },
             "restrict": {
                 "channel": "mod_log",
                 "key": "log_restrict",
                 "on_time": True,
-                "color": 0xffcc00,
+                "color": 0xffdc5c,
                 "emote": "RESTRICT"
             },
             "unban": {
@@ -101,7 +101,7 @@ class ActionLogger:
                 "channel": "mod_log",
                 "key": "log_warn",
                 "on_time": True,
-                "color": 0xffcc00,
+                "color": 0xffdc5c,
                 "emote": "WARN"
             },
 
@@ -160,23 +160,15 @@ class ActionLogger:
                 "channel": "server_log",
                 "key": "log_join_with_prior_cases",
                 "on_time": True,
-                "color": 0xffcc00,
+                "color": 0xffdc5c,
                 "emote": "WARN"
-            },
-
-            "clean": {
-                "channel": "mod_log",
-                "key": "log_clean",
-                "on_time": True,
-                "color": 0x202225,
-                "emote": "CLEAN"
             },
 
             "warns_added": {
                 "channel": "mod_log",
                 "key": "log_warns_added",
                 "on_time": True,
-                "color": 0xffcc00,
+                "color": 0xffdc5c,
                 "emote": "WARN"
             },
 

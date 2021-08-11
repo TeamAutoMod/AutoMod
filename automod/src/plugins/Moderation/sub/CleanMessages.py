@@ -52,16 +52,6 @@ async def cleanMessages(plugin, ctx, category, amount, predicate, before=None, a
         
         else:
             await ctx.send(plugin.i18next.t(ctx.guild, "messages_deleted", _emote="YES", count=len(deleted), plural="" if len(deleted) == 1 else "s"), delete_after=5)
-            await plugin.action_logger.log(
-                ctx.guild,
-                "clean",
-                moderator=ctx.message.author,
-                moderator_id=ctx.message.author.id,
-                count=len(deleted),
-                plural="" if len(deleted) == 1 else "s",
-                category=category,
-                channel=ctx.message.channel.mention
-            )
         
     except Exception as ex:
         plugin.bot.loop.create_task(finishCleaning(plugin, ctx.channel.id))
