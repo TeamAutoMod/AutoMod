@@ -76,12 +76,6 @@ async def userCases(plugin, ctx, user):
 
         case = e['id'].split("-")[-1]
 
-        target = await plugin.bot.utils.getUser(e["target_id"])
-        target = target if target is not None else "Unknown#0000"
-
-        mod = await plugin.bot.utils.getUser(e["moderator_id"])
-        mod = mod if mod is not None else "Unknown#0000"
-
         reason = e["reason"]
         reason = reason if len(reason) < 40 else f"{reason[:40]}..."
 
@@ -114,7 +108,7 @@ async def userCases(plugin, ctx, user):
 
     pages = []
     lines = 0
-    max_lines = 7 if len(out) >= 7 else len(out)
+    max_lines = 5 if len(out) >= 5 else len(out)
     max_lines -= 1
     for i, inp in enumerate(out):
         if lines >= max_lines:
