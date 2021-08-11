@@ -39,7 +39,7 @@ async def userCases(plugin, ctx, user):
     option = None
     if isinstance(user, discord.Guild):
         option = options["guild"]
-    if isinstance(user, discord.user.User) or isinstance(user, discord.User) or isinstance(discord.user.ClientUser):
+    if isinstance(user, discord.user.User) or isinstance(user, discord.User) or isinstance(user, discord.user.ClientUser):
         member = ctx.guild.get_member(user.id)
         if member is None:
             option = options["user"]

@@ -228,7 +228,7 @@
     "ignored_users_remove_help": "Includes an excluded user from the message logs",
 
     "filter_help": "Base command for interacting with filters. View the subcommands for more info",
-    "filter_add_help": "Creates a new filer with the given name, warns and words",
+    "filter_add_help": "Creates a new filer with the given name, warns and words. Words are seperated by commas (word1, word 2, word 3)",
     "filter_remove_help": "Removes the filter with the given name",
     "filter_show_help": "Shows a list of all active filters",
 
@@ -419,7 +419,7 @@
     "filter_doesnt_exist": "{emote} A filter with that name doesn't exist.",
     "no_filters": "{emote} This server doesn't have any filters yet.",
     "filter_removed": "{emote} Filter ``{name}`` has been removed.",
-    "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are seperated by spaces. You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
+    "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are seperated by commas. You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nTo add a filter with the words ``test``, ``hey there`` & ``coo*``, you could use this command: \n``{prefix}filter add test_filter 1 test, hey there, coo*``\n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
     "filters": "Active filters for **{guild_name}**",
 
     "prior_cases": "**Profile:** {profile} \n**Created:** <t:{created}> \n**Prior cases:** {cases}",

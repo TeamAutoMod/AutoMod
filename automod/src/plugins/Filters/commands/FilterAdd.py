@@ -19,7 +19,7 @@ async def run(plugin, ctx, name, warns, words):
 
     new_filter = {
         "warns": warns,
-        "words": words.split(" ")
+        "words": words.split(", ")
     }
     filters[name] = new_filter
     plugin.db.configs.update(ctx.guild.id, "filters", filters)

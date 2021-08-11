@@ -90,7 +90,6 @@ class BasicPlugin(PluginBlueprint):
 
     @commands.command()
     @commands.guild_only()
-    @commands.has_permissions(manage_messages=True)
     async def translate(
         self,
         ctx,

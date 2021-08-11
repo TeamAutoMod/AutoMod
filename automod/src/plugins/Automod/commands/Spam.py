@@ -29,4 +29,4 @@ async def run(plugin, ctx, warns):
 
     else:
         prefix = plugin.bot.get_guild_prefix(ctx.guild)
-        return await ctx.send(plugin.i18next.t(ctx.guild, "spam_help_2", _emote="WARN", prefix=prefix))
+        return await ctx.send(plugin.i18next.t(ctx.guild, "spam_help_2", _emote="BULB", prefix=prefix))
