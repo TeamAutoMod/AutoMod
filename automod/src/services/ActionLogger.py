@@ -223,16 +223,15 @@ class ActionLogger:
                 color=conf["color"],
                 timestamp=datetime.datetime.utcnow()
             )
+
             if kwargs.get('moderator') is None:
                 kwargs.update({'moderator': guild.me, 'moderator_id': guild.me.id})
+
             e.set_author(
                 name=f"{kwargs.get('moderator')} ({kwargs.get('moderator_id')})", 
                 icon_url=(kwargs.get('moderator')).avatar_url_as()
             )
-            if "user" in kwargs:
-                e.set_thumbnail(
-                    url=(kwargs.get('user')).avatar_url_as()
-                )
+
             dm = kwargs.get("dm", None)
             if dm is not None:
                 if "failed" in dm:
@@ -246,6 +245,7 @@ class ActionLogger:
                 e.set_footer(
                     text=f"Case #{kwargs.get('case')}{dm if dm is not None else ''}"
                 )
+                
             e.description = self.i18next.translate(guild, log_key, _emote=log_emote, **kwargs)
         else:
             e = kwargs.get("_embed")
