@@ -2,6 +2,8 @@
 
 
 async def getTags(plugin, message):
+    global tags
+    tags = []
     try:
         tags = plugin.cached_tags[message.guild.id]
     except KeyError:

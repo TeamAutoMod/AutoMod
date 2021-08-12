@@ -84,11 +84,14 @@ async def userCases(plugin, ctx, user):
             case_type = "restriction"
 
         timestamp = e["timestamp"]
-        if not timestamp.startswith("<t"):
-            dt = datetime.datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
-            timestamp = f"<t:{round(dt.timestamp())}:d>"
+        if isinstance(timestamp, str):
+            if not timestamp.startswith("<t"):
+                dt = datetime.datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
+                timestamp = f"<t:{round(dt.timestamp())}:d>"
+            else:
+                timestamp = timestamp.replace(">", ":d>")
         else:
-            timestamp = timestamp.replace(">", ":d>")
+            timestamp = f"<t:{round(timestamp.timestamp())}:d>"
 
 
         log_url = await getLogForCase(plugin, ctx, e)
