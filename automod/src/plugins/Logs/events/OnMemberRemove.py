@@ -23,7 +23,7 @@ async def run(plugin, member):
         description=plugin.i18next.t(member.guild, "leave", profile=member.mention, joined=round(member.joined_at.timestamp()))
     )
     e.set_author(name=f"{member} ({member.id})")
-    e.set_thumbnail(url=member.avatar_url)
+    e.set_thumbnail(url=member.avatar.url)
     e.set_footer(text="User left")
     await plugin.action_logger.log(
         member.guild, 

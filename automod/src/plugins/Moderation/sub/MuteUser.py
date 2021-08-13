@@ -4,6 +4,8 @@ from discord.ext import commands
 import datetime
 import traceback
 
+from ....utils.Views import ConfirmView
+
 
 
 async def muteUser(plugin, ctx, user, length, reason):
@@ -22,31 +24,51 @@ async def muteUser(plugin, ctx, user, length, reason):
     mute_id = f"{ctx.guild.id}-{user.id}"
     # Check if user is already muted. If so, should we extend their mute?
     if plugin.db.mutes.exists(mute_id):
-        confirm = await ctx.prompt(plugin.i18next.t(ctx.guild, "already_muted", _emote="WARN", user=user), timeout=15)
-        if not confirm:
-            return await ctx.send(plugin.i18next.t(ctx.guild, "aborting"))
-        
-        until = (plugin.db.mutes.get(mute_id, "ending") + datetime.timedelta(seconds=length.to_seconds(ctx)))
-        plugin.db.mutes.update(mute_id, "ending", until)
 
-        await ctx.send(plugin.i18next.t(ctx.guild, "mute_extended", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason))
-        await plugin.action_logger.log(
-            ctx.guild, 
-            "mute_extended", 
-            moderator=ctx.message.author, 
-            moderator_id=ctx.message.author.id,
-            user=user,
-            user_id=user.id,
-            length=length.length, 
-            unit=length.unit,
-            reason=reason
+        async def confirm(interaction):
+            until = (plugin.db.mutes.get(mute_id, "ending") + datetime.timedelta(seconds=length.to_seconds(ctx)))
+            plugin.db.mutes.update(mute_id, "ending", until)
+
+            await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "mute_extended", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason), view=None)
+            await plugin.action_logger.log(
+                ctx.guild, 
+                "mute_extended", 
+                moderator=ctx.message.author, 
+                moderator_id=ctx.message.author.id,
+                user=user,
+                user_id=user.id,
+                length=length.length, 
+                unit=length.unit,
+                reason=reason
+            )
+            if not mute_role in user.roles:
+                try:
+                    await user.add_roles(mute_role)
+                except Exception:
+                    return
+            return
+
+        async def cancel(interaction):
+            await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+
+        async def timeout():
+            if message is not None:
+                await message.edit(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+
+        def check(interaction):
+            return interaction.user.id == ctx.author.id and interaction.message.id == message.id
+
+        message = await ctx.send(
+            "User is already muted. Do you want to extend their mute?", 
+            view=ConfirmView(
+                ctx.guild.id, 
+                on_confirm=confirm, 
+                on_cancel=cancel, 
+                on_timeout=timeout,
+                check=check
+            )
         )
-        if not mute_role in user.roles:
-            try:
-                await user.add_roles(mute_role)
-            except Exception:
-                return
-        return
+
     else:
         if ctx.guild.me.top_role.position > mute_role.position:
             seconds = length.to_seconds(ctx)

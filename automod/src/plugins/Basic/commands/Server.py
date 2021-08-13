@@ -11,7 +11,7 @@ async def run(plugin, ctx):
 
     e = Embed()
     e.set_thumbnail(
-        url=ctx.guild.icon_url_as()
+        url=ctx.guild.icon.url
     )
     e.add_field(
         name="❯ Information",

@@ -64,7 +64,7 @@
     "not_muted": "{emote} User isn't muted",
     "messages_deleted": "{emote} Successfully deleted **{count}** message{plural}!",
     "user_asciified": "{emote} Successfully asciified ``{old}`` to ``{new}``",
-    "users_cybernuked": "{emote} Successfully cybernuked ``{banned}/{total}`` users (Case #{case})",
+    "users_cybernuked": "{emote} Successfully cybernuked **{banned}/{total}** users (Case #{case})",
     "user_restricted": "{emote} Successfully {success} **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
 
     "already_blocked": "{emote} This is already a blocked guild",
@@ -267,7 +267,7 @@
     "no_ban_then": "{emote} Alright, I'll ban nobody then!",
     "max_ban": "{emote} Max targets to ban at once are 50",
     "cant_ban_anyone": "{emote} I can't ban any of the specified targets.",
-    "aborting": "Aborting...",
+    "aborting": "Command execution canceled.",
     "mban_success": "{emote} Successfully banned {users}/{total} users!",
     "no_kick_then": "{emote} Alright, I'll kick nobody then!",
     "max_kick": "{emote} Max targets to kick at once are 50",

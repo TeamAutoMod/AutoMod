@@ -5,7 +5,7 @@ from ...Types import Embed
 async def run(plugin, ctx):
     bot = plugin.bot
     e = Embed()
-    e.set_thumbnail(url=plugin.bot.user.avatar_url)
+    e.set_thumbnail(url=plugin.bot.user.avatar.url)
 
     e.add_field(
         name="❯ Uptime",

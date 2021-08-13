@@ -35,7 +35,7 @@ async def run(plugin, message):
     )
     e.set_author(
         name=f"{message.author} ({message.author.id})",
-        icon_url=message.author.avatar_url_as()
+        icon_url=message.author.avatar.url
     )
     e.add_field(
         name="Content",

@@ -60,5 +60,6 @@ async def loadPlugins(bot):
             bot.add_cog(plugin(bot))
             bot.load_extension(path)
         except Exception:
-            ex = traceback.format_exc()
-            log.warn("Failed to load plugin {} - {}".format(plugin, ex))
+            pass
+            # ex = traceback.format_exc()
+            # log.warn("Failed to load plugin {} - {}".format(plugin, ex))

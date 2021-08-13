@@ -6,7 +6,7 @@ async def run(plugin, ctx):
     cfg = plugin.db.configs.get_doc(ctx.guild.id)
 
     e = Embed()
-    e.set_thumbnail(url=ctx.guild.icon_url_as())
+    e.set_thumbnail(url=ctx.guild.icon.url)
     e.add_field(
         name="❯ Configurations",
         value="• Prefix: ``{}`` \n• Mute Role: {} \n• Mod Log: {} \n• Message Log: {} \n• Server Log: {} \n• Voice Log: {} \n• Persist Mode: {} \n• DM on actions: {}"\

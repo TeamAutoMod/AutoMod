@@ -1,6 +1,7 @@
 import datetime
 import traceback
-import datetime
+import discord
+
 
 from ..plugins.Types import Embed
 
@@ -229,7 +230,7 @@ class ActionLogger:
 
             e.set_author(
                 name=f"{kwargs.get('moderator')} ({kwargs.get('moderator_id')})", 
-                icon_url=(kwargs.get('moderator')).avatar_url_as()
+                icon_url=(kwargs.get('moderator')).avatar.url
             )
 
             dm = kwargs.get("dm", None)

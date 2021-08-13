@@ -14,7 +14,7 @@ def create_embed(option, user):
     main_embed = Embed()
     main_embed.set_author(
         name=f"{user} ({user.id})",
-        icon_url=user.avatar_url_as() if option != "guild" else user.icon_url_as()
+        icon_url=user.avatar.url if option != "guild" else user.icon.url
     )
     main_embed.add_field(
         name="❯ History",
