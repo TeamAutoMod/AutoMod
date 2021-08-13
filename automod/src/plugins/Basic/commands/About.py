@@ -26,7 +26,7 @@ async def run(plugin, ctx):
     )
     e.add_field(
         name="❯ Commands",
-        value="• Commands used: {} \n• Tags used: {}"\
+        value="• Used: {} \n• Tags used: {}"\
         .format(
             bot.used_commands,
             bot.used_tags
