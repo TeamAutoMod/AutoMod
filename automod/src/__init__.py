@@ -61,7 +61,7 @@ class AutoMod(commands.AutoShardedBot):
         self.used_commands = 0
         self.used_tags = 0
         self.total_shards = config.shards
-        self.version = "0.0.1"
+        self.version = None
 
         self.i18next = Translator(self, config.langs)
         self.db = MongoDB(host=config.mongo_url).database
@@ -89,6 +89,7 @@ class AutoMod(commands.AutoShardedBot):
                     log.info("Left blocked guild {}".format(g.id))
 
             self.uncached_guilds = {g.id: g for g in self.guilds}
+            self.version = await self.utils.getVersion()
             
             try:
                 for signal, signame in ("SIGTERM", "SIGINT"):

@@ -12,17 +12,17 @@ async def run(plugin, ctx):
         value="{}"\
         .format(
             bot.get_uptime()
-        )
+        ),
+        inline=True
     )
     e.add_field(
         name="❯ Stats",
-        value="• Guilds: {} \n• Users: {} ({} unique) \n• Channels: {}"\
+        value="• Guilds: {} \n• Users: {}"\
         .format(
-            len(bot.guilds), 
-            sum([len(x.members) for x in bot.guilds]), 
-            len(bot.users), 
-            sum([len(x.channels) for x in bot.guilds])
-        )
+            len(bot.guilds),
+            len(bot.users)
+        ),
+        inline=True
     )
     e.add_field(
         name="❯ Commands",
@@ -30,11 +30,23 @@ async def run(plugin, ctx):
         .format(
             bot.used_commands,
             bot.used_tags
-        )
+        ),
+        inline=True
     )
     e.add_field(
-        name="❯ Links",
-        value="[Support Server](https://discord.gg/S9BEBux) \n[GitHub](https://github.com/xezzz/AutoMod) \n[Bot Invite](https://discord.com/oauth2/authorize?client_id=697487580522086431&scope=bot&permissions=403041534)"
+        name="❯ Support",
+        value=f"[Join for help](https://discord.gg/S9BEBux)",
+        inline=True
+    )
+    e.add_field(
+        name="❯ GitHub",
+        value=f"[{bot.version}](https://github.com/xezzz/AutoMod)",
+        inline=True
+    )
+    e.add_field(
+        name="❯ Invite",
+        value="[Add to server](https://discord.com/oauth2/authorize?client_id=697487580522086431&scope=bot&permissions=403041534)",
+        inline=True
     )
 
     await ctx.send(embed=e)

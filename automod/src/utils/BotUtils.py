@@ -109,7 +109,7 @@ class BotUtils:
 
 
     async def getVersion(self):
-        _, output, __ = Shell.run("git rev-parse --short FETCH_HEAD")
+        _, output, __ = await Shell.run("git rev-parse --short FETCH_HEAD")
         return output
 
 
