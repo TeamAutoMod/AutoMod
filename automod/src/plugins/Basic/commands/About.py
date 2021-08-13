@@ -17,16 +17,15 @@ async def run(plugin, ctx):
     )
     e.add_field(
         name="❯ Stats",
-        value="• Guilds: {} \n• Users: {}"\
+        value="• Guilds: {}"\
         .format(
-            len(bot.guilds),
-            len(bot.users)
+            len(bot.guilds)
         ),
         inline=True
     )
     e.add_field(
         name="❯ Commands",
-        value="• Used: {} \n• Tags used: {}"\
+        value="• Used: {} \n• Tags: {}"\
         .format(
             bot.used_commands,
             bot.used_tags
