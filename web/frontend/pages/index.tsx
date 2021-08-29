@@ -1,82 +1,48 @@
 import Head from 'next/head'
 import { Anchor } from './components/Anchor';
+import { Wave } from './components/Wave';
+import { Main } from './components/Main';
+import { Container } from './components/Container';
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
         <script src="https://kit.fontawesome.com/f2afea373b.js" crossOrigin="anonymous"></script>
         <title>AutoMod</title>
       </Head>
 
-
-      <main className={styles.main}>
-
+      <Main top={50} left={50} transform_x={50} transform_y={50}>
         <div className={styles.text}>
-          <h1>AutoMod</h1>
-          <p>Advanced moderation for your community</p>
+          <h1>AutoMod - Keep your community safe</h1>
+          <p>
+            Powerful automoderation, combined with out-of-the-box moderation <br/> commands, custom tags and much much more.
+          </p>
         </div>
-
 
         <div className={styles.buttons}>
           <ul>
             <li>
-              <Anchor url="https://discord.com/oauth2/authorize?client_id=697487580522086431&scope=bot&permissions=403041534">
-                <div className={styles.btn}>
-                  <i className="fas fa-plus-circle"></i>&nbsp;Invite
-                </div>
-              </Anchor>
-            </li>
-
-
-            <li>
               <Anchor url="/guilds">
                 <div className={styles.btn}>
-                  <i className="fas fa-cog"></i>&nbsp;Dashboard
+                  Dashboard
                 </div>
               </Anchor>
             </li>
 
             <li>
-              <Anchor url="https://discord.gg/S9BEBux">
-                <div className={styles.btn}>
-                  <i className="fas fa-question-circle"></i>&nbsp;Support
+              <Anchor url="https://discord.com/oauth2/authorize?client_id=697487580522086431&scope=bot&permissions=403041534">
+                <div className={styles.btn2}>
+                  Invite
                 </div>
               </Anchor>
             </li>
           </ul>
         </div>
 
-
-        <div className={styles.features}>
-          <ul>
-            <li>
-              <div className={styles.feature}>
-                <i className="fas fa-shield-alt fa-2x"></i>
-                <h1>Automoderator</h1>
-                <p>Customizable automod features to keep your server clean.</p>
-              </div>
-            </li>
-
-            <li>
-              <div className={styles.feature}>
-              <i className="fas fa-tags fa-2x"></i>
-                <h1>Custom Tags</h1>
-                <p>Create tags to automate replying.</p>
-              </div>
-            </li>
-
-            <li>
-              <div className={styles.feature}>
-                <i className="fas fa-gavel fa-2x"></i>
-                <h1>Moderation</h1>
-                <p>Easy-to-use mod commands with clean log messages.</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </main>
-    </div>
+      </Main>
+      <Wave />
+    </Container>
   )
 }

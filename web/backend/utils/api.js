@@ -32,5 +32,25 @@ async function fetchUserGuilds(discordId) {
     return response.json();
 }
 
+async function fetchGuildRoles(guildId) {
+    const response = await fetch(`${DISCORD_API_BASE}/guilds/${guildId}/roles`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bot ${process.env.BOT_TOKEN}`
+        }
+    })
+    return response.json();
+}
 
-module.exports = {fetchBotGuilds, fetchUserGuilds}
+async function fetchGuildChannels(guildId) {
+    const response = await fetch(`${DISCORD_API_BASE}/guilds/${guildId}/channels`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bot ${process.env.BOT_TOKEN}`
+        }
+    })
+    return response.json();
+}
+
+
+module.exports = {fetchBotGuilds, fetchUserGuilds, fetchGuildRoles, fetchGuildChannels}

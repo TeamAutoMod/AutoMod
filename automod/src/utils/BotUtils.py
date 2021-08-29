@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 class BotUtils:
     def __init__(self, bot):
         self.bot = bot
+        self.error_log = None
         self.last_fetches = {}
     
 
@@ -151,3 +152,9 @@ class BotUtils:
                 return res
         else:
             return ""
+
+
+    async def sendErrorLog(self, embed):
+        if self.error_log is None:
+            self.error_log = await self.bot.fetch_channel(self.bot.config.error_log_channel)
+        await self.error_log.send(embed=embed)

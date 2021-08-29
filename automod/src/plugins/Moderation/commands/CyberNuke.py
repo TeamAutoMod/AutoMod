@@ -1,11 +1,9 @@
-import discord
-
 import datetime
 import time
 import pytz
 utc = pytz.UTC
 
-from ..sub.BanUser import banUser
+from ...Types import Embed
 from ....utils import Permissions
 from ....utils.Views import ConfirmView
 
@@ -33,11 +31,17 @@ async def run(plugin, ctx, join, age):
     message = None
     async def cancel(interaction):
         plugin.running_cybernukes.remove(ctx.guild.id)
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+        e = Embed(
+            description=plugin.i18next.t(ctx.guild, "aborting")
+        )
+        await interaction.response.edit_message(embed=e, view=None)
 
     async def timeout():
         if message is not None:
-            await message.edit(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+            e = Embed(
+                description=plugin.i18next.t(ctx.guild, "aborting")
+            )
+            await message.edit(embed=e, view=None)
 
     def check(interaction):
         return interaction.user.id == ctx.author.id and interaction.message.id == message.id
@@ -72,11 +76,18 @@ async def run(plugin, ctx, join, age):
                     )
         
         plugin.running_cybernukes.remove(ctx.guild.id)
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "users_cybernuked", _emote="YES", banned=banned, total=len(targets), case=case), view=None)
+        await interaction.response.edit_message(
+            content=plugin.i18next.t(ctx.guild, "users_cybernuked", _emote="YES", banned=banned, total=len(targets), case=case), 
+            embed=None, 
+            view=None
+        )
 
     plugin.running_cybernukes.append(ctx.guild.id)
+    e = Embed(
+        description=plugin.i18next.t(ctx.guild, "cybernuke_description", targets=len(targets))
+    )
     message = await ctx.send(
-        f"This will ban {len(targets)} users.",
+        embed=e,
         view=ConfirmView(
             ctx.guild.id, 
             on_confirm=confirm, 

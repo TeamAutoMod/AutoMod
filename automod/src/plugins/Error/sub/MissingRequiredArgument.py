@@ -1,9 +1,21 @@
+from ...Types import Embed
+from ..Types import arg_ex
 
 
 
 async def run(plugin, ctx):
-    param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
     plugin.bot.help_command.context = ctx
     usage = plugin.bot.help_command.get_command_signature(ctx.command)
-    arg = param._name
-    await ctx.send(plugin.i18next.t(ctx.guild, "missing_arg", _emote="NO", arg=arg, usage=usage))
+    e = Embed(
+        title="Missing command argument",
+        color=0xff5c5c
+    )
+    e.add_field(
+        name="❯ Usage",
+        value=f"``{usage}``"
+    )
+    e.add_field(
+        name="❯ Arguments",
+        value="\n".join(f"``{x.name}`` - *{arg_ex[x.name]}*" for x in list(ctx.command.params.values())[2:])
+    )
+    await ctx.send(embed=e)

@@ -1,8 +1,9 @@
 import discord
 import datetime
 import traceback
+import time
 
-from ...Types import Embed, DiscordUser
+from ...Types import Embed
 from ....utils import MessageUtils
 
 from ..sub.GetLogForCase import getLogForCase

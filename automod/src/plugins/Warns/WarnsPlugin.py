@@ -22,12 +22,12 @@ class WarnsPlugin(PluginBlueprint):
     async def punishment(
         self, 
         ctx,
-        warns: int,
+        warn: int,
         action: str,
         time: Duration = None
     ):
         """punishment_help"""
-        await Punishment.run(self, ctx, warns, action, time)
+        await Punishment.run(self, ctx, warn, action, time)
 
 
     @commands.command()

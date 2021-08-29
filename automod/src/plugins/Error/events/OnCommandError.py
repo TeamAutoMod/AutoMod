@@ -5,7 +5,7 @@ import logging
 
 from ..Types import NotCachedError
 from ..Types import PostParseError as _PostParseError
-from ..sub import MissingRequiredArgument, PostParseError, BadArgument
+from ..sub import MissingRequiredArgument, PostParseError, BadArgument, OtherError
 
 
 
@@ -21,11 +21,11 @@ async def run(plugin, ctx, error):
         pass
 
     if isinstance(error, commands.CheckFailure):
-        await ctx.send(plugin.i18next.t(ctx.guild, "missing_user_perms", _emote="NO"))
+        await ctx.send(plugin.i18next.t(ctx.guild, "missing_user_perms", _emote="LOCK"))
     elif isinstance(error, commands.BotMissingPermissions):
-        await ctx.send(plugin.i18next.t(ctx.guild, "missing_bot_perms", _emote="NO"))
+        await ctx.send(plugin.i18next.t(ctx.guild, "missing_bot_perms", _emote="LOCK"))
     elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(plugin.i18next.t(ctx.guild, "missing_user_perms", _emote="NO"))
+        await ctx.send(plugin.i18next.t(ctx.guild, "missing_user_perms", _emote="LOCK"))
     elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(plugin.i18next.t(ctx.guild, "on_cooldown", retry_after=round(error.retry_after)))
     elif isinstance(error.__cause__, discord.Forbidden):
@@ -38,5 +38,4 @@ async def run(plugin, ctx, error):
     elif isinstance(error, commands.BadArgument):
         await BadArgument.run(plugin, ctx, error)
     else:
-        log.info([getattr(error, x) for x in dir(error) if not x.startswith("__")])
-        log.warn("Error in command {} - {}".format(ctx.command.name, error))
+        await OtherError.run(plugin, ctx, error)

@@ -40,7 +40,12 @@ async def cleanMessages(plugin, ctx, category, amount, predicate, before=None, a
             await ctx.send(plugin.i18next.t(ctx.guild, "already_cleaned", _emote="WARN"))
         
         else:
-            await ctx.send(plugin.i18next.t(ctx.guild, "messages_deleted", _emote="YES", count=len(deleted), plural="" if len(deleted) == 1 else "s"), delete_after=5)
+            try:
+                await ctx.message.delete()
+            except Exception:
+                pass
+            finally:
+                await ctx.send(plugin.i18next.t(ctx.guild, "messages_deleted", _emote="YES", count=len(deleted), plural="" if len(deleted) == 1 else "s"), delete_after=5)
         
     except Exception as ex:
         plugin.bot.loop.create_task(finishCleaning(plugin, ctx.channel.id))

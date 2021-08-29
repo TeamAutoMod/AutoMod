@@ -10,14 +10,14 @@ async def run(plugin, ctx, channel_role):
     if channel_role is None:
         e = Embed()
         e.add_field(
-            name="❯ Roles",
+            name="❯ Ignored Roles",
             value="\n".join(set([*[f"<@&{x.id}>" for x in sorted(ctx.guild.roles, key=lambda l: l.position) if x.position >= ctx.guild.me.top_role.position or x.permissions.ban_members]]))
         )
         
         channels = [f"<#{x}>" for x in sorted(channels)]
         if len(channels) > 0:
             e.add_field(
-                name="❯ Channels", 
+                name="❯ Ignored Channels", 
                 value="\n".join(channels)
             )
         

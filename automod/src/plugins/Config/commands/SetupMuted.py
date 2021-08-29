@@ -1,5 +1,6 @@
 import discord
 
+from ...Types import Embed
 from ....utils.Views import ConfirmView
 
 
@@ -7,23 +8,33 @@ from ....utils.Views import ConfirmView
 async def run(plugin, ctx):
     role_id = plugin.db.configs.get(ctx.guild.id, "mute_role")
     if role_id == "":
-        text = "This will create a new mute role and assign it overwrites in all of the channels and categories."
+        text = plugin.i18next.t(ctx.guild, "setup_muted_description_1")
     else:
-        text = f"{plugin.emotes.get('WARN')} This will modify the existing mute role and assign it overwrites in all of the channels and categories."
+        text = plugin.i18next.t(ctx.guild, "setup_muted_description_2")
 
     message = None
     async def cancel(interaction):
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+        e = Embed(
+            description=plugin.i18next.t(ctx.guild, "aborting")
+        )
+        await interaction.response.edit_message(embed=e, view=None)
 
     async def timeout():
         if message is not None:
-            await message.edit(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+            e = Embed(
+                description=plugin.i18next.t(ctx.guild, "aborting")
+            )
+            await message.edit(embed=e, view=None)
 
     def check(interaction):
         return interaction.user.id == ctx.author.id and interaction.message.id == message.id
 
     async def confirm(interaction):
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "start_mute", _emote="YES"), view=None)
+        await interaction.response.edit_message(
+            content=plugin.i18next.t(ctx.guild, "start_mute", _emote="WAIT"), 
+            embed=None, 
+            view=None
+        )
         msg = interaction.message
 
         global role
@@ -72,9 +83,13 @@ async def run(plugin, ctx):
         if role_id == "":
             plugin.db.configs.update(ctx.guild.id, "mute_role", f"{role.id}")
         await msg.edit(content=plugin.i18next.t(ctx.guild, "mute_done", _emote="YES"))
-
+    
+    e = Embed(
+        title="Muted role setup",
+        description=text
+    )
     message = await ctx.send(
-        text,
+        embed=e,
         view=ConfirmView(
             ctx.guild.id, 
             on_confirm=confirm, 

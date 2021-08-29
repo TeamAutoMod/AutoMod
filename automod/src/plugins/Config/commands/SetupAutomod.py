@@ -1,4 +1,4 @@
-import discord
+from ...Types import Embed
 from ....utils.Views import ConfirmView
 
 
@@ -6,17 +6,27 @@ from ....utils.Views import ConfirmView
 async def run(plugin, ctx):
     message = None
     async def cancel(interaction):
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+        e = Embed(
+            description=plugin.i18next.t(ctx.guild, "aborting")
+        )
+        await interaction.response.edit_message(embed=e, view=None)
 
     async def timeout():
         if message is not None:
-            await message.edit(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+            e = Embed(
+                description=plugin.i18next.t(ctx.guild, "aborting")
+            )
+            await message.edit(embed=e, view=None)
 
     def check(interaction):
         return interaction.user.id == ctx.author.id and interaction.message.id == message.id
 
     async def confirm(interaction):
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "start_automod", _emote="YES"), view=None)
+        await interaction.response.edit_message(
+            content=plugin.i18next.t(ctx.guild, "start_automod", _emote="WAIT"), 
+            embed=None, 
+            view=None
+        )
         msg = interaction.message
 
         punishments = plugin.db.configs.get(ctx.guild.id, "punishments")
@@ -45,11 +55,24 @@ async def run(plugin, ctx):
         plugin.db.configs.update(ctx.guild.id, "automod", automod)
 
         prefix = plugin.bot.get_guild_prefix(ctx.guild)
-        await msg.edit(content=plugin.i18next.t(ctx.guild, "automod_done", _emote="YES", prefix=prefix))
+        e = Embed()
+        e.add_field(
+            name="❯ Configured",
+            value=plugin.i18next.t(ctx.guild, "automod_basic")
+        )
+        e.add_field(
+            name="❯ View Config",
+            value=f"``{prefix}config``"
+        )
+        await msg.edit(content=plugin.i18next.t(ctx.guild, "automod_done", _emote="YES", prefix=prefix), embed=e)
 
     
+    e = Embed(
+        title="Automoderator setup",
+        description=plugin.i18next.t(ctx.guild, "setup_automod_description")
+    )
     message = await ctx.send(
-        f"This will setup the basic automod config. If you've already setup a few settings, those will be overwritten.",
+        embed=e,
         view=ConfirmView(
             ctx.guild.id, 
             on_confirm=confirm, 

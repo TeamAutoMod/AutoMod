@@ -59,3 +59,23 @@ class ConfirmView(View):
 
     async def refuse(self, interaction):
         interaction.response.send_message("Invalid interactor", ephermal=True)
+
+
+
+class Link(Button):
+    def __init__(self, _url, _label, *args, **kwargs):
+        super().__init__(*args, style=discord.ButtonStyle.link, url=_url, label=_label, **kwargs)
+
+
+
+class LinkView(View):
+    def __init__(self, _guild, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_item(Link(_url=f"https://localhost:3000/guilds/{_guild.id}", _label="View dashboard"))
+
+
+class AboutView(View):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_item(Link(_url="https://discord.gg/S9BEBux", _label="Support"))
+        self.add_item(Link(_url="https://top.gg/bot/697487580522086431/vote", _label="Vote"))

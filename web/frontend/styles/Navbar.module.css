@@ -18,15 +18,20 @@
   
 .navbar li a {
     display: block;
-    color: white;
+    color: #ffffff80;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 14px;
+    transition: 0.15s;
+}
+
+.navbar li a:hover {
+    color: #f8f8f8;
 }
 
 .navbar li img {
-    width: 35px;
-    height: 35px;
+    width: 32px;
+    height: 32px;
     max-width: 100%;
 }

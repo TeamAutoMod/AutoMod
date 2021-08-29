@@ -44,7 +44,7 @@ async def run(plugin, ctx, users, warns, reason):
             case = plugin.bot.utils.newCase(ctx.guild, "Unwarn", user, ctx.author, reason)
 
             dm_result = await plugin.bot.utils.dmUser(ctx.message, "unwarn", user, _emote="ANGEL", warns=warns, guild_name=ctx.guild.name, reason=reason)
-            await ctx.send(plugin.i18next.t(ctx.guild, "user_unwarned", _emote="YES", user=user, reason=reason, case=case, dm=dm_result, warns=warns))
+            await ctx.send(plugin.i18next.t(ctx.guild, "user_unwarned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
 
             await plugin.action_logger.log(
                 ctx.guild, 

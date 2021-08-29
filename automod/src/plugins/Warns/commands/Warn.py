@@ -31,7 +31,7 @@ async def run(plugin, ctx, users, warns, reason):
             await ctx.send(plugin.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO"))
 
         else:
-            dm_result, case = await plugin.action_validator.add_warns(
+            _, case = await plugin.action_validator.add_warns(
                 ctx.message, 
                 user, warns, 
                 moderator=ctx.author, 
@@ -41,4 +41,4 @@ async def run(plugin, ctx, users, warns, reason):
                 reason=reason
             )
 
-            await ctx.send(plugin.i18next.t(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, dm=dm_result, warns=warns))
+            await ctx.send(plugin.i18next.t(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, warns=warns))

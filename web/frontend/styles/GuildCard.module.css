@@ -1,0 +1,34 @@
+.card {
+    width: 350px;
+    height: 198px;
+    margin: 10px;
+    position: relative;
+    text-align: center;
+    background: #32353b;
+    /* overflow: hidden */
+    transition: 0.2s;
+}
+
+.guild_icon {
+    object-fit: cover;
+    width: 350px;
+    height: 198px;
+    background: #32353b;
+}
+
+.card:hover {
+    transform: scale(1.005);
+}
+
+.name {
+    position: absolute;
+    bottom: -6.3%;
+    width: 100%;
+}
+
+.name h1 {
+    font-size: 18px;
+    color: #dbdbdb;
+    padding: 9px;
+    background: rgb(50, 53, 59, 0.6);
+}

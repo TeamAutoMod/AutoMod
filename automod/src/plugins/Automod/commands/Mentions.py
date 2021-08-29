@@ -1,3 +1,4 @@
+from ...Types import Embed
 
 
 
@@ -14,7 +15,11 @@ async def run(plugin, ctx, mentions):
         try:
             mentions = int(mentions)
         except ValueError:
-            await ctx.send(plugin.i18next.t(ctx.guild, "invalid_automod_feature_param", _emote="WARN", prefix=plugin.bot.get_guild_prefix(ctx.guild), command="mentions <mentions>", off_command="mentions off"))
+            e = Embed(
+                title="Invalid paramater",
+                description=plugin.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=plugin.bot.get_guild_prefix(ctx.guild), command="mentions <mentions>", off_command="mentions off")
+            )
+            await ctx.send(embed=e)
         else:
             if mentions < 4:
                 return await ctx.send(plugin.i18next.t(ctx.guild, "min_mentions", _emote="NO"))

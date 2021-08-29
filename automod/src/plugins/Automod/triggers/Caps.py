@@ -27,5 +27,5 @@ async def check(plugin, message):
             moderator_id=plugin.bot.user.id,
             user=message.author,
             user_id=message.author.id,
-            reason=f"Excessive caps usage: {up_percentage}% in {len(content)} chars"
+            reason=f"Excessive caps usage"
         )

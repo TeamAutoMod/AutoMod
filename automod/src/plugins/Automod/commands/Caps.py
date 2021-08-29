@@ -1,3 +1,4 @@
+from ...Types import Embed
 
 
 
@@ -14,7 +15,11 @@ async def run(plugin, ctx, warns):
         try:
             warns = int(warns)
         except ValueError:
-            await ctx.send(plugin.i18next.t(ctx.guild, "invalid_automod_feature_param", _emote="WARN", prefix=plugin.bot.get_guild_prefix(ctx.guild), command="caps <warns>", off_command="caps off"))
+            e = Embed(
+                title="Invalid paramater",
+                description=plugin.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=plugin.bot.get_guild_prefix(ctx.guild), command="caps <warns>", off_command="caps off")
+            )
+            await ctx.send(embed=e)
         else:
             if warns < 1:
                 return await ctx.send(plugin.i18next.t(ctx.guild, "min_warns", _emote="NO"))

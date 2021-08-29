@@ -134,6 +134,7 @@ dmypy.json
 /automod/config.json
 /automod/src/future
 /automod/src/migrations
+/automod/src/utils/SlashCommand.py
 
 
 

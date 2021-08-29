@@ -12,6 +12,6 @@ async def run(plugin, ctx):
     e = Embed()
     e.add_field(
         name="❯ Tags",
-        value=", ".join([f"``{prefix}{x}``" for x in tags])
+        value=" | ".join([f"``{prefix}{x}``" for x in tags])
     )
     await ctx.send(embed=e)

@@ -1,9 +1,8 @@
-import discord
 from discord.ext import commands
 
 import datetime
-import traceback
 
+from ...Types import Embed
 from ....utils.Views import ConfirmView
 
 
@@ -29,7 +28,11 @@ async def muteUser(plugin, ctx, user, length, reason):
             until = (plugin.db.mutes.get(mute_id, "ending") + datetime.timedelta(seconds=length.to_seconds(ctx)))
             plugin.db.mutes.update(mute_id, "ending", until)
 
-            await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "mute_extended", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason), view=None)
+            await interaction.response.edit_message(
+                content=plugin.i18next.t(ctx.guild, "mute_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>", reason=reason), 
+                embed=None, 
+                view=None
+            )
             await plugin.action_logger.log(
                 ctx.guild, 
                 "mute_extended", 
@@ -37,8 +40,7 @@ async def muteUser(plugin, ctx, user, length, reason):
                 moderator_id=ctx.message.author.id,
                 user=user,
                 user_id=user.id,
-                length=length.length, 
-                unit=length.unit,
+                expiration=f"<t:{round(until.timestamp())}:D>",
                 reason=reason
             )
             if not mute_role in user.roles:
@@ -49,17 +51,26 @@ async def muteUser(plugin, ctx, user, length, reason):
             return
 
         async def cancel(interaction):
-            await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+            e = Embed(
+                description=plugin.i18next.t(ctx.guild, "aborting")
+            )
+            await interaction.response.edit_message(embed=e, view=None)
 
         async def timeout():
             if message is not None:
-                await message.edit(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+                e = Embed(
+                    description=plugin.i18next.t(ctx.guild, "aborting")
+                )
+                await message.edit(embed=e, view=None)
 
         def check(interaction):
             return interaction.user.id == ctx.author.id and interaction.message.id == message.id
 
+        e = Embed(
+            description=plugin.i18next.t(ctx.guild, "already_muted_description")
+        )
         message = await ctx.send(
-            "User is already muted. Do you want to extend their mute?", 
+            embed=e,
             view=ConfirmView(
                 ctx.guild.id, 
                 on_confirm=confirm, 
@@ -83,13 +94,17 @@ async def muteUser(plugin, ctx, user, length, reason):
 
                     case = plugin.bot.utils.newCase(ctx.guild, "Mute", user, ctx.author, reason)
 
-                    dm_result = await plugin.bot.utils.dmUser(ctx.message, "mute", user, _emote="MUTE", guild_name=ctx.guild.name, length=length.length, unit=length.unit, reason=reason)
-                    await ctx.send(plugin.i18next.t(ctx.guild, "user_muted", _emote="YES", user=user, length=length.length, unit=length.unit, reason=reason, case=case, dm=dm_result))
+                    dm_result = await plugin.bot.utils.dmUser(
+                        ctx.message, 
+                        "mute", 
+                        user, 
+                        _emote="MUTE", 
+                        guild_name=ctx.guild.name, 
+                        until=f"<t:{round(until.timestamp())}>", 
+                        reason=reason
+                    )
+                    await ctx.send(plugin.i18next.t(ctx.guild, "user_muted", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>", reason=reason, case=case))
                     
-                    try:
-                        last = ctx.message
-                    except Exception:
-                        last = None
                     await plugin.action_logger.log(
                         ctx.guild, 
                         "mute", 
@@ -97,9 +112,7 @@ async def muteUser(plugin, ctx, user, length, reason):
                         moderator_id=ctx.message.author.id,
                         user=user,
                         user_id=user.id,
-                        length=length.length, 
-                        unit=length.unit,
-                        context=f"\n**Context:** [Here!]({last.jump_url})" if last is not None else "",
+                        expiration=f"<t:{round(until.timestamp())}:D>",
                         reason=reason, 
                         case=case,
                         dm=dm_result

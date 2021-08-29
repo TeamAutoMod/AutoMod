@@ -10,3 +10,18 @@ export function fetchUserDeatils() {
 export function fetchGuilds() {
     return axios.get(BASE_URL + "/discord/guilds", {withCredentials: true});
 };
+
+export function fetchGuildConfig(gid: any) {
+    console.log(gid)
+    return axios.get(BASE_URL + `/discord/guilds/${gid}/config`, {withCredentials: true});
+}
+
+export function fetchGuildRoles(gid: any) {
+    console.log(gid)
+    return axios.get(BASE_URL + `/discord/guilds/${gid}/roles`, {withCredentials: true});
+}
+
+export function fetchGuildChannels(gid: any) {
+    console.log(gid)
+    return axios.get(BASE_URL + `/discord/guilds/${gid}/channels`, {withCredentials: true});
+}

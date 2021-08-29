@@ -2,6 +2,7 @@ from discord import PermissionOverwrite
 
 from ..sub.Overwrites import overwrite
 
+from ...Types import Embed
 from ....utils.Views import ConfirmView
 
 
@@ -9,17 +10,27 @@ from ....utils.Views import ConfirmView
 async def run(plugin, ctx):
     message = None
     async def cancel(interaction):
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+        e = Embed(
+            description=plugin.i18next.t(ctx.guild, "aborting")
+        )
+        await interaction.response.edit_message(embed=e, view=None)
 
     async def timeout():
         if message is not None:
-            await message.edit(content=plugin.i18next.t(ctx.guild, "aborting"), view=None)
+            e = Embed(
+                description=plugin.i18next.t(ctx.guild, "aborting")
+            )
+            await message.edit(embed=e, view=None)
 
     def check(interaction):
         return interaction.user.id == ctx.author.id and interaction.message.id == message.id
 
     async def confirm(interaction):
-        await interaction.response.edit_message(content=plugin.i18next.t(ctx.guild, "start_restrict", _emote="YES"), view=None)
+        await interaction.response.edit_message(
+            content=plugin.i18next.t(ctx.guild, "start_restrict", _emote="WAIT"), 
+            embed=None, 
+            view=None
+        )
         msg = interaction.message
 
 
@@ -64,13 +75,17 @@ async def run(plugin, ctx):
             ctx, 
             msg, 
             {
-                "embed_role": {"role": embed_role, "perms": PermissionOverwrite(embed_links=False)}, 
+                "embed_role": {"role": embed_role, "perms": PermissionOverwrite(embed_links=False, attach_files=False)}, 
                 "emoji_role": {"role": emoji_role, "perms": PermissionOverwrite(external_emojis=False)}
             }
         )
 
+    e = Embed(
+        title="Restrict roles setup",
+        description=plugin.i18next.t(ctx.guild, "setup_restrict_description")
+    )
     message = await ctx.send(
-        "This will create (or edit) 3 roles (Embed restricted, Emoji restricted & Tag restricted)",
+        embed=e,
         view=ConfirmView(
             ctx.guild.id, 
             on_confirm=confirm, 

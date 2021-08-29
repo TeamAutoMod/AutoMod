@@ -19,15 +19,14 @@ async def getHelpForAllCommands(plugin, ctx):
     }
 
     valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
-    e = Embed()
-    e.add_field(
-        name="❯ Commands", 
-        value=f"This is a list of all available commands. \nTo get more info about a command, use ``{prefix}help <command>``"
+    e = Embed(
+        title="Commands",
+        description=f"This is a list of all available commands. \nTo get more info about a command, use ``{prefix}help <command>``"
     )
     for p in valid_plugins:
         e.add_field(
             name=actual_plugin_names[p.qualified_name],
-            value=", ".join([f"``{prefix}{x}``" for x in p.get_commands()])
+            value=" | ".join([f"``{prefix}{x}``" for x in p.get_commands()])
         )
     return e
 
@@ -52,7 +51,7 @@ async def generateHelpForCommand(plugin, ctx, command):
                 actual_subcommands[k] = v
 
         if len(actual_subcommands.keys()) > 0:
-            e.add_field(name="❯ Subcommands", value=", ".join([f"``{x}``" for x in actual_subcommands.keys()]), inline=True)
+            e.add_field(name="❯ Subcommands", value=" | ".join([f"``{x}``" for x in actual_subcommands.keys()]), inline=True)
 
     return e
 
