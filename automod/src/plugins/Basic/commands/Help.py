@@ -1,14 +1,22 @@
 import traceback
 
-from ....utils.MessageUtils import multiPage
 from ..sub.HelpGenerator import getHelpForAllCommands, getHelpForCommand
+from ....utils.Views import HelpView
+from ...Types import Embed
 
 
 
 async def run(plugin, ctx, query):
     if query is None:
-        help_embed = await getHelpForAllCommands(plugin, ctx)
-        await ctx.send(embed=help_embed)
+        e = Embed(
+            title=plugin.i18next.t(ctx.guild, "help_title"),
+            description=plugin.i18next.t(ctx.guild, "help_description", prefix=plugin.bot.get_guild_prefix(ctx.guild))
+        )
+        e.set_thumbnail(
+            url=plugin.bot.user.display_avatar
+        )
+        view = HelpView(ctx.guild, plugin.bot, "None")
+        await ctx.send(embed=e, view=view)
     else:
         query = "".join(query.splitlines())
 

@@ -1,6 +1,8 @@
+import discord
 from discord.ext.commands import GroupMixin
 
 from ...Types import Embed
+from ....utils.Views import HelpView
 
 
 
@@ -29,6 +31,47 @@ async def getHelpForAllCommands(plugin, ctx):
             value=" | ".join([f"``{prefix}{x}``" for x in p.get_commands()])
         )
     return e
+
+actual_plugin_names = {
+    "AutomodPlugin": f"🛡️ Automod Commands",
+    "BasicPlugin": f"🎉 Basic Commands",
+    "ModerationPlugin": f"🔨 Moderation Commands",
+    "WarnsPlugin": f"📌 Warn Commands",
+    "CasesPlugin": f"🔎 Case Commands",
+    "ConfigPlugin": f"⚙️ Configuration Commands",
+    "TagsPlugin": f"📝 Tag Commands",
+    "FiltersPlugin": f"📦 Filter Commands"
+}
+
+async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
+    guild = bot.get_guild(i.guild_id)
+    prefix = bot.get_guild_prefix(guild)
+
+    if _plugin == None:
+        e = Embed(
+            title=bot.i18next.t(guild, "help_title"),
+            description=bot.i18next.t(guild, "help_description", prefix=prefix)
+        )
+        e.set_thumbnail(
+            url=bot.user.display_avatar
+        )
+        view = HelpView(guild, bot, "None")
+        return e, view
+    
+    plugin = {v: k for k, v in actual_plugin_names.items()}.get(_plugin)
+    actual_plugin = bot.get_cog(plugin)
+    e = Embed(
+        title=" ".join(actual_plugin_names[plugin].split(" ")[1:]).replace("Commands", "Plugin"),
+        description=bot.i18next.t(guild, f"{plugin.lower()}_long_description", prefix=prefix)
+    )
+    e.add_field(
+        name=f"❯ Commands",
+        value="\n".join([f"``{prefix}{str(x)}`` - {bot.i18next.t(guild, x.help)}" for x in actual_plugin.get_commands()])
+    )
+
+    view = HelpView(guild, bot, actual_plugin.qualified_name)
+    return e, view
+
 
 
 

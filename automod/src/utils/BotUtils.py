@@ -12,12 +12,15 @@ from . import Shell
 
 log = logging.getLogger(__name__)
 
+_bot = None
 
 class BotUtils:
     def __init__(self, bot):
         self.bot = bot
         self.error_log = None
         self.last_fetches = {}
+        global _bot
+        _bot = bot
     
 
 

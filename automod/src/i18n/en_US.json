@@ -132,7 +132,6 @@
     "automod_disabled": "{emote} The **Automod** module is disabled here. You need to enable it first before you can use this feature.",
 
     "help_page": "Help Page",
-    "help_description": "All commands start with ``{prefix}`` \n• Use ``{prefix}help <command>`` for more info about a command (subcommands & args)",
     "command_help": "Command Help",
 
     "plugin_not_found": "{emote} Plugin not found",
@@ -317,6 +316,7 @@
     "restrict_dm": "{emote} You have been {success} in **{guild_name}**. Reason: \n```\n{reason} \n```",
 
     "no_cases_found": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria.",
+    "searching": "{emote} Looking for recent cases, this may take a bit...",
     "case_not_found": "{emote} I couldn't find a case with that ID.",
 
     "no_targets": "{emote} I couldn't find any members matching your given criterias.",
@@ -454,5 +454,32 @@
 
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
 
-    "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Caps has been set to ``1`` warn \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Everyone has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns"
+    "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Caps has been set to ``1`` warn \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Everyone has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns",
+
+    "help_title": "Help Menu",
+    "help_description": "Select one of the categories below to view its commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "automodplugin_short_description": "Commands to configure the automoderator",
+    "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "basicplugin_short_description": "Basic bot commands for information",
+    "basicplugin_long_description": "These are some basic commands mainly for information. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "moderationplugin_short_description": "All of the moderation commands",
+    "moderationplugin_long_description": "These commands will help you and your moderators to keep the community safe. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "warnsplugin_short_description": "Commands used for warning",
+    "warnsplugin_long_description": "You can use these commands to handle all things related to warning users. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "casesplugin_short_description": "Commands for interacting with cases",
+    "casesplugin_long_description": "These commands will help you manage cases in the server. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "configplugin_short_description": "Commands for bot configurations",
+    "configplugin_long_description": "You can configure the bots general configurations using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "tagsplugin_short_description": "Commands used for managing tags",
+    "tagsplugin_long_description": "You can create, delete & edit your custom tags with these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "filtersplugin_short_description": "Commands used for managing word filters",
+    "filtersplugin_long_description": "Create and delete custom word filters using these commands. \nTo get more info about a command, use ``{prefix}help <command>``"
 }

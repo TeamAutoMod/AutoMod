@@ -22,7 +22,7 @@ from .utils.Context import Context
 from .utils.BotUtils import BotUtils
 from .plugins import PluginLoader
 from .plugins.Types import Embed
-from .utils.SlashCommand import SlashCommand
+from .plugins.Basic.sub.HelpGenerator import getHelpForPlugin
 
 
 
@@ -67,6 +67,7 @@ class AutoMod(commands.AutoShardedBot):
         self.used_tags = 0
         self.total_shards = config.shards
         self.version = None
+        self.case_cache = dict()
 
         self.i18next = Translator(self, config.langs)
         self.db = MongoDB(host=config.mongo_url).database
@@ -130,7 +131,6 @@ class AutoMod(commands.AutoShardedBot):
 
             log.info("Loading plugins...")
             await PluginLoader.loadPlugins(self)
-            print(self.slash_commands)
 
             if not hasattr(self, "uptime"):
                 self.uptime = datetime.datetime.utcnow()
@@ -177,6 +177,19 @@ class AutoMod(commands.AutoShardedBot):
             else:
                 await self.invoke(ctx)
 
+
+    async def on_interaction(self, i: discord.Interaction):
+        if i.type == discord.InteractionType.component:
+            _id = i.data.get("custom_id")
+            if _id.startswith("help:"):
+                selected = i.data.get("values")[0]
+                selected = selected if selected != "None" else None
+                embed, view = await getHelpForPlugin(self, selected, i)
+                await i.response.edit_message(
+                    embed=embed, 
+                    view=view
+                )
+
     
     async def on_error(self, event, *args, **kwargs):
         error = sys.exc_info()
@@ -196,7 +209,10 @@ class AutoMod(commands.AutoShardedBot):
             value=f"{event}",
             inline=True
         )
-        guild = args[0].guild or args[0]
+        if len(args) > 0:
+            guild = args[0].guild or args[0]
+        else:
+            guild = None
         e.add_field(
             name="❯ Location",
             value="• Name: {} \n• ID: {}".format(

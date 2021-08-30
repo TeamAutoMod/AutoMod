@@ -16,7 +16,7 @@ async def run(plugin, ctx, user):
         color=None if member is None else member.color
     )
     e.set_thumbnail(
-        url=user.avatar.url
+        url=user.display_avatar
     )
     e.add_field(
         name="❯ Information",
