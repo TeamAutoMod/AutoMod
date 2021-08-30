@@ -1,6 +1,7 @@
 import datetime
 import traceback
-import datetime
+import discord
+
 
 from ..plugins.Types import Embed
 
@@ -224,13 +225,18 @@ class ActionLogger:
                 timestamp=datetime.datetime.utcnow()
             )
 
-            if kwargs.get('moderator') is None:
-                kwargs.update({'moderator': guild.me, 'moderator_id': guild.me.id})
+            if kwargs.get("moderator") is None:
+                kwargs.update({"moderator": guild.me, "moderator_id": guild.me.id})
 
             e.set_author(
                 name=f"{kwargs.get('moderator')} ({kwargs.get('moderator_id')})", 
-                icon_url=(kwargs.get('moderator')).avatar_url_as()
+                icon_url=(kwargs.get("moderator")).avatar.url
             )
+
+            if "user" in kwargs:
+                e.set_thumbnail(
+                    url=(kwargs.get("user")).avatar.url
+                )
 
             dm = kwargs.get("dm", None)
             if dm is not None:

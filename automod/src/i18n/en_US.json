@@ -10,8 +10,8 @@
     "log_cybernuke": "**Member:** ``{user}`` ({user_id}) \n**Action:** Ban \n**Reason:** {reason}",
     "log_restrict": "**Member:** ``{user}`` ({user_id}) \n**Action:** {action} \n**Reason:** {reason}",
     
-    "log_mute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute \n**Length:** {length} {unit} {context}\n**Reason:** {reason}",
-    "log_mute_extended": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute extended \n**Length:** {length} {unit}\n**Reason:** {reason}",
+    "log_mute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute \n**Expiration:** {expiration} \n**Reason:** {reason}",
+    "log_mute_extended": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute extended \n**Expiration:** {expiration}\n**Reason:** {reason}",
     "log_unmute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unmute \n**Reason:** Mute expired",
     
     "log_warn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Warn ({old_warns} → {new_warns}) {context}\n**Reason:** {reason}",
@@ -48,24 +48,24 @@
     "voice_channel_leave": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) left voice channel ``{beforeChannel}``",
     "voice_channel_switch": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) moved from voice channel ``{afterChannel}`` to ``{beforeChannel}``",
 
-    "user_banned": "{emote} Successfully banned **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
-    "user_unbanned": "{emote} Successfully unbanned **{user.name}#{user.discriminator}** (Case #{case})",
-    "user_kicked": "{emote} Successfully kicked **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
-    "user_cleanbanned": "{emote} Successfully cleanbanned **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
-    "user_forcebanned": "{emote} Successfully forcebanned **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
-    "user_softbanned": "{emote} Successfully softbanned **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
-    "user_muted": "{emote} Successfully muted **{user.name}#{user.discriminator}** for {length} {unit} (Case #{case}) {dm}",
-    "mute_extended": "{emote} Successfully extended **{user.name}#{user.discriminator}**'s mute for {length} {unit}",
-    "user_warned": "{emote} Successfully gave ``{warns}`` warns to **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
-    "user_unwarned": "{emote} Successfully took away ``{warns}`` warns from **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
+    "user_banned": "{emote} Successfully banned **{user.name}#{user.discriminator}** (#{case})",
+    "user_unbanned": "{emote} Successfully unbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_kicked": "{emote} Successfully kicked **{user.name}#{user.discriminator}** (#{case})",
+    "user_cleanbanned": "{emote} Successfully cleanbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_forcebanned": "{emote} Successfully forcebanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_softbanned": "{emote} Successfully softbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_muted": "{emote} Successfully muted **{user.name}#{user.discriminator}** until {until} (#{case})",
+    "mute_extended": "{emote} Successfully extended **{user.name}#{user.discriminator}**'s mute until {until}",
+    "user_warned": "{emote} Successfully gave ``{warns}`` warns to **{user.name}#{user.discriminator}** (#{case})",
+    "user_unwarned": "{emote} Successfully took away ``{warns}`` warns from **{user.name}#{user.discriminator}** (#{case})",
     "case_claimed": "{emote} Successfully claimed case **#{case}**!",
     "case_deleted": "{emote} Successfully deleted case **#{case}**!",
     "mute_lifted": "{emote} Successfully lifted **{user.name}#{user.discriminator}**'s mute",
     "not_muted": "{emote} User isn't muted",
     "messages_deleted": "{emote} Successfully deleted **{count}** message{plural}!",
     "user_asciified": "{emote} Successfully asciified ``{old}`` to ``{new}``",
-    "users_cybernuked": "{emote} Successfully cybernuked ``{banned}/{total}`` users (Case #{case})",
-    "user_restricted": "{emote} Successfully {success} **{user.name}#{user.discriminator}** (Case #{case}) {dm}",
+    "users_cybernuked": "{emote} Successfully cybernuked **{banned}/{total}** users (#{case})",
+    "user_restricted": "{emote} Successfully {success} **{user.name}#{user.discriminator}** (#{case})",
 
     "already_blocked": "{emote} This is already a blocked guild",
     "blocked_guild": "{emote} Successfully blocked guild **{guild_id}**",
@@ -132,7 +132,6 @@
     "automod_disabled": "{emote} The **Automod** module is disabled here. You need to enable it first before you can use this feature.",
 
     "help_page": "Help Page",
-    "help_description": "All commands start with ``{prefix}`` \n• Use ``{prefix}help <command>`` for more info about a command (subcommands & args)",
     "command_help": "Command Help",
 
     "plugin_not_found": "{emote} Plugin not found",
@@ -161,6 +160,7 @@
     "userinfo_help": "Shows some basic info about a specific user",
     "asciify_help": "Removes all non-ascii chars from a users name/nickname",
     "translate_help": "Translates a text to english. Also works by replying to a message",
+    "dashboard_help": "Get a direct link to your servers dashboard", 
 
     "config_help": "Shows the current server config",
     "setup_help": "Shows commands for automatically setting up a feature",
@@ -267,7 +267,7 @@
     "no_ban_then": "{emote} Alright, I'll ban nobody then!",
     "max_ban": "{emote} Max targets to ban at once are 50",
     "cant_ban_anyone": "{emote} I can't ban any of the specified targets.",
-    "aborting": "Aborting...",
+    "aborting": "Command execution canceled.",
     "mban_success": "{emote} Successfully banned {users}/{total} users!",
     "no_kick_then": "{emote} Alright, I'll kick nobody then!",
     "max_kick": "{emote} Max targets to kick at once are 50",
@@ -297,7 +297,6 @@
 
     "missing_bot_perms": "{emote} I don't have the required permissions to do this.",
     "missing_arg": "{emote} You are missing a required parameter (``{arg}``). Usage: ``{usage}``",
-    "arg_parse_error": "{emote} Failed to parse the ``{arg}`` param: ``{error}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
     "forbidden": "{emote} {exc}",
     "missing_user_perms": "{emote} This command can only be used by moderators.",
@@ -311,12 +310,13 @@
     "softban": "{emote} You have been softbanned in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "kick_dm": "{emote} You have been kicked in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "warn_dm": "{emote} You have received ``{warns}`` warns in **{guild_name}**. Reason: \n```\n{reason} \n```",
-    "mute_dm": "{emote} You have been muted for {length} {unit} in **{guild_name}**. Reason: \n```\n{reason} \n```",
+    "mute_dm": "{emote} You have been muted until {until} in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "unwarn_dm": "{emote} ``{warns}`` of your warns in **{guild_name}** have been removed. Reason: \n```\n{reason} \n```",
     "cybernuke_dm": "{emote} You have been banned in **{guild_name}**. Reason: \n```\n{reason} \n```",
     "restrict_dm": "{emote} You have been {success} in **{guild_name}**. Reason: \n```\n{reason} \n```",
 
     "no_cases_found": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria.",
+    "searching": "{emote} Looking for recent cases, this may take a bit...",
     "case_not_found": "{emote} I couldn't find a case with that ID.",
 
     "no_targets": "{emote} I couldn't find any members matching your given criterias.",
@@ -346,10 +346,10 @@
     "role_fail2": "{emote} Failed to create the {role} role: {exc}",
     "restrict_done": "{emote} Restrict setup complete!",
 
-    "setup_commands": "You can use these commands to let the bot automatically setup the features. \n \n``{prefix}setup muted`` - Sets up a mute role \n``{prefix}setup automod`` - Sets up the basic automod config \n``{prefix}setup restrict`` - Sets up the roles for the restrict command",
+    "setup_description": "You can use these commands to let the bot automatically setup the respective feature. ",
 
     "start_automod": "{emote} Starting to setup the basic automod config...",
-    "automod_done": "{emote} Basic automod setup complete! The following things have been configured: \n• Anti-invite has been set to ``1`` warns \n• Max-mentions have been set to ``10`` \n• Max-newlines have been set to ``15`` \n• Anti-caps has been set to ``1`` warn \n• Anti-zalgo has been set to ``1`` warn \n• Anti-everyone has been set to ``1`` warn \n• Anti-spam has been set to ``3`` warns \n⚠️ You can view all the server configurations, by using ``{prefix}config``",
+    "automod_done": "{emote} Basic automod setup complete!",
 
     "min_warns": "{emote} You can't set this below 1 warn.",
     "max_warns": "{emote} You can't set this to be more than 100 warns.",
@@ -438,5 +438,48 @@
     "restrict_failed": "{emote} Failed to restrict target ||{error}||",
 
     "automod_feature_disabled": "{emote} Successfully disabled the ``{what}`` feature!",
-    "invalid_automod_feature_param": "{emote} This isn't a valid paramater. \n \nYou can use ``{prefix}automod {command}`` to configure this feature. \nYou can use ``{prefix}automod {off_command}`` to disable this feature."
+    "invalid_automod_feature_param": "You can use ``{prefix}automod {command}`` to configure this feature. \nYou can use ``{prefix}automod {off_command}`` to disable this feature.",
+    
+    "about_text": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
+    "got_you": "{emote} Alright, I've got you!",
+
+    "setup_automod_description": "This will setup the basic automod config. If you've already setup a few settings, those will be overwritten.",
+    "setup_muted_description_1": "This will create a new mute role and assign it overwrites in all of the channels and categories.",
+    "setup_muted_description_2": "This will modify the existing mute role and assign it overwrites in all of the channels and categories.",
+    "setup_restrict_description": "This will create (or edit) 3 roles (Embed restricted, Emoji restricted & Tag restricted)",
+
+    "case_delete_description": "Are you sure you want to delete case **#{case}**? This actions can't be reverted.",
+
+    "cybernuke_description": "This will ban {targets} users.",
+
+    "already_muted_description": "User is already muted. Do you want to extend their mute?",
+
+    "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Caps has been set to ``1`` warn \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Everyone has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns",
+
+    "help_title": "Help Menu",
+    "help_description": "Select one of the categories below to view its commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "automodplugin_short_description": "Commands to configure the automoderator",
+    "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "basicplugin_short_description": "Basic bot commands for information",
+    "basicplugin_long_description": "These are some basic commands mainly for information. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "moderationplugin_short_description": "All of the moderation commands",
+    "moderationplugin_long_description": "These commands will help you and your moderators to keep the community safe. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "warnsplugin_short_description": "Commands used for warning",
+    "warnsplugin_long_description": "You can use these commands to handle all things related to warning users. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "casesplugin_short_description": "Commands for interacting with cases",
+    "casesplugin_long_description": "These commands will help you manage cases in the server. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "configplugin_short_description": "Commands for bot configurations",
+    "configplugin_long_description": "You can configure the bots general configurations using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "tagsplugin_short_description": "Commands used for managing tags",
+    "tagsplugin_long_description": "You can create, delete & edit your custom tags with these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "filtersplugin_short_description": "Commands used for managing word filters",
+    "filtersplugin_long_description": "Create and delete custom word filters using these commands. \nTo get more info about a command, use ``{prefix}help <command>``"
 }

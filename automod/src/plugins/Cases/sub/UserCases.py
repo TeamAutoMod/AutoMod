@@ -1,9 +1,10 @@
 import discord
 import datetime
 import traceback
+import time
 
-from ...Types import Embed, DiscordUser
-from ....utils import MessageUtils
+from ...Types import Embed
+from ....utils.Views import MultiPageView
 
 from ..sub.GetLogForCase import getLogForCase
 
@@ -11,11 +12,18 @@ from ..sub.GetLogForCase import getLogForCase
 
 
 def create_embed(option, user):
-    main_embed = Embed()
-    main_embed.set_author(
-        name=f"{user} ({user.id})",
-        icon_url=user.avatar_url_as() if option != "guild" else user.icon_url_as()
+    main_embed = Embed(
+        title="Recent cases"
     )
+    if option == "guild":
+        if user.icon != None:
+            main_embed.set_thumbnail(
+                url=user.icon.url
+            )
+    else:
+        main_embed.set_thumbnail(
+            url=user.display_avatar
+        )
     main_embed.add_field(
         name="❯ History",
         value=""
@@ -34,7 +42,7 @@ options = {
     "mod": "mod"
 }
 async def userCases(plugin, ctx, user):
-    await ctx.trigger_typing()
+    message = await ctx.send(embed=Embed(description=plugin.i18next.t(ctx.guild, "searching", _emote="SEARCH")))
     # Check what we should search by
     option = None
     if isinstance(user, discord.Guild):
@@ -59,7 +67,7 @@ async def userCases(plugin, ctx, user):
         reverse=True
     )
     if len(results) < 1:
-        return await ctx.send(plugin.i18next.t(ctx.guild, "no_cases_found", _emote="NO"))
+        return await message.edit(embed=Embed(description=plugin.i18next.t(ctx.guild, "no_cases_found", _emote="NO")))
 
     out = list()
     counts = {
@@ -87,11 +95,11 @@ async def userCases(plugin, ctx, user):
         if isinstance(timestamp, str):
             if not timestamp.startswith("<t"):
                 dt = datetime.datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
-                timestamp = f"<t:{round(dt.timestamp())}:d>"
-            else:
-                timestamp = timestamp.replace(">", ":d>")
+                timestamp = f"<t:{round(dt.timestamp())}>"
+            # else:
+                # timestamp = timestamp.replace(">", ":d>")
         else:
-            timestamp = f"<t:{round(timestamp.timestamp())}:d>"
+            timestamp = f"<t:{round(timestamp.timestamp())}>"
 
 
         log_url = await getLogForCase(plugin, ctx, e)
@@ -136,7 +144,14 @@ async def userCases(plugin, ctx, user):
         em.set_footer(text=text)
 
     if len(pages) > 1:
-        msg = await ctx.send(embed=pages[0])
-        await MessageUtils.multiPage(plugin, ctx, msg, pages)
+        data = {
+            "pages": pages,
+            "page_number": 0
+        }
+        plugin.bot.case_cache.update({
+            message.id: data
+        })
+        view = MultiPageView(0, len(pages))
+        await message.edit(content=None, embed=pages[0], view=view)
     else:
-        await ctx.send(embed=pages[0])
+        await message.edit(content=None, embed=pages[0])

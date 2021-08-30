@@ -8,7 +8,6 @@ router.get("/discord/redirect", passport.authenticate("discord"), (req, res) => 
 });
 
 router.get("/", (req, res) => {
-    console.log(req.user);
     if (req.user) {
         res.send(req.user);
     }  else {

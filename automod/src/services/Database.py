@@ -196,8 +196,8 @@ class MongoSchemas:
             "timestamp": timestamp,
             "type": f"{inf_type}",
             "reason": f"{reason}",
-            "target_av": f"{target.avatar_url_as()}",
-            "moderator_av": f"{moderator.avatar_url_as()}",
+            "target_av": f"{target.avatar.url}",
+            "moderator_av": f"{moderator.avatar.url}",
             "log_id": "",
             "jump_url": ""
         }

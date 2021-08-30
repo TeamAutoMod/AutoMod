@@ -27,17 +27,17 @@ plugins = {
 
     BasicPlugin: "src.plugins.Basic.BasicPlugin",
 
+    ConfigPlugin: "src.plugins.Config.ConfigPlugin",
+
+    AutomodPlugin: "src.plugins.Automod.AutomodPlugin",
+
     ModerationPlugin: "src.plugins.Moderation.ModerationPlugin",
 
     WarnsPlugin: "src.plugins.Warns.WarnsPlugin",
 
-    AutomodPlugin: "src.plugins.Automod.AutomodPlugin",
-
     AdminPlugin: "src.plugins.Admin.AdminPlugin",
 
     AntispamPlugin: "src.plugins.Antispam.AntispamPlugin",
-
-    ConfigPlugin: "src.plugins.Config.ConfigPlugin",
 
     FiltersPlugin: "src.plugins.Filters.FiltersPlugin",
 
@@ -60,5 +60,6 @@ async def loadPlugins(bot):
             bot.add_cog(plugin(bot))
             bot.load_extension(path)
         except Exception:
-            ex = traceback.format_exc()
-            log.warn("Failed to load plugin {} - {}".format(plugin, ex))
+            pass
+            # ex = traceback.format_exc()
+            # log.warn("Failed to load plugin {} - {}".format(plugin, ex))

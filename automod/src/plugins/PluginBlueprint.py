@@ -1,6 +1,10 @@
 import discord
 from discord.ext import commands
 
+from functools import wraps
+
+from ..utils.SlashCommand import SlashCommand
+
 
 
 class PluginBlueprint(commands.Cog):

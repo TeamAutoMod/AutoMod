@@ -11,7 +11,8 @@ from .commands import (
     Server, 
     Userinfo, 
     Asciify, 
-    Translate
+    Translate,
+    Dashboard
 )
 
 from ..Types import DiscordUser
@@ -76,28 +77,39 @@ class BasicPlugin(PluginBlueprint):
         await Userinfo.run(self, ctx, user)
 
 
-    @commands.command()
-    @commands.guild_only()
-    @commands.has_permissions(manage_nicknames=True)
-    async def asciify(
-        self,
-        ctx,
-        user: discord.Member
-    ):
-        """asciify_help"""
-        await Asciify.run(self, ctx, user)
+
+    # @commands.command()
+    # @commands.guild_only()
+    # @commands.has_permissions(manage_nicknames=True)
+    # async def asciify(
+    #     self,
+    #     ctx,
+    #     user: discord.Member
+    # ):
+    #     """asciify_help"""
+    #     await Asciify.run(self, ctx, user)
 
 
-    @commands.command()
-    @commands.guild_only()
-    async def translate(
-        self,
-        ctx,
-        *,
-        text: str = None
-    ):
-        """translate_help"""
-        await Translate.run(self, ctx, text)
+    # @commands.command()
+    # @commands.guild_only()
+    # async def translate(
+    #     self,
+    #     ctx,
+    #     *,
+    #     text: str = None
+    # ):
+    #     """translate_help"""
+    #     await Translate.run(self, ctx, text)
+
+
+    # @commands.command()
+    # @commands.guild_only()
+    # async def dashboard(
+    #     self,
+    #     ctx,
+    # ):
+    #     """dashboard_help"""
+    #     await Dashboard.run(self, ctx)
 
 
 def setup(bot):

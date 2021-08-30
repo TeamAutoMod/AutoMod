@@ -11,6 +11,6 @@ async def run(plugin, ctx):
         e = Embed()
         e.add_field(
             name="❯ Allowed invites (by server ID)", 
-            value=", ".join([f"``{x}``" for x in allowed])
+            value=" | ".join([f"``{x}``" for x in allowed])
         )
         await ctx.send(embed=e)

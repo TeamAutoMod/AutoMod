@@ -16,9 +16,8 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.3",
-    "@emotion/react": "^11.4.0",
-    "@emotion/styled": "^11.3.0",
     "framer-motion": "^4.1.17",
-    "next-themes": "0.0.15"
+    "next-themes": "0.0.15",
+    "react-select": "^4.3.1"
   }
 }

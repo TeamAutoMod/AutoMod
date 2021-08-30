@@ -14,7 +14,7 @@ async def kickUser(plugin, ctx, user, reason):
         case = plugin.bot.utils.newCase(ctx.guild, "Kick", user, ctx.author, reason)
 
         dm_result = await plugin.bot.utils.dmUser(ctx.message, "kick", user, _emote="SHOE", guild_name=ctx.guild.name, reason=reason)
-        await ctx.send(plugin.i18next.t(ctx.guild, f"user_kicked", _emote="YES", user=user, reason=reason, case=case, dm=dm_result))
+        await ctx.send(plugin.i18next.t(ctx.guild, f"user_kicked", _emote="YES", user=user, reason=reason, case=case))
 
         await plugin.action_logger.log(
             ctx.guild, 

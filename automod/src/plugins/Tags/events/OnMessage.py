@@ -34,4 +34,10 @@ async def run(plugin, message):
                 plugin.db.tags.update(f"{message.guild.id}-{trigger}", "uses", (uses+1))
                 reply = tag["reply"]
                 plugin.bot.used_tags += 1
-                return await message.channel.send(f"{reply}")
+                try:
+                    await message.reply(f"{reply}", mention_author=False)
+                except discord.NotFound:
+                    # just in case
+                    await message.channel.send(f"{reply}")
+                finally:
+                    return

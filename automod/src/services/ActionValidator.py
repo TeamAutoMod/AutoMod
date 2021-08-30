@@ -22,7 +22,7 @@ class ActionValidator:
             return
         if "warns" in opt:
             warns = opt["warns"]
-        elif opt is "mention":
+        elif opt == "mention":
             warns = abs(int(opt["threshold"]) - int(kwargs.get("mentions")))
         else:
             if "threshold" in opt:
@@ -93,16 +93,21 @@ class ActionValidator:
                 except Exception:
                     last = None
 
-                dm = await self.bot.utils.dmUser(message, "mute", target, _emote="MUTE", guild_name=message.guild.name, length=int(action.split(" ")[-2]), unit=action.split(" ")[-1], reason=f"Automatic punishment ({_to}): {kwargs.get('reason')}")
+                dm = await self.bot.utils.dmUser(
+                    message, 
+                    "mute", 
+                    target, 
+                    _emote="MUTE", 
+                    guild_name=message.guild.name, 
+                    until=f"<t:{round(until.timestamp())}>", 
+                    reason=f"Automatic punishment ({_to}): {kwargs.get('reason')}")
                 new_kwargs = {
                     "user": target,
                     "user_id": target.id,
                     "moderator": kwargs.get("moderator"),
                     "moderator_id": kwargs.get("moderator_id"),
-                    "length": int(action.split(" ")[-2]),
-                    "unit": action.split(" ")[-1],
+                    "expiration": f"<t:{round(until.timestamp())}:D>",
                     "reason": f"Automatic punishment ({_to}): {kwargs.get('reason')}",
-                    "context": f"\n**Context: ** [Here!]({last.jump_url})" if last is not None else "",
                     "case": case,
                     "dm": dm
                 }

@@ -1,3 +1,4 @@
+from ...Types import Embed
 
 
 
@@ -14,7 +15,11 @@ async def run(plugin, ctx, lines):
         try:
             lines = int(lines)
         except ValueError:
-            await ctx.send(plugin.i18next.t(ctx.guild, "invalid_automod_feature_param", _emote="WARN", prefix=plugin.bot.get_guild_prefix(ctx.guild), command="lines <lines>", off_command="lines off"))
+            e = Embed(
+                title="Invalid paramater",
+                description=plugin.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=plugin.bot.get_guild_prefix(ctx.guild), command="lines <lines>", off_command="lines off")
+            )
+            await ctx.send(embed=e)
         else:
             if lines < 6:
                 return await ctx.send(plugin.i18next.t(ctx.guild, "min_lines", _emote="NO"))
@@ -28,4 +33,4 @@ async def run(plugin, ctx, lines):
             })
             plugin.db.configs.update(ctx.guild.id, "automod", automod)
 
-            await ctx.send(plugin.i18next.t(ctx.guild, "lines_set", _emote="YES", lines=lines, what="they attempt to mention @everyone/here"))
+            await ctx.send(plugin.i18next.t(ctx.guild, "lines_set", _emote="YES", lines=lines))

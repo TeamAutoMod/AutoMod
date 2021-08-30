@@ -1,0 +1,39 @@
+.plugin {
+    width: 360px;
+    height: 130px;
+    background: #313339;
+    border: 0.5px solid #313339;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    transition: 0.2s;
+}
+
+.plugin:hover {
+    box-shadow: 0px 0px 0px 0.5px rgb(78, 78, 78);
+}
+
+.plugin_text h1 {
+    font-size: 18px;
+    color: #e7e8ed;
+    /* padding: 0px 0px 2.3px;  */
+    /* text-transform: uppercase; */
+}
+
+.plugin_text p {
+    font-size: 14px;
+    color: #cfcfd1;
+}
+
+.plugin_icon {
+    flex-basis: 40%;
+    padding-left: 12px;
+}
+
+.plugin_icon img {
+    width: 48px;
+    height: 48px;
+    max-width: 100%;
+}

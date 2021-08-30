@@ -3,15 +3,17 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #2295f3;
-    border-radius: 3px;
-    font-size: 20px;
-    width: 230px;
+    background: #12c8fb;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 232px;
     height: 40px;
-    line-height: 40px;
     text-align: center;
+    margin: 0px 4px;
+    padding: 8px;
+    transition: 0.12s;
 }
 
 .login:hover {
-    background: #43a6f7;
+    background: #38d1fc;
   }

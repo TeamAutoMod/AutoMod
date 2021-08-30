@@ -8,7 +8,7 @@ from ..utils.RegEx import getPattern
 
 
 class Embed(discord.Embed):
-    def __init__(self, color=0x2295f3, **kwargs):
+    def __init__(self, color=0x7289da, **kwargs):
         super().__init__(color=color, **kwargs)
     
 

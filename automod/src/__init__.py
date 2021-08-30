@@ -6,7 +6,9 @@ import asyncio
 import time
 import datetime
 import traceback
+import sys
 from toolbox import S
+from functools import wraps
 
 from .i18n.Translator import Translator
 from .services.Database import MongoDB, MongoSchemas
@@ -19,6 +21,8 @@ from .utils.ModifyConfig import ModifyConfig
 from .utils.Context import Context
 from .utils.BotUtils import BotUtils
 from .plugins import PluginLoader
+from .plugins.Types import Embed
+from .plugins.Basic.sub.HelpGenerator import getHelpForPlugin
 
 
 
@@ -41,6 +45,7 @@ def _prefix_callable(bot, message):
 class AutoMod(commands.AutoShardedBot):
     def __init__(self, config: dict):
         self.config = config = S(config)
+        # self.slash_commands = dict()
         intents = discord.Intents(
             guilds=True,
             members=True,
@@ -52,7 +57,7 @@ class AutoMod(commands.AutoShardedBot):
         )
         super().__init__(
            command_prefix=_prefix_callable, intents=intents, case_insensitive=True, 
-           max_messages=1000, chunk_guilds_at_startup=False, shard_count=config.shards,
+           max_messages=1000, chunk_guilds_at_startup=True, shard_count=config.shards,
            allowed_mentions=discord.AllowedMentions(everyone=False)
         )
         self.ready = False
@@ -62,6 +67,7 @@ class AutoMod(commands.AutoShardedBot):
         self.used_tags = 0
         self.total_shards = config.shards
         self.version = None
+        self.case_cache = dict()
 
         self.i18next = Translator(self, config.langs)
         self.db = MongoDB(host=config.mongo_url).database
@@ -74,6 +80,30 @@ class AutoMod(commands.AutoShardedBot):
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
 
+
+    # TODO slash commands...
+    # def slash_command(self, description, perms):
+    #     def decorator(func, description=description):
+    #         name = func.__name__
+
+    #         @wraps(func)
+    #         def wrapper(*args, **kwargs):
+    #             return func(*args, **kwargs)
+
+
+    #         command = SlashCommand(
+    #             name,
+    #             description,
+    #             perms,
+    #             wrapper
+    #         )
+
+    #         self.slash_commands.update({
+    #             name: command
+    #         })
+
+    #         return func
+    #     return decorator
 
     
     async def on_ready(self):
@@ -97,7 +127,7 @@ class AutoMod(commands.AutoShardedBot):
             except Exception:
                 pass
 
-            asyncio.create_task(self.chunk_guilds())
+            await self.chunk_guilds()
 
             log.info("Loading plugins...")
             await PluginLoader.loadPlugins(self)
@@ -109,45 +139,23 @@ class AutoMod(commands.AutoShardedBot):
 
     
     async def chunk_guilds(self):
-        while len(list(self.uncached_guilds.items())) > 0:
-            start = time.time()
-            try:
-                chunk_tasks = [asyncio.create_task(self.chunk_guild(gid, g)) for gid, g in self.uncached_guilds.items()]
-                await asyncio.wait_for(asyncio.gather(*chunk_tasks), 600)
-            except Exception as ex:
-                log.error("Error while chunking guilds - {}".format(ex))
-                for t in chunk_tasks:
-                    t.cancel()
-            end = time.time()
-            dur = (end - start)
-            log.info("Finished chunking guilds in {}m".format(round(dur / 60, 1)))
+        start = time.time()
 
-            for g in [x for x in self.guilds if isinstance(x, discord.Guild)]:
-                if not self.db.configs.exists(f"{g.id}"):
-                    self.db.configs.insert(self.schemas.GuildConfig(g))
-                    log.info("Filled up missing guild {}".format(g.id))
-            
-            self.cache.build()
+        for g in [x for x in self.guilds if isinstance(x, discord.Guild)]:
+            if not self.db.configs.exists(f"{g.id}"):
+                self.db.configs.insert(self.schemas.GuildConfig(g))
+                log.info("Filled up missing guild {}".format(g.id))
+        
+        self.cache.build()
 
-            end2 = time.time()
-            final_dur = (end2 - start)
-            log.info("Finished building internal cache in {}m".format(round(final_dur / 60, 1)))
+        end2 = time.time()
+        final_dur = (end2 - start)
+        log.info("Finished building internal cache in {}m".format(round(final_dur / 60, 1)))
 
-            self.ready = True
-            self.locked = False
-            if not self.config.dev:
-                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{self.config.default_prefix}help"), status=discord.Status.online)
-
-
-    async def chunk_guild(self, guild_id, guild):
-        if guild_id in self.uncached_guilds:
-            try:
-                await guild.chunk(cache=True)
-            except Exception:
-                ex = traceback.format_exc()
-                log.warn("Failed to chunk guild {} - {}".format(guild_id, ex))
-            finally:
-                    del self.uncached_guilds[guild_id]
+        self.ready = True
+        self.locked = False
+        # if not self.config.dev:
+        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"commands | {self.config.default_prefix}help"), status=discord.Status.online)
 
 
     async def on_message(self, message):
@@ -168,6 +176,52 @@ class AutoMod(commands.AutoShardedBot):
                     pass
             else:
                 await self.invoke(ctx)
+
+
+    async def on_interaction(self, i: discord.Interaction):
+        if i.type == discord.InteractionType.component:
+            _id = i.data.get("custom_id")
+            if _id.startswith("help:"):
+                selected = i.data.get("values")[0]
+                selected = selected if selected != "None" else None
+                embed, view = await getHelpForPlugin(self, selected, i)
+                await i.response.edit_message(
+                    embed=embed, 
+                    view=view
+                )
+
+    
+    async def on_error(self, event, *args, **kwargs):
+        error = sys.exc_info()
+        e = Embed(
+            color=0xff5c5c,
+            title="Event Error",
+            description="```py\n{}\n```".format("".join(
+                traceback.format_exception(
+                    etype=error[0], 
+                    value=error[1], 
+                    tb=error[2]
+                )
+            ))
+        )
+        e.add_field(
+            name="❯ Event",
+            value=f"{event}",
+            inline=True
+        )
+        if len(args) > 0:
+            guild = args[0].guild or args[0]
+        else:
+            guild = None
+        e.add_field(
+            name="❯ Location",
+            value="• Name: {} \n• ID: {}".format(
+                guild.name or "None",
+                guild.id or "None"
+            ),
+            inline=True
+        )
+        await self.utils.sendErrorLog(e)
 
     
     def get_uptime(self, display_raw=False):

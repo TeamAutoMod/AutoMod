@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
 from .events import (
-    OnCommandError
+    OnCommandError,
 )
 
 
@@ -20,8 +20,6 @@ class ErrorPlugin(PluginBlueprint):
         error
     ):
         await OnCommandError.run(self, ctx, error)
-
-
 
 
 

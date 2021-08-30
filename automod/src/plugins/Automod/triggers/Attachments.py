@@ -46,5 +46,5 @@ async def check(plugin, message):
                 moderator_id=plugin.bot.user.id,
                 user=message.author,
                 user_id=message.author.id,  
-                reason=f"Sending forbidden attachment type (Was not plain/rich text, Markdown, or common image/video format): {', '.join(forbidden)}"
+                reason=f"Forbidden attachment type"
             )
