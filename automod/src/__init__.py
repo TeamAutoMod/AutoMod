@@ -109,7 +109,7 @@ class AutoMod(commands.AutoShardedBot):
     async def on_ready(self):
         if not self.ready:
             if not self.config.dev:
-                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="loading..."), status=discord.Status.dnd)
+                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Starting..."), status=discord.Status.dnd)
             log.info("Starting up as {}#{} ({})".format(self.user.name, self.user.discriminator, self.user.id))
             self.fetch_guilds()
 
