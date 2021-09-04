@@ -34,6 +34,7 @@ class StarboardPlugin(PluginBlueprint):
 
 
     @commands.group()
+    @commands.has_permissions(ban_members=True)
     async def starboard(
         self,
         ctx
@@ -44,6 +45,7 @@ class StarboardPlugin(PluginBlueprint):
 
 
     @starboard.command()
+    @commands.has_permissions(ban_members=True)
     async def channel(
         self,
         ctx,
