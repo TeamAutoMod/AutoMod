@@ -299,7 +299,8 @@
     "server": "Info about **{guild_name}**",
 
     "missing_bot_perms": "{emote} I don't have the required permissions to do this.",
-    "missing_arg": "{emote} You are missing a required parameter (``{arg}``). Usage: ``{usage}``",
+    "missing_arg": "{emote} Missing required argument: {param} \nUsage: ``{usage}``",
+    "bad_argument": "{emote} Failed to parse the {param} argument: {error} \nUsage: ``{usage}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
     "forbidden": "{emote} {exc}",
     "missing_user_perms": "{emote} This command can only be used by moderators.",
