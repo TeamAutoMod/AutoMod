@@ -15,6 +15,7 @@ from .Warns.WarnsPlugin import WarnsPlugin
 from .Tags.TagsPlugin import TagsPlugin
 from .Filters.FiltersPlugin import FiltersPlugin
 from .Cache.CachePlugin import CachePlugin
+from .Starboard.StarboardPlugin import StarboardPlugin
 
 
 
@@ -35,6 +36,10 @@ plugins = {
 
     WarnsPlugin: "src.plugins.Warns.WarnsPlugin",
 
+    StarboardPlugin: "src.plugins.Starboard.StarboardPlugin",
+
+    TagsPlugin: "src.plugins.Tags.TagsPlugin",
+
     AdminPlugin: "src.plugins.Admin.AdminPlugin",
 
     AntispamPlugin: "src.plugins.Antispam.AntispamPlugin",
@@ -46,8 +51,6 @@ plugins = {
     PersistPlugin: "src.plugins.Persist.PersistPlugin",
 
     LogsPlugin: "src.plugins.Logs.LogsPlugin",
-
-    TagsPlugin: "src.plugins.Tags.TagsPlugin",
 
     CachePlugin: "src.plugins.Cache.CachePlugin"
 }

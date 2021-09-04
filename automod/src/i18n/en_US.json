@@ -252,6 +252,9 @@
     "case_delete_help": "Deletes a case (can't be reverted)",
     "reason_help": "Updates the reason of a case. Either by case ID or the last case without a reason",
 
+    "starboard_help": "Base command for starboard configurations",
+    "starboard_channel_help": "Sets a channel to show starred messages in",
+
     "about": "About {bot}",
     "invalid_command": "{emote} This isn't a valid command.",
     "command_list": "Command List",
@@ -483,5 +486,17 @@
     "filtersplugin_short_description": "Commands used for managing word filters",
     "filtersplugin_long_description": "Create and delete custom word filters using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "amount_too_big": "{emote} Amount to clean is too big."
+    "starboardplugin_short_description": "Commands used for managing the starboard",
+    "starboardplugin_long_description": "This command is used to enable or disable the starboard. It has a subcommand to set the showcase channel for starred messages. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "amount_too_big": "{emote} Amount to clean is too big.",
+
+    "starboard_disabled": "The starboard is currently disabled. Would you like to enable it?",
+    "starboard_enabled": "The starboard is currently enabled. Would you like to disable it?",
+
+    "disabled_starboard": "{emote} Disabled the starboard!",
+    "enabled_starboard": "{emote} Enabled the starboard!",
+
+    "starboard_is_disabled": "{emote} You can't use this command, because the starboard is disabled. Use the ``{prefix}starboard`` command to enable it.",
+    "set_starboard_channel": "{emote} Set the starboard channel to {channel}"
 }

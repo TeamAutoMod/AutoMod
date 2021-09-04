@@ -66,6 +66,7 @@ class MongoDatabase(Database):
         self.inf = MongoCollection(self, "infractions")
         self.persists = MongoCollection(self, "persists")
         self.follows = MongoCollection(self, "follows")
+        self.stars = MongoCollection(self, "stars")
 
 
 
@@ -161,6 +162,12 @@ class MongoSchemas:
             "cases": 0,
             "case_ids": {},
 
+            "starboard": {
+                "enabled": False,
+                "channel": "",
+                "ignored_channels": []
+            },
+
             "lang": "en_US",
             "guild_name": f"{guild.name}",
         }
@@ -200,5 +207,17 @@ class MongoSchemas:
             "moderator_av": f"{moderator.display_avatar}",
             "log_id": "",
             "jump_url": ""
+        }
+        return schema
+
+
+    def StarboardEntry(self, message):
+        schema = {
+            "id": f"{message.id}",
+            "guild": f"{message.guild.id}",
+            "channel": f"{message.channel.id}",
+            "author": f"{message.author.id}",
+            "log_message": "",
+            "stars": 1
         }
         return schema

@@ -35,7 +35,6 @@ class ActionValidator:
             await self.add_warns(message, target, warns, **kwargs)
 
 
-
     async def add_warns(self, message, target, warns, **kwargs):
         _id = f"{message.guild.id}-{target.id}"
         if not self.bot.db.warns.exists(_id):

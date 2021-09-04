@@ -232,7 +232,7 @@ class AutoMod(commands.AutoShardedBot):
             inline=True
         )
         if len(args) > 0:
-            guild = args[0].guild or args[0]
+            guild = args[0].guild or args[0] or None
         else:
             guild = None
         e.add_field(

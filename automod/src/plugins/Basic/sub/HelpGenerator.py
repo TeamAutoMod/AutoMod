@@ -17,7 +17,8 @@ async def getHelpForAllCommands(plugin, ctx):
         "CasesPlugin": f"❯ Case Commands",
         "ConfigPlugin": f"❯ Configuration Commands",
         "TagsPlugin": f"❯ Tag Commands",
-        "FiltersPlugin": f"❯ Filter Commands"
+        "FiltersPlugin": f"❯ Filter Commands",
+        "StarboardPlugin": f"❯ Starboard Commands"
     }
 
     valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
@@ -40,7 +41,8 @@ actual_plugin_names = {
     "CasesPlugin": f"🔎 Case Commands",
     "ConfigPlugin": f"⚙️ Configuration Commands",
     "TagsPlugin": f"📝 Tag Commands",
-    "FiltersPlugin": f"📦 Filter Commands"
+    "FiltersPlugin": f"📦 Filter Commands",
+    "StarboardPlugin": f"⭐️ Starboard Commands"
 }
 
 async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):

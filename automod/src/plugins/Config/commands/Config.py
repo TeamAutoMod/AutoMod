@@ -52,8 +52,8 @@ async def run(plugin, ctx):
         inline=True
     )
     e.add_field(
-        name="Timezone",
-        value="``UTC``",
+        name="Starboard",
+        value=f"``✅``" if cfg['starboard']['enabled'] is True else "``❌``",
         inline=True
     )
     

@@ -179,7 +179,8 @@ def set_select(v: View, guild, bot, cur_plugin):
         "CasesPlugin": f"🔎 Case Commands",
         "ConfigPlugin": f"⚙️ Configuration Commands",
         "TagsPlugin": f"📝 Tag Commands",
-        "FiltersPlugin": f"📦 Filter Commands"
+        "FiltersPlugin": f"📦 Filter Commands",
+        "StarboardPlugin": f"⭐️ Starboard Commands"
     }
     plugins = [bot.get_cog(x) for x in bot.cogs if x in bot.config.enabled_plugins_with_commands]
 
