@@ -1,0 +1,19 @@
+.login {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #12c8fb;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 232px;
+    height: 40px;
+    text-align: center;
+    margin: 0px 4px;
+    padding: 8px;
+    transition: 0.12s;
+}
+
+.login:hover {
+    background: #38d1fc;
+  }

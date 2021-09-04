@@ -1,0 +1,23 @@
+.guild_container {
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    max-width: 1200px;
+}
+
+.text h1 {
+    font-size: 22px;
+    color: #f6f6f7;
+    /* text-transform: uppercase; */
+}
+
+.guilds ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+}
+  
+.guilds ul li {
+    list-style: none;
+    flex: 0 0 33.333333%;
+}

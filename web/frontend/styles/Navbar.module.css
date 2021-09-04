@@ -1,0 +1,37 @@
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 15px;
+    padding-top: 5px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.navbar li {
+    float: left;
+}
+
+.image {
+    flex-basis: 40%;
+}
+  
+.navbar li a {
+    display: block;
+    color: #ffffff80;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.15s;
+}
+
+.navbar li a:hover {
+    color: #f8f8f8;
+}
+
+.navbar li img {
+    width: 32px;
+    height: 32px;
+    max-width: 100%;
+}
