@@ -48,24 +48,24 @@
     "voice_channel_leave": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) left voice channel ``{beforeChannel}``",
     "voice_channel_switch": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) moved from voice channel ``{afterChannel}`` to ``{beforeChannel}``",
 
-    "user_banned": "{emote} Successfully banned **{user.name}#{user.discriminator}** (#{case})",
-    "user_unbanned": "{emote} Successfully unbanned **{user.name}#{user.discriminator}** (#{case})",
-    "user_kicked": "{emote} Successfully kicked **{user.name}#{user.discriminator}** (#{case})",
-    "user_cleanbanned": "{emote} Successfully cleanbanned **{user.name}#{user.discriminator}** (#{case})",
-    "user_forcebanned": "{emote} Successfully forcebanned **{user.name}#{user.discriminator}** (#{case})",
-    "user_softbanned": "{emote} Successfully softbanned **{user.name}#{user.discriminator}** (#{case})",
-    "user_muted": "{emote} Successfully muted **{user.name}#{user.discriminator}** until {until} (#{case})",
-    "mute_extended": "{emote} Successfully extended **{user.name}#{user.discriminator}**'s mute until {until}",
-    "user_warned": "{emote} Successfully gave ``{warns}`` warns to **{user.name}#{user.discriminator}** (#{case})",
-    "user_unwarned": "{emote} Successfully took away ``{warns}`` warns from **{user.name}#{user.discriminator}** (#{case})",
-    "case_claimed": "{emote} Successfully claimed case **#{case}**!",
-    "case_deleted": "{emote} Successfully deleted case **#{case}**!",
-    "mute_lifted": "{emote} Successfully lifted **{user.name}#{user.discriminator}**'s mute",
+    "user_banned": "{emote} Banned **{user.name}#{user.discriminator}** (#{case})",
+    "user_unbanned": "{emote} Unbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_kicked": "{emote} Kicked **{user.name}#{user.discriminator}** (#{case})",
+    "user_cleanbanned": "{emote} Cleanbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_forcebanned": "{emote} Forcebanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_softbanned": "{emote} Softbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_muted": "{emote} Muted **{user.name}#{user.discriminator}** until {until} (#{case})",
+    "mute_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
+    "user_warned": "{emote} Warned **{user.name}#{user.discriminator}** (#{case})",
+    "user_unwarned": "{emote} Unwarned **{user.name}#{user.discriminator}** (#{case})",
+    "case_claimed": "{emote} Claimed case **#{case}**!",
+    "case_deleted": "{emote} Deleted case **#{case}**!",
+    "mute_lifted": "{emote} Lifted **{user.name}#{user.discriminator}**'s mute",
     "not_muted": "{emote} User isn't muted",
-    "messages_deleted": "{emote} Successfully deleted **{count}** message{plural}!",
-    "user_asciified": "{emote} Successfully asciified ``{old}`` to ``{new}``",
-    "users_cybernuked": "{emote} Successfully cybernuked **{banned}/{total}** users (#{case})",
-    "user_restricted": "{emote} Successfully {success} **{user.name}#{user.discriminator}** (#{case})",
+    "messages_deleted": "{emote} Deleted **{count}** message{plural}!",
+    "user_asciified": "{emote} Asciified ``{old}`` to ``{new}``",
+    "users_cybernuked": "{emote} Cybernuked **{banned}/{total}** users (#{case})",
+    "user_restricted": "{emote} {success} **{user.name}#{user.discriminator}** (#{case})",
 
     "already_blocked": "{emote} This is already a blocked guild",
     "blocked_guild": "{emote} Successfully blocked guild **{guild_id}**",
@@ -100,7 +100,7 @@
     "case_already_owned": "{emote} Seems like you are already responsible for this case.",
     "case_target": "{emote} You can't take responsibility for a case that you are the target of.",
 
-    "action_log_set": "{emote} Successfully set the action log channel to {channel}!",
+    "action_log_set": "{emote} Set the action log channel to {channel}!",
 
     "current_prefix": "The current prefix for this server is: **{prefix}**",
     "already_is_prefix": "{emote} This already is the active prefix.",
@@ -144,7 +144,7 @@
 
     "mutual_guilds": "Mutual Guilds",
 
-    "updated_punishment": "{emote} Successfully updated the punishment for **{_type}**!",
+    "updated_punishment": "{emote} Updated the punishment for **{_type}**!",
 
     "NaN": "Not a number",
     "number_too_small": "Number too small, must be at least {min}",
@@ -268,11 +268,11 @@
     "max_ban": "{emote} Max targets to ban at once are 50",
     "cant_ban_anyone": "{emote} I can't ban any of the specified targets.",
     "aborting": "Command execution canceled.",
-    "mban_success": "{emote} Successfully banned {users}/{total} users!",
+    "mban_success": "{emote} Banned {users}/{total} users!",
     "no_kick_then": "{emote} Alright, I'll kick nobody then!",
     "max_kick": "{emote} Max targets to kick at once are 50",
     "cant_kick_anyone": "{emote} I can't kick any of the specified targets.",
-    "mkick_success": "{emote} Successfully kicked {users}/{total} users!",
+    "mkick_success": "{emote} Kicked {users}/{total} users!",
 
     "ignores": "Ignored roles & channels for **{guild_name}**",
     "cases": "Recent cases in **{guild_name}**",
@@ -282,7 +282,7 @@
     "already_cleaned": "{emote} Looks like these messages were alrady cleaned.",
     "clean_error": "{emote} Error while trying to clean: {exc}",
     "zero_cleaned": "{emote} Zero messages were cleaned. Looks like nothing matched your passed arguments.",
-    "cleaned": "{emote} Successfully cleaned **{amount}** message{plural}!",
+    "cleaned": "{emote} Cleaned **{amount}** message{plural}!",
     "too_many_messages": "{emote} Too many messages given ({limit}/500)",
     "clean_success": "{emote} Deleted {deleted} message{plural}!",
     "cleaning_error": "{emote} There was an error while trying perform this action: ``{error}``",
@@ -426,7 +426,7 @@
 
     "leave": "**Profile:** {profile} \n**Joined:** <t:{joined}>", 
 
-    "tag_edited": "{emote} Successfully edited the **{tag}** tag!",
+    "tag_edited": "{emote} Edited the **{tag}** tag!",
     "tag_content_too_long": "{emote} The new tag content is too long. Max allowed chars are 1500.",
 
     "edit": "**Member:** ``{user}`` ({user_id}) \n**Channel:** {channel}",
@@ -437,7 +437,7 @@
     "already_restricted": "{emote} This user is already {success}",
     "restrict_failed": "{emote} Failed to restrict target ||{error}||",
 
-    "automod_feature_disabled": "{emote} Successfully disabled the ``{what}`` feature!",
+    "automod_feature_disabled": "{emote} Disabled the ``{what}`` feature!",
     "invalid_automod_feature_param": "You can use ``{prefix}automod {command}`` to configure this feature. \nYou can use ``{prefix}automod {off_command}`` to disable this feature.",
     
     "about_text": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",

@@ -51,7 +51,6 @@ async def run(plugin, ctx, users, warns, reason):
                 "unwarn",
                 user=user,
                 user_id=user.id,
-                warns=warns,
                 old_warns=current,
                 new_warns=new,
                 moderator=ctx.author,

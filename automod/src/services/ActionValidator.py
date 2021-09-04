@@ -130,7 +130,6 @@ class ActionValidator:
                 "reason": kwargs.get("reason"),
                 "old_warns": old_warns,
                 "new_warns": new_warns,
-                "warns": warns,
                 "context": f"\n**Context: ** [Here!]({last.jump_url})" if last is not None else "",
                 "case": case,
                 "dm": dm
