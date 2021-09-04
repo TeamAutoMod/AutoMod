@@ -25,11 +25,7 @@ async def run(plugin, before, after):
         )
         e.set_author(
             name=f"{after.author} ({after.author.id})",
-<<<<<<< HEAD
             icon_url=after.author.display_avatar
-=======
-            icon_url=after.author.avatar.url
->>>>>>> fadbb019af2ff9681468f33deab270b740801566
         )
         e.add_field(
             name="Before",

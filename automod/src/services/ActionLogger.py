@@ -230,20 +230,12 @@ class ActionLogger:
 
             e.set_author(
                 name=f"{kwargs.get('moderator')} ({kwargs.get('moderator_id')})", 
-<<<<<<< HEAD
                 icon_url=(kwargs.get("moderator")).display_avatar
-=======
-                icon_url=(kwargs.get("moderator")).avatar.url
->>>>>>> fadbb019af2ff9681468f33deab270b740801566
             )
 
             if "user" in kwargs:
                 e.set_thumbnail(
-<<<<<<< HEAD
                     url=(kwargs.get("user")).display_avatar
-=======
-                    url=(kwargs.get("user")).avatar.url
->>>>>>> fadbb019af2ff9681468f33deab270b740801566
                 )
 
             dm = kwargs.get("dm", None)
