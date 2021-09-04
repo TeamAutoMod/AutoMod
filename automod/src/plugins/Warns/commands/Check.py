@@ -18,7 +18,11 @@ async def run(plugin, ctx, user):
     e = Embed()
     e.set_author(
         name=f"{user} ({user.id})",
+<<<<<<< HEAD
         icon_url=user.display_avatar
+=======
+        icon_url=user.avatar.url
+>>>>>>> fadbb019af2ff9681468f33deab270b740801566
     )
     e.add_field(
         name="❯ Warns",
