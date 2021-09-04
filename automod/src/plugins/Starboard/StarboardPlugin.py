@@ -33,7 +33,7 @@ class StarboardPlugin(PluginBlueprint):
         await OnRawReactionRemove.run(self, payload)
 
 
-    @commands.group()
+    @commands.group(aliases=["sb"])
     @commands.has_permissions(ban_members=True)
     async def starboard(
         self,

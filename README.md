@@ -13,6 +13,7 @@ AutoMod is a Discord moderation and utility bot, made for both small and large c
 - Custom word filters
 - Custom tags for easy replying
 - Easy-to-use moderation & utility commands
+- Starboard
 - And much, much more
 
 ## Self-hosting/Development

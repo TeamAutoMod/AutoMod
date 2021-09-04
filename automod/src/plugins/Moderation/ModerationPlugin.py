@@ -69,7 +69,7 @@ class ModerationPlugin(PluginBlueprint):
         await Softban.run(self, ctx, users, reason)
 
 
-    @commands.command()
+    @commands.command(aliases=["hackban"])
     @commands.has_guild_permissions(ban_members=True)
     async def forceban(
         self, 
