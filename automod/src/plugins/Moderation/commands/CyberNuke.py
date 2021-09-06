@@ -61,7 +61,16 @@ async def run(plugin, ctx, join, age):
                     pass
                 else:
                     banned += 1
-                    dm_result = await plugin.bot.utils.dmUser(ctx.message, "cybernuke", t, _emote="HAMMER", guild_name=ctx.guild.name, reason=reason)
+                    dm_result = await plugin.bot.utils.dmUser(
+                        ctx.message, 
+                        "cybernuke", 
+                        t, 
+                        _emote="HAMMER", 
+                        color=0xff5c5c,
+                        moderator=ctx.message.author, 
+                        guild_name=ctx.guild.name, 
+                        reason=reason
+                    )
 
                     await plugin.action_logger.log(
                         ctx.guild,

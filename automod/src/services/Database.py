@@ -144,6 +144,7 @@ class MongoSchemas:
             "voice_logging": False,
             "persist": False,
             "dm_on_actions": False,
+            "show_mod_in_dm": False,
 
             "ignored_channels": [],
             "ignored_roles": [],

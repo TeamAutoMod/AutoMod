@@ -97,6 +97,8 @@ class ActionValidator:
                     "mute", 
                     target, 
                     _emote="MUTE", 
+                    color=0xffdc5c,
+                    moderator=kwargs.get("moderator"),
                     guild_name=message.guild.name, 
                     until=f"<t:{round(until.timestamp())}>", 
                     reason=f"Automatic punishment ({_to}): {kwargs.get('reason')}")
@@ -120,7 +122,17 @@ class ActionValidator:
             except Exception:
                 last = None
 
-            dm = await self.bot.utils.dmUser(message, "warn", target, _emote="WARN", warns=warns, guild_name=message.guild.name, reason=kwargs.get("reason"))
+            dm = await self.bot.utils.dmUser(
+                message, 
+                "warn", 
+                target, 
+                _emote="WARN", 
+                color=0xffdc5c,
+                moderator=kwargs.get("moderator"),
+                warns=warns, 
+                guild_name=message.guild.name, 
+                reason=kwargs.get("reason")
+            )
             new_kwargs = {
                 "user": target,
                 "user_id": target.id,
@@ -147,7 +159,17 @@ class ActionValidator:
         else:
             
             case = self.bot.utils.newCase(guild, "Ban", target, kwargs.get("moderator"), kwargs.get("reason"))
-            dm = await self.bot.utils.dmUser(message, "ban", target, _emote="HAMMER", guild_name=message.guild.name, reason=kwargs.get("moderator"))
+            dm = await self.bot.utils.dmUser(
+                message, 
+                "ban", 
+                target, 
+                _emote="HAMMER", 
+                color=0xff5c5c,
+                moderator=kwargs.get("moderator"),
+                guild_name=message.guild.name, 
+                reason=kwargs.get("reason")
+            )
+            
             new_kwargs = {
                 "user": target,
                 "user_id": target.id,
@@ -170,7 +192,17 @@ class ActionValidator:
             return
         else:
             case = self.bot.utils.newCase(guild, "Kick", target, kwargs.get("moderator"), kwargs.get("reason"))
-            dm = await self.bot.utils.dmUser(message, "kick", target, _emote="SHOE", guild_name=message.guild.name, reason=kwargs.get("reason"))
+            dm = await self.bot.utils.dmUser(
+                message, 
+                "kick", 
+                target, 
+                _emote="SHOE", 
+                color=0xf79554,
+                moderator=kwargs.get("moderator"),
+                guild_name=message.guild.name, 
+                reason=kwargs.get("reason")
+            )
+            
             new_kwargs = {
                 "user": target,
                 "user_id": target.id,

@@ -11,6 +11,7 @@ from .commands import (
     SetupAutomod, 
     SetupRestrict,
     DMOnActions, 
+    ShowModInDM,
     Persist, 
     ModLog, 
     MessageLog, 
@@ -65,6 +66,16 @@ class ConfigPlugin(PluginBlueprint):
     ):
         """setup_restrict_help"""
         await SetupRestrict.run(self, ctx)
+
+    
+    @commands.command()
+    async def prefix(
+        self,
+        ctx,
+        prefix: str
+    ):
+        """prefix_help"""
+        await Prefix.run(self, ctx, prefix) 
 
 
     @commands.command()
@@ -126,22 +137,21 @@ class ConfigPlugin(PluginBlueprint):
 
 
     @commands.command()
+    async def show_mod_in_dm(
+        self,
+        ctx
+    ):
+        """show_mod_in_dm_help"""
+        await ShowModInDM.run(self, ctx) 
+
+
+    @commands.command()
     async def persist(
         self,
         ctx
     ):
         """persist_help"""
         await Persist.run(self, ctx) 
-
-
-    @commands.command()
-    async def prefix(
-        self,
-        ctx,
-        prefix: str
-    ):
-        """prefix_help"""
-        await Prefix.run(self, ctx, prefix) 
 
 
 

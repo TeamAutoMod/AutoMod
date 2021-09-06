@@ -43,8 +43,18 @@ async def restrictUser(plugin, ctx, restriction, user, reason):
         return await ctx.send(plugin.i18next.t(ctx.guild, "restrict_failed", _emote="NO", error=ex))
     else:
         case = plugin.bot.utils.newCase(ctx.guild, d["action"], user, ctx.author, reason)
-
-        dm_result = await plugin.bot.utils.dmUser(ctx.message, "restrict", user, _emote="RESTRICT", guild_name=ctx.guild.name, success=d["success"], reason=reason)
+        dm_result = await plugin.bot.utils.dmUser(
+            ctx.message, 
+            "restrict", 
+            user, 
+            _emote="RESTRICT", 
+            color=0xffdc5c,
+            moderator=ctx.message.author,
+            guild_name=ctx.guild.name, 
+            success=d["success"],
+            reason=reason
+        )
+        
         await ctx.send(plugin.i18next.t(ctx.guild, "user_restricted", _emote="YES", user=user, success=d["success"], case=case))
 
         await plugin.action_logger.log(

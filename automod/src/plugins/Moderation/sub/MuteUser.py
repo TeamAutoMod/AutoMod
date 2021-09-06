@@ -99,6 +99,8 @@ async def muteUser(plugin, ctx, user, length, reason):
                         "mute", 
                         user, 
                         _emote="MUTE", 
+                        color=0xffdc5c,
+                        moderator=ctx.message.author,
                         guild_name=ctx.guild.name, 
                         until=f"<t:{round(until.timestamp())}>", 
                         reason=reason

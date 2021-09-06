@@ -2,10 +2,9 @@ import discord
 
 import asyncio
 import logging
-import importlib
-import traceback
 import datetime
 
+from ..plugins.Types import Embed
 from . import Shell
 
 
@@ -142,12 +141,25 @@ class BotUtils:
 
 
     async def dmUser(self, message, _type, user, **kwargs):
-        msg = self.bot.i18next.translate(message.guild, f"{_type}_dm", **kwargs)
+        e = Embed(
+            color=kwargs.get("color"),
+            description=self.bot.i18next.translate(message.guild, f"{_type}_dm", **kwargs)
+        )
+        e.add_field(
+            name="❯ Reason",
+            value=kwargs.get("reason", "No reason"),
+            inline=True
+        )
+        e.add_field(
+            name="❯ Moderator",
+            value=f"{kwargs.get('moderator')}" if self.bot.db.configs.get(message.guild.id, "show_mod_in_dm") == True else "Hidden",
+            inline=True
+        )
         res = ""
         state = self.bot.db.configs.get(message.guild.id, "dm_on_actions")
         if state is True:
             try:
-                await user.send(content=msg)
+                await user.send(embed=e)
                 res += "(user notified with a direct message)"
             except Exception:
                 res += "(failed to message user)"

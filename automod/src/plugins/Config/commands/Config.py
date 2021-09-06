@@ -51,9 +51,14 @@ async def run(plugin, ctx):
         value=f"``✅``" if cfg['dm_on_actions'] is True else "``❌``",
         inline=True
     )
+    # e.add_field(
+    #     name="Starboard",
+    #     value=f"``✅``" if cfg['starboard']['enabled'] is True else "``❌``",
+    #     inline=True
+    # )
     e.add_field(
-        name="Starboard",
-        value=f"``✅``" if cfg['starboard']['enabled'] is True else "``❌``",
+        name="Show mod in DM",
+        value=f"``✅``" if cfg['show_mod_in_dm'] is True else "``❌``",
         inline=True
     )
     

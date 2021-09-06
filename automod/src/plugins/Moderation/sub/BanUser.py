@@ -11,8 +11,19 @@ async def banUser(plugin, ctx, user, reason, log_type, ban_type, days=0):
         return await ctx.send(plugin.i18next.t(ctx.guild, "ban_failed", _emote="NO", error=ex))
     else:
         plugin.bot.ignore_for_event.add("bans_kicks", user.id)
+
         case = plugin.bot.utils.newCase(ctx.guild, log_type.capitalize(), user, ctx.author, reason)
-        dm_result = await plugin.bot.utils.dmUser(ctx.message, log_type, user, _emote="HAMMER", guild_name=ctx.guild.name, reason=reason)
+        dm_result = await plugin.bot.utils.dmUser(
+            ctx.message, 
+            log_type, 
+            user, 
+            _emote="HAMMER", 
+            color=0xff5c5c,
+            moderator=ctx.message.author, 
+            guild_name=ctx.guild.name, 
+            reason=reason
+        )
+
         await ctx.send(plugin.i18next.t(ctx.guild, f"user_{ban_type}", _emote="YES", user=user, reason=reason, case=case))
 
         await plugin.action_logger.log(
