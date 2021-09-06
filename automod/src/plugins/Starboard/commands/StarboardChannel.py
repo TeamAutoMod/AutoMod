@@ -7,4 +7,5 @@ async def run(plugin, ctx, channel):
         return await ctx.send(plugin.i18next.t(ctx.guild, "starboard_is_disabled", _emote="NO", prefix=plugin.bot.get_guild_prefix(ctx.guild)))
     
     config["channel"] = f"{channel.id}"
+    plugin.db.configs.update(f"{ctx.guild.id}", "starboard", config)
     await ctx.send(plugin.i18next.t(ctx.guild, "set_starboard_channel", _emote="YES", channel=channel.mention))
