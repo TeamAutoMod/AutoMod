@@ -467,16 +467,16 @@
     "help_title": "Help Menu",
     "help_description": "Select one of the categories below to view its commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "automodplugin_short_description": "Commands to configure the automoderator",
+    "automodplugin_short_description": "Commands for the automod",
     "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "basicplugin_short_description": "Basic bot commands for information",
+    "basicplugin_short_description": "Commands for basic info",
     "basicplugin_long_description": "These are some basic commands mainly for information. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "moderationplugin_short_description": "All of the moderation commands",
+    "moderationplugin_short_description": "Commands for moderation",
     "moderationplugin_long_description": "These commands will help you and your moderators to keep the community safe. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "warnsplugin_short_description": "Commands used for warning",
+    "warnsplugin_short_description": "Commands for warnings",
     "warnsplugin_long_description": "You can use these commands to handle all things related to warning users. \nTo get more info about a command, use ``{prefix}help <command>``",
 
     "casesplugin_short_description": "Commands for interacting with cases",
@@ -485,13 +485,13 @@
     "configplugin_short_description": "Commands for bot configurations",
     "configplugin_long_description": "You can configure the bots general configurations using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "tagsplugin_short_description": "Commands used for managing tags",
+    "tagsplugin_short_description": "Commands for managing tags",
     "tagsplugin_long_description": "You can create, delete & edit your custom tags with these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "filtersplugin_short_description": "Commands used for managing word filters",
+    "filtersplugin_short_description": "Commands for managing word filters",
     "filtersplugin_long_description": "Create and delete custom word filters using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "starboardplugin_short_description": "Commands used for managing the starboard",
+    "starboardplugin_short_description": "Commands for managing the starboard",
     "starboardplugin_long_description": "This command is used to enable or disable the starboard. It has a subcommand to set the showcase channel for starred messages. \nTo get more info about a command, use ``{prefix}help <command>``",
 
     "amount_too_big": "{emote} Amount to clean is too big.",

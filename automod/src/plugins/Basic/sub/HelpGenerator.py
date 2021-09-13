@@ -33,16 +33,17 @@ async def getHelpForAllCommands(plugin, ctx):
         )
     return e
 
+
 actual_plugin_names = {
-    "AutomodPlugin": f"Automod Commands",
-    "BasicPlugin": f"Basic Commands",
-    "ModerationPlugin": f"Moderation Commands",
-    "WarnsPlugin": f"Warn Commands",
-    "CasesPlugin": f"Case Commands",
-    "ConfigPlugin": f"Configuration Commands",
-    "TagsPlugin": f"Tag Commands",
-    "FiltersPlugin": f"Filter Commands",
-    "StarboardPlugin": f"Starboard Commands"
+    "AutomodPlugin": "Automod",
+    "BasicPlugin": "Basic",
+    "ModerationPlugin": "Moderation",
+    "WarnsPlugin": "Warning",
+    "CasesPlugin": "Cases",
+    "ConfigPlugin": "Configuration",
+    "TagsPlugin": "Tags",
+    "FiltersPlugin": "Filters",
+    "StarboardPlugin": "Starboard"
 }
 
 async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
@@ -63,7 +64,7 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
     plugin = {v: k for k, v in actual_plugin_names.items()}.get(_plugin)
     actual_plugin = bot.get_cog(plugin)
     e = Embed(
-        title=" ".join(actual_plugin_names[plugin].split(" ")[1:]).replace("Commands", "Plugin"),
+        title=f"{actual_plugin_names[plugin]} Plugin",
         description=bot.i18next.t(guild, f"{plugin.lower()}_long_description", prefix=prefix)
     )
     e.add_field(
@@ -73,10 +74,6 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
 
     view = HelpView(guild, bot, actual_plugin.qualified_name)
     return e, view
-
-
-
-
 
 
 async def generateHelpForCommand(plugin, ctx, command):
@@ -99,7 +96,6 @@ async def generateHelpForCommand(plugin, ctx, command):
             e.add_field(name="❯ Subcommands", value=" | ".join([f"``{x}``" for x in actual_subcommands.keys()]), inline=True)
 
     return e
-
 
 
 async def getHelpForCommand(plugin, ctx, query):
