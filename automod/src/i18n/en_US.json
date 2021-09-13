@@ -1,0 +1,507 @@
+{
+    "log_ban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Ban \n**Reason:** {reason}",
+    "log_kick": "**Member:** ``{user}`` ({user_id}) \n**Action:** Kick \n**Reason:** {reason}",
+    "log_forceban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Forceban \n**Reason:** {reason}",
+    "log_softban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Softban \n**Reason:** {reason}",
+    "log_cleanban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Cleanban \n**Reason:** {reason}",
+    "log_mass_ban": "**Member:** {users} ({user_id}) \n**Action:** Massban \n**Reason:** {reason}",
+    "log_mass_kick": "**Member:** {users} \n**Action:** Masskick \n**Reason:** {reason}",
+    "log_unban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unban \n**Reason:** {reason}",
+    "log_cybernuke": "**Member:** ``{user}`` ({user_id}) \n**Action:** Ban \n**Reason:** {reason}",
+    "log_restrict": "**Member:** ``{user}`` ({user_id}) \n**Action:** {action} \n**Reason:** {reason}",
+    
+    "log_mute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute \n**Expiration:** {expiration} \n**Reason:** {reason}",
+    "log_mute_extended": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute extended \n**Expiration:** {expiration}\n**Reason:** {reason}",
+    "log_unmute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unmute \n**Reason:** Mute expired",
+    
+    "log_warn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Warn ({old_warns} → {new_warns}) {context}\n**Reason:** {reason}",
+    "log_warns_added": "**Member:** ``{user}`` ({user_id}) \n**Action:** Warn ({old_warns} → {new_warns}) {context}\n**Reason:** {reason}",
+    "log_unwarn": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unwarn ({old_warns} → {new_warns}) \n**Reason:** {reason}",
+
+    "log_censor": "**Member:** ``{user}`` ({user_id}) \n**Action:** Message censorship \n**Channel:** {channel} \n**Reason:** NSFW language (Using slurs) \n**Words:** {words}",
+    "log_invite": "**Member:** ``{user}`` ({user_id}) \n**Action:** Invite censorship \n**Channel:** {channel} \n**Reason:** Advertising (Invite) \n**Link:** {link}",
+    "log_zalgo": "**Member:** ``{user}`` ({user_id}) \n**Action:** Zalgo censorship \n**Channel:** {channel} \n**Reason:** Illegible message formatting (Zalgo chars) \n**Position:** {position}",
+    "log_file": "**Member:** ``{user}`` ({user_id}) \n**Action:** File censorship \n**Channel:** {channel} \n**Reason:** Sending forbidden attachment type (Was not plain/rich text, Markdown, or common image/video format) \n**Files:** {unallowed}",
+    "log_mention": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mention censorship \n**Channel:** {channel} \n**Reason:** Spamming mentions \n**Count:** {all_mentions}",
+    "log_caps": "**Member:** ``{user}`` ({user_id}) \n**Action:** CAPS censorship \n**Channel:** {channel} \n**Reason:** Excessive CAPS usage \n**Ratio:** {up_percentage}% of {content}",
+    "log_spam": "**Member:** ``{user}`` ({user_id}) \n**Action:** Anti-spam \n**Channel:** {channel} \n**Reason:** Spamming messages",
+
+    "log_warn_clearing": "``[{on_time} UTC]`` {emote} Warnings of **{user}** (``{user_id}``) were cleared by **{moderator}** (``{moderator_id}``). Reason: \n```\n{reason} \n```",
+    "log_inf_claim": "**Member:** ``{user}`` ({user_id}) \n**Action:** Case claim \n**Case:** #{case} \n**Reason:** {reason}",
+    "log_manual_unban": "**Member:** ``{user}`` ({user_id}) \n**Action:** Manual unban",
+    "log_reapplied_mute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mute \n**Reason:** Reapplied active mute on rejoin",
+    "log_manual_unmute": "**Member:** ``{user}`` ({user_id}) \n**Action:** Unmute",
+
+
+    "log_message_deletion": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been manually deleted:",
+    "log_message_edit": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been edited:",
+
+
+    "log_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) has joined, (created {age} days ago)",
+    "log_leave": "``[{on_time} UTC]`` {emote} **{user}** (`{user_id}`) has left the server (joined {joined} days ago)",
+    "log_join_with_prior_cases": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) with prior cases has joined. Recent cases: \n```\n{cases}\n```",
+
+    "log_raid_on": "**Action:** Enabled raid mode \n **Reason:** {reason}",
+    "log_raid_off": "**Action:** Disabled raid mode \n **Reason:** {reason}",
+
+    "voice_channel_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) joined voice channel ``{afterChannel}``",
+    "voice_channel_leave": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) left voice channel ``{beforeChannel}``",
+    "voice_channel_switch": "``[{on_time} UTC]`` {emote} **{user}** (``{user.id}``) moved from voice channel ``{afterChannel}`` to ``{beforeChannel}``",
+
+    "user_banned": "{emote} Banned **{user.name}#{user.discriminator}** (#{case})",
+    "user_unbanned": "{emote} Unbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_kicked": "{emote} Kicked **{user.name}#{user.discriminator}** (#{case})",
+    "user_cleanbanned": "{emote} Cleanbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_forcebanned": "{emote} Forcebanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_softbanned": "{emote} Softbanned **{user.name}#{user.discriminator}** (#{case})",
+    "user_muted": "{emote} Muted **{user.name}#{user.discriminator}** until {until} (#{case})",
+    "mute_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
+    "user_warned": "{emote} Warned **{user.name}#{user.discriminator}** (#{case})",
+    "user_unwarned": "{emote} Unwarned **{user.name}#{user.discriminator}** (#{case})",
+    "case_claimed": "{emote} Claimed case **#{case}**!",
+    "case_deleted": "{emote} Deleted case **#{case}**!",
+    "mute_lifted": "{emote} Lifted **{user.name}#{user.discriminator}**'s mute",
+    "not_muted": "{emote} User isn't muted",
+    "messages_deleted": "{emote} Deleted **{count}** message{plural}!",
+    "user_asciified": "{emote} Asciified ``{old}`` to ``{new}``",
+    "users_cybernuked": "{emote} Cybernuked **{banned}/{total}** users (#{case})",
+    "user_restricted": "{emote} {success} **{user.name}#{user.discriminator}** (#{case})",
+
+    "already_blocked": "{emote} This is already a blocked guild",
+    "blocked_guild": "{emote} Successfully blocked guild **{guild_id}**",
+    "not_blocked": "{emote} This isn't a blocked guild",
+    "unblocked_guild": "{emote} Successfully unblocked guild **{guild_id}**",
+
+    "target_not_banned": "{emote} User isn't banned.",
+
+    "max_warns_prompt": "{emote} This user already has **{warns}** warnings! Warning them would enforce the automatic punishment setup for max warnings. Do you want to proceed?",
+    "ban_not_allowed": "{emote} Cannot ban: target permissions are qual or higher than yours/mine",
+    "target_not_on_server": "{emote} User not found in the server",
+    "target_already_banned": "{emote} User is already banned.",
+    "ban_failed": "{emote} Failed to ban target ||{error}||",
+    "kick_failed": "{emote} Failed to kick target ||{error}||",
+    "unban_failed": "{emote} Failed to unban target ||{error}||",
+    "mute_failed": "{emote} Failed to mute target ||{error}||",
+    "asciify_failed": "{emote} Failed to asciify name ||{error}||",
+
+    "translation_failed": "{emote} Failed to translate text ||{error}||",
+    "no_text": "{emote} Message to translate is missing.",
+
+    "already_muted": "{emote} **{user}** is already muted. Do you want to extend their mute?",
+    "threshold_too_low": "{emote} The treshold must be at least 5/5.",
+
+    "kick_not_allowed": "{emote} Cannot kick: target permissions are qual or higher than yours/mine",
+    "mute_not_allowed": "{emote} Cannot mute: target permissions are qual or higher than yours/mine",
+    "warn_not_allowed": "{emote} Cannot warn: target permissions are qual or higher than yours/mine",
+    "unwarn_not_allowed": "{emote} Cannot unwarn: target permissions are qual or higher than yours/mine",
+    "warnclearing_not_allowed": "{emote} Cannot clear warns: target permissions are qual or higher than yours/mine",
+    "restrict_not_allowed": "{emote} Cannot restrict: target permissions are qual or higher than yours/mine",
+
+    "case_already_owned": "{emote} Seems like you are already responsible for this case.",
+    "case_target": "{emote} You can't take responsibility for a case that you are the target of.",
+
+    "action_log_set": "{emote} Set the action log channel to {channel}!",
+
+    "current_prefix": "The current prefix for this server is: **{prefix}**",
+    "already_is_prefix": "{emote} This already is the active prefix.",
+    "prefix_too_long": "{emote} This prefix is too long (max chars are 10).",
+    "prefix_updated": "{emote} Changed the server prefix to: **{prefix}**",
+
+    "default_role_forbidden": "{emote} You can't use the default role as the mute role.",
+    "role_too_high": "{emote} I can't assign roles to users that are above my highest role.",
+
+    "no_mute_role": "{emote} This server doesn't have a mute role setup yet. Do so by running ``{prefix}setup muted``",
+    
+    "already_whitelisted": "{emote} This is already a whitelisted server.",
+    "not_whitelisted": "{emote} This isn't a whitelisted server.",
+    "added_invite": "{emote} Added **{server}** as an allowed server! Invites for it won't be deleted.",
+    "removed_invite": "{emote} Removed **{server}** as an allowed server. Invites for it will be deleted.",
+
+    "already_following": "{emote} You are already following this user.",
+    "followed": "{emote} Done! Everytime **{user}** joins a voice channel, I will notify you.",
+    "not_following": "{emote} You are not following this user.",
+    "unfollowed": "{emote} Alert for **{user}** deleted!",
+    "no_follows": "{emote} You don't have any active alerts.",
+    "cant_follow_yourself": "{emote} You can't set an alert for yourself.",
+    "not_in_voice": "{emote} This user currently isn't connected to a voice channel.",
+    "error_invite": "{emote} Error while trying to create an invite for the channel ||{exc}||",
+    "send_where": "``{user}`` is in channel ``{channel}``: {invite}",
+
+    "invalid_amount": "{emote} The amount must be between 1 and 300.",
+
+    "automod_disabled": "{emote} The **Automod** module is disabled here. You need to enable it first before you can use this feature.",
+
+    "help_page": "Help Page",
+    "command_help": "Command Help",
+
+    "plugin_not_found": "{emote} Plugin not found",
+    "plugin_loaded": "{emote} Loaded the **{plugin}** plugin",
+    "plugin_load_failed": "{emote} Failed to load plugin: {exc}",
+    "plugin_unload_failed": "{emote} Failed to unload plugin: {exc}",
+    "plugin_unloaded": "{emote} Unloaded the **{plugin}** plugin",
+    "plugin_reload_failed": "{emote} Failed to reload plugin: {exc}",
+    "plugin_reloaded": "{emote} Reloaded the **{plugin}** plugin",
+
+    "mutual_guilds": "Mutual Guilds",
+
+    "updated_punishment": "{emote} Updated the punishment for **{_type}**!",
+
+    "NaN": "Not a number",
+    "number_too_small": "Number too small, must be at least {min}",
+    "number_too_big": "Number too big, must be at most {max}",
+    "user_not_found": "User not found",
+    "unknown_message": "I couldn't find that message. It has either been deleted or it's in a channel that I can't access.",
+    "unknown_channel": "I couldn't find that channel",
+
+    "about_help": "Shows some information about the bot",
+    "ping_help": "Shows the client latency and the REST API ping",
+    "help_help": "Shows a full list of commands or help for a specific command",
+    "server_help": "Shows some basic info about the server",
+    "userinfo_help": "Shows some basic info about a specific user",
+    "asciify_help": "Removes all non-ascii chars from a users name/nickname",
+    "translate_help": "Translates a text to english. Also works by replying to a message",
+    "dashboard_help": "Get a direct link to your servers dashboard", 
+
+    "config_help": "Shows the current server config",
+    "setup_help": "Shows commands for automatically setting up a feature",
+    "setup_muted_help": "Automatically sets up a mute role or updates the configured one",
+    "setup_automod_help": "Automatically sets up the deafult automod settings. Already set rules will be overwritten.",
+    "setup_restrict_help": "Automatically sets up the roles for the restrict command or updates the configured ones",
+    "modlog_help": "Sets a log channel for moderation actions (bans, warns, etc.)",
+    "voicelog_help": "Sets a log channel for voice events (joins, leaves etc.)",
+    "serverlog_help": "Sets a log channel for server events (joins, leaves)",
+    "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
+    "show_mod_in_dm_help": "Enables/Disables the option to show the responsible moderator in the notification DM (disabled by default)",
+    "prefix_help": "Sets the servers prefix",
+
+    "invite_help": "Sets the amount of warns a user should receive when posting an invite. Use **off** as the argument to disable this",
+    "everyone_help": "Sets the amount of warns a user should receive when trying to ping @everyone/here. Use **off** as the argument to disable this",
+    "caps_help": "Sets the amount of warns a user should receive when posting a message containing more than 75% caps. Use **off** as the argument to disable this",
+    "files_help": "Sets the amount of warns a user should receive when sending an uncommon file-type. Use **off** as the argument to disable this",
+    "zalgo_help": "Sets the amount of warns a user should receive when posting Zalgo characters. Use **off** as the argument to disable this",
+    "mentions_help": "Sets the amount of maximum mentions allowed per message. Use **off** as the argument to disable this",
+    "lines_help": "Sets the amount of maximum newlines allowed per message. Use **off** as the argument to disable this",
+    "raid_help": "Sets the threshold for when antiraid is triggered (10/10 = 10 users per 10 seconds). Use **off** as the argument to disable this",
+    "spam_help": "Sets the amount of warns a user should receive when sending too many messages. Use **off** as the argument to disable this",
+    "ignore_help": "Ignores a channel or role from the automoderator",
+    "unignore_help": "Unignores a channel or role from the automoderator",
+
+
+    "config_punsishment_help": "Base command for configuring punishments. View the subcommands for more info",
+    "config_punsishment_invite_censor_help": "Updates the punishment for advertisers",
+    "config_punsishment_word_censor_help": "Updates the punishment for word censorship",
+    "config_punsishment_file_censor_help": "Updates the punishment for file/attachment censorship",
+    "config_punsishment_zalgo_censor_help": "Updates the punishment for zalgo censorship",
+    "config_punsishment_caps_censor_help": "Updates the punishment for caps censorship",
+    "config_punsishment_spam_detection_help": "Updates the punishment for spam detection",
+    "config_punsishment_mention_spam_help": "Updates the punishment for mention spammers",
+    "config_punsishment_max_warns_help": "Updates the punishment for when a user gets the max amount of configured warns",
+    
+    "allowed_invites_help": "Shows whitelisted invites. Subcommands are add & remove",
+    "allowed_invites_add_help": "Whitelists invites for a server. Use the server ID",
+    "allowed_invites_remove_help": "Removes a invites for a server from the whitelist. Use the server ID",
+
+    "punishment_help": "Sets a punishment for a specific amount of warns",
+    "warn_help": "Applies a certain amount of warns to the specified users",
+    "unwarn_help": "Removes a certain amount of warns to the specified users",
+    "check_help": "Checks the current state of the user (warns, etc.)",
+
+    "raidmode_help": "Enables/disables the raid mode. If enabled, new users will be kicked",
+
+    "ban_help": "Bans the specified users from the server",
+    "kick_help": "Kicks the specified users from the server",
+    "cleanban_help": "Clean bans a user (Ban, delete messages & unban)",
+    "softban_help": "Softbans the specified users from the server (ban & unban)",
+    "forceban_help": "Force bans the specified users (bans them even if they are not in the server anymore)",
+    "unban_help": "Unbans a user from the server",
+    "mute_help": "Mutes a user (mute role needs to be configured)",
+    "unmute_help": "Manually unmutes a user",
+    "cybernuke_help": "Bans all users that have joined within the given join time and have a younger account age than the given one (both in minutes by default)",
+    "restrict_help": "Restricts a user. Valid restrictions are embed, emoji and tag",
+    
+    "message_logging_help": "Module for message edit/deletion logs",
+    "member_logging_help": "Modules for join/leave logs",
+    "automod_help": "Base command for configuring the automod. You can use **off** as the argument in all subcommands to disable the respective feature",
+    "persist_help": "Enables/Disables persist mode (re-applies roles and nicknames for users when they rejoin)",
+
+    "ignored_users_add_help": "Excludes someone from the message logs",
+    "ignored_users_remove_help": "Includes an excluded user from the message logs",
+
+    "filter_help": "Base command for interacting with filters. View the subcommands for more info",
+    "filter_add_help": "Creates a new filer with the given name, warns and words. Words are seperated by commas (word1, word 2, word 3)",
+    "filter_remove_help": "Removes the filter with the given name",
+    "filter_show_help": "Shows a list of all active filters",
+
+    "clean_help": "Base command for cleaning messages",
+    "purge_help": "Purges up to 300 messages from the channel",
+    "clean_bots_help": "Cleans all bot messages from a channel",
+    "clean_user_help": "Cleans all messages sent by the specified users",
+    "clean_last_help": "Cleans all messages that have been sent within the giving time",
+    "clean_until_help": "Cleans all messages up to the specified one",
+    "clean_between_help": "Cleans all messages between the two given ones",
+
+    "tags_help": "Base command for interacting with tags. View the subcommands for more info",
+    "tags_add_help": "Adds a tag with the specified name and response",
+    "tags_remove_help": "Removes the tag with the specified name",
+    "tags_info_help": "Shows some information about a tag",
+    "tags_edit_help": "Edits the content of the given tag",
+
+    "cases_help": "Searches for cases. Either by a user or a guild if no argument is passed",
+    "case_help": "Base command for interacting with cases. View the subcommands for more info",
+    "case_info_help": "Shows some information about a certain case",
+    "case_claim_help": "Claims a case (sets you as the responsible moderator)",
+    "case_delete_help": "Deletes a case (can't be reverted)",
+    "reason_help": "Updates the reason of a case. Either by case ID or the last case without a reason",
+
+    "starboard_help": "Base command for starboard configurations",
+    "starboard_channel_help": "Sets a channel to show starred messages in",
+
+    "about": "About {bot}",
+    "invalid_command": "{emote} This isn't a valid command.",
+    "command_list": "Command List",
+    "custom_commands": "**Custom Commands for {guild_name}**",
+    "log_mod_actions": "{emote} I will now log any mod actions to {channel}!",
+    "no_ignored_users": "There aren't any ignored users configured, all users will be logged",
+    "ignored_users": "Ignored Users",
+
+    "no_whiteslisted": "{emote} This server doesn't have any whitelisted invites yet. Whitelist a server by using ``{prefix}allowed_invites add <serverID>``",
+    "allowed_invites": "Allowed invites for **{guild_name}**",
+
+    "no_reason": "No reason",
+    "no_ban_then": "{emote} Alright, I'll ban nobody then!",
+    "max_ban": "{emote} Max targets to ban at once are 50",
+    "cant_ban_anyone": "{emote} I can't ban any of the specified targets.",
+    "aborting": "Command execution canceled.",
+    "mban_success": "{emote} Banned {users}/{total} users!",
+    "no_kick_then": "{emote} Alright, I'll kick nobody then!",
+    "max_kick": "{emote} Max targets to kick at once are 50",
+    "cant_kick_anyone": "{emote} I can't kick any of the specified targets.",
+    "mkick_success": "{emote} Kicked {users}/{total} users!",
+
+    "ignores": "Ignored roles & channels for **{guild_name}**",
+    "cases": "Recent cases in **{guild_name}**",
+    "invalid_raid_opt": "{emote} This isn't a valid parameter. Valid ones are ``on`` and ``off``",
+
+    "already_cleaning": "{emote} There's already a clean going on in this channel. Wait until it's done before starting another one.",
+    "already_cleaned": "{emote} Looks like these messages were alrady cleaned.",
+    "clean_error": "{emote} Error while trying to clean: {exc}",
+    "zero_cleaned": "{emote} Zero messages were cleaned. Looks like nothing matched your passed arguments.",
+    "cleaned": "{emote} Cleaned **{amount}** message{plural}!",
+    "too_many_messages": "{emote} Too many messages given ({limit}/500)",
+    "clean_success": "{emote} Deleted {deleted} message{plural}!",
+    "cleaning_error": "{emote} There was an error while trying perform this action: ``{error}``",
+    
+    "prompt_text": "{message}\n\nReact with {yes} to confirm or {no} to deny.",
+
+    "invalid_length_unit": "Invalid length unit",
+    "max_length": "Max length is {max_length}",
+    "advanced_invalid_length_unit": "Invalid length unit, Valid units: week/s, day/s, hour/s, minute/s, second/s, w, d, h, m, s",
+
+    "server": "Info about **{guild_name}**",
+
+    "missing_bot_perms": "{emote} I don't have the required permissions to do this.",
+    "missing_arg": "{emote} Missing required argument: {param} \nUsage: ``{usage}``",
+    "bad_argument": "{emote} Failed to parse the {param} argument: {error} \nUsage: ``{usage}``",
+    "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
+    "forbidden": "{emote} {exc}",
+    "missing_user_perms": "{emote} This command can only be used by moderators.",
+    "cant_send_message": "Looks like you tried to use a command in a channel I'm not allowed to send messages in. Make sure I have the ``send messages`` permission in the channel.",
+
+    "dm_on_actions_false": "{emote} I will no longer dm users about actions taken on them.",
+    "dm_on_actions_true": "{emote} I will now dm users about actions taken on them.",
+
+    "show_mod_in_dm_false": "{emote} The responsible moderator in notification DMs will now be shown as 'Hidden'.",
+    "show_mod_in_dm_true": "{emote} The responsible moderator in notification DMs will now be normally displayed.",
+
+    "ban_dm": "You have been banned in **{guild_name}**",
+    "forceban_dm": "You have been forcebanned in **{guild_name}**",
+    "softban": "You have been softbanned in **{guild_name}**",
+    "kick_dm": "You have been kicked in **{guild_name}**",
+    "warn_dm": "You have been warned in **{guild_name}**",
+    "mute_dm": "You have been muted until {until} in **{guild_name}**",
+    "unwarn_dm": "{warns} of your warns in **{guild_name}** have been removed",
+    "cybernuke_dm": "You have been banned in **{guild_name}**",
+    "restrict_dm": "You have been {success} in **{guild_name}**",
+
+    "no_cases_found": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria.",
+    "searching": "{emote} Looking for recent cases, this may take a bit...",
+    "case_not_found": "{emote} I couldn't find a case with that ID.",
+
+    "no_targets": "{emote} I couldn't find any members matching your given criterias.",
+    "too_many_targets": "{emote} I found too many targets. I can only ban up 100 people during one cybernuke.",
+    "cybernuke_running": "{emote} There is already a cybernuke goind on, please wait until it's finished.", 
+
+    "no_tags": "{emote} No tags found.",
+    "trigger_too_long": "{emote} Trigger is too long. Max chars are 20.",
+    "reply_too_long": "{emote} Reply is too long. Max chars are 700.",
+    "available_tags": "Available tags for **{guild_name}**",
+    "tag_already_exists": "{emote} A tag with that name already exists.",
+    "tag_created": "{emote} Leave it to me! Tag has been created, you can use it with ``{prefix}{tag}``",
+    "tag_doesnt_exist": "{emote} A tag with that name doesn't exist.",
+    "tag_deleted": "{emote} Tag deleted!",
+
+    "no_member": "{emote} You need to specify at least 1 user.",
+
+    "start_mute": "{emote} Starting to setup the mute role...",
+    "role_fail": "{emote} Failed to create the mute role: {exc}",
+    "category_fail": "{emote} Failed to overwrites permissions for category {category}: {exc}",
+    "text_fail": "{emote} Failed to overwrites permissions for text channel {channel}: {exc}",
+    "voice_fail": "{emote} Failed to overwrites permissions for voice channel {channel}: {exc}",
+    "clean_fail": "{emote} Failed to clean messages ||{exc}||",
+    "mute_done": "{emote} Mute role setup complete!",
+
+    "start_restrict": "{emote} Starting to setup the roles...",
+    "role_fail2": "{emote} Failed to create the {role} role: {exc}",
+    "restrict_done": "{emote} Restrict setup complete!",
+
+    "setup_description": "You can use these commands to let the bot automatically setup the respective feature. ",
+
+    "start_automod": "{emote} Starting to setup the basic automod config...",
+    "automod_done": "{emote} Basic automod setup complete!",
+
+    "min_warns": "{emote} You can't set this below 1 warn.",
+    "max_warns": "{emote} You can't set this to be more than 100 warns.",
+    "warns_set": "{emote} Done! Users will receive ``{warns}`` warns when {what}.",
+
+    "min_mentions": "{emote} You can't set this below 4 mentions.",
+    "max_mentions": "{emote} You can't set this to be more than 100 mentions.",
+    "mentions_set": "{emote} Done! Users can now only mention up to ``{mentions}`` users/roles in one message.",
+
+    "max_lines": "{emote} You can't set this below 8 lines.",
+    "min_lines": "{emote} You can't set this to be more than 150 lines.",
+    "lines_set": "{emote} Done! Messages longer than ``{lines}`` will now be automatically deleted. Aditionally users will also receive warns for every additional multiple of up to ``{lines}`` lines.",
+
+    "raid_off": "{emote} Auto-raid is now ``off``.",
+    "raid_on": "{emote} Auto-raid is now ``on``. It'll be triggered if more than ``{users}`` users join within the last ``{seconds}`` seconds.",
+    "raid_help_2": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic raidmode by using ``{prefix}automod raid <joins/seconds>``. \nFor example you could use ``{prefix}automod raid 10/10``, which would mean that if more than 10 users per 10 seconds join, the raid mode would be enabled. \nTo disable this feature, use ``{prefix}automod raid off``",
+
+    "about_desc": "**AutoMod** is a customizable and easy-to-use Discord moderation bot. Its goal is to provide your moderators with powerful & efficient features, to keep moderating as simple and smooth as possible.",
+
+    "invalid_channel": "{emote} This doesn't seem to be a valid text channel.",
+    "log_on": "{emote} Done! {opt} will now be sent to {channel}",
+    "log_off": "{emote} {opt} won't be sent anymore.",
+
+    "role_already_ignored": "{emote} This role is already being ignored.",
+    "channel_already_ignored": "{emote} This channel is already being ignored.",
+    "role_ignored": "{emote} Done! Automod is now ignoring users with the ``{role}`` role.",
+    "channel_ignored": "{emote} Done! Automod is now ignoring messages in the ``{channel}`` channel.",
+
+    "spam_off": "{emote} Turned off the automatic spam detection.",
+    "spam_help_2": "{emote} This isn't a valid parameter. \n \nYou can enable the automatic spam detection by using ``{prefix}automod spam <warns>``. \nFor example you could use ``{prefix}automod spam 3``, which would mean that if a user sends more than 10 messages within the last 10 seconds, they would receive 3 warns. \nTo disable this feature, use ``{prefix}automod spam off``",
+
+    "user": "Information about **{user}**",
+
+    "role_not_ignored": "{emote} This role isn't being ignored.",
+    "channel_not_ignored": "{emote} This channel isn't being ignored.",
+    "role_unignored": "{emote} Automod is not ignoring users with the ``{role}`` role anymore.",
+    "channel_ungnored": "{emote} Automod is not ignoring messages in the ``{channel}`` channel anymore.",
+
+    "persist_true": "{emote} Enabled the persist mode! Users will receive their old roles & nickname once they re-join.",
+    "persist_false": "{emote} Disabled the persist mode. Users will no longer receive their old roles & nickname once they re-join.",
+
+    "invalid_action": "{emote} This isn't a valid action. Valid actions are: \n• Ban \n• Kick \n• Mute \n• None \n \nUsage: ``{prefix}punishment <warns> <action> [time]``",
+    "set_none": "{emote} Done! No action will be taken on users when they reach ``{warns}`` warns.",
+    "set_ban": "{emote} Done! Users will now be ``banned`` when reaching ``{warns}`` warns.",
+    "set_kick": "{emote} Done! Users will now be ``kicked`` when reaching ``{warns}`` warns.",
+    "set_mute": "{emote} Done! Users will now be ``muted`` for ``{length}{unit}`` when reaching ``{warns}`` warns.",
+    "time_needed": "{emote} A time is required for the mute action. \nE.g. ``{}punishment 2 mute 10m`` would mute a user for ``10`` minutes when reaching ``2`` warns",
+
+    "mod_info": "{emote} __Moderation info for **{user}** ({user_id}):__ \n• Warns: **{warns}** \n• Muted: **{muted}** \n• Remaining Mute Time: **{mute_remaining}** \n• Banned: **{banned}**",
+    "no_warns": "{emote} This user currently doesn't have any warns.",
+
+    "no_mod_log_set": "{emote} No mod log has been set yet.",
+    "log_not_found": "{emote} I couldn't find the log message. Seems like it either has been deleted or I can't see it anymore.",
+    "log_edit_failed": "{emote} Failed to edit the log message: {exc}",
+    "log_edited": "{emote} Done! Case ``{case}`` has been updated.",
+    "alert_triggered": "{emote} An alert requested by you has triggered!\n**{user}** has joined voice channel **{channel}** in server **{guild_name}**",
+
+    "no_raid": "{emote} Raid-mode isn't enabled right now.",
+    "already_raid": "{emote} Raid-mode is already enabled.",
+    "disabled_raid": "{emote} Raid-mode has been disabled!",
+    "enabled_raid": "{emote} Raid-mode has been enabled! The verification level has been changed and new users will be kicked upon joining.",
+
+    "name_too_long": "{emote} This filter name is too long. Max allowed chars are 25.",
+    "filter_exists": "{emote} A filter with that name already exists.",
+    "filter_added": "{emote} Done! Filter ``{name}`` has been created.",
+    "filter_doesnt_exist": "{emote} A filter with that name doesn't exist.",
+    "no_filters": "{emote} This server doesn't have any filters yet.",
+    "filter_removed": "{emote} Filter ``{name}`` has been removed.",
+    "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are seperated by commas. You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nTo add a filter with the words ``test``, ``hey there`` & ``coo*``, you could use this command: \n``{prefix}filter add test_filter 1 test, hey there, coo*``\n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
+    "filters": "Active filters for **{guild_name}**",
+
+    "prior_cases": "**Profile:** {profile} \n**Created:** <t:{created}> \n**Prior cases:** {cases}",
+    "normal_join": "**Profile:** {profile} \n**Created:** <t:{created}>",
+
+    "leave": "**Profile:** {profile} \n**Joined:** <t:{joined}>", 
+
+    "tag_edited": "{emote} Edited the **{tag}** tag!",
+    "tag_content_too_long": "{emote} The new tag content is too long. Max allowed chars are 1500.",
+
+    "edit": "**Member:** ``{user}`` ({user_id}) \n**Channel:** {channel}",
+    "delete": "**Member:** ``{user}`` ({user_id}) \n**Channel:** {channel}",
+
+    "invalid_restriction": "This isn't a valid restriction option. Valid restrictions are: \n• ``embed`` \n• ``emoji`` \n• ``tag``",
+    "no_restrict_role": "Looks like the restrictions roles haven't been configured yet. Do so by running ``{prefix}setup restrict``",
+    "already_restricted": "{emote} This user is already {success}",
+    "restrict_failed": "{emote} Failed to restrict target ||{error}||",
+
+    "automod_feature_disabled": "{emote} Disabled the ``{what}`` feature!",
+    "invalid_automod_feature_param": "You can use ``{prefix}automod {command}`` to configure this feature. \nYou can use ``{prefix}automod {off_command}`` to disable this feature.",
+    
+    "about_text": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
+    "got_you": "{emote} Alright, I've got you!",
+
+    "setup_automod_description": "This will setup the basic automod config. If you've already setup a few settings, those will be overwritten.",
+    "setup_muted_description_1": "This will create a new mute role and assign it overwrites in all of the channels and categories.",
+    "setup_muted_description_2": "This will modify the existing mute role and assign it overwrites in all of the channels and categories.",
+    "setup_restrict_description": "This will create (or edit) 3 roles (Embed restricted, Emoji restricted & Tag restricted)",
+
+    "case_delete_description": "Are you sure you want to delete case **#{case}**? This actions can't be reverted.",
+
+    "cybernuke_description": "This will ban {targets} users.",
+
+    "already_muted_description": "User is already muted. Do you want to extend their mute?",
+
+    "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Caps has been set to ``1`` warn \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Everyone has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns",
+
+    "help_title": "Help Menu",
+    "help_description": "Select one of the categories below to view its commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "automodplugin_short_description": "Commands to configure the automoderator",
+    "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "basicplugin_short_description": "Basic bot commands for information",
+    "basicplugin_long_description": "These are some basic commands mainly for information. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "moderationplugin_short_description": "All of the moderation commands",
+    "moderationplugin_long_description": "These commands will help you and your moderators to keep the community safe. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "warnsplugin_short_description": "Commands used for warning",
+    "warnsplugin_long_description": "You can use these commands to handle all things related to warning users. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "casesplugin_short_description": "Commands for interacting with cases",
+    "casesplugin_long_description": "These commands will help you manage cases in the server. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "configplugin_short_description": "Commands for bot configurations",
+    "configplugin_long_description": "You can configure the bots general configurations using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "tagsplugin_short_description": "Commands used for managing tags",
+    "tagsplugin_long_description": "You can create, delete & edit your custom tags with these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "filtersplugin_short_description": "Commands used for managing word filters",
+    "filtersplugin_long_description": "Create and delete custom word filters using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "starboardplugin_short_description": "Commands used for managing the starboard",
+    "starboardplugin_long_description": "This command is used to enable or disable the starboard. It has a subcommand to set the showcase channel for starred messages. \nTo get more info about a command, use ``{prefix}help <command>``",
+
+    "amount_too_big": "{emote} Amount to clean is too big.",
+
+    "starboard_disabled": "The starboard is currently disabled. Would you like to enable it?",
+    "starboard_enabled": "The starboard is currently enabled. Would you like to disable it?",
+
+    "disabled_starboard": "{emote} Disabled the starboard!",
+    "enabled_starboard": "{emote} Enabled the starboard!",
+
+    "starboard_is_disabled": "{emote} You can't use this command, because the starboard is disabled. Use the ``{prefix}starboard`` command to enable it.",
+    "set_starboard_channel": "{emote} Set the starboard channel to {channel}"
+}

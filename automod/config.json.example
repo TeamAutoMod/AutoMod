@@ -1,0 +1,31 @@
+{       
+    "dev": false,
+
+    "default_prefix": "!",
+
+    "token": "YOUR_BOTS_TOKEN",
+    "mongo_url": "mongodb+srv://REST_OF_YOUR_MONGO_URL",
+    "sentry_dsn": "",
+    "shards": 1,
+    "error_log_channel": 123456789,
+
+    "langs": [
+        "en_US"
+    ],
+
+    "enabled_plugins_with_commands": [
+        "BasicPlugin",
+        "ModerationPlugin",
+        "CasesPlugin",
+        "ConfigPlugin",
+        "LocateUserPlugin",
+        "TagsPlugin",
+        "AutomodPlugin",
+        "WarnsPlugin",
+        "TagsPlugin",
+        "FiltersPlugin"
+    ],
+    
+    "bot_admins": [123456789, 987654321],
+    "blocked_guilds": [123456789, 987654321]
+}

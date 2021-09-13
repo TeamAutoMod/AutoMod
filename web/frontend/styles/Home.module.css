@@ -1,0 +1,59 @@
+.text h1 {
+  margin: 0px 0px 8px;
+  text-align: center;
+  font-size: 23px;
+  color: #e7e8ed;
+}
+
+.text p {
+  margin: 0px 0px 16px;
+  text-align: center;
+  font-size: 15px;
+  color: #8b8c92;
+}
+
+
+.buttons ul {
+  margin: 0px 0px 8px;
+  padding: 0;
+  display: inline-block;
+}
+
+.buttons ul li {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  margin: 0px 2px;
+}
+
+.btn {
+  background: #12c8fb;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 232px;
+  height: 40px;
+  text-align: center;
+  margin: 0px 4px;
+  padding: 8px;
+  transition: 0.12s;
+}
+
+.btn:hover {
+  background: #44d4fc;
+}
+
+.btn2 {
+  background: #19191a;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 232px;
+  height: 40px;
+  text-align: center;
+  margin: 0px 4px;
+  padding: 8px;
+  transition: 0.12s;
+}
+
+.btn2:hover {
+  background: rgb(31, 30, 30);
+}
