@@ -55,8 +55,8 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
             title=bot.i18next.t(guild, "help_title"),
             description=bot.i18next.t(guild, "help_description", prefix=prefix)
         )
-        e.set_thumbnail(
-            url=bot.user.display_avatar
+        e.set_image(
+            url="https://cdn.discordapp.com/attachments/874097242598961152/883736333389004821/banner_.png"
         )
         view = HelpView(guild, bot, "None")
         return e, view

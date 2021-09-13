@@ -1,11 +1,15 @@
+import time
 
 
 
 async def run(plugin, ctx):
-    bot = plugin.bot
+    t1 = time.perf_counter()
     msg = await ctx.send(f"{plugin.emotes.get('PINGING')} Pinging...")
+    t2 = time.perf_counter()
 
+    rest = round((t2 - t1) * 1000)
+    latency = round(plugin.bot.latency * 1000)
     await msg.edit(
-        content="{} Pong! ``{}ms``"\
-        .format(plugin.emotes.get("PONG"), round(bot.latency * 1000, 2))
+        content="{} Rest API: ``{}ms`` | Latency: ``{}ms``"\
+        .format(plugin.emotes.get("PONG"), rest, latency)
     )

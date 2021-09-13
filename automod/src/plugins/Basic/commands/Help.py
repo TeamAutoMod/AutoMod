@@ -12,8 +12,8 @@ async def run(plugin, ctx, query):
             title=plugin.i18next.t(ctx.guild, "help_title"),
             description=plugin.i18next.t(ctx.guild, "help_description", prefix=plugin.bot.get_guild_prefix(ctx.guild))
         )
-        e.set_thumbnail(
-            url=plugin.bot.user.display_avatar
+        e.set_image(
+            url="https://cdn.discordapp.com/attachments/874097242598961152/883736333389004821/banner_.png"
         )
         view = HelpView(ctx.guild, plugin.bot, "None")
         await ctx.send(embed=e, view=view)

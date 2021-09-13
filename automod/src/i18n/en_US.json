@@ -161,6 +161,7 @@
     "asciify_help": "Removes all non-ascii chars from a users name/nickname",
     "translate_help": "Translates a text to english. Also works by replying to a message",
     "dashboard_help": "Get a direct link to your servers dashboard", 
+    "avatar_help": "Shows a users avatar (or your own)",
 
     "config_help": "Shows the current server config",
     "setup_help": "Shows commands for automatically setting up a feature",
