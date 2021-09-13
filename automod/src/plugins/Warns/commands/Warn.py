@@ -41,4 +41,7 @@ async def run(plugin, ctx, users, warns, reason):
                 reason=reason
             )
 
+            if case == 0:
+                return await ctx.send(plugin.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO"))
+
             await ctx.send(plugin.i18next.t(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, warns=warns))

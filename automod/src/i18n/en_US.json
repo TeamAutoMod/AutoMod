@@ -404,7 +404,7 @@
     "set_ban": "{emote} Done! Users will now be ``banned`` when reaching ``{warns}`` warns.",
     "set_kick": "{emote} Done! Users will now be ``kicked`` when reaching ``{warns}`` warns.",
     "set_mute": "{emote} Done! Users will now be ``muted`` for ``{length}{unit}`` when reaching ``{warns}`` warns.",
-    "time_needed": "{emote} A time is required for the mute action. \nE.g. ``{}punishment 2 mute 10m`` would mute a user for ``10`` minutes when reaching ``2`` warns",
+    "time_needed": "{emote} A time is required for the mute action. \nE.g. ``{prefix}punishment 2 mute 10m`` would mute a user for ``10`` minutes when reaching ``2`` warns",
 
     "mod_info": "{emote} __Moderation info for **{user}** ({user_id}):__ \n• Warns: **{warns}** \n• Muted: **{muted}** \n• Remaining Mute Time: **{mute_remaining}** \n• Banned: **{banned}**",
     "no_warns": "{emote} This user currently doesn't have any warns.",

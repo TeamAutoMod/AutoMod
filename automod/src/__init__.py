@@ -108,8 +108,8 @@ class AutoMod(commands.AutoShardedBot):
     
     async def on_ready(self):
         if not self.ready:
-            if not self.config.dev:
-                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Starting..."), status=discord.Status.dnd)
+            # if not self.config.dev:
+            #     await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Starting..."), status=discord.Status.dnd)
             log.info("Starting up as {}#{} ({})".format(self.user.name, self.user.discriminator, self.user.id))
             self.fetch_guilds()
 
@@ -165,8 +165,8 @@ class AutoMod(commands.AutoShardedBot):
 
             self.ready = True
             self.locked = False
-            if not self.config.dev:
-                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{self.config.default_prefix}help"), status=discord.Status.online)
+            # if not self.config.dev:
+            #     await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{self.config.default_prefix}help"), status=discord.Status.online)
 
 
     async def chunk_guild(self, guild_id, guild):
@@ -185,6 +185,10 @@ class AutoMod(commands.AutoShardedBot):
             if not message.guild.chunked:
                 await message.guild.chunk(cache=True)
                 log.info("Cached missing guild {}".format(message.guild.id))
+                
+        if message.guild != None:
+            if not self.db.configs.exists(f"{message.guild.id}"):
+                self.db.configs.insert(self.schemas.GuildConfig(message.guild))
 
         ctx = await self.get_context(message, cls=Context) # TODO: fix this
         if ctx.valid and ctx.command is not None:

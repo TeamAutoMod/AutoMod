@@ -155,7 +155,7 @@ class ActionValidator:
             await guild.ban(user=target)
         except Exception:
             await self.delete(message, guild, target, **kwargs)
-            return
+            return "", 0
         else:
             
             case = self.bot.utils.newCase(guild, "Ban", target, kwargs.get("moderator"), kwargs.get("reason"))
@@ -188,8 +188,7 @@ class ActionValidator:
         try:
             await guild.kick(user=target)
         except Exception:
-            await self.delete(message, guild, target, **kwargs)
-            return
+            return "", 0
         else:
             case = self.bot.utils.newCase(guild, "Kick", target, kwargs.get("moderator"), kwargs.get("reason"))
             dm = await self.bot.utils.dmUser(
