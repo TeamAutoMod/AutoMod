@@ -10,6 +10,7 @@ from .commands import (
     Help, 
     Server, 
     Userinfo, 
+    Avatar,
     Asciify, 
     Translate,
     Dashboard
@@ -75,6 +76,18 @@ class BasicPlugin(PluginBlueprint):
     ):
         """userinfo_help"""
         await Userinfo.run(self, ctx, user)
+
+
+    @commands.command(aliases=["av"])
+    @commands.guild_only()
+    @commands.has_permissions(manage_messages=True)
+    async def avatar(
+        self,
+        ctx,
+        user: DiscordUser = None
+    ):
+        """avatar_help"""
+        await Avatar.run(self, ctx, user)
 
 
 
