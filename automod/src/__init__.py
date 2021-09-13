@@ -80,36 +80,9 @@ class AutoMod(commands.AutoShardedBot):
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
 
-
-    # TODO slash commands...
-    # def slash_command(self, description, perms):
-    #     def decorator(func, description=description):
-    #         name = func.__name__
-
-    #         @wraps(func)
-    #         def wrapper(*args, **kwargs):
-    #             return func(*args, **kwargs)
-
-
-    #         command = SlashCommand(
-    #             name,
-    #             description,
-    #             perms,
-    #             wrapper
-    #         )
-
-    #         self.slash_commands.update({
-    #             name: command
-    #         })
-
-    #         return func
-    #     return decorator
-
     
     async def on_ready(self):
         if not self.ready:
-            # if not self.config.dev:
-            #     await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Starting..."), status=discord.Status.dnd)
             log.info("Starting up as {}#{} ({})".format(self.user.name, self.user.discriminator, self.user.id))
             self.fetch_guilds()
 
@@ -165,8 +138,6 @@ class AutoMod(commands.AutoShardedBot):
 
             self.ready = True
             self.locked = False
-            # if not self.config.dev:
-            #     await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{self.config.default_prefix}help"), status=discord.Status.online)
 
 
     async def chunk_guild(self, guild_id, guild):

@@ -34,15 +34,15 @@ async def getHelpForAllCommands(plugin, ctx):
     return e
 
 actual_plugin_names = {
-    "AutomodPlugin": f"🛡️ Automod Commands",
-    "BasicPlugin": f"🎉 Basic Commands",
-    "ModerationPlugin": f"🔨 Moderation Commands",
-    "WarnsPlugin": f"📌 Warn Commands",
-    "CasesPlugin": f"🔎 Case Commands",
-    "ConfigPlugin": f"⚙️ Configuration Commands",
-    "TagsPlugin": f"📝 Tag Commands",
-    "FiltersPlugin": f"📦 Filter Commands",
-    "StarboardPlugin": f"⭐️ Starboard Commands"
+    "AutomodPlugin": f"Automod Commands",
+    "BasicPlugin": f"Basic Commands",
+    "ModerationPlugin": f"Moderation Commands",
+    "WarnsPlugin": f"Warn Commands",
+    "CasesPlugin": f"Case Commands",
+    "ConfigPlugin": f"Configuration Commands",
+    "TagsPlugin": f"Tag Commands",
+    "FiltersPlugin": f"Filter Commands",
+    "StarboardPlugin": f"Starboard Commands"
 }
 
 async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
