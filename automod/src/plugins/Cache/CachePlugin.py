@@ -3,13 +3,6 @@ from discord.ext import commands
 
 from ..PluginBlueprint import PluginBlueprint
 
-from .events import (
-    OnGuildChannelCreate,
-    OnGuildChannelDelete,
-    OnGuildRoleCreate,
-    OnGuildRoleDelete
-)
-
 
 
 class CachePlugin(PluginBlueprint):
@@ -22,7 +15,8 @@ class CachePlugin(PluginBlueprint):
         self,
         channel
     ):
-        await OnGuildChannelCreate.run(self, channel)
+        self.bot.cache.text_channels[channel.guild.id] = channel.guild.text_channels
+        self.bot.cache.voice_channels[channel.guild.id] = channel.guild.voice_channels
 
 
     @commands.Cog.listener()
@@ -30,7 +24,8 @@ class CachePlugin(PluginBlueprint):
         self,
         channel
     ):
-        await OnGuildChannelDelete.run(self, channel)
+        self.bot.cache.text_channels[channel.guild.id] = channel.guild.text_channels
+        self.bot.cache.voice_channels[channel.guild.id] = channel.guild.voice_channels
 
 
     @commands.Cog.listener()
@@ -38,7 +33,7 @@ class CachePlugin(PluginBlueprint):
         self,
         role
     ):
-        await OnGuildRoleCreate.run(self, role)
+        self.bot.cache.roles[role.guild.id] = role.guild.roles
 
 
     @commands.Cog.listener()
@@ -46,7 +41,7 @@ class CachePlugin(PluginBlueprint):
         self,
         role
     ):
-        await OnGuildRoleDelete.run(self, role)
+        self.bot.cache.roles[role.guild.id] = role.guild.roles
 
 
 

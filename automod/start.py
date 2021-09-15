@@ -1,5 +1,5 @@
 import discord.http
-discord.http.Route.BASE = "https://discordapp.com/api/v6"
+discord.http.Route.BASE = "https://discordapp.com/api/v9"
 
 import os
 import json

@@ -138,7 +138,7 @@ class AutoMod(commands.AutoShardedBot):
             self.ready = True
             self.locked = False
 
-
+ 
     async def chunk_guild(self, guild_id, guild):
         if guild_id in self.uncached_guilds:
             try:
