@@ -129,7 +129,7 @@ class AutoMod(commands.AutoShardedBot):
                     self.db.configs.insert(self.schemas.GuildConfig(g))
                     log.info("Filled up missing guild {}".format(g.id))
             
-            self.cache.build()
+            #self.cache.build()
 
             end2 = time.time()
             final_dur = (end2 - start)
