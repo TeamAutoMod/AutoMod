@@ -181,10 +181,26 @@ class AutoMod(commands.AutoShardedBot):
                 selected = i.data.get("values")[0]
                 selected = selected if selected != "None" else None
                 embed, view = await getHelpForPlugin(self, selected, i)
-                await i.response.edit_message(
-                    embed=embed, 
-                    view=view
-                )
+                if selected == None:
+                    try:
+                        await i.delete_original_message()
+                    except Exception:
+                        pass
+                    finally:
+                        await i.channel.send("Invalid interaction, please use the command again.")
+                else:
+                    try:
+                        await i.response.edit_message(
+                            embed=embed, 
+                            view=view
+                        )
+                    except discord.NotFound:
+                        try:
+                            await i.delete_original_message()
+                        except Exception:
+                            pass
+                        finally:
+                            await i.channel.send("Invalid interaction, please use the command again.")
 
     
     async def on_error(self, event, *args, **kwargs):

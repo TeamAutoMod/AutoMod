@@ -21,11 +21,13 @@ async def run(plugin, ctx, error):
         pass
 
     if isinstance(error, commands.CheckFailure):
-        await ctx.send(plugin.i18next.t(ctx.guild, "missing_user_perms", _emote="LOCK"))
+        await ctx.send(plugin.i18next.t(ctx.guild, "check_fail", _emote="LOCK"))
     elif isinstance(error, commands.BotMissingPermissions):
-        await ctx.send(plugin.i18next.t(ctx.guild, "missing_bot_perms", _emote="LOCK"))
+        perms = " | ".join([f"``{x}``" for x in error.missing_permissions])
+        await ctx.send(plugin.i18next.t(ctx.guild, "missing_bot_perms", _emote="LOCK", perms=perms))
     elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(plugin.i18next.t(ctx.guild, "missing_user_perms", _emote="LOCK"))
+        perms = " | ".join([f"``{x}``" for x in error.missing_permissions])
+        await ctx.send(plugin.i18next.t(ctx.guild, "missing_user_perms", _emote="LOCK", perms=perms))
     elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(plugin.i18next.t(ctx.guild, "on_cooldown", retry_after=round(error.retry_after)))
     elif isinstance(error.__cause__, discord.Forbidden):
