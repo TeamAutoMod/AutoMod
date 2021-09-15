@@ -8,7 +8,6 @@ import datetime
 import traceback
 import sys
 from toolbox import S
-from functools import wraps
 
 from .i18n.Translator import Translator
 from .services.Database import MongoDB, MongoSchemas
@@ -156,6 +155,10 @@ class AutoMod(commands.AutoShardedBot):
             if not message.guild.chunked:
                 await message.guild.chunk(cache=True)
                 log.info("Cached missing guild {}".format(message.guild.id))
+                
+        if message.guild != None:
+            if not self.db.configs.exists(f"{message.guild.id}"):
+                self.db.configs.insert(self.schemas.GuildConfig(message.guild))
 
         ctx = await self.get_context(message, cls=Context) # TODO: fix this
         if ctx.valid and ctx.command is not None:

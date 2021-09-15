@@ -196,7 +196,7 @@ def set_select(v: View, guild, bot, cur_plugin):
             value=actual_plugin_names[plugin.qualified_name], 
             description=bot.i18next.t(guild, f"{plugin.qualified_name.lower()}_short_description"),
             default=cur_plugin.lower() == plugin.qualified_name.lower(),
-            emoji="<:help:887313739903279174>"
+            emoji="<:arrow:836558825481568296>"
         ))
 
     v.add_item(Select(custom_id="help:select", options=options))
