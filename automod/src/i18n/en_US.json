@@ -161,6 +161,7 @@
     "asciify_help": "Removes all non-ascii chars from a users name/nickname",
     "translate_help": "Translates a text to english. Also works by replying to a message",
     "dashboard_help": "Get a direct link to your servers dashboard", 
+    "avatar_help": "Shows a users avatar (or your own)",
 
     "config_help": "Shows the current server config",
     "setup_help": "Shows commands for automatically setting up a feature",
@@ -299,12 +300,13 @@
 
     "server": "Info about **{guild_name}**",
 
-    "missing_bot_perms": "{emote} I don't have the required permissions to do this.",
+    "missing_bot_perms": "{emote} I'm missing the following permissions to do this: {perms}",
     "missing_arg": "{emote} Missing required argument: {param} \nUsage: ``{usage}``",
     "bad_argument": "{emote} Failed to parse the {param} argument: {error} \nUsage: ``{usage}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
     "forbidden": "{emote} {exc}",
-    "missing_user_perms": "{emote} This command can only be used by moderators.",
+    "missing_user_perms": "{emote} You are missing the following permissions to us this command: {perms}",
+    "check_fail": "{emote} A command check has failed. Looks like you are missing the required permissions for this command.",
     "cant_send_message": "Looks like you tried to use a command in a channel I'm not allowed to send messages in. Make sure I have the ``send messages`` permission in the channel.",
 
     "dm_on_actions_false": "{emote} I will no longer dm users about actions taken on them.",
@@ -404,7 +406,7 @@
     "set_ban": "{emote} Done! Users will now be ``banned`` when reaching ``{warns}`` warns.",
     "set_kick": "{emote} Done! Users will now be ``kicked`` when reaching ``{warns}`` warns.",
     "set_mute": "{emote} Done! Users will now be ``muted`` for ``{length}{unit}`` when reaching ``{warns}`` warns.",
-    "time_needed": "{emote} A time is required for the mute action. \nE.g. ``{}punishment 2 mute 10m`` would mute a user for ``10`` minutes when reaching ``2`` warns",
+    "time_needed": "{emote} A time is required for the mute action. \nE.g. ``{prefix}punishment 2 mute 10m`` would mute a user for ``10`` minutes when reaching ``2`` warns",
 
     "mod_info": "{emote} __Moderation info for **{user}** ({user_id}):__ \n• Warns: **{warns}** \n• Muted: **{muted}** \n• Remaining Mute Time: **{mute_remaining}** \n• Banned: **{banned}**",
     "no_warns": "{emote} This user currently doesn't have any warns.",
@@ -467,16 +469,16 @@
     "help_title": "Help Menu",
     "help_description": "Select one of the categories below to view its commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "automodplugin_short_description": "Commands to configure the automoderator",
+    "automodplugin_short_description": "Commands for the automod",
     "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "basicplugin_short_description": "Basic bot commands for information",
+    "basicplugin_short_description": "Commands for basic info",
     "basicplugin_long_description": "These are some basic commands mainly for information. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "moderationplugin_short_description": "All of the moderation commands",
+    "moderationplugin_short_description": "Commands for moderation",
     "moderationplugin_long_description": "These commands will help you and your moderators to keep the community safe. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "warnsplugin_short_description": "Commands used for warning",
+    "warnsplugin_short_description": "Commands for warnings",
     "warnsplugin_long_description": "You can use these commands to handle all things related to warning users. \nTo get more info about a command, use ``{prefix}help <command>``",
 
     "casesplugin_short_description": "Commands for interacting with cases",
@@ -485,13 +487,13 @@
     "configplugin_short_description": "Commands for bot configurations",
     "configplugin_long_description": "You can configure the bots general configurations using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "tagsplugin_short_description": "Commands used for managing tags",
+    "tagsplugin_short_description": "Commands for managing tags",
     "tagsplugin_long_description": "You can create, delete & edit your custom tags with these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "filtersplugin_short_description": "Commands used for managing word filters",
+    "filtersplugin_short_description": "Commands for managing word filters",
     "filtersplugin_long_description": "Create and delete custom word filters using these commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "starboardplugin_short_description": "Commands used for managing the starboard",
+    "starboardplugin_short_description": "Commands for managing the starboard",
     "starboardplugin_long_description": "This command is used to enable or disable the starboard. It has a subcommand to set the showcase channel for starred messages. \nTo get more info about a command, use ``{prefix}help <command>``",
 
     "amount_too_big": "{emote} Amount to clean is too big.",

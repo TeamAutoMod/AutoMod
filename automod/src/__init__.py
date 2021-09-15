@@ -80,36 +80,9 @@ class AutoMod(commands.AutoShardedBot):
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
 
-
-    # TODO slash commands...
-    # def slash_command(self, description, perms):
-    #     def decorator(func, description=description):
-    #         name = func.__name__
-
-    #         @wraps(func)
-    #         def wrapper(*args, **kwargs):
-    #             return func(*args, **kwargs)
-
-
-    #         command = SlashCommand(
-    #             name,
-    #             description,
-    #             perms,
-    #             wrapper
-    #         )
-
-    #         self.slash_commands.update({
-    #             name: command
-    #         })
-
-    #         return func
-    #     return decorator
-
     
     async def on_ready(self):
         if not self.ready:
-            if not self.config.dev:
-                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Starting..."), status=discord.Status.dnd)
             log.info("Starting up as {}#{} ({})".format(self.user.name, self.user.discriminator, self.user.id))
             self.fetch_guilds()
 
@@ -157,7 +130,7 @@ class AutoMod(commands.AutoShardedBot):
                     self.db.configs.insert(self.schemas.GuildConfig(g))
                     log.info("Filled up missing guild {}".format(g.id))
             
-            self.cache.build()
+            #self.cache.build()
 
             end2 = time.time()
             final_dur = (end2 - start)
@@ -165,10 +138,8 @@ class AutoMod(commands.AutoShardedBot):
 
             self.ready = True
             self.locked = False
-            if not self.config.dev:
-                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f"{self.config.default_prefix}help"), status=discord.Status.online)
 
-
+ 
     async def chunk_guild(self, guild_id, guild):
         if guild_id in self.uncached_guilds:
             try:
@@ -207,10 +178,26 @@ class AutoMod(commands.AutoShardedBot):
                 selected = i.data.get("values")[0]
                 selected = selected if selected != "None" else None
                 embed, view = await getHelpForPlugin(self, selected, i)
-                await i.response.edit_message(
-                    embed=embed, 
-                    view=view
-                )
+                if selected == None:
+                    try:
+                        await i.delete_original_message()
+                    except Exception:
+                        pass
+                    finally:
+                        await i.channel.send("Invalid interaction, please use the command again.")
+                else:
+                    try:
+                        await i.response.edit_message(
+                            embed=embed, 
+                            view=view
+                        )
+                    except discord.NotFound:
+                        try:
+                            await i.delete_original_message()
+                        except Exception:
+                            pass
+                        finally:
+                            await i.channel.send("Invalid interaction, please use the command again.")
 
     
     async def on_error(self, event, *args, **kwargs):

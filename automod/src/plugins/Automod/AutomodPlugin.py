@@ -2,31 +2,57 @@ from typing import Union
 import discord
 from discord.ext import commands
 
+import re
+
 from ..PluginBlueprint import PluginBlueprint
 from .events import (
     OnMessage, 
     OnMessageEdit, 
     OnMemberJoin
 )
-from .commands import (
-    Caps, 
-    Everyone, 
-    Files, 
-    Invite, 
-    Zalgo, 
-    Raid, 
-    Lines, 
-    Mentions, 
-    Spam, 
-    Ignore, 
-    Unignore,
-    RaidMode, 
-    AllowedInvites, 
-    AllowedInvitesAdd, 
-    AllowedInvitesRemove
-)
-from ..Types import Reason
+from ..Types import Reason, Embed
 
+
+
+async def enableRaidMode(plugin, guild, moderator, reason):
+    state = {"last": guild.verification_level, "in_raid": False}
+
+    try:
+        await guild.edit(verification_level=discord.VerificationLevel.high)
+    except Exception:
+        pass
+    else:
+        state.update({"in_raid": True})
+        plugin.raids[guild.id] = state
+
+        await plugin.action_logger.log(
+            guild, 
+            "raid_on", 
+            moderator=moderator, 
+            moderator_id=moderator.id,
+            reason=reason
+        )
+
+
+async def disableRaidMode(plugin, guild, moderator, reason):
+    state = plugin.raids[guild.id]
+
+    try:
+        await guild.edit(verification_level=state["last"])
+    except Exception:
+        pass
+    finally:
+        del plugin.raids[guild.id]
+        if guild.id in plugin.last_joiners:
+            plugin.last_joiners[guild.id].clear()
+
+        await plugin.action_logger.log(
+            guild, 
+            "raid_off", 
+            moderator=moderator,
+            moderator_id=moderator.id,
+            reason=reason
+        )
 
 
 class AutomodPlugin(PluginBlueprint):
@@ -83,7 +109,37 @@ class AutomodPlugin(PluginBlueprint):
         warns: str
     ):
         """invite_help"""
-        await Invite.run(self, ctx, warns)
+        warns = warns.lower()
+        if warns == "off":
+            automod = self.db.configs.get(ctx.guild.id, "automod")
+            if "invites" in automod:
+                del automod["invites"]
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-invites"))
+        else:
+            try:
+                warns = int(warns)
+            except ValueError:
+                e = Embed(
+                    title="Invalid paramater",
+                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="invite <warns>", off_command="invite off")
+                )
+                await ctx.send(embed=e)
+            else:
+                if warns < 1:
+                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+
+                if warns > 100:
+                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+
+                automod = self.db.configs.get(ctx.guild.id, "automod")
+                automod.update({
+                    "invites": {"warns": warns}
+                })
+                self.db.configs.update(ctx.guild.id, "automod", automod)
+
+                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they send Discord invites"))
 
 
     @automod.command()
@@ -93,7 +149,37 @@ class AutomodPlugin(PluginBlueprint):
         warns: str
     ):
         """everyone_help"""
-        await Everyone.run(self, ctx, warns)
+        warns = warns.lower()
+        if warns == "off":
+            automod = self.db.configs.get(ctx.guild.id, "automod")
+            if "everyone" in automod:
+                del automod["everyone"]
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-everyone"))
+        else:
+            try:
+                warns = int(warns)
+            except ValueError:
+                e = Embed(
+                    title="Invalid paramater",
+                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="everyone <warns>", off_command="everyone off")
+                )
+                await ctx.send(embed=e)
+            else:
+                if warns < 1:
+                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+
+                if warns > 100:
+                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+
+                automod = self.db.configs.get(ctx.guild.id, "automod")
+                automod.update({
+                    "everyone": {"warns": warns}
+                })
+                self.db.configs.update(ctx.guild.id, "automod", automod)
+
+                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they attempt to mention @everyone/here"))
 
 
     @automod.command()
@@ -103,7 +189,37 @@ class AutomodPlugin(PluginBlueprint):
         warns: str
     ):
         """caps_help"""
-        await Caps.run(self, ctx, warns)
+        warns = warns.lower()
+        if warns == "off":
+            automod = self.db.configs.get(ctx.guild.id, "automod")
+            if "caps" in automod:
+                del automod["caps"]
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+            
+            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-caps"))
+        else:
+            try:
+                warns = int(warns)
+            except ValueError:
+                e = Embed(
+                    title="Invalid paramater",
+                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="caps <warns>", off_command="caps off")
+                )
+                await ctx.send(embed=e)
+            else:
+                if warns < 1:
+                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+
+                if warns > 100:
+                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+
+                automod = self.db.configs.get(ctx.guild.id, "automod")
+                automod.update({
+                    "caps": {"warns": warns}
+                })
+                self.db.configs.update(ctx.guild.id, "automod", automod)
+
+                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message consists of more than 75% capital letters"))
 
 
     @automod.command()
@@ -113,7 +229,37 @@ class AutomodPlugin(PluginBlueprint):
         warns: str
     ):
         """files_help"""
-        await Files.run(self, ctx, warns)
+        warns = warns.lower()
+        if warns == "off":
+            automod = self.db.configs.get(ctx.guild.id, "automod")
+            if "files" in automod:
+                del automod["files"]
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-files"))
+        else:
+            try:
+                warns = int(warns)
+            except ValueError:
+                e = Embed(
+                    title="Invalid paramater",
+                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="files <warns>", off_command="files off")
+                )
+                await ctx.send(embed=e)
+            else:
+                if warns < 1:
+                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+
+                if warns > 100:
+                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+
+                automod = self.db.configs.get(ctx.guild.id, "automod")
+                automod.update({
+                    "files": {"warns": warns}
+                })
+                self.db.configs.update(ctx.guild.id, "automod", automod)
+
+                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they send forbidden/uncommon attachment types"))
 
 
     @automod.command()
@@ -123,7 +269,37 @@ class AutomodPlugin(PluginBlueprint):
         warns: str
     ):
         """zalgo_help"""
-        await Zalgo.run(self, ctx, warns)
+        warns = warns.lower()
+        if warns == "off":
+            automod = self.db.configs.get(ctx.guild.id, "automod")
+            if "zalgo" in automod:
+                del automod["zalgo"]
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+            
+            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-zalgo"))
+        else:
+            try:
+                warns = int(warns)
+            except ValueError:
+                e = Embed(
+                    title="Invalid paramater",
+                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="zalgo <warns>", off_command="zalgo off")
+                )
+                await ctx.send(embed=e)
+            else:
+                if warns < 1:
+                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+
+                if warns > 100:
+                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+
+                automod = self.db.configs.get(ctx.guild.id, "automod")
+                automod.update({
+                    "zalgo": {"warns": warns}
+                })
+                self.db.configs.update(ctx.guild.id, "automod", automod)
+
+                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message contains zalgo letters."))
 
 
     @automod.command()
@@ -133,7 +309,37 @@ class AutomodPlugin(PluginBlueprint):
         mentions: str
     ):
         """mentions_help"""
-        await Mentions.run(self, ctx, mentions)
+        mentions = mentions.lower()
+        if mentions == "off":
+            automod = self.db.configs.get(ctx.guild.id, "automod")
+            if "mentions" in automod:
+                del automod["mentions"]
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+            
+            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="max-mentions"))
+        else:
+            try:
+                mentions = int(mentions)
+            except ValueError:
+                e = Embed(
+                    title="Invalid paramater",
+                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="mentions <mentions>", off_command="mentions off")
+                )
+                await ctx.send(embed=e)
+            else:
+                if mentions < 4:
+                    return await ctx.send(self.i18next.t(ctx.guild, "min_mentions", _emote="NO"))
+
+                if mentions > 100:
+                    return await ctx.send(self.i18next.t(ctx.guild, "max_mentions", _emote="NO"))
+
+                automod = self.db.configs.get(ctx.guild.id, "automod")
+                automod.update({
+                    "mentions": {"threshold": mentions}
+                })
+                self.db.configs.update(ctx.guild.id, "automod", automod)
+
+                await ctx.send(self.i18next.t(ctx.guild, "mentions_set", _emote="YES", mentions=mentions))
 
 
     @automod.command()
@@ -143,7 +349,37 @@ class AutomodPlugin(PluginBlueprint):
         lines: str
     ):
         """lines_help"""
-        await Lines.run(self, ctx, lines)
+        lines = lines.lower()
+        if lines == "off":
+            automod = self.db.configs.get(ctx.guild.id, "automod")
+            if "lines" in automod:
+                del automod["lines"]
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="max-lines"))
+        else:
+            try:
+                lines = int(lines)
+            except ValueError:
+                e = Embed(
+                    title="Invalid paramater",
+                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="lines <lines>", off_command="lines off")
+                )
+                await ctx.send(embed=e)
+            else:
+                if lines < 6:
+                    return await ctx.send(self.i18next.t(ctx.guild, "min_lines", _emote="NO"))
+
+                if lines > 150:
+                    return await ctx.send(self.i18next.t(ctx.guild, "max_lines", _emote="NO"))
+
+                automod = self.db.configs.get(ctx.guild.id, "automod")
+                automod.update({
+                    "lines": {"threshold": lines}
+                })
+                self.db.configs.update(ctx.guild.id, "automod", automod)
+
+                await ctx.send(self.i18next.t(ctx.guild, "lines_set", _emote="YES", lines=lines))
 
 
     @automod.command()
@@ -153,7 +389,31 @@ class AutomodPlugin(PluginBlueprint):
         threshold: str
     ):
         """raid_help"""
-        await Raid.run(self, ctx, threshold)
+        threshold = threshold.lower()
+        automod = self.db.configs.get(ctx.guild.id, "automod")
+        
+        if threshold == "off":
+            automod.update({
+                "raid": {"status": False, "threshold": automod["raid"]["threshold"] if "raid" in automod else "100/100"}
+            })
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            return await ctx.send(self.i18next.t(ctx.guild, "raid_off", _emote="YES"))
+        
+        elif len(threshold.split("/")) == 2 and re.match(r"^[-+]?[0-9]+$", threshold.split("/")[0]) is not None and re.match(r"^[-+]?[0-9]+$", threshold.split("/")[1]) is not None:
+            if int(threshold.split("/")[0]) < 5 or int(threshold.split("/")[1]) < 5:
+                return await ctx.send(self.i18next.t(ctx.guild, "threshold_too_low", _emote="NO"))
+
+            automod.update({
+                "raid": {"status": True, "threshold": f"{threshold}"}
+            })
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            return await ctx.send(self.i18next.t(ctx.guild, "raid_on", _emote="YES", users=threshold.split("/")[0], seconds=threshold.split("/")[1]))
+
+        else:
+            prefix = self.bot.get_guild_prefix(ctx.guild)
+            return await ctx.send(self.i18next.t(ctx.guild, "raid_help_2", _emote="BULB", prefix=prefix)) 
 
 
     @automod.command()
@@ -163,7 +423,34 @@ class AutomodPlugin(PluginBlueprint):
         warns: str
     ):
         """spam_help"""
-        await Spam.run(self, ctx, warns)
+        warns = warns.lower()
+        automod = self.db.configs.get(ctx.guild.id, "automod")
+        if warns == "off":
+            automod.update({
+                "spam": {"status": False, "warns": 0}
+            })
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            return await ctx.send(self.i18next.t(ctx.guild, "spam_off", _emote="YES"))
+
+        elif warns.isnumeric():
+            warns = int(warns)
+            if warns < 1:
+                return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+
+            if warns > 100:
+                return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+
+            automod.update({
+                "spam": {"status": True, "warns": warns}
+            })
+            self.db.configs.update(ctx.guild.id, "automod", automod)
+
+            await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they spam more than 10 messages within the last 10 seconds"))
+
+        else:
+            prefix = self.bot.get_guild_prefix(ctx.guild)
+            return await ctx.send(self.i18next.t(ctx.guild, "spam_help_2", _emote="BULB", prefix=prefix))
 
     
     @commands.command()
@@ -173,7 +460,39 @@ class AutomodPlugin(PluginBlueprint):
         role_or_channel: Union[discord.Role, discord.TextChannel] = None
     ):
         """ignore_help"""
-        await Ignore.run(self, ctx, role_or_channel)
+        roles = self.db.configs.get(ctx.guild.id, "ignored_roles")
+        channels = self.db.configs.get(ctx.guild.id, "ignored_channels")
+        if role_or_channel is None:
+            e = Embed()
+            e.add_field(
+                name="❯ Ignored Roles",
+                value="\n".join(set([*[f"<@&{x.id}>" for x in sorted(ctx.guild.roles, key=lambda l: l.position) if x.position >= ctx.guild.me.top_role.position or x.permissions.ban_members]]))
+            )
+            
+            channels = [f"<#{x}>" for x in sorted(channels)]
+            if len(channels) > 0:
+                e.add_field(
+                    name="❯ Ignored Channels", 
+                    value="\n".join(channels)
+                )
+            
+            return await ctx.send(embed=e)
+
+        cu = role_or_channel
+        if cu.id in roles:
+            return await ctx.send(self.db.configs.get(ctx.guild.id, "role_already_ignored", _emote="WARN"))
+
+        if cu.id in channels:
+            return await ctx.send(self.db.configs.get(ctx.guild.id, "channel_already_ignored", _emote="WARN"))
+        
+        if isinstance(cu, discord.Role):
+            roles.append(cu.id)
+            self.db.configs.update(ctx.guild.id, "ignored_roles", roles)
+            return await ctx.send(self.i18next.t(ctx.guild, "role_ignored", _emote="YES", role=cu.name))
+        elif isinstance(cu, discord.TextChannel):
+            channels.append(cu.id)
+            self.db.configs.update(ctx.guild.id, "ignored_channels", channels)
+            return await ctx.send(self.i18next.t(ctx.guild, "channel_ignored", _emote="YES", channel=cu.name))
 
 
     @commands.command()
@@ -183,7 +502,22 @@ class AutomodPlugin(PluginBlueprint):
         role_or_channel: Union[discord.Role, discord.TextChannel]
     ):
         """unignore_help"""
-        await Unignore.run(self, ctx, role_or_channel)
+        cu = role_or_channel
+        roles = self.db.configs.get(ctx.guild.id, "ignored_roles")
+        channels = self.db.configs.get(ctx.guild.id, "ignored_channels")
+        
+        if isinstance(cu, discord.Role):
+            if cu.id not in roles:
+                return await ctx.send(self.i18next.t(ctx.guild, "role_not_ignored", _emote="NO"))
+            roles.remove(cu.id)
+            self.db.configs.update(ctx.guild.id, "ignored_roles", roles)
+            return await ctx.send(self.i18next.t(ctx.guild, "role_unignored", _emote="YES", role=cu.name))
+        elif isinstance(cu, discord.TextChannel):
+            if cu.id not in channels:
+                return await ctx.send(self.i18next.t(ctx.guild, "channel_not_ignored", _emote="NO"))
+            channels.remove(cu.id)
+            self.db.configs.update(ctx.guild.id, "ignored_channels", channels)
+            return await ctx.send(self.i18next.t(ctx.guild, "channel_unignored", _emote="YES", channel=cu.name))
 
     
     @commands.command()
@@ -195,7 +529,21 @@ class AutomodPlugin(PluginBlueprint):
         reason: Reason = None
     ):
         """raidmode_help"""
-        await RaidMode.run(self, ctx, state, reason)
+        state = state.lower()
+        if state == "off":
+            if ctx.guild.id not in self.raids:
+                return await ctx.send(self.i18next.t(ctx.guild, "no_raid", _emote="NO"))
+            else:
+                await disableRaidMode(self, ctx.guild, ctx.author, reason)
+                await ctx.send(self.i18next.t(ctx.guild, "disabled_raid", _emote="YES"))
+        elif state == "on":
+            if ctx.guild.id in self.raids:
+                return await ctx.send(self.i18next.t(ctx.guild, "already_raid", _emote="NO"))
+            else:
+                await enableRaidMode(self, ctx.guild, ctx.author, reason)
+                await ctx.send(self.i18next.t(ctx.guild, "enabled_raid", _emote="YES"))
+        else:
+            await ctx.send(self.i18next.t(ctx.guild, "invalid_raid_opt", _emote="WARN"))
 
 
     @commands.group()
@@ -205,7 +553,17 @@ class AutomodPlugin(PluginBlueprint):
     ):
         """allowed_invites_help"""
         if ctx.subcommand_passed is None:
-            await AllowedInvites.run(self, ctx)
+            allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "whitelisted_invites")]
+            prefix = self.bot.get_guild_prefix(ctx.guild)
+            if len(allowed) < 1:
+                return await ctx.send(self.i18next.t(ctx.guild, "no_whiteslisted", _emote="NO", prefix=prefix))
+            else:
+                e = Embed()
+                e.add_field(
+                    name="❯ Allowed invites (by server ID)", 
+                    value=" | ".join([f"``{x}``" for x in allowed])
+                )
+                await ctx.send(embed=e)
 
     
     @allowed_invites.command()
@@ -214,8 +572,16 @@ class AutomodPlugin(PluginBlueprint):
         ctx,
         guild_id: int
     ):
-        """allowed_invites_add_help"""
-        await AllowedInvitesAdd.run(self, ctx, guild_id)
+        """allowed_invites_add_help"""    
+        allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "whitelisted_invites")]
+
+        if str(guild_id) in allowed:
+            return await ctx.send(self.i18next.t(ctx.guild, "already_whitelisted", _emote="WARN", server=guild_id))
+
+        allowed.append(str(guild_id))
+        self.db.configs.update(ctx.guild.id, "whitelisted_invites", allowed)
+
+        await ctx.send(self.i18next.t(ctx.guild, "added_invite", _emote="YES", server=guild_id))
 
 
     @allowed_invites.command()
@@ -225,7 +591,15 @@ class AutomodPlugin(PluginBlueprint):
         guild_id: int
     ): 
         """allowed_invites_remove_help"""
-        await AllowedInvitesRemove.run(self, ctx, guild_id)
+        allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "whitelisted_invites")]
+
+        if str(guild_id) not in allowed:
+            return await ctx.send(self.i18next.t(ctx.guild, "not_whitelisted", _emote="NO", server=guild_id))
+
+        allowed.remove(str(guild_id))
+        self.db.configs.update(ctx.guild.id, "whitelisted_invites", allowed)
+        
+        await ctx.send(self.i18next.t(ctx.guild, "removed_invite", _emote="YES", server=guild_id))
 
 
 

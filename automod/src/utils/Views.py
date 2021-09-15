@@ -172,21 +172,21 @@ async def get_cases_from_cache(i: discord.Interaction, diff):
 
 def set_select(v: View, guild, bot, cur_plugin):
     actual_plugin_names = {
-        "AutomodPlugin": f"🛡️ Automod Commands",
-        "BasicPlugin": f"🎉 Basic Commands",
-        "ModerationPlugin": f"🔨 Moderation Commands",
-        "WarnsPlugin": f"📌 Warn Commands",
-        "CasesPlugin": f"🔎 Case Commands",
-        "ConfigPlugin": f"⚙️ Configuration Commands",
-        "TagsPlugin": f"📝 Tag Commands",
-        "FiltersPlugin": f"📦 Filter Commands",
-        "StarboardPlugin": f"⭐️ Starboard Commands"
+        "AutomodPlugin": "Automod",
+        "BasicPlugin": "Basic",
+        "ModerationPlugin": "Moderation",
+        "WarnsPlugin": "Warning",
+        "CasesPlugin": "Cases",
+        "ConfigPlugin": "Configuration",
+        "TagsPlugin": "Tags",
+        "FiltersPlugin": "Filters",
+        "StarboardPlugin": "Starboard"
     }
     plugins = [bot.get_cog(x) for x in bot.cogs if x in bot.config.enabled_plugins_with_commands]
 
     options = []
     options.append(discord.SelectOption(
-        label="📁 Select a category",
+        label="Select a category",
         value="None",
         default=cur_plugin == "None"
     ))
@@ -195,7 +195,8 @@ def set_select(v: View, guild, bot, cur_plugin):
             label=actual_plugin_names[plugin.qualified_name],
             value=actual_plugin_names[plugin.qualified_name], 
             description=bot.i18next.t(guild, f"{plugin.qualified_name.lower()}_short_description"),
-            default=cur_plugin.lower() == plugin.qualified_name.lower()
+            default=cur_plugin.lower() == plugin.qualified_name.lower(),
+            emoji="<:help:887313739903279174>"
         ))
 
     v.add_item(Select(custom_id="help:select", options=options))

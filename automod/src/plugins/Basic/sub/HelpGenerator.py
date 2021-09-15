@@ -6,43 +6,16 @@ from ....utils.Views import HelpView
 
 
 
-async def getHelpForAllCommands(plugin, ctx):
-    plugin.bot.help_command.context = ctx
-    prefix = plugin.bot.get_guild_prefix(ctx.guild)
-    actual_plugin_names = {
-        "AutomodPlugin": f"❯ Automod Commands",
-        "BasicPlugin": f"❯ Basic Commands",
-        "ModerationPlugin": f"❯ Moderation Commands",
-        "WarnsPlugin": f"❯ Warn Commands",
-        "CasesPlugin": f"❯ Case Commands",
-        "ConfigPlugin": f"❯ Configuration Commands",
-        "TagsPlugin": f"❯ Tag Commands",
-        "FiltersPlugin": f"❯ Filter Commands",
-        "StarboardPlugin": f"❯ Starboard Commands"
-    }
-
-    valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
-    e = Embed(
-        title="Commands",
-        description=f"This is a list of all available commands. \nTo get more info about a command, use ``{prefix}help <command>``"
-    )
-    for p in valid_plugins:
-        e.add_field(
-            name=actual_plugin_names[p.qualified_name],
-            value=" | ".join([f"``{prefix}{x}``" for x in p.get_commands()])
-        )
-    return e
-
 actual_plugin_names = {
-    "AutomodPlugin": f"🛡️ Automod Commands",
-    "BasicPlugin": f"🎉 Basic Commands",
-    "ModerationPlugin": f"🔨 Moderation Commands",
-    "WarnsPlugin": f"📌 Warn Commands",
-    "CasesPlugin": f"🔎 Case Commands",
-    "ConfigPlugin": f"⚙️ Configuration Commands",
-    "TagsPlugin": f"📝 Tag Commands",
-    "FiltersPlugin": f"📦 Filter Commands",
-    "StarboardPlugin": f"⭐️ Starboard Commands"
+    "AutomodPlugin": "Automod",
+    "BasicPlugin": "Basic",
+    "ModerationPlugin": "Moderation",
+    "WarnsPlugin": "Warning",
+    "CasesPlugin": "Cases",
+    "ConfigPlugin": "Configuration",
+    "TagsPlugin": "Tags",
+    "FiltersPlugin": "Filters",
+    "StarboardPlugin": "Starboard"
 }
 
 async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
@@ -75,10 +48,6 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
     return e, view
 
 
-
-
-
-
 async def generateHelpForCommand(plugin, ctx, command):
     plugin.bot.help_command.context = ctx
     name = ctx.bot.help_command.get_command_signature(command)
@@ -99,7 +68,6 @@ async def generateHelpForCommand(plugin, ctx, command):
             e.add_field(name="❯ Subcommands", value=" | ".join([f"``{x}``" for x in actual_subcommands.keys()]), inline=True)
 
     return e
-
 
 
 async def getHelpForCommand(plugin, ctx, query):
