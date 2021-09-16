@@ -305,8 +305,8 @@
     "bad_argument": "{emote} Failed to parse the {param} argument: {error} \nUsage: ``{usage}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
     "forbidden": "{emote} {exc}",
-    "missing_user_perms": "{emote} You are missing the following permissions to us this command: {perms}",
-    "check_fail": "{emote} A command check has failed. Looks like you are missing the required permissions for this command.",
+    "missing_user_perms": "{emote} You are missing the following permissions to use this command: {perms}",
+    "check_fail": "{emote} A command check has failed. Looks like you are missing the required permissions to use this command.",
     "cant_send_message": "Looks like you tried to use a command in a channel I'm not allowed to send messages in. Make sure I have the ``send messages`` permission in the channel.",
 
     "dm_on_actions_false": "{emote} I will no longer dm users about actions taken on them.",

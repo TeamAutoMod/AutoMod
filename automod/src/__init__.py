@@ -7,6 +7,7 @@ import time
 import datetime
 import traceback
 import sys
+from discord.ext.commands.flags import F
 from toolbox import S
 
 from .i18n.Translator import Translator
@@ -22,7 +23,7 @@ from .utils.BotUtils import BotUtils
 from .plugins import PluginLoader
 from .plugins.Types import Embed
 from .plugins.Basic.sub.HelpGenerator import getHelpForPlugin
-
+from .plugins.Tags.TagsPlugin import getTags
 
 
 log = logging.getLogger(__name__)
@@ -62,6 +63,10 @@ class AutoMod(commands.AutoShardedBot):
         self.ready = False
         self.locked = True
 
+        self.active_chunk = False
+        self.pending_chunk = False
+        self.terminate_chunk = False
+
         self.used_commands = 0
         self.used_tags = 0
         self.total_shards = config.shards
@@ -81,96 +86,86 @@ class AutoMod(commands.AutoShardedBot):
 
     
     async def on_ready(self):
-        if not self.ready:
-            log.info("Starting up as {}#{} ({})".format(self.user.name, self.user.discriminator, self.user.id))
-            self.fetch_guilds()
+        for guild in self.guilds:
+            if not self.db.configs.exists(f"{guild.id}"):
+                self.db.configs.insert(self.schemas.GuildConfig(guild))
 
-            for g in self.guilds:
-                if g.id in self.config.blocked_guilds:
-                    await g.leave()
-                    log.info("Left blocked guild {}".format(g.id))
+        await self.chunk_guilds()
 
-            self.uncached_guilds = {g.id: g for g in self.guilds}
-            self.version = await self.utils.getVersion()
-            
-            try:
-                for signal, signame in ("SIGTERM", "SIGINT"):
-                    asyncio.get_event_loop().add_signal_handler(getattr(signal, signame), lambda: asyncio.ensure_future(self.logout()))
-            except Exception:
-                pass
 
-            asyncio.create_task(self.chunk_guilds())
-
-            log.info("Loading plugins...")
-            await PluginLoader.loadPlugins(self)
-
-            if not hasattr(self, "uptime"):
-                self.uptime = datetime.datetime.utcnow()
-            
-            log.info("Ready!")
-
-    
     async def chunk_guilds(self):
-        while len(list(self.uncached_guilds.items())) > 0:
-            start = time.time()
-            try:
-                chunk_tasks = [asyncio.create_task(self.chunk_guild(gid, g)) for gid, g in self.uncached_guilds.items()]
-                await asyncio.wait_for(asyncio.gather(*chunk_tasks), 600)
-            except Exception as ex:
-                log.error("Error while chunking guilds - {}".format(ex))
-                for t in chunk_tasks:
-                    t.cancel()
-            end = time.time()
-            dur = (end - start)
-            log.info("Finished chunking guilds in {}m".format(round(dur / 60, 1)))
+        await asyncio.wait_for(self._chunk_guilds(), 60 * 25)
 
-            for g in [x for x in self.guilds if isinstance(x, discord.Guild)]:
-                if not self.db.configs.exists(f"{g.id}"):
-                    self.db.configs.insert(self.schemas.GuildConfig(g))
-                    log.info("Filled up missing guild {}".format(g.id))
-            
-            self.cache.build()
 
-            end2 = time.time()
-            final_dur = (end2 - start)
-            log.info("Finished building internal cache in {}m".format(round(final_dur / 60, 1)))
+    async def _chunk_guilds(self):
+        if self.pending_chunk == True:
+            return
+        
+        self.pending_chunk = True
+        c = 0
+        while self.active_chunk:
+            self.terminate_chunk = True
+            await asyncio.sleep(0.5)
+            c += 1
+            if c > 120:
+                log.warn("Failed to reset chunking task after reconnect.")
+                break
 
-            self.ready = True
-            self.locked = False
+        self.pending_chunk = False
+        self.active_chunk = True
+        self.terminate_chunk = False
 
- 
-    async def chunk_guild(self, guild_id, guild):
-        if guild_id in self.uncached_guilds:
-            try:
+        ids = [g.id for g in self.guilds]
+        chunked = 0
+        for g in ids:
+            if self.terminate_chunk == True:
+                return
+            guild = self.get_guild(g)
+            if guild is None:
+                log.info("Couldn't chunk {} - Seems like we have been removed during the task".format(g))
+            else:
                 await guild.chunk(cache=True)
-            except Exception:
-                ex = traceback.format_exc()
-                log.warn("Failed to chunk guild {} - {}".format(guild_id, ex))
-            finally:
-                    del self.uncached_guilds[guild_id]
+                await asyncio.sleep(0.1)
+                chunked += 1
+        self.active_chunk = False
+
+        self.cache.build()
+        if self.terminate_chunk:
+            log.warn("Chunking task aborted with {} left to go!".format(len(ids) - chunked))
+        else:
+            log.info("Chunking task completed!")
 
 
-    async def on_message(self, message):
-        if message.guild != None:
-            if not self.db.configs.exists(f"{message.guild.id}"):
-                self.db.configs.insert(self.schemas.GuildConfig(message.guild))
+    # async def on_message(self, message):             
+    #     # if message.guild != None:
+    #     #     if not self.db.configs.exists(f"{message.guild.id}"):
+    #     #         self.db.configs.insert(self.schemas.GuildConfig(message.guild))
 
+    #     ctx = await self.get_context(message, cls=Context) # TODO: fix this
+    #     if ctx.valid and ctx.command is not None:
+    #         self.used_commands = self.used_commands + 1
+    #         if isinstance(ctx.channel, discord.DMChannel) or ctx.guild is None:
+    #             return
+    #         elif isinstance(ctx.channel, discord.TextChannel) and not ctx.channel.permissions_for(ctx.channel.guild.me).send_messages:
+    #             try:
+    #                 await ctx.author.send(self.i18next.t(ctx.guild, "cant_send_message"))
+    #             except Exception:
+    #                 pass
+    #         else:
+    #             # if message.guild is not None and self.ready:
+    #             #     if not message.guild.chunked:
+    #             #         await message.guild.chunk(cache=True)
+    #             #         log.info("Cached missing guild {}".format(message.guild.id))
+    #             await self.invoke(ctx)
+
+
+    async def on_messag(self, message):
         ctx = await self.get_context(message, cls=Context) # TODO: fix this
         if ctx.valid and ctx.command is not None:
-            self.used_commands = self.used_commands + 1
-            if isinstance(ctx.channel, discord.DMChannel) or ctx.guild is None:
-                return
-            elif isinstance(ctx.channel, discord.TextChannel) and not ctx.channel.permissions_for(ctx.channel.guild.me).send_messages:
-                try:
-                    await ctx.author.send(self.i18next.t(ctx.guild, "cant_send_message"))
-                except Exception:
-                    pass
-            else:
-                if message.guild is not None and self.ready:
-                    if not message.guild.chunked:
-                        await message.guild.chunk(cache=True)
-                        log.info("Cached missing guild {}".format(message.guild.id))
-                await self.invoke(ctx)
+            if self.ready:
+                if not message.guild.chunked:
+                    await message.guild.chunk(cache=True)
+            await self.invoke(ctx)
 
 
     async def on_interaction(self, i: discord.Interaction):
@@ -259,8 +254,8 @@ class AutoMod(commands.AutoShardedBot):
         return prefix
 
 
-    def run(self):
-        try:
-            super().run(self.config.token, reconnect=True)
-        finally:
-            pass
+    # def run(self):
+    #     try:
+    #         super().run(self.config.token, reconnect=True)
+    #     finally:
+    #         pass

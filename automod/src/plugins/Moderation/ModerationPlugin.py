@@ -420,7 +420,7 @@ class ModerationPlugin(PluginBlueprint):
 
     
     @commands.command()
-    @commands.has_guild_permissions(ban_members=True)
+    @commands.has_guild_permissions(kick_members=True)
     async def kick(
         self, 
         ctx, 

@@ -24,7 +24,7 @@ def SetupLogging():
 
         logging.basicConfig(level=logging.INFO, format="[{levelname:<7}] - {message}", style="{")
         
-        yield
+        yield 
 
         
     except Exception as ex:
