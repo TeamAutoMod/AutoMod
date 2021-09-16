@@ -5,7 +5,6 @@ import os
 import json
 import asyncio
 import sentry_sdk
-import aioredis
 import datetime
 import logging
 
@@ -16,7 +15,6 @@ from bot.logger import SetupLogging
 
 
 async def boot(bot, log):
-    #await bot.login(bot.config.token)
     try:
         version = bot.version = await bot.utils.getVersion()
         log.info("Spinning up version {}".format(version))
@@ -25,14 +23,6 @@ async def boot(bot, log):
             bot.config.sentry_dsn,
             traces_sample_rate=1.0
         )
-
-        # bot.redis = await aioredis.create_redis_pool(
-        #     bot.config.redit_host,
-        #     bot.config.redis_port,
-        #     encoding="utf-8",
-        #     db=0
-        # )
-        # log.info("Established redis connection")
 
         if not hasattr(bot, "uptime"):
             bot.uptime = datetime.datetime.utcnow()

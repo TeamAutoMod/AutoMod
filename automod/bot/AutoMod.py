@@ -141,29 +141,6 @@ class AutoMod(commands.AutoShardedBot):
             log.info("Chunking task completed!")
 
 
-    # async def on_message(self, message):             
-    #     # if message.guild != None:
-    #     #     if not self.db.configs.exists(f"{message.guild.id}"):
-    #     #         self.db.configs.insert(self.schemas.GuildConfig(message.guild))
-
-    #     ctx = await self.get_context(message, cls=Context) # TODO: fix this
-    #     if ctx.valid and ctx.command is not None:
-    #         self.used_commands = self.used_commands + 1
-    #         if isinstance(ctx.channel, discord.DMChannel) or ctx.guild is None:
-    #             return
-    #         elif isinstance(ctx.channel, discord.TextChannel) and not ctx.channel.permissions_for(ctx.channel.guild.me).send_messages:
-    #             try:
-    #                 await ctx.author.send(self.i18next.t(ctx.guild, "cant_send_message"))
-    #             except Exception:
-    #                 pass
-    #         else:
-    #             # if message.guild is not None and self.ready:
-    #             #     if not message.guild.chunked:
-    #             #         await message.guild.chunk(cache=True)
-    #             #         log.info("Cached missing guild {}".format(message.guild.id))
-    #             await self.invoke(ctx)
-
-
     async def on_message(self, message):
         ctx = await self.get_context(message) # TODO: fix this
         if ctx.valid and ctx.command is not None:

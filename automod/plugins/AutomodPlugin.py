@@ -142,84 +142,84 @@ class AutomodPlugin(PluginBlueprint):
                 await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they send Discord invites"))
 
 
-    @automod.command()
-    async def everyone(
-        self, 
-        ctx,
-        warns: str
-    ):
-        """everyone_help"""
-        warns = warns.lower()
-        if warns == "off":
-            automod = self.db.configs.get(ctx.guild.id, "automod")
-            if "everyone" in automod:
-                del automod["everyone"]
-            self.db.configs.update(ctx.guild.id, "automod", automod)
+    # @automod.command()
+    # async def everyone(
+    #     self, 
+    #     ctx,
+    #     warns: str
+    # ):
+    #     """everyone_help"""
+    #     warns = warns.lower()
+    #     if warns == "off":
+    #         automod = self.db.configs.get(ctx.guild.id, "automod")
+    #         if "everyone" in automod:
+    #             del automod["everyone"]
+    #         self.db.configs.update(ctx.guild.id, "automod", automod)
 
-            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-everyone"))
-        else:
-            try:
-                warns = int(warns)
-            except ValueError:
-                e = Embed(
-                    title="Invalid paramater",
-                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="everyone <warns>", off_command="everyone off")
-                )
-                await ctx.send(embed=e)
-            else:
-                if warns < 1:
-                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+    #         await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-everyone"))
+    #     else:
+    #         try:
+    #             warns = int(warns)
+    #         except ValueError:
+    #             e = Embed(
+    #                 title="Invalid paramater",
+    #                 description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="everyone <warns>", off_command="everyone off")
+    #             )
+    #             await ctx.send(embed=e)
+    #         else:
+    #             if warns < 1:
+    #                 return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
 
-                if warns > 100:
-                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+    #             if warns > 100:
+    #                 return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
 
-                automod = self.db.configs.get(ctx.guild.id, "automod")
-                automod.update({
-                    "everyone": {"warns": warns}
-                })
-                self.db.configs.update(ctx.guild.id, "automod", automod)
+    #             automod = self.db.configs.get(ctx.guild.id, "automod")
+    #             automod.update({
+    #                 "everyone": {"warns": warns}
+    #             })
+    #             self.db.configs.update(ctx.guild.id, "automod", automod)
 
-                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they attempt to mention @everyone/here"))
+    #             await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they attempt to mention @everyone/here"))
 
 
-    @automod.command()
-    async def caps(
-        self, 
-        ctx,
-        warns: str
-    ):
-        """caps_help"""
-        warns = warns.lower()
-        if warns == "off":
-            automod = self.db.configs.get(ctx.guild.id, "automod")
-            if "caps" in automod:
-                del automod["caps"]
-            self.db.configs.update(ctx.guild.id, "automod", automod)
+    # @automod.command()
+    # async def caps(
+    #     self, 
+    #     ctx,
+    #     warns: str
+    # ):
+    #     """caps_help"""
+    #     warns = warns.lower()
+    #     if warns == "off":
+    #         automod = self.db.configs.get(ctx.guild.id, "automod")
+    #         if "caps" in automod:
+    #             del automod["caps"]
+    #         self.db.configs.update(ctx.guild.id, "automod", automod)
             
-            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-caps"))
-        else:
-            try:
-                warns = int(warns)
-            except ValueError:
-                e = Embed(
-                    title="Invalid paramater",
-                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="caps <warns>", off_command="caps off")
-                )
-                await ctx.send(embed=e)
-            else:
-                if warns < 1:
-                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+    #         await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-caps"))
+    #     else:
+    #         try:
+    #             warns = int(warns)
+    #         except ValueError:
+    #             e = Embed(
+    #                 title="Invalid paramater",
+    #                 description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="caps <warns>", off_command="caps off")
+    #             )
+    #             await ctx.send(embed=e)
+    #         else:
+    #             if warns < 1:
+    #                 return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
 
-                if warns > 100:
-                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+    #             if warns > 100:
+    #                 return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
 
-                automod = self.db.configs.get(ctx.guild.id, "automod")
-                automod.update({
-                    "caps": {"warns": warns}
-                })
-                self.db.configs.update(ctx.guild.id, "automod", automod)
+    #             automod = self.db.configs.get(ctx.guild.id, "automod")
+    #             automod.update({
+    #                 "caps": {"warns": warns}
+    #             })
+    #             self.db.configs.update(ctx.guild.id, "automod", automod)
 
-                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message consists of more than 75% capital letters"))
+    #             await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message consists of more than 75% capital letters"))
 
 
     @automod.command()
@@ -262,44 +262,44 @@ class AutomodPlugin(PluginBlueprint):
                 await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they send forbidden/uncommon attachment types"))
 
 
-    @automod.command()
-    async def zalgo(
-        self, 
-        ctx,
-        warns: str
-    ):
-        """zalgo_help"""
-        warns = warns.lower()
-        if warns == "off":
-            automod = self.db.configs.get(ctx.guild.id, "automod")
-            if "zalgo" in automod:
-                del automod["zalgo"]
-            self.db.configs.update(ctx.guild.id, "automod", automod)
+    # @automod.command()
+    # async def zalgo(
+    #     self, 
+    #     ctx,
+    #     warns: str
+    # ):
+    #     """zalgo_help"""
+    #     warns = warns.lower()
+    #     if warns == "off":
+    #         automod = self.db.configs.get(ctx.guild.id, "automod")
+    #         if "zalgo" in automod:
+    #             del automod["zalgo"]
+    #         self.db.configs.update(ctx.guild.id, "automod", automod)
             
-            await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-zalgo"))
-        else:
-            try:
-                warns = int(warns)
-            except ValueError:
-                e = Embed(
-                    title="Invalid paramater",
-                    description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="zalgo <warns>", off_command="zalgo off")
-                )
-                await ctx.send(embed=e)
-            else:
-                if warns < 1:
-                    return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+    #         await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-zalgo"))
+    #     else:
+    #         try:
+    #             warns = int(warns)
+    #         except ValueError:
+    #             e = Embed(
+    #                 title="Invalid paramater",
+    #                 description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="zalgo <warns>", off_command="zalgo off")
+    #             )
+    #             await ctx.send(embed=e)
+    #         else:
+    #             if warns < 1:
+    #                 return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
 
-                if warns > 100:
-                    return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+    #             if warns > 100:
+    #                 return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
 
-                automod = self.db.configs.get(ctx.guild.id, "automod")
-                automod.update({
-                    "zalgo": {"warns": warns}
-                })
-                self.db.configs.update(ctx.guild.id, "automod", automod)
+    #             automod = self.db.configs.get(ctx.guild.id, "automod")
+    #             automod.update({
+    #                 "zalgo": {"warns": warns}
+    #             })
+    #             self.db.configs.update(ctx.guild.id, "automod", automod)
 
-                await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message contains zalgo letters."))
+    #             await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message contains zalgo letters."))
 
 
     @automod.command()

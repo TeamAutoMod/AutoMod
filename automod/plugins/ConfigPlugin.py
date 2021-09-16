@@ -452,16 +452,16 @@ class ConfigPlugin(PluginBlueprint):
             value=f"``{am['mention']['threshold']} mentions``" if "mention" in am else "``❌``", 
             inline=True
         )
-        e.add_field(
-            name="Anti Caps", 
-            value=f"``{am['caps']['warns']} {'warn' if int(am['caps']['warns']) == 1 else 'warns'}``" if 'caps' in am else "``❌``", 
-            inline=True
-        )
-        e.add_field(
-            name="Anti @ever1", 
-            value=f"``{am['everyone']['warns']} {'warn' if int(am['everyone']['warns']) == 1 else 'warns'}``" if 'everyone' in am else "``❌``", 
-            inline=True
-        )
+        # e.add_field(
+        #     name="Anti Caps", 
+        #     value=f"``{am['caps']['warns']} {'warn' if int(am['caps']['warns']) == 1 else 'warns'}``" if 'caps' in am else "``❌``", 
+        #     inline=True
+        # )
+        # e.add_field(
+        #     name="Anti @ever1", 
+        #     value=f"``{am['everyone']['warns']} {'warn' if int(am['everyone']['warns']) == 1 else 'warns'}``" if 'everyone' in am else "``❌``", 
+        #     inline=True
+        # )
         e.add_field(
             name="Anti Invites", 
             value=f"``{am['invites']['warns']} {'warn' if int(am['invites']['warns']) == 1 else 'warns'}``" if "invites" in am else "``❌``", 
@@ -487,11 +487,11 @@ class ConfigPlugin(PluginBlueprint):
             value=f"``{am['lines']['threshold']} lines``" if "files" in am else "``❌``", 
             inline=True
         )
-        e.add_field(
-            name="Anti Zalgo", 
-            value=f"``{am['zalgo']['warns']} {'warn' if int(am['zalgo']['warns']) == 1 else 'warns'}``" if "files" in am else "``❌``", 
-            inline=True
-        )
+        # e.add_field(
+        #     name="Anti Zalgo", 
+        #     value=f"``{am['zalgo']['warns']} {'warn' if int(am['zalgo']['warns']) == 1 else 'warns'}``" if "files" in am else "``❌``", 
+        #     inline=True
+        # )
 
         punishments = [f"``{x} ({y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]})``" for x, y in cfg["punishments"].items()]
         punishments = sorted(punishments, key=lambda i: int(i.split(" ")[0].replace("``", "")))
