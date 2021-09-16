@@ -6,10 +6,10 @@ import re
 
 from .PluginBlueprint import PluginBlueprint
 from .Automod.events import (
-    OnMessage, 
-    OnMessageEdit, 
     OnMemberJoin
 )
+from .Automod.sub.CheckMessage import checkMessage
+from .Automod.sub.ShouldPerformAutomod import shouldPerformAutomod
 from .Types import Reason, Embed
 
 
@@ -71,7 +71,16 @@ class AutomodPlugin(PluginBlueprint):
         self, 
         message
     ):
-        await OnMessage.run(self, message)
+        if not await shouldPerformAutomod(self, message):
+            return
+        if message.guild is None or not isinstance(message.guild, discord.Guild):
+            return
+        if not self.db.configs.exists(message.guild.id):
+            return
+        if len(self.db.configs.get(message.guild.id, "automod")) < 1:
+            return
+
+        await checkMessage(self, message)
 
     
     @commands.Cog.listener()
@@ -80,7 +89,17 @@ class AutomodPlugin(PluginBlueprint):
         before, 
         after
     ):
-        await OnMessageEdit.run(self, before, after)
+        if not await shouldPerformAutomod(self, after):
+            return
+        if after.guild is None:
+            return
+        if not self.db.configs.get(after.guild.id, "automod"):
+            return
+        
+        if before.content != after.content and after.content == None:
+            return
+        
+        await checkMessage(self, after)
 
 
     @commands.Cog.listener()
