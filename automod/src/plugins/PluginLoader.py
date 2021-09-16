@@ -36,7 +36,7 @@ plugins = {
 
     WarnsPlugin: "src.plugins.Warns.WarnsPlugin",
 
-    StarboardPlugin: "src.plugins.Starboard.StarboardPlugin",
+    #StarboardPlugin: "src.plugins.Starboard.StarboardPlugin",
 
     TagsPlugin: "src.plugins.Tags.TagsPlugin",
 

@@ -129,7 +129,7 @@ class AutoMod(commands.AutoShardedBot):
                     self.db.configs.insert(self.schemas.GuildConfig(g))
                     log.info("Filled up missing guild {}".format(g.id))
             
-            #self.cache.build()
+            self.cache.build()
 
             end2 = time.time()
             final_dur = (end2 - start)
@@ -151,11 +151,6 @@ class AutoMod(commands.AutoShardedBot):
 
 
     async def on_message(self, message):
-        if message.guild is not None and self.ready:
-            if not message.guild.chunked:
-                await message.guild.chunk(cache=True)
-                log.info("Cached missing guild {}".format(message.guild.id))
-                
         if message.guild != None:
             if not self.db.configs.exists(f"{message.guild.id}"):
                 self.db.configs.insert(self.schemas.GuildConfig(message.guild))
@@ -171,6 +166,10 @@ class AutoMod(commands.AutoShardedBot):
                 except Exception:
                     pass
             else:
+                if message.guild is not None and self.ready:
+                    if not message.guild.chunked:
+                        await message.guild.chunk(cache=True)
+                        log.info("Cached missing guild {}".format(message.guild.id))
                 await self.invoke(ctx)
 
 
