@@ -10,14 +10,13 @@ import datetime
 import logging
 
 
-from src import AutoMod
-from src.logger import SetupLogging
-from src.plugins import PluginLoader
+from bot.AutoMod import AutoMod
+from bot.logger import SetupLogging
 
 
 
 async def boot(bot, log):
-    await bot.login(bot.config.token)
+    #await bot.login(bot.config.token)
     try:
         version = bot.version = await bot.utils.getVersion()
         log.info("Spinning up version {}".format(version))
@@ -38,7 +37,12 @@ async def boot(bot, log):
         if not hasattr(bot, "uptime"):
             bot.uptime = datetime.datetime.utcnow()
         
-        await PluginLoader.loadPlugins(bot, log)
+        for plugin in bot.config.plugins:
+            try:
+                bot.load_extension("plugins.{}".format(plugin))
+                log.info("Loaded {}".format(plugin))
+            except Exception as ex:
+                log.warning("Failed to load {} - {}".format(plugin, ex))
 
         bot.ready = True
         bot.locked = False
