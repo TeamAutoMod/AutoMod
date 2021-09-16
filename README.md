@@ -1,4 +1,4 @@
-![Banner](https://cdn.discordapp.com/attachments/874097242598961152/883736333389004821/banner_.png)
+![Banner](https://cdn.discordapp.com/attachments/874097242598961152/888160308227629076/banner.png)
 # AutoMod
 AutoMod is a Discord moderation and utility bot, made for both small and large communities.
 
