@@ -17,7 +17,7 @@ class AntispamPlugin(PluginBlueprint):
 
 
     @commands.Cog.listener()
-    async def on_message(
+    async def on_spam(
         self,
         message
     ):

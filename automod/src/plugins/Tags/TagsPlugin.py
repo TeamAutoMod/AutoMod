@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 
 import datetime
+import asyncio
 
 from ..PluginBlueprint import PluginBlueprint
 from ..Types import Embed
@@ -29,7 +30,7 @@ async def editTag(plugin, ctx, tag, content):
         plugin.db.tags.update(_id, "edited_by", f"{ctx.message.author.id}")
 
 
-async def getTags(plugin, message):
+def getTags(plugin, message):
     global tags
     tags = []
     try:
@@ -209,6 +210,9 @@ class TagsPlugin(PluginBlueprint):
         self,
         message
     ):
+        tags = getTags(self, message) 
+        if len(tags) < 1:
+            return
         if message.author.bot or message.webhook_id is not None or message.author.id == self.bot.user.id:
             return
 
@@ -226,7 +230,7 @@ class TagsPlugin(PluginBlueprint):
                     if role in message.author.roles:
                         return
 
-        tags = await getTags(self, message)
+        tags = getTags(self, message)
         prefix = self.bot.get_guild_prefix(message.guild)
         if prefix is None:
             return

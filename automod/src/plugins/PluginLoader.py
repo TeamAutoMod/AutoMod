@@ -52,16 +52,17 @@ plugins = {
 
     LogsPlugin: "src.plugins.Logs.LogsPlugin",
 
-    CachePlugin: "src.plugins.Cache.CachePlugin"
+    # CachePlugin: "src.plugins.Cache.CachePlugin"
 }
 
 
-async def loadPlugins(bot):
+async def loadPlugins(bot, log):
     for plugin, path in plugins.items():
         try:
             plugin.set_path(plugin, path)
             bot.add_cog(plugin(bot))
             bot.load_extension(path)
+            log.info("Loaded {}".format(path.split(".")[-1]))
         except Exception:
             pass
             # ex = traceback.format_exc()

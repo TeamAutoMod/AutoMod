@@ -67,20 +67,20 @@ class AutomodPlugin(PluginBlueprint):
 
 
     @commands.Cog.listener()
-    async def on_message(
+    async def on_automod(
         self, 
         message
     ):
         await OnMessage.run(self, message)
 
     
-    @commands.Cog.listener()
-    async def on_message_edit(
-        self, 
-        before, 
-        after
-    ):
-        await OnMessageEdit.run(self, before, after)
+    # @commands.Cog.listener()
+    # async def on_message_edit(
+    #     self, 
+    #     before, 
+    #     after
+    # ):
+    #     await OnMessageEdit.run(self, before, after)
 
 
     @commands.Cog.listener()
