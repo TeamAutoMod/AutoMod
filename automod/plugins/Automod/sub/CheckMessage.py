@@ -7,7 +7,7 @@ from ..triggers import Attachments, Invites, Lines, Mentions
 
 async def checkMessage(plugin, message): 
     automod = plugin.db.configs.get(f"{message.guild.id}", "automod")
-    if "files" in automod:
+    if "files" in automod:  
         await Attachments.check(plugin, message)
     if "invites" in automod:
         await Invites.check(plugin, message)

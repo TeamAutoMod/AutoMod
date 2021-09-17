@@ -331,8 +331,8 @@ class AutomodPlugin(PluginBlueprint):
         mentions = mentions.lower()
         if mentions == "off":
             automod = self.db.configs.get(ctx.guild.id, "automod")
-            if "mentions" in automod:
-                del automod["mentions"]
+            if "mention" in automod:
+                del automod["mention"]
             self.db.configs.update(ctx.guild.id, "automod", automod)
             
             await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="max-mentions"))
@@ -354,7 +354,7 @@ class AutomodPlugin(PluginBlueprint):
 
                 automod = self.db.configs.get(ctx.guild.id, "automod")
                 automod.update({
-                    "mentions": {"threshold": mentions}
+                    "mention": {"threshold": mentions}
                 })
                 self.db.configs.update(ctx.guild.id, "automod", automod)
 
