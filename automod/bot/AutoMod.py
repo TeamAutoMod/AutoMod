@@ -207,8 +207,8 @@ class AutoMod(commands.AutoShardedBot):
         e.add_field(
             name="❯ Location",
             value="• Name: {} \n• ID: {}".format(
-                guild.name or "None",
-                guild.id or "None"
+                guild.name if guild != None else "None",
+                guild.id if guild != None else "None"
             ),
             inline=True
         )
