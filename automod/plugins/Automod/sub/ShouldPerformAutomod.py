@@ -4,7 +4,7 @@ from utils import Permissions
 
 
 
-async def shouldPerformAutomod(plugin, message):
+def shouldPerformAutomod(plugin, message):
     if message.guild is None:
         return False
 

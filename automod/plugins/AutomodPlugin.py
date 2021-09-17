@@ -11,48 +11,7 @@ from .Automod.events import (
 from .Automod.sub.CheckMessage import checkMessage
 from .Automod.sub.ShouldPerformAutomod import shouldPerformAutomod
 from .Types import Reason, Embed
-
-
-
-async def enableRaidMode(plugin, guild, moderator, reason):
-    state = {"last": guild.verification_level, "in_raid": False}
-
-    try:
-        await guild.edit(verification_level=discord.VerificationLevel.high)
-    except Exception:
-        pass
-    else:
-        state.update({"in_raid": True})
-        plugin.raids[guild.id] = state
-
-        await plugin.action_logger.log(
-            guild, 
-            "raid_on", 
-            moderator=moderator, 
-            moderator_id=moderator.id,
-            reason=reason
-        )
-
-
-async def disableRaidMode(plugin, guild, moderator, reason):
-    state = plugin.raids[guild.id]
-
-    try:
-        await guild.edit(verification_level=state["last"])
-    except Exception:
-        pass
-    finally:
-        del plugin.raids[guild.id]
-        if guild.id in plugin.last_joiners:
-            plugin.last_joiners[guild.id].clear()
-
-        await plugin.action_logger.log(
-            guild, 
-            "raid_off", 
-            moderator=moderator,
-            moderator_id=moderator.id,
-            reason=reason
-        )
+from utils.Raid import enableRaidMode, disableRaidMode
 
 
 class AutomodPlugin(PluginBlueprint):
@@ -71,7 +30,7 @@ class AutomodPlugin(PluginBlueprint):
         self, 
         message
     ):
-        if not await shouldPerformAutomod(self, message):
+        if not shouldPerformAutomod(self, message):
             return
         if message.guild is None or not isinstance(message.guild, discord.Guild):
             return
@@ -89,7 +48,7 @@ class AutomodPlugin(PluginBlueprint):
         before, 
         after
     ):
-        if not await shouldPerformAutomod(self, after):
+        if not shouldPerformAutomod(self, after):
             return
         if after.guild is None:
             return

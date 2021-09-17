@@ -6,43 +6,8 @@ import asyncio
 
 from .PluginBlueprint import PluginBlueprint
 from .Types import Embed
+from utils.Tags import *
 
-
-
-async def addTagToCache(plugin, ctx, trigger, reply):
-    try:
-        plugin.cached_tags[ctx.guild.id].append({"trigger": trigger, "reply": reply})
-    except KeyError:
-        plugin.cached_tags[ctx.guild.id] = [{"trigger": trigger, "reply": reply}]
-
-
-async def editTag(plugin, ctx, tag, content):
-    try:
-        await removeTagFromCache(plugin, ctx, tag)
-        await addTagToCache(plugin, ctx, tag, content)
-    except Exception:
-        pass
-    finally:
-        _id = f"{ctx.guild.id}-{tag}"
-        plugin.db.tags.update(_id, "reply", f"{content}")
-        plugin.db.tags.update(_id, "last_edited", datetime.datetime.utcnow())
-        plugin.db.tags.update(_id, "edited_by", f"{ctx.message.author.id}")
-
-
-def getTags(plugin, message):
-    global tags
-    tags = []
-    try:
-        tags = plugin.cached_tags[message.guild.id]
-    except KeyError:
-        _tags = [x for x in plugin.db.tags.find({}) if x["id"].split("-")[0] == str(message.guild.id)]
-        tags = [{"trigger": "-".join(x["id"].split("-")[1:]), "reply": x["reply"]} for x in _tags]
-    finally:
-        return tags
-
-
-async def removeTagFromCache(plugin, ctx, trigger):
-    plugin.cached_tags[ctx.guild.id] = list(filter(lambda x: x["trigger"] != trigger, plugin.cached_tags[ctx.guild.id]))
 
 
 async def cacheTags(plugin):
@@ -111,7 +76,7 @@ class TagsPlugin(PluginBlueprint):
             return await ctx.send(self.i18next.t(ctx.guild, "tag_already_exists", _emote="WARN"))
 
         self.db.tags.insert(self.schemas.Tag(_id, reply, ctx.author, datetime.datetime.utcnow()))
-        await addTagToCache(self, ctx, trigger, reply)
+        addTagToCache(self, ctx, trigger, reply)
 
         prefix = self.bot.get_guild_prefix(ctx.guild)
         await ctx.send(self.i18next.t(ctx.guild, "tag_created", _emote="YES", prefix=prefix, tag=trigger))
@@ -136,7 +101,7 @@ class TagsPlugin(PluginBlueprint):
             return await ctx.send(self.i18next.t(ctx.guild, "tag_doesnt_exist", _emote="NO"))
 
         self.db.tags.delete(_id)
-        await removeTagFromCache(self, ctx, trigger)
+        removeTagFromCache(self, ctx, trigger)
 
         await ctx.send(self.i18next.t(ctx.guild, "tag_deleted", _emote="YES"))
 
@@ -215,7 +180,7 @@ class TagsPlugin(PluginBlueprint):
         if len(content) > 1500:
             return await ctx.send(self.i18next.t(ctx.guild, "tag_content_too_long", _emote="NO"))
 
-        await editTag(self, ctx, tag, content)
+        editTag(self, ctx, tag, content)
 
         await ctx.send(self.i18next.t(ctx.guild, "tag_edited", _emote="YES", tag=tag))
 

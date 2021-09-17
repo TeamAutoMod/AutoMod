@@ -144,7 +144,8 @@ class WarnsPlugin(PluginBlueprint):
             else:
                 _, case = await self.action_validator.add_warns(
                     ctx.message, 
-                    user, warns, 
+                    user, 
+                    warns, 
                     moderator=ctx.author, 
                     moderator_id=ctx.author.id,
                     user=user, 
