@@ -33,11 +33,11 @@ class FiltersPlugin(PluginBlueprint):
 
 
     @commands.Cog.listener()
-    async def on_message(
+    async def on_filter_event(
         self,
         message
     ):
-        if not await shouldPerformAutomod(self, message):
+        if not shouldPerformAutomod(self, message):
             return
 
         filters = self.db.configs.get(message.guild.id, "filters")
@@ -173,9 +173,6 @@ class FiltersPlugin(PluginBlueprint):
             e.set_footer(text=footer)
         
         await ctx.send(embed=e)
-
-
-    
 
 
 

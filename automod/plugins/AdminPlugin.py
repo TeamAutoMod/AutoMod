@@ -3,7 +3,6 @@ from discord.ext import commands
 
 import topgg
 import logging
-import unicodedata
 import ast
 import traceback
 import time
@@ -11,15 +10,12 @@ import psutil
 
 from .PluginBlueprint import PluginBlueprint
 from .Types import DiscordUserID, Embed
+from utils.Utils import toStr, parseShardInfo
 
 
 
 log = logging.getLogger(__name__)
 
-def toStr(char):
-    digit = f"{ord(char):x}".upper()
-    name = unicodedata.name(char, "Name not found")
-    return f"{char} - {digit:>04} | {name.upper()}"
 
 def insert_returns(body):
     if isinstance(body[-1], ast.Expr):
@@ -32,15 +28,6 @@ def insert_returns(body):
 
     if isinstance(body[-1], ast.With):
         insert_returns(body[-1].body)
-
-
-def parseShardInfo(plugin, shard):
-    guilds = len(list(filter(lambda x: x.shard_id == shard.id, plugin.bot.guilds)))
-    if not shard.is_closed():
-        text = "+ {}: CONNECTED ~ {} guilds".format(shard.id, guilds)
-    else:
-        text = "- {}: DISCONNECTED ~ {} guilds".format(shard.id, guilds)
-    return text
 
 
 class AdminPlugin(PluginBlueprint):
