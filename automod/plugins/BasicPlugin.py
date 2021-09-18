@@ -41,12 +41,12 @@ class BasicPlugin(PluginBlueprint):
         """ping_help"""
         bot = self.bot
         t1 = time.perf_counter()
-        msg = await ctx.send(f"{self.emotes.get('PINGING')} Pinging...")
+        msg = await ctx.send(f"Pinging...")
         t2 = time.perf_counter()
 
         await msg.edit(
-            content="{} Pong! ``{}ms`` \n*Server Latency: ``{}ms``*"\
-            .format(self.emotes.get("PONG"), round((t2 - t1) * 1000), round(bot.latency * 1000, 2))
+            content="Pong! ``{}ms`` \n*Server Latency: ``{}ms``*"\
+            .format(round((t2 - t1) * 1000), round(bot.latency * 1000, 2))
         )
 
 
