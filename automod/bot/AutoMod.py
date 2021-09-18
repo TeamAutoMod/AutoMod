@@ -3,7 +3,6 @@ from discord.ext import commands
 
 import logging
 import asyncio
-import time
 import datetime
 import traceback
 import sys
@@ -21,6 +20,7 @@ from utils.ModifyConfig import ModifyConfig
 from utils.BotUtils import BotUtils
 from plugins.Types import Embed
 from utils.HelpGenerator import getHelpForPlugin
+from utils.Utils import spawnNewThread
 
 
 
@@ -85,13 +85,12 @@ class AutoMod(commands.AutoShardedBot):
 
     def dispatch(self, event_name, *args, **kwargs):
         if event_name == "message":
-            super().dispatch("tags_event", *args, **kwargs)
-            super().dispatch("automod_event", *args, **kwargs)
-            super().dispatch("antispam_event", *args, **kwargs)
-            super().dispatch("filter_event", *args, **kwargs)
-            # for event in ["tags", "automod", "antispam", "filter"]:
-            #     super().dispatch(f"{event}_event", *args, **kwargs)
+            spawnNewThread(super().dispatch, "tags_event", *args, **kwargs)
+            spawnNewThread(super().dispatch, "automod_event", *args, **kwargs)
+            spawnNewThread(super().dispatch, "antispam_event", *args, **kwargs)
+            spawnNewThread(super().dispatch, "filter_event", *args, **kwargs)
         super().dispatch(event_name, *args, **kwargs)
+    
     
     async def on_ready(self):
         for guild in self.guilds:

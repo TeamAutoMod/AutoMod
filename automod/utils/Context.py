@@ -8,6 +8,8 @@ import io
 class Context(commands.Context):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        if self.command_prefix == None:
+            self.command_prefix = self.bot.config.default_prefix
  
 
     async def prompt(self, message, *, timeout=60.0, delete_after=True, author_id=None):
