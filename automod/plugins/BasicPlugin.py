@@ -45,7 +45,7 @@ class BasicPlugin(PluginBlueprint):
         t2 = time.perf_counter()
 
         await msg.edit(
-            content="{} Pong! Rest API: ``{}``ms | Latency: ``{}ms``"\
+            content="{} Pong! ``{}ms`` \n*Server Latency: ``{}ms``*"\
             .format(self.emotes.get("PONG"), round((t2 - t1) * 1000), round(bot.latency * 1000, 2))
         )
 

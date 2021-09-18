@@ -85,19 +85,20 @@ class AutoMod(commands.AutoShardedBot):
 
     def dispatch(self, event_name, *args, **kwargs):
         if event_name == "message":
-            # super().dispatch("tags_event", *args, **kwargs)
-            # super().dispatch("automod_event", *args, **kwargs)
-            # super().dispatch("antispam_event", *args, **kwargs)
-            for event in ["tags", "automod", "antispam", "filter"]:
-                super().dispatch(f"{event}_event", *args, **kwargs)
+            super().dispatch("tags_event", *args, **kwargs)
+            super().dispatch("automod_event", *args, **kwargs)
+            super().dispatch("antispam_event", *args, **kwargs)
+            super().dispatch("filter_event", *args, **kwargs)
+            # for event in ["tags", "automod", "antispam", "filter"]:
+            #     super().dispatch(f"{event}_event", *args, **kwargs)
         super().dispatch(event_name, *args, **kwargs)
     
     async def on_ready(self):
         for guild in self.guilds:
             if not self.db.configs.exists(f"{guild.id}"):
                 self.db.configs.insert(self.schemas.GuildConfig(guild))
-
-        await self.chunk_guilds()
+        if not self.ready:
+            await self.chunk_guilds()
 
 
     async def chunk_guilds(self):
