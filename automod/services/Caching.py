@@ -73,7 +73,7 @@ class Cache:
 
 
     def build(self, _return=True):
-        self.users = UserCache(list(set(list(itertools.chain(*[x.members for x in self.bot.guilds])))))
+        self.users = UserCache(list(set(self.bot.users)))
         for guild in self.bot.guilds:
             self.guilds[guild.id] = guild
             self.members[guild.id] = guild.members
@@ -81,8 +81,7 @@ class Cache:
             self.text_channels[guild.id] = guild.text_channels
             self.voice_channels[guild.id] = guild.voice_channels
         
-        if _return:
-            return self
+        if _return: return self
 
 
     def build_for_guild(self, guild):

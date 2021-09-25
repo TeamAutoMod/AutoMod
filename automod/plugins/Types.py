@@ -1,7 +1,7 @@
 import discord
 from discord import HTTPException
 from discord.ext import commands
-from discord.ext.commands import BadArgument, UserConverter
+from discord.ext.commands import BadArgument, UserConverter, MemberConverter
 
 from utils.RegEx import getPattern
 
@@ -48,6 +48,27 @@ class DiscordUser(commands.Converter):
             raise BadArgument("user_not_found")
         return user
 
+
+class DiscordMember(commands.Converter):
+    async def convert(self, ctx, argument):
+        user = None
+    
+        if ctx.message.reference != None:
+            if isinstance(ctx.message.reference, discord.Message):
+                user = ctx.message.referenc.resolved.author
+
+        match = (getPattern(r"<@!?([0-9]+)>")).match(argument)
+        if match is not None:
+            argument = match.group(1)
+        try:
+            user = await MemberConverter().convert(ctx, argument)
+        except BadArgument:
+            raise BadArgument
+        
+        if user == None:
+            raise BadArgument("user_not_found")
+        
+        return user
 
 
 class RangedInt(commands.Converter):

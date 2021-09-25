@@ -20,6 +20,7 @@ from utils.ModifyConfig import ModifyConfig
 from utils.BotUtils import BotUtils
 from plugins.Types import Embed
 from utils.HelpGenerator import getHelpForPlugin
+from utils.Context import Context
 
 
 
@@ -36,13 +37,16 @@ def _prefix_callable(bot, message):
             base.append(prefix)
         except Exception:
             base.append(bot.config.default_prefix)
+    
+    for p in base: 
+        if p == None:
+            base.remove(p)
     return base
 
 
 class AutoMod(commands.AutoShardedBot):
     def __init__(self, config: dict):
         self.config = config = S(config)
-        # self.slash_commands = dict()
         intents = discord.Intents(
             guilds=True,
             members=True,
@@ -55,7 +59,7 @@ class AutoMod(commands.AutoShardedBot):
         super().__init__(
            command_prefix=_prefix_callable, intents=intents, case_insensitive=True, 
            max_messages=1000, chunk_guilds_at_startup=False, shard_count=config.shards,
-           allowed_mentions=discord.AllowedMentions(everyone=False)
+           allowed_mentions=discord.AllowedMentions(everyone=False, replied_user=False)
         )
         self.ready = False
         self.locked = True
@@ -143,7 +147,7 @@ class AutoMod(commands.AutoShardedBot):
 
 
     async def on_message(self, message):
-        ctx = await self.get_context(message) # TODO: fix this
+        ctx = await self.get_context(message, cls=Context) # TODO: fix this
         if ctx.valid and ctx.command is not None:
             if self.ready:
                 if not message.guild.chunked:
@@ -158,26 +162,18 @@ class AutoMod(commands.AutoShardedBot):
                 selected = i.data.get("values")[0]
                 selected = selected if selected != "None" else None
                 embed, view = await getHelpForPlugin(self, selected, i)
-                if selected == None:
+                try:
+                    await i.response.edit_message(
+                        embed=embed, 
+                        view=view
+                    )
+                except discord.NotFound:
                     try:
                         await i.delete_original_message()
                     except Exception:
                         pass
                     finally:
                         await i.channel.send("Invalid interaction, please use the command again.")
-                else:
-                    try:
-                        await i.response.edit_message(
-                            embed=embed, 
-                            view=view
-                        )
-                    except discord.NotFound:
-                        try:
-                            await i.delete_original_message()
-                        except Exception:
-                            pass
-                        finally:
-                            await i.channel.send("Invalid interaction, please use the command again.")
 
     
     async def on_error(self, event, *args, **kwargs):
@@ -237,8 +233,8 @@ class AutoMod(commands.AutoShardedBot):
         return prefix
 
 
-    # def run(self):
-    #     try:
-    #         super().run(self.config.token, reconnect=True)
-    #     finally:
-    #         pass
+    def run(self):
+        try:
+            super().run(self.config.token, reconnect=True)
+        finally:
+            pass

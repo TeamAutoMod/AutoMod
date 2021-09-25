@@ -21,10 +21,22 @@ async def overwrite(plugin, ctx, msg, roles):
                 })
                 await c.edit(overwrites=ov)
         except Exception as ex:
-            return await msg.edit(content=plugin.i18next.t(ctx.guild, "category_fail", _emote="NO", category=c.name, exc=ex))
+            return await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=plugin.i18next.t(
+                    ctx.guild, 
+                    "category_fail", 
+                    _emote="NO", 
+                    category=c.name, 
+                    exc=ex
+                )
+            )
         else:
             plugin.db.configs.update(ctx.guild.id, k, f"{role.id}")
-    await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Category overwrites complete!")
+    await msg.edit(
+        allowed_mentions=discord.AllowedMentions(replied_user=False), 
+        content=f"{msg.content} \n{plugin.emotes.get('YES')} Category overwrites complete!"
+    )
 
     for k, v in roles.items():
         role = v["role"]
@@ -36,12 +48,31 @@ async def overwrite(plugin, ctx, msg, roles):
                 })
                 await c.edit(overwrites=ov)
         except Exception as ex:
-            return await msg.edit(content=plugin.i18next.t(ctx.guild, "text_fail", _emote="NO", channel=c.name, exc=ex))
+            return await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=plugin.i18next.t(
+                    ctx.guild, 
+                    "text_fail", 
+                    _emote="NO", 
+                    channel=c.name, 
+                    exc=ex
+                )
+            )
         else:
             plugin.db.configs.update(ctx.guild.id, k, f"{role.id}")
-    await msg.edit(content=f"{msg.content} \n{plugin.emotes.get('YES')} Text channel overwrites complete!")
+    await msg.edit(
+        allowed_mentions=discord.AllowedMentions(replied_user=False), 
+        content=f"{msg.content} \n{plugin.emotes.get('YES')} Text channel overwrites complete!"
+    )
 
-    await msg.edit(content=plugin.i18next.t(ctx.guild, "restrict_done", _emote="YES"))
+    await msg.edit(
+        allowed_mentions=discord.AllowedMentions(replied_user=False), 
+        content=plugin.i18next.t(
+            ctx.guild, 
+            "restrict_done", 
+            _emote="YES"
+        )
+    )
 
 
 class ConfigPlugin(PluginBlueprint):
@@ -125,9 +156,20 @@ class ConfigPlugin(PluginBlueprint):
                 try:
                     role = await ctx.guild.create_role(name="Muted")
                 except Exception as ex:
-                    return await msg.edit(content=self.i18next.t(ctx.guild, "role_fail", _emote="NO", exc=ex))
+                    return await msg.edit(
+                        allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                        content=self.i18next.t(
+                            ctx.guild, 
+                            "role_fail",
+                            _emote="NO", 
+                            exc=ex
+                        )
+                    )
 
-            await msg.edit(content=f"{msg.content} \n{self.emotes.get('YES')} Role initialized!")
+            await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=f"{msg.content} \n{self.emotes.get('YES')} Role initialized!"
+            )
             try:
                 for c in ctx.guild.categories:
                     ov = c.overwrites
@@ -136,9 +178,21 @@ class ConfigPlugin(PluginBlueprint):
                     })
                     await c.edit(overwrites=ov)
             except Exception as ex:
-                return await msg.edit(content=self.i18next.t(ctx.guild, "category_fail", _emote="NO", category=c.name, exc=ex))
+                return await msg.edit(
+                    allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                    content=self.i18next.t(
+                        ctx.guild, 
+                        "category_fail", 
+                        _emote="NO", 
+                        category=c.name, 
+                        exc=ex
+                    )
+                )
             
-            await msg.edit(content=f"{msg.content} \n{self.emotes.get('YES')} Category overwrites complete!")
+            await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=f"{msg.content} \n{self.emotes.get('YES')} Category overwrites complete!"
+            )
             try:
                 for c in ctx.guild.text_channels:
                     ov = c.overwrites
@@ -147,9 +201,21 @@ class ConfigPlugin(PluginBlueprint):
                     })
                     await c.edit(overwrites=ov)
             except Exception as ex:
-                return await msg.edit(content=self.i18next.t(ctx.guild, "text_fail", _emote="NO", channel=c.name, exc=ex))
+                return await msg.edit(
+                    allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                    content=self.i18next.t(
+                        ctx.guild, 
+                        "text_fail", 
+                        _emote="NO", 
+                        channel=c.name, 
+                        exc=ex
+                    )
+                )
 
-            await msg.edit(content=f"{msg.content} \n{self.emotes.get('YES')} Text channel overwrites complete!")
+            await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=f"{msg.content} \n{self.emotes.get('YES')} Text channel overwrites complete!"
+            )
             try:
                 for c in ctx.guild.voice_channels:
                     ov = c.overwrites
@@ -158,11 +224,30 @@ class ConfigPlugin(PluginBlueprint):
                     })
                     await c.edit(overwrites=ov)
             except Exception as ex:
-                return await msg.edit(content=self.i18next.t(ctx.guild, "voice_fail", _emote="NO", channel=c.name, exc=ex))
+                return await msg.edit(
+                    allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                    content=self.i18next.t(
+                        ctx.guild, 
+                        "voice_fail", 
+                        _emote="NO", 
+                        channel=c.name, 
+                        exc=ex
+                    )
+                )
 
-            await msg.edit(content=f"{msg.content} \n{self.emotes.get('YES')} Voice channel overwrites complete!")
+            await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=f"{msg.content} \n{self.emotes.get('YES')} Voice channel overwrites complete!"
+            )
             self.db.configs.update(ctx.guild.id, "mute_role", f"{role.id}")
-            await msg.edit(content=self.i18next.t(ctx.guild, "mute_done", _emote="YES"))
+            await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=self.i18next.t(
+                    ctx.guild, 
+                    "mute_done",
+                     _emote="YES"
+                )
+            )
         
         e = Embed(
             title="Muted role setup",
@@ -246,7 +331,16 @@ class ConfigPlugin(PluginBlueprint):
                 name="❯ View Config",
                 value=f"``{prefix}config``"
             )
-            await msg.edit(content=self.i18next.t(ctx.guild, "automod_done", _emote="YES", prefix=prefix), embed=e)
+            await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=self.i18next.t(
+                    ctx.guild, 
+                    "automod_done", 
+                    _emote="YES", 
+                    prefix=prefix
+                ), 
+                embed=e
+            )
 
         
         e = Embed(
@@ -305,7 +399,16 @@ class ConfigPlugin(PluginBlueprint):
                 try:
                     embed_role = await ctx.guild.create_role(name="Embed restricted")
                 except Exception as ex:
-                    return await msg.edit(content=self.i18next.t(ctx.guild, "role_fail2", _emote="NO", role="Embed restricted", exc=ex))
+                    return await msg.edit(
+                        allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                        content=self.i18next.t(
+                            ctx.guild, 
+                            "role_fail2", 
+                            _emote="NO", 
+                            role="Embed restricted", 
+                            exc=ex
+                        )
+                    )
 
 
             global emoji_role
@@ -316,7 +419,16 @@ class ConfigPlugin(PluginBlueprint):
                 try:
                     emoji_role = await ctx.guild.create_role(name="Emoji restricted")
                 except Exception as ex:
-                    return await msg.edit(content=self.i18next.t(ctx.guild, "role_fail2", _emote="NO", role="Emoji restricted", exc=ex))
+                    return await msg.edit(
+                        allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                        content=self.i18next.t(
+                            ctx.guild, 
+                            "role_fail2", 
+                            _emote="NO", 
+                            role="Emoji restricted", 
+                            exc=ex
+                        )
+                    )
 
 
             global tag_role
@@ -327,12 +439,24 @@ class ConfigPlugin(PluginBlueprint):
                 try:
                     tag_role = await ctx.guild.create_role(name="Tag restricted")
                 except Exception as ex:
-                    return await msg.edit(content=self.i18next.t(ctx.guild, "role_fail2", _emote="NO", role="Tag restricted", exc=ex))
+                    return await msg.edit(
+                        allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                        content=self.i18next.t(
+                            ctx.guild, 
+                            "role_fail2", 
+                            _emote="NO", 
+                            role="Tag restricted", 
+                            exc=ex
+                        )
+                    )
                 else:
                     self.db.configs.update(ctx.guild.id, "tag_role", f"{tag_role.id}")
 
 
-            await msg.edit(content=f"{msg.content} \n{self.emotes.get('YES')} Roles initialized!")
+            await msg.edit(
+                allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                content=f"{msg.content} \n{self.emotes.get('YES')} Roles initialized!"
+            )
             await overwrite(
                 self, 
                 ctx, 

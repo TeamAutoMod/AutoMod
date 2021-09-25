@@ -8,6 +8,7 @@
     "sentry_dsn": "",
     "shards": 1,
     "error_log_channel": 123456789,
+    "custom_status": "",
 
     "langs": [
         "en_US"

@@ -8,8 +8,6 @@ import io
 class Context(commands.Context):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if self.command_prefix == None:
-            self.command_prefix = self.bot.config.default_prefix
  
 
     async def prompt(self, message, *, timeout=60.0, delete_after=True, author_id=None):
@@ -69,3 +67,14 @@ class Context(commands.Context):
             return await self.send(file=discord.File(f, filename="msg_too_long.txt"), **kwargs)
         else:
             return await self.send(content)
+
+
+
+    async def send(self, *args, **kwargs):
+        msg = None
+        try:
+            msg = await self.reply(*args, mention_author=False, **kwargs)
+        except Exception:
+            msg = await super().send(*args, **kwargs)
+        finally:
+            return msg

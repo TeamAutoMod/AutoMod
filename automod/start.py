@@ -37,6 +37,9 @@ async def boot(bot, log):
         bot.ready = True
         bot.locked = False
 
+        if bot.config.custom_status != "":
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=bot.config.custom_status))
+
         log.info("Booted up & ready to go!")
     except Exception as ex:
         log.error("Failed to start - {}".format(ex))
@@ -52,7 +55,7 @@ if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    config = json.load(open("./config.json", "r", closefd=True))
+    config = json.load(open("./config.json", "r", encoding="utf8", errors="ignore", closefd=True))
     automod = AutoMod(config)
     automod.remove_command("help")
 
@@ -66,6 +69,6 @@ if __name__ == "__main__":
 
         loop.run_until_complete(boot(automod, log))
 
-        automod.run(config["token"])
+        automod.run()
 
         log.info("Shutting down...")
