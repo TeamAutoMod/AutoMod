@@ -68,15 +68,18 @@ class ModerationPlugin(PluginBlueprint):
             reason = self.i18next.t(ctx.guild, "no_reason")
 
         users = list(set(users))
+        if ctx.message.reference != None: 
+            users.append(ctx.message.reference.resolved.author)
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
+        
         for user in users:
             user = ctx.guild.get_member(user.id)
             if user is None:
                 await ctx.send(self.i18next.t(ctx.guild, "target_not_on_server", _emote="NO"))
             
             elif not Permissions.is_allowed(ctx, ctx.author, user):
-                await ctx.send(self.i18next.t(ctx.guild, "kick_not_allowed", _emote="NO"))
+                await ctx.send(self.i18next.t(ctx.guild, "kick_not_allowed", _emote="NO", user=user.name))
             else:
                 await kickUser(self, ctx, user, reason)
 
@@ -95,15 +98,18 @@ class ModerationPlugin(PluginBlueprint):
             reason = self.i18next.t(ctx.guild, "no_reason")
 
         users = list(set(users))
+        if ctx.message.reference != None: 
+            users.append(ctx.message.reference.resolved.author)
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
+
         for user in users:
             user = ctx.guild.get_member(user.id)
             if user is None:
                 await ctx.send(self.i18next.t(ctx.guild, "target_not_on_server", _emote="NO"))
             
             elif not Permissions.is_allowed(ctx, ctx.author, user):
-                await ctx.send(self.i18next.t(ctx.guild, "ban_not_allowed", _emote="NO"))
+                await ctx.send(self.i18next.t(ctx.guild, "ban_not_allowed", _emote="NO", user=user.name))
             else:
                 await banUser(self, ctx, user, reason, "ban", "banned")
 
@@ -122,15 +128,18 @@ class ModerationPlugin(PluginBlueprint):
             reason = self.i18next.t(ctx.guild, "no_reason")
 
         users = list(set(users))
+        if ctx.message.reference != None: 
+            users.append(ctx.message.reference.resolved.author)
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
+
         for user in users:
             user = ctx.guild.get_member(user.id)
             if user is None:
                 await ctx.send(self.i18next.t(ctx.guild, "target_not_on_server", _emote="NO"))
             
             elif not Permissions.is_allowed(ctx, ctx.author, user):
-                await ctx.send(self.i18next.t(ctx.guild, "ban_not_allowed", _emote="NO"))
+                await ctx.send(self.i18next.t(ctx.guild, "ban_not_allowed", _emote="NO", user=user.name))
             else:
                 await banUser(self, ctx, user, reason, "softban", "softbanned", days=7)
                 await unbanUser(self, ctx, user, "Softban", softban=True)
@@ -150,8 +159,11 @@ class ModerationPlugin(PluginBlueprint):
             reason = self.i18next.t(ctx.guild, "no_reason")
         
         users = list(set(users))
+        if ctx.message.reference != None: 
+            users.append(ctx.message.reference.resolved.author)
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
+
         for user in users:
             await banUser(self, ctx, user, reason, "forceban", "forcebanned")
 
@@ -171,7 +183,7 @@ class ModerationPlugin(PluginBlueprint):
             reason = self.i18next.t(ctx.guild, "no_reason")
         
         if not Permissions.is_allowed(ctx, ctx.author, user):
-            return await ctx.send(self.i18next.t(ctx.guild, "mute_not_allowed", _emote="NO"))
+            return await ctx.send(self.i18next.t(ctx.guild, "mute_not_allowed", _emote="NO", user=user.name))
         
 
         await muteUser(self, ctx, user, length, reason)
@@ -281,6 +293,8 @@ class ModerationPlugin(PluginBlueprint):
             amount = 50
 
         users = list(set(users))
+        if ctx.message.reference != None: 
+            users.append(ctx.message.reference.resolved.author)
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
         
@@ -481,7 +495,7 @@ class ModerationPlugin(PluginBlueprint):
             reason = self.i18next.t(ctx.guild, "no_reason")
         
         if not Permissions.is_allowed(ctx, ctx.author, user):
-            return await ctx.send(self.i18next.t(ctx.guild, "restrict_not_allowed", _emote="NO"))
+            return await ctx.send(self.i18next.t(ctx.guild, "restrict_not_allowed", _emote="NO", user=user.name))
 
         await restrictUser(self, ctx, restriction, user, reason)
 

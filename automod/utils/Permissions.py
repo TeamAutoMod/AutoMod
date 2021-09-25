@@ -14,6 +14,7 @@ def is_admin(member):
 def is_allowed(ctx, mod, target):
     bot = ctx.guild.me
     mod = ctx.guild.get_member(mod.id)
+    target = ctx.guild.get_member(target.id)
     if target is None:
         return True
     if target.top_role.position >= mod.top_role.position\

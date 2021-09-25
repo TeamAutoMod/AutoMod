@@ -141,9 +141,12 @@ class BasicPlugin(PluginBlueprint):
     ):
         """userinfo_help"""
         if user is None:
-            user = member = ctx.author
+            if ctx.message.reference == None:
+                user = member = ctx.author
+            else:
+                user = member = ctx.message.reference.resolved.author
         else:
-            member = None if ctx.guild is None else await self.bot.utils.getUser(user.id)
+            member = None if ctx.guild.get_member(user.id) is None else await self.bot.utils.getUser(user.id)
 
         e = Embed(
             color=None if member is None else member.color

@@ -134,12 +134,14 @@ class WarnsPlugin(PluginBlueprint):
             return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
         
         users = list(set(users))
+        if ctx.message.reference != None: 
+            users.append(ctx.message.reference.resolved.author)
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
 
         for user in users:
             if not Permissions.is_allowed(ctx, ctx.author, user):
-                await ctx.send(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO"))
+                await ctx.send(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO", user=user.name))
 
             else:
                 _, case = await self.action_validator.add_warns(
@@ -154,7 +156,7 @@ class WarnsPlugin(PluginBlueprint):
                 )
 
                 if case == 0:
-                    return await ctx.send(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO"))
+                    return await ctx.send(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO", user=user.name))
 
                 await ctx.send(self.i18next.t(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
 
@@ -189,12 +191,14 @@ class WarnsPlugin(PluginBlueprint):
             return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
         
         users = list(set(users))
+        if ctx.message.reference != None: 
+            users.append(ctx.message.reference.resolved.author)
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
 
         for user in users:
             if not Permissions.is_allowed(ctx, ctx.author, user):
-                await ctx.send(self.i18next.t(ctx.guild, "unwarn_not_allowed", _emote="NO"))
+                await ctx.send(self.i18next.t(ctx.guild, "unwarn_not_allowed", _emote="NO", user=user.name))
 
             else:
                 _id = f"{ctx.guild.id}-{user.id}"

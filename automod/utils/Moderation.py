@@ -12,7 +12,7 @@ from plugins.Types import Embed
 
 
 
-async def banUser(plugin, ctx, user, reason, log_type, ban_type, days=0):
+async def banUser(plugin, ctx, user, reason, log_type, ban_type, days=3):
     try:
         if await Permissions.is_banned(ctx, user):
             return await ctx.send(plugin.i18next.t(ctx.guild, "target_already_banned", _emote="WARN"))
