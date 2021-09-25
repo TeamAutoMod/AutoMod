@@ -171,6 +171,7 @@
     "modlog_help": "Sets a log channel for moderation actions (bans, warns, etc.)",
     "voicelog_help": "Sets a log channel for voice events (joins, leaves etc.)",
     "serverlog_help": "Sets a log channel for server events (joins, leaves)",
+    "messagelog_help": "Sets a log channel for message logs (deletions & edits)",
     "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
     "show_mod_in_dm_help": "Enables/Disables the option to show the responsible moderator in the notification DM (disabled by default)",
     "prefix_help": "Sets the servers prefix",
@@ -464,7 +465,7 @@
 
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
 
-    "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Caps has been set to ``1`` warn \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Everyone has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns",
+    "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Badfiles has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns",
 
     "help_title": "Help Menu",
     "help_description": "Select one of the categories below to view its commands. \nTo get more info about a command, use ``{prefix}help <command>``",

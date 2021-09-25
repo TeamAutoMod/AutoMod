@@ -59,24 +59,25 @@ class ConfigPlugin(PluginBlueprint):
         ctx
     ):
         """setup_help"""
-        prefix = self.bot.get_guild_prefix(ctx.guild)
-        e = Embed(
-            title="Setup commands",
-            description=self.i18next.t(ctx.guild, "setup_description")
-        )
-        e.add_field(
-            name="❯ Mute role",
-            value=f"``{prefix}setup muted``"
-        )
-        e.add_field(
-            name="❯ Automoderator",
-            value=f"``{prefix}setup automod``"
-        )
-        e.add_field(
-            name="❯ Restrict roles",
-            value=f"``{prefix}setup restrict``"
-        )
-        await ctx.send(embed=e)
+        if ctx.invoked_subcommand is None:
+            prefix = self.bot.get_guild_prefix(ctx.guild)
+            e = Embed(
+                title="Setup commands",
+                description=self.i18next.t(ctx.guild, "setup_description")
+            )
+            e.add_field(
+                name="❯ Mute role",
+                value=f"``{prefix}setup muted``"
+            )
+            e.add_field(
+                name="❯ Automoderator",
+                value=f"``{prefix}setup automod``"
+            )
+            e.add_field(
+                name="❯ Restrict roles",
+                value=f"``{prefix}setup restrict``"
+            )
+            await ctx.send(embed=e)
     
 
 
@@ -160,8 +161,7 @@ class ConfigPlugin(PluginBlueprint):
                 return await msg.edit(content=self.i18next.t(ctx.guild, "voice_fail", _emote="NO", channel=c.name, exc=ex))
 
             await msg.edit(content=f"{msg.content} \n{self.emotes.get('YES')} Voice channel overwrites complete!")
-            if role_id == "":
-                self.db.configs.update(ctx.guild.id, "mute_role", f"{role.id}")
+            self.db.configs.update(ctx.guild.id, "mute_role", f"{role.id}")
             await msg.edit(content=self.i18next.t(ctx.guild, "mute_done", _emote="YES"))
         
         e = Embed(
@@ -629,7 +629,7 @@ class ConfigPlugin(PluginBlueprint):
         state = not state
         self.db.configs.update(ctx.guild.id, "persist", state)
         if state is False:
-            return await ctx.send(self.i18next.t(ctx.guild, "persist_False", _emote="YES"))
+            return await ctx.send(self.i18next.t(ctx.guild, "persist_false", _emote="YES"))
         else:
             return await ctx.send(self.i18next.t(ctx.guild, "persist_true", _emote="YES"))
 

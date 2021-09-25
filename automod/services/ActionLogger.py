@@ -234,9 +234,10 @@ class ActionLogger:
             )
 
             if "user" in kwargs:
-                e.set_thumbnail(
-                    url=(kwargs.get("user")).display_avatar
-                )
+                if not isinstance(kwargs.get("user"), str):
+                    e.set_thumbnail(
+                        url=(kwargs.get("user")).display_avatar
+                    )
 
             dm = kwargs.get("dm", None)
             if dm is not None:

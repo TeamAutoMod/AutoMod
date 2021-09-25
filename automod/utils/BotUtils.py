@@ -31,7 +31,7 @@ class BotUtils:
             if user_id in self.last_fetches:
                 return self.last_fetches[user_id]
             
-            fetched = discord.utils.get(guild.members, id=user_id)
+            fetched = discord.utils.get(guild.members, id=int(user_id))
             if fetched is not None:
                 self.last_fetches[user_id] = fetched
                 return fetched
@@ -65,7 +65,7 @@ class BotUtils:
             if channel_id in self.last_fetches:
                 return self.last_fetches[channel_id]
             
-            fetched = discord.utils.get(guild.text_channels, id=channel_id)
+            fetched = discord.utils.get(guild.text_channels, id=int(channel_id))
             if fetched is not None:
                 self.last_fetches[channel_id] = fetched
                 return fetched
@@ -82,7 +82,7 @@ class BotUtils:
             if role_id in self.last_fetches:
                 return self.last_fetches[role_id]
             
-            fetched = discord.utils.get(guild.roles, id=role_id)
+            fetched = discord.utils.get(guild.roles, id=int(role_id))
             if fetched is not None:
                 self.last_fetches[role_id] = fetched
                 return fetched

@@ -41,7 +41,7 @@ class BasicPlugin(PluginBlueprint):
         """ping_help"""
         bot = self.bot
         t1 = time.perf_counter()
-        msg = await ctx.send(f"Pinging...")
+        msg = await ctx.send("Pinging...")
         t2 = time.perf_counter()
 
         await msg.edit(

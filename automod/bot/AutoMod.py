@@ -3,7 +3,6 @@ from discord.ext import commands
 
 import logging
 import asyncio
-import time
 import datetime
 import traceback
 import sys
@@ -89,15 +88,15 @@ class AutoMod(commands.AutoShardedBot):
             super().dispatch("automod_event", *args, **kwargs)
             super().dispatch("antispam_event", *args, **kwargs)
             super().dispatch("filter_event", *args, **kwargs)
-            # for event in ["tags", "automod", "antispam", "filter"]:
-            #     super().dispatch(f"{event}_event", *args, **kwargs)
         super().dispatch(event_name, *args, **kwargs)
+    
     
     async def on_ready(self):
         for guild in self.guilds:
             if not self.db.configs.exists(f"{guild.id}"):
                 self.db.configs.insert(self.schemas.GuildConfig(guild))
         if not self.ready:
+            self.cache.build()
             await self.chunk_guilds()
 
 
@@ -137,7 +136,6 @@ class AutoMod(commands.AutoShardedBot):
                 chunked += 1
         self.active_chunk = False
 
-        self.cache.build()
         if self.terminate_chunk:
             log.warn("Chunking task aborted with {} left to go!".format(len(ids) - chunked))
         else:
