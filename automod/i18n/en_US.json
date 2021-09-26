@@ -330,7 +330,7 @@
     "searching": "{emote} Looking for recent cases, this may take a bit...",
     "case_not_found": "{emote} I couldn't find a case with that ID.",
 
-    "no_targets": "{emote} I couldn't find any members matching your given criterial.",
+    "no_targets": "{emote} I couldn't find any members matching your given criteria.",
     "too_many_targets": "{emote} I found too many targets. I can only ban up 100 people during one cybernuke.",
     "cybernuke_running": "{emote} There is already a cybernuke in progress, please wait until it's finished.", 
 
