@@ -75,7 +75,7 @@
     "target_not_banned": "{emote} User isn't banned.",
 
     "max_warns_prompt": "{emote} This user already has **{warns}** warnings! Warning them would enforce the automatic punishment setup for max warnings. Do you want to proceed?",
-    "ban_not_allowed": "{emote} **{user}**'s permissions are qual to or higher than yours/mine",
+    "ban_not_allowed": "{emote} **{user}**'s permissions are equal to or higher than yours/mine",
     "target_not_on_server": "{emote} User not found in the server",
     "target_already_banned": "{emote} User is already banned.",
     "ban_failed": "{emote} Failed to ban target ||{error}||",
@@ -90,7 +90,7 @@
     "already_muted": "{emote} **{user}** is already muted. Do you want to extend their mute?",
     "threshold_too_low": "{emote} The treshold must be at least 5/5.",
 
-    "kick_not_allowed": "{emote} **{user}**'s permissions are qual to or higher than yours/mine",
+    "kick_not_allowed": "{emote} **{user}**'s permissions are equal to or higher than yours/mine",
     "mute_not_allowed": "{emote} **{user}**'s permissions are qual to or higher than yours/mine",
     "warn_not_allowed": "{emote} **{user}**'s permissions are qual to or higher than yours/mine",
     "unwarn_not_allowed": "{emote} **{user}**'s permissions are qual to or higher than yours/mine",
