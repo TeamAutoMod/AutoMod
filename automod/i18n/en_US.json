@@ -175,6 +175,10 @@
     "dm_on_actions_help": "Enables/Disables the option to DM people about actions taken on them (disabled by default)",
     "show_mod_in_dm_help": "Enables/Disables the option to show the responsible moderator in the notification DM (disabled by default)",
     "prefix_help": "Sets the servers prefix",
+    "preset_reason_help": "Base command for managing preset reasons",
+    "preset_reason_add_help": "Adds a preset reason with the given name and content",
+    "preset_reason_remove_help": "Removes the preset reason with the given name",
+    "preset_reason_edit_help": "Edits the content of the given preset reason",
 
     "invite_help": "Sets the amount of warns a user should receive when posting an invite. Use **off** as the argument to disable this",
     "everyone_help": "Sets the amount of warns a user should receive when trying to ping @everyone/here. Use **off** as the argument to disable this",
@@ -506,5 +510,12 @@
     "enabled_starboard": "{emote} Enabled the starboard!",
 
     "starboard_is_disabled": "{emote} You can't use this command, because the starboard is disabled. Use the ``{prefix}starboard`` command to enable it.",
-    "set_starboard_channel": "{emote} Set the starboard channel to {channel}"
+    "set_starboard_channel": "{emote} Set the starboard channel to {channel}",
+
+    "no_pre_reasons": "{emote} This server doesn't have any preset reasons yet.",
+    "pre_reasons_exists": "{emote} A preset reason with that name already exists.",
+    "pre_reasons_added": "{emote} Added **{reason_name}** as a new preset reason! You can use it as the reason argument in all moderation commands.",
+    "pre_reasons_doesnt_exist": "{emote} A preset reason with that name doesn't exist.",
+    "pre_reasons_removed": "{emote} Removed **{reason_name}** as a preset reason!",
+    "pre_reasons_edited": "{emote} Upated the preset reason **{reason_name}**!"
 }

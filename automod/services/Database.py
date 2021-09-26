@@ -169,6 +169,8 @@ class MongoSchemas:
                 "ignored_channels": []
             },
 
+            "pre_reasons": {},
+
             "lang": "en_US",
             "guild_name": f"{guild.name}",
         }

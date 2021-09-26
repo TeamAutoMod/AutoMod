@@ -513,126 +513,106 @@ class ConfigPlugin(PluginBlueprint):
         if ctx.subcommand_passed is None:
             cfg = self.db.configs.get_doc(ctx.guild.id)
 
-        e = Embed(
-            title="Server configuration",
-            description="This shows all of the current server and automoderator configurations."
-        )
-        if ctx.guild.icon != None:
-            e.set_thumbnail(url=ctx.guild.icon.url)
-        e.add_field(
-            name="Prefix",
-            value=f"``{cfg['prefix']}``",
-            inline=True
-        )
-        e.add_field(
-            name="Mute Role",
-            value=f"<@&{cfg['mute_role']}>" if cfg['mute_role'] != "" else "``❌``",
-            inline=True
-        )
-        e.add_field(
-            name="Mod Log",
-            value=f"<#{cfg['mod_log']}>" if cfg['mod_log'] != "" else "``❌``",
-            inline=True
-        )
-        e.add_field(
-            name="Message Log",
-            value=f"<#{cfg['message_log']}>" if cfg['message_log'] != "" else "``❌``",
-            inline=True
-        )
-        e.add_field(
-            name="Server Log",
-            value=f"<#{cfg['server_log']}>" if cfg['server_log'] != "" else "``❌``",
-            inline=True
-        )
-        e.add_field(
-            name="Voice Log",
-            value=f"<#{cfg['voice_log']}>" if cfg['voice_log'] != "" else "``❌``",
-            inline=True
-        )
-        # e.add_field(
-        #     name="Persist Mode",
-        #     value=f"``✅``" if cfg['persist'] is True else "``❌``",
-        #     inline=True
-        # )
-        e.add_field(
-            name="Starboard",
-            value=f"``✅``" if cfg['starboard']['enabled'] is True else "``❌``",
-            inline=True
-        )
-        e.add_field(
-            name="DM on actions",
-            value=f"``✅``" if cfg['dm_on_actions'] is True else "``❌``",
-            inline=True
-        )
-        e.add_field(
-            name="Show mod in DM",
-            value=f"``✅``" if cfg['show_mod_in_dm'] is True else "``❌``",
-            inline=True
-        )
-        
-        am = cfg['automod']
-        e.add_field(
-            name="Max Mentions", 
-            value=f"``{am['mention']['threshold']} mentions``" if "mention" in am else "``❌``", 
-            inline=True
-        )
-        # e.add_field(
-        #     name="Anti Caps", 
-        #     value=f"``{am['caps']['warns']} {'warn' if int(am['caps']['warns']) == 1 else 'warns'}``" if 'caps' in am else "``❌``", 
-        #     inline=True
-        # )
-        # e.add_field(
-        #     name="Anti @ever1", 
-        #     value=f"``{am['everyone']['warns']} {'warn' if int(am['everyone']['warns']) == 1 else 'warns'}``" if 'everyone' in am else "``❌``", 
-        #     inline=True
-        # )
-        e.add_field(
-            name="Anti Invites", 
-            value=f"``{am['invites']['warns']} {'warn' if int(am['invites']['warns']) == 1 else 'warns'}``" if "invites" in am else "``❌``", 
-            inline=True
-        )
-        e.add_field(
-            name="Anti Spam", 
-            value=f"``{am['spam']['warns']} {'warn' if int(am['spam']['warns']) == 1 else 'warns'}``" if "spam" in am else "``❌``", 
-            inline=True
-        )
-        e.add_field(
-            name="Anti Raid", 
-            value=f"``{am['raid']['threshold'].split('/')[0]}``/``{am['raid']['threshold'].split('/')[1]}``" if "raid" in am and am['raid']['status'] is True else "``❌``", 
-            inline=True
-        )
-        e.add_field(
-            name="Bad Files", 
-            value=f"``{am['files']['warns']} {'warn' if int(am['files']['warns']) == 1 else 'warns'}``" if "files" in am else "``❌``", 
-            inline=True
-        )
-        e.add_field(
-            name="Max Newlines", 
-            value=f"``{am['lines']['threshold']} lines``" if "files" in am else "``❌``", 
-            inline=True
-        )
-        # e.add_field(
-        #     name="Anti Zalgo", 
-        #     value=f"``{am['zalgo']['warns']} {'warn' if int(am['zalgo']['warns']) == 1 else 'warns'}``" if "files" in am else "``❌``", 
-        #     inline=True
-        # )
+            e = Embed(
+                title="Server configuration",
+                description="This shows all of the current server and automoderator configurations."
+            )
+            if ctx.guild.icon != None:
+                e.set_thumbnail(url=ctx.guild.icon.url)
+            e.add_field(
+                name="Prefix",
+                value=f"``{cfg['prefix']}``",
+                inline=True
+            )
+            e.add_field(
+                name="Mute Role",
+                value=f"<@&{cfg['mute_role']}>" if cfg['mute_role'] != "" else "``❌``",
+                inline=True
+            )
+            e.add_field(
+                name="Mod Log",
+                value=f"<#{cfg['mod_log']}>" if cfg['mod_log'] != "" else "``❌``",
+                inline=True
+            )
+            e.add_field(
+                name="Message Log",
+                value=f"<#{cfg['message_log']}>" if cfg['message_log'] != "" else "``❌``",
+                inline=True
+            )
+            e.add_field(
+                name="Server Log",
+                value=f"<#{cfg['server_log']}>" if cfg['server_log'] != "" else "``❌``",
+                inline=True
+            )
+            e.add_field(
+                name="Voice Log",
+                value=f"<#{cfg['voice_log']}>" if cfg['voice_log'] != "" else "``❌``",
+                inline=True
+            )
+            e.add_field(
+                name="Starboard",
+                value=f"``✅``" if cfg['starboard']['enabled'] is True else "``❌``",
+                inline=True
+            )
+            e.add_field(
+                name="DM on actions",
+                value=f"``✅``" if cfg['dm_on_actions'] is True else "``❌``",
+                inline=True
+            )
+            e.add_field(
+                name="Show mod in DM",
+                value=f"``✅``" if cfg['show_mod_in_dm'] is True else "``❌``",
+                inline=True
+            )
+            
+            am = cfg['automod']
+            e.add_field(
+                name="Max Mentions", 
+                value=f"``{am['mention']['threshold']} mentions``" if "mention" in am else "``❌``", 
+                inline=True
+            )
+            e.add_field(
+                name="Anti Invites", 
+                value=f"``{am['invites']['warns']} {'warn' if int(am['invites']['warns']) == 1 else 'warns'}``" if "invites" in am else "``❌``", 
+                inline=True
+            )
+            e.add_field(
+                name="Anti Spam", 
+                value=f"``{am['spam']['warns']} {'warn' if int(am['spam']['warns']) == 1 else 'warns'}``" if "spam" in am else "``❌``", 
+                inline=True
+            )
+            e.add_field(
+                name="Anti Raid", 
+                value=f"``{am['raid']['threshold'].split('/')[0]}``/``{am['raid']['threshold'].split('/')[1]}``" if "raid" in am and am['raid']['status'] is True else "``❌``", 
+                inline=True
+            )
+            e.add_field(
+                name="Bad Files", 
+                value=f"``{am['files']['warns']} {'warn' if int(am['files']['warns']) == 1 else 'warns'}``" if "files" in am else "``❌``", 
+                inline=True
+            )
+            e.add_field(
+                name="Max Newlines", 
+                value=f"``{am['lines']['threshold']} lines``" if "files" in am else "``❌``", 
+                inline=True
+            )
 
-        punishments = [f"``{x} ({y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]})``" for x, y in cfg["punishments"].items()]
-        punishments = sorted(punishments, key=lambda i: int(i.split(" ")[0].replace("``", "")))
-        e.add_field(
-            name="Punishments",
-            value="{}".format(" | ".join(punishments) if len(punishments) > 0 else "``❌``"),
-            inline=False
-        )
+            punishments = [f"``{x} ({y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]})``" for x, y in cfg["punishments"].items()]
+            punishments = sorted(punishments, key=lambda i: int(i.split(" ")[0].replace("``", "")))
+            e.add_field(
+                name="Punishments",
+                value="{}".format(" | ".join(punishments) if len(punishments) > 0 else "``❌``"),
+                inline=False
+            )
 
-        filters = self.db.configs.get(ctx.guild.id, "filters")
-        e.add_field(
-            name=f"Filters",
-            value=" | ".join([f"``{x}``" for x in filters]) if len(filters) > 0 else "``❌``",
-            inline=False
-        )
-        
-        await ctx.send(embed=e)
+            filters = self.db.configs.get(ctx.guild.id, "filters")
+            e.add_field(
+                name=f"Filters",
+                value=" | ".join([f"``{x}``" for x in filters]) if len(filters) > 0 else "``❌``",
+                inline=False
+            )
+            
+            await ctx.send(embed=e)
 
 
     @commands.command()
@@ -741,6 +721,90 @@ class ConfigPlugin(PluginBlueprint):
             return await ctx.send(self.i18next.t(ctx.guild, "show_mod_in_dm_false", _emote="YES"))
         else:
             return await ctx.send(self.i18next.t(ctx.guild, "show_mod_in_dm_true", _emote="YES"))
+
+
+    @commands.group()
+    async def preset_reason(
+        self, 
+        ctx
+    ):
+        """preset_reason_help"""
+        if ctx.invoked_subcommand is None:
+            reasons = self.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
+            if len(reasons) < 1:
+                return await ctx.send(self.i18next.t(ctx.guild, "no_pre_reasons", _emote="NO"))
+            
+            e = Embed(
+                title="Preset Reasons"
+            )
+            for r in reasons:
+                e.add_field(
+                    name=r.lower(),
+                    value=reasons[r]
+                )
+            await ctx.send(embed=e)
+
+    
+    @preset_reason.command()
+    async def add(
+        self,
+        ctx,
+        reason_name: str,
+        *,
+        reason_text: str,
+    ):
+        """preset_reason_add_help"""
+        reasons = self.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
+        if len(reasons) < 1:
+            return await ctx.send(self.i18next.t(ctx.guild, "no_pre_reasons", _emote="NO"))
+        if reason_name.lower() in reasons:
+            return await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_exists", _emote="NO"))
+        
+        reasons.update({
+            reason_name.lower(): reason_text
+        })
+        self.db.configs.update(f"{ctx.guild.id}", "pre_reasons", reasons)
+        await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_added", _emote="YES", reason_name=reason_name))
+
+
+    @preset_reason.command()
+    async def remove(
+        self,
+        ctx,
+        reason_name: str,
+    ):
+        """preset_reason_remove_help"""
+        reasons = self.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
+        if len(reasons) < 1:
+            return await ctx.send(self.i18next.t(ctx.guild, "no_pre_reasons", _emote="NO"))
+        if reason_name.lower() not in reasons:
+            return await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_doesnt_exist", _emote="NO"))
+        
+        del reasons[reason_name]
+        self.db.configs.update(f"{ctx.guild.id}", "pre_reasons", reasons)
+        await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_removed", _emote="YES", reason_name=reason_name))
+
+
+    @preset_reason.command()
+    async def edit(
+        self,
+        ctx,
+        reason_name: str,
+        *,
+        reason_text: str,
+    ):
+        """preset_reason_edit_help"""
+        reasons = self.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
+        if len(reasons) < 1:
+            return await ctx.send(self.i18next.t(ctx.guild, "no_pre_reasons", _emote="NO"))
+        if reason_name.lower() in reasons:
+            return await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_exists", _emote="NO"))
+        
+        reasons.update({
+            reason_name.lower(): reason_text
+        })
+        self.db.configs.update(f"{ctx.guild.id}", "pre_reasons", reasons)
+        await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_edited", _emote="YES", reason_name=reason_name))
 
 
     @commands.command()
