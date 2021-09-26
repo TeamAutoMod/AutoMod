@@ -14,6 +14,22 @@
         "en_US"
     ],
 
+    "plugins": [
+        "ErrorPlugin",
+        "BasicPlugin",
+        "ModerationPlugin",
+        "CasesPlugin",
+        "ConfigPlugin",
+        "TagsPlugin",
+        "AutomodPlugin",
+        "WarnsPlugin",
+        "FiltersPlugin",
+        "StarboardPlugin",
+        "AdminPlugin",
+        "LogsPlugin",
+        "AntispamPlugin"
+    ],
+
     "enabled_plugins_with_commands": [
         "BasicPlugin",
         "ModerationPlugin",
