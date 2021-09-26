@@ -755,8 +755,6 @@ class ConfigPlugin(PluginBlueprint):
     ):
         """preset_reason_add_help"""
         reasons = self.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
-        if len(reasons) < 1:
-            return await ctx.send(self.i18next.t(ctx.guild, "no_pre_reasons", _emote="NO"))
         if name.lower() in reasons:
             return await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_exists", _emote="NO"))
         
