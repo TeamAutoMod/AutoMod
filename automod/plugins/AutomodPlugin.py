@@ -534,7 +534,7 @@ class AutomodPlugin(PluginBlueprint):
             allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "whitelisted_invites")]
             prefix = self.bot.get_guild_prefix(ctx.guild)
             if len(allowed) < 1:
-                return await ctx.send(self.i18next.t(ctx.guild, "no_whiteslisted", _emote="NO", prefix=prefix))
+                return await ctx.send(self.i18next.t(ctx.guild, "no_whitelisted", _emote="NO", prefix=prefix))
             else:
                 e = Embed()
                 e.add_field(

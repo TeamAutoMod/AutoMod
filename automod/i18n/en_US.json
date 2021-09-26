@@ -88,7 +88,7 @@
     "no_text": "{emote} Message to translate is missing.",
 
     "already_muted": "{emote} **{user}** is already muted. Do you want to extend their mute?",
-    "threshold_too_low": "{emote} The treshold must be at least 5/5.",
+    "threshold_too_low": "{emote} The threshold must be at least 5/5.",
 
     "kick_not_allowed": "{emote} **{user}**'s permissions are equal to or higher than yours/mine",
     "mute_not_allowed": "{emote} **{user}**'s permissions are qual to or higher than yours/mine",
@@ -166,7 +166,7 @@
     "config_help": "Shows the current server config",
     "setup_help": "Shows commands for automatically setting up a feature",
     "setup_muted_help": "Automatically sets up a mute role or updates the configured one",
-    "setup_automod_help": "Automatically sets up the deafult automod settings. Already set rules will be overwritten.",
+    "setup_automod_help": "Automatically sets up the default automod settings. Already set rules will be overwritten.",
     "setup_restrict_help": "Automatically sets up the roles for the restrict command or updates the configured ones",
     "modlog_help": "Sets a log channel for moderation actions (bans, warns, etc.)",
     "voicelog_help": "Sets a log channel for voice events (joins, leaves etc.)",
@@ -186,18 +186,18 @@
     "raid_help": "Sets the threshold for when antiraid is triggered (10/10 = 10 users per 10 seconds). Use **off** as the argument to disable this",
     "spam_help": "Sets the amount of warns a user should receive when sending too many messages. Use **off** as the argument to disable this",
     "ignore_help": "Ignores a channel or role from the automoderator",
-    "unignore_help": "Unignores a channel or role from the automoderator",
+    "unignore_help": "Un-ignores a channel or role from the automoderator",
 
 
-    "config_punsishment_help": "Base command for configuring punishments. View the subcommands for more info",
-    "config_punsishment_invite_censor_help": "Updates the punishment for advertisers",
-    "config_punsishment_word_censor_help": "Updates the punishment for word censorship",
-    "config_punsishment_file_censor_help": "Updates the punishment for file/attachment censorship",
-    "config_punsishment_zalgo_censor_help": "Updates the punishment for zalgo censorship",
-    "config_punsishment_caps_censor_help": "Updates the punishment for caps censorship",
-    "config_punsishment_spam_detection_help": "Updates the punishment for spam detection",
-    "config_punsishment_mention_spam_help": "Updates the punishment for mention spammers",
-    "config_punsishment_max_warns_help": "Updates the punishment for when a user gets the max amount of configured warns",
+    "config_punishment_help": "Base command for configuring punishments. View the subcommands for more info",
+    "config_punishment_invite_censor_help": "Updates the punishment for advertisers",
+    "config_punishment_word_censor_help": "Updates the punishment for word censorship",
+    "config_punishment_file_censor_help": "Updates the punishment for file/attachment censorship",
+    "config_punishment_zalgo_censor_help": "Updates the punishment for zalgo censorship",
+    "config_punishment_caps_censor_help": "Updates the punishment for caps censorship",
+    "config_punishment_spam_detection_help": "Updates the punishment for spam detection",
+    "config_punishment_mention_spam_help": "Updates the punishment for mention spammers",
+    "config_punishment_max_warns_help": "Updates the punishment for when a user gets the max amount of configured warns",
     
     "allowed_invites_help": "Shows whitelisted invites. Subcommands are add & remove",
     "allowed_invites_add_help": "Whitelists invites for a server. Use the server ID",
@@ -230,7 +230,7 @@
     "ignored_users_remove_help": "Includes an excluded user from the message logs",
 
     "filter_help": "Base command for interacting with filters. View the subcommands for more info",
-    "filter_add_help": "Creates a new filer with the given name, warns and words. Words are seperated by commas (word1, word 2, word 3)",
+    "filter_add_help": "Creates a new filer with the given name, warns and words. Words are separated by commas (word1, word 2, word 3)",
     "filter_remove_help": "Removes the filter with the given name",
     "filter_show_help": "Shows a list of all active filters",
 
@@ -266,7 +266,7 @@
     "no_ignored_users": "There aren't any ignored users configured, all users will be logged",
     "ignored_users": "Ignored Users",
 
-    "no_whiteslisted": "{emote} This server doesn't have any whitelisted invites yet. Whitelist a server by using ``{prefix}allowed_invites add <serverID>``",
+    "no_whitelisted": "{emote} This server doesn't have any whitelisted invites yet. Whitelist a server by using ``{prefix}allowed_invites add <serverID>``",
     "allowed_invites": "Allowed invites for **{guild_name}**",
 
     "no_reason": "No reason",
@@ -285,7 +285,7 @@
     "invalid_raid_opt": "{emote} This isn't a valid parameter. Valid ones are ``on`` and ``off``",
 
     "already_cleaning": "{emote} There's already a clean going on in this channel. Wait until it's done before starting another one.",
-    "already_cleaned": "{emote} Looks like these messages were alrady cleaned.",
+    "already_cleaned": "{emote} Looks like these messages were already cleaned.",
     "clean_error": "{emote} Error while trying to clean: {exc}",
     "zero_cleaned": "{emote} Zero messages were cleaned. Looks like nothing matched your passed arguments.",
     "cleaned": "{emote} Cleaned **{amount}** message{plural}!",
@@ -330,9 +330,9 @@
     "searching": "{emote} Looking for recent cases, this may take a bit...",
     "case_not_found": "{emote} I couldn't find a case with that ID.",
 
-    "no_targets": "{emote} I couldn't find any members matching your given criterias.",
+    "no_targets": "{emote} I couldn't find any members matching your given criteria.",
     "too_many_targets": "{emote} I found too many targets. I can only ban up 100 people during one cybernuke.",
-    "cybernuke_running": "{emote} There is already a cybernuke goind on, please wait until it's finished.", 
+    "cybernuke_running": "{emote} There is already a cybernuke in progress, please wait until it's finished.", 
 
     "no_tags": "{emote} No tags found.",
     "trigger_too_long": "{emote} Trigger is too long. Max chars are 20.",
@@ -372,7 +372,7 @@
 
     "max_lines": "{emote} You can't set this below 8 lines.",
     "min_lines": "{emote} You can't set this to be more than 150 lines.",
-    "lines_set": "{emote} Done! Messages longer than ``{lines}`` will now be automatically deleted. Aditionally users will also receive warns for every additional multiple of up to ``{lines}`` lines.",
+    "lines_set": "{emote} Done! Messages longer than ``{lines}`` will now be automatically deleted. Additionally users will also receive warns for every additional multiple of up to ``{lines}`` lines.",
 
     "raid_off": "{emote} Auto-raid is now ``off``.",
     "raid_on": "{emote} Auto-raid is now ``on``. It'll be triggered if more than ``{users}`` users join within the last ``{seconds}`` seconds.",
@@ -429,7 +429,7 @@
     "filter_doesnt_exist": "{emote} A filter with that name doesn't exist.",
     "no_filters": "{emote} This server doesn't have any filters yet.",
     "filter_removed": "{emote} Filter ``{name}`` has been removed.",
-    "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are seperated by commas. You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nTo add a filter with the words ``test``, ``hey there`` & ``coo*``, you could use this command: \n``{prefix}filter add test_filter 1 test, hey there, coo*``\n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
+    "filter_cmd_help": "{emote} __Here's a little guide on how to work with filters:__ \nYou can add a filter by using ``{prefix}filter add <name> <warns> <words>`` \n• ``<name>`` represent the name of the filter \n• ``<warns>`` represents the amount of warns a user should receive when using a word in the filter \n• ``<words>`` represents the words contained in this filter \nWords are separated by commas. You can also use an asterisks (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered. \n \nTo add a filter with the words ``test``, ``hey there`` & ``coo*``, you could use this command: \n``{prefix}filter add test_filter 1 test, hey there, coo*``\n \nIf you want to remove a filter, use ``{prefix}filter remove <name>`` \n• ``<name>`` represents the name of filter you want to delete",
     "filters": "Active filters for **{guild_name}**",
 
     "prior_cases": "**Profile:** {profile} \n**Created:** <t:{created}> \n**Prior cases:** {cases}",
