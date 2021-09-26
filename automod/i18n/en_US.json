@@ -21,7 +21,7 @@
     "log_censor": "**Member:** ``{user}`` ({user_id}) \n**Action:** Message censorship \n**Channel:** {channel} \n**Reason:** NSFW language (Using slurs) \n**Words:** {words}",
     "log_invite": "**Member:** ``{user}`` ({user_id}) \n**Action:** Invite censorship \n**Channel:** {channel} \n**Reason:** Advertising (Invite) \n**Link:** {link}",
     "log_zalgo": "**Member:** ``{user}`` ({user_id}) \n**Action:** Zalgo censorship \n**Channel:** {channel} \n**Reason:** Illegible message formatting (Zalgo chars) \n**Position:** {position}",
-    "log_file": "**Member:** ``{user}`` ({user_id}) \n**Action:** File censorship \n**Channel:** {channel} \n**Reason:** Sending forbidden attachment type (Was not plain/rich text, Markdown, or common image/video format) \n**Files:** {un-allowed}",
+    "log_file": "**Member:** ``{user}`` ({user_id}) \n**Action:** File censorship \n**Channel:** {channel} \n**Reason:** Sending forbidden attachment type (Was not plain/rich text, Markdown, or common image/video format) \n**Files:** {unallowed}",
     "log_mention": "**Member:** ``{user}`` ({user_id}) \n**Action:** Mention censorship \n**Channel:** {channel} \n**Reason:** Spamming mentions \n**Count:** {all_mentions}",
     "log_caps": "**Member:** ``{user}`` ({user_id}) \n**Action:** CAPS censorship \n**Channel:** {channel} \n**Reason:** Excessive CAPS usage \n**Ratio:** {up_percentage}% of {content}",
     "log_spam": "**Member:** ``{user}`` ({user_id}) \n**Action:** Anti-spam \n**Channel:** {channel} \n**Reason:** Spamming messages",
