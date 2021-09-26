@@ -749,22 +749,22 @@ class ConfigPlugin(PluginBlueprint):
     async def add(
         self,
         ctx,
-        reason_name: str,
+        name: str,
         *,
-        reason_text: str,
+        text: str,
     ):
         """preset_reason_add_help"""
         reasons = self.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
         if len(reasons) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_pre_reasons", _emote="NO"))
-        if reason_name.lower() in reasons:
+        if name.lower() in reasons:
             return await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_exists", _emote="NO"))
         
         reasons.update({
-            reason_name.lower(): reason_text
+            name.lower(): text
         })
         self.db.configs.update(f"{ctx.guild.id}", "pre_reasons", reasons)
-        await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_added", _emote="YES", reason_name=reason_name))
+        await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_added", _emote="YES", reason_name=name))
 
 
     @preset_reason.command()
@@ -789,22 +789,22 @@ class ConfigPlugin(PluginBlueprint):
     async def edit(
         self,
         ctx,
-        reason_name: str,
+        name: str,
         *,
-        reason_text: str,
+        text: str,
     ):
         """preset_reason_edit_help"""
         reasons = self.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
         if len(reasons) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_pre_reasons", _emote="NO"))
-        if reason_name.lower() in reasons:
+        if name.lower() in reasons:
             return await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_exists", _emote="NO"))
         
         reasons.update({
-            reason_name.lower(): reason_text
+            name.lower(): text
         })
         self.db.configs.update(f"{ctx.guild.id}", "pre_reasons", reasons)
-        await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_edited", _emote="YES", reason_name=reason_name))
+        await ctx.send(self.i18next.t(ctx.guild, "pre_reasons_edited", _emote="YES", reason_name=name))
 
 
     @commands.command()
