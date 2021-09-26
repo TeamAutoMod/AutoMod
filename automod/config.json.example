@@ -6,6 +6,7 @@
     "token": "YOUR_BOTS_TOKEN",
     "mongo_url": "mongodb+srv://REST_OF_YOUR_MONGO_URL",
     "sentry_dsn": "",
+    "dbl_token": "",
     "shards": 1,
     "error_log_channel": 123456789,
     "custom_status": "",
