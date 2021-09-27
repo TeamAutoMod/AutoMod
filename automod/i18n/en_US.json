@@ -308,6 +308,7 @@
     "missing_bot_perms": "{emote} I'm missing the following permissions to do this: {perms}",
     "missing_arg": "{emote} Missing required argument: {param} \nUsage: ``{usage}``",
     "bad_argument": "{emote} Failed to parse the {param} argument: {error} \nUsage: ``{usage}``",
+    "bad_argument_no_param": "{emote} Failed to parse one or more arguments: {error} \nUsage: ``{usage}``",
     "on_cooldown": "This command is currently on cooldown. You can use it again in ``{retry_after}`` seconds",
     "forbidden": "{emote} {exc}",
     "missing_user_perms": "{emote} You are missing the following permissions to use this command: {perms}",

@@ -66,11 +66,14 @@ class ErrorPlugin(PluginBlueprint):
             
             await ctx.send(self.i18next.t(ctx.guild, "bad_argument", _emote="NO", param=error.type, error=error.error, usage=usage))
         elif isinstance(error, commands.BadArgument):
-            param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
             self.bot.help_command.context = ctx
             usage = self.bot.help_command.get_command_signature(ctx.command)
-            
-            await ctx.send(self.i18next.t(ctx.guild, "bad_argument", _emote="NO", param=param._name, error=error, usage=usage))
+            try:
+                param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
+            except IndexError:
+                await ctx.send(self.i18next.t(ctx.guild, "bad_argument_no_param", _emote="NO", error=error, usage=usage))
+            else:
+                await ctx.send(self.i18next.t(ctx.guild, "bad_argument", _emote="NO", param=param._name, error=error, usage=usage))
         else:
             e = Embed(
                 color=0xff5c5c,
