@@ -33,6 +33,10 @@ async def boot(bot, log):
                 log.info("Loaded {}".format(plugin))
             except Exception as ex:
                 log.warning("Failed to load {} - {}".format(plugin, ex))
+        
+        for guild in bot.guilds:
+            if not bot.db.configs.exists(f"{guild.id}"):
+                bot.db.configs.insert(bot.schemas.GuildConfig(guild))
 
         bot.ready = True
         bot.locked = False

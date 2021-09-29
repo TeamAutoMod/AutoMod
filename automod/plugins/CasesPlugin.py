@@ -354,7 +354,7 @@ class CasesPlugin(PluginBlueprint):
         ctx,
         case: Optional[int],
         *,
-        reason: _Reason
+        reason: str
     ):
         """reason_help"""
         if case is None:
