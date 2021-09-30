@@ -73,6 +73,7 @@ class AutoMod(commands.AutoShardedBot):
         self.total_shards = config.shards
         self.version = None
         self.case_cache = dict()
+        self.command_stats = {}
 
         self.i18next = Translator(self, config.langs)
         self.db = MongoDB(host=config.mongo_url).database
@@ -148,6 +149,12 @@ class AutoMod(commands.AutoShardedBot):
             return
         ctx = await self.get_context(message, cls=Context) # TODO: fix this
         if ctx.valid and ctx.command is not None:
+            if not ctx.command.qualified_name in self.command_stats:
+                self.command_stats.update({
+                    ctx.command.qualified_name: 1
+                })
+            else:
+                self.command_stats[ctx.command.qualified_name] += 1
             if self.ready:
                 if not message.guild.chunked:
                     await message.guild.chunk(cache=True)

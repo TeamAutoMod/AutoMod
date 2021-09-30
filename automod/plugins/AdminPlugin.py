@@ -7,6 +7,7 @@ import ast
 import traceback
 import time
 import psutil
+import discordspy
 
 from .PluginBlueprint import PluginBlueprint
 from .Types import DiscordUserID, Embed
@@ -35,6 +36,7 @@ class AdminPlugin(PluginBlueprint):
         super().__init__(bot)
         if not bot.config.dev:
             bot.topggpy = topgg.DBLClient(bot, bot.config.dbl_token, autopost=True, post_shard_count=True)
+            self.discords = discordspy.Client(bot, bot.config.discords_token, post=discordspy.Post.auto())
 
     
     async def cog_check(self, ctx):
@@ -77,6 +79,17 @@ class AdminPlugin(PluginBlueprint):
         self
     ):
         log.info("Posted server count ({}) and shard count ({})".format(self.bot.topggpy.guild_count, self.bot.shard_count))
+
+
+    @commands.Cog.listener()
+    async def on_discords_server_post(
+        self, 
+        status
+    ):
+        if status == 200:
+            log.info(f"Posted server count ({self.discords.servers()}) on discords.com")
+        else:
+            log.info(f"Failed to post server count to discords.com - Status code {status}")
         
 
 
@@ -261,6 +274,30 @@ class AdminPlugin(PluginBlueprint):
 
         await ctx.send(embed=e)
 
+
+
+    @commands.command()
+    async def command_stats(
+        self,
+        ctx
+    ):
+        spaces = abs(7 - len(list(sorted(self.bot.command_stats.keys(), key=lambda x: len(x), reverse=True))[0])) + 1
+        base = f"Command{' ' * spaces}| Uses \n{'=' * 25}"
+        table = []
+        for command, uses in self.bot.command_stats.items():
+            _spaces = abs(7 + spaces - len(command))
+            table.append(
+                f"{command}{' ' * _spaces}| {uses}"
+            )
+        
+        table = sorted(table, key=lambda x: int(x.split("| ")[-1]), reverse=True)
+        table.insert(0, base)
+
+        e = Embed(
+            title="Command Stats",
+            description="```py\n{}\n```".format("\n".join(table))
+        )
+        await ctx.send(embed=e)
         
 
 
