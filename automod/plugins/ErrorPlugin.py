@@ -65,7 +65,7 @@ class ErrorPlugin(PluginBlueprint):
             usage = self.bot.help_command.get_command_signature(ctx.command)
             
             await ctx.send(self.i18next.t(ctx.guild, "bad_argument", _emote="NO", param=error.type, error=error.error, usage=usage))
-        elif isinstance(error, commands.BadArgument):
+        elif isinstance(error, commands.BadArgument) or isinstance(error, commands.BadUnionArgument):
             self.bot.help_command.context = ctx
             usage = self.bot.help_command.get_command_signature(ctx.command)
             try:
