@@ -29,7 +29,8 @@
         "StarboardPlugin",
         "AdminPlugin",
         "LogsPlugin",
-        "AntispamPlugin"
+        "AntispamPlugin",
+        "PersistPlugin"
     ],
 
     "enabled_plugins_with_commands": [

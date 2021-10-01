@@ -163,8 +163,11 @@ class LogsPlugin(PluginBlueprint):
         if self.db.configs.get(member.guild.id, "member_logging") is False:
             return
 
-        prior_cases = [f"``#{x['id'].split('-')[1]}``" for x in list(filter(lambda x: x['guild'] == str(member.guild.id) and x['target_id'] == str(member.id), list(self.db.inf.find({}))))]
-        
+        try:
+            prior_cases = [f"``#{x['id'].split('-')[1]}``" for x in list(filter(lambda x: x['guild'] == str(member.guild.id) and x['target_id'] == str(member.id), list(self.db.inf.find({}))))]
+        except Exception:
+            prior_cases= []
+
         e = Embed()
         e.set_author(name=f"{member} ({member.id})")
         e.set_thumbnail(url=member.display_avatar)

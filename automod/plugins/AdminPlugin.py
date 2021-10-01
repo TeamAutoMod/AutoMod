@@ -36,7 +36,6 @@ class AdminPlugin(PluginBlueprint):
         super().__init__(bot)
         if not bot.config.dev:
             bot.topggpy = topgg.DBLClient(bot, bot.config.dbl_token, autopost=True, post_shard_count=True)
-            self.discords = discordspy.Client(bot, bot.config.discords_token, post=discordspy.Post.auto())
 
     
     async def cog_check(self, ctx):
@@ -81,15 +80,15 @@ class AdminPlugin(PluginBlueprint):
         log.info("Posted server count ({}) and shard count ({})".format(self.bot.topggpy.guild_count, self.bot.shard_count))
 
 
-    @commands.Cog.listener()
-    async def on_discords_server_post(
-        self, 
-        status
-    ):
-        if status == 200:
-            log.info(f"Posted server count ({self.discords.servers()}) on discords.com")
-        else:
-            log.info(f"Failed to post server count to discords.com - Status code {status}")
+    # @commands.Cog.listener()
+    # async def on_discords_server_post(
+    #     self,   
+    #     status
+    # ):
+    #     if status == 200:
+    #         log.info(f"Posted server count ({self.discords.servers()}) on discords.com")
+    #     else:
+    #         log.info(f"Failed to post server count to discords.com - Status code {status}")
         
 
 

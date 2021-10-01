@@ -97,6 +97,10 @@ class AutoMod(commands.AutoShardedBot):
     
     
     async def on_ready(self):
+        for guild in self.guilds:
+            if not self.db.configs.exists(f"{guild.id}"):
+                self.db.configs.insert(self.schemas.GuildConfig(guild))
+                log.info("Filled up missing guild {} ({})".format(guild.name, guild.id))
         if not self.ready:
             self.cache.build()
             await self.chunk_guilds()
@@ -158,6 +162,7 @@ class AutoMod(commands.AutoShardedBot):
             if self.ready:
                 if not message.guild.chunked:
                     await message.guild.chunk(cache=True)
+            
             await self.invoke(ctx)
 
 
