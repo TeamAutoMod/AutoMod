@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+import traceback
+
 from .PluginBlueprint import PluginBlueprint
 
 
@@ -25,7 +27,7 @@ class PersistPlugin(PluginBlueprint):
         if self.db.persists.exists(f"{guild.id}-{member.id}"):
             return
         
-        old_roles = [x.id for x in member.roles if x != guild.default_role and x.position < member.guild.me.top_role.position]
+        old_roles = [x.id for x in member.roles if x != guild.default_role and x < member.guild.me.top_role]
         old_nick = member.nick if member.nick is not None else ""
 
         if len(old_roles) < 1 and old_nick == "":
@@ -58,27 +60,23 @@ class PersistPlugin(PluginBlueprint):
             role_obj = await self.bot.utils.getRole(guild, x)
             if role_obj is None:
                 pass
-            elif role_obj.position >= guild.me.top_role.position:
+            elif role_obj >= guild.me.top_role:
                 pass
             elif role_obj in member.roles:
                 pass
             else:
                 can_add.append(role_obj)
 
-        self.db.persists.delete(_id)    
-        
-        if len(can_add) < 1:
-            return
-
         try:
             await member.edit(nick=nick)
         except Exception:
             pass
-
-        try:
-            await member.add_roles(*can_add)
-        except Exception:
-            pass
+        finally:
+            try:
+                await member.add_roles(*can_add)
+            except Exception:
+                pass
+            self.db.persists.delete(_id) 
 
 
 
