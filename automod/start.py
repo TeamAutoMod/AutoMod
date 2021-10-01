@@ -37,7 +37,7 @@ async def boot(bot, log):
 
         bot.ready = True
         bot.locked = False
-
+        
         if bot.config.custom_status != "":
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=bot.config.custom_status))
 

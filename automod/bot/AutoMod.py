@@ -101,9 +101,17 @@ class AutoMod(commands.AutoShardedBot):
             if not self.db.configs.exists(f"{guild.id}"):
                 self.db.configs.insert(self.schemas.GuildConfig(guild))
                 log.info("Filled up missing guild {} ({})".format(guild.name, guild.id))
+            else:
+                if self.db.configs.get(f"{guild.id}", "persist") is True:
+                    try:
+                        await guild.chunk(cache=True)
+                    except Exception as ex:
+                        log.info("Failed to chunk guild {} ({})".format(guild.name, guild.id))
         if not self.ready:
             self.cache.build()
             await self.chunk_guilds()
+            # self.ready = True
+            # self.locked = False
 
 
     async def chunk_guilds(self):
@@ -138,6 +146,7 @@ class AutoMod(commands.AutoShardedBot):
                 log.info("Couldn't chunk {} - Seems like we have been removed during the task".format(g))
             else:
                 await guild.chunk(cache=True)
+                log.info("Chunked {}".format(guild.id))
                 await asyncio.sleep(0.1)
                 chunked += 1
         self.active_chunk = False
