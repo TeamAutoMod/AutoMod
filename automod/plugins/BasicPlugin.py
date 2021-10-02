@@ -146,7 +146,7 @@ class BasicPlugin(PluginBlueprint):
             else:
                 user = member = ctx.message.reference.resolved.author
         else:
-            member = None if ctx.guild.get_member(user.id) is None else await self.bot.utils.getUser(user.id)
+            member = ctx.guild.get_member(user.id) or None
 
         e = Embed(
             color=None if member is None else member.color
