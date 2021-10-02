@@ -71,10 +71,10 @@ class MongoDatabase(Database):
 
 
 class MongoDB(MongoClient):
-    def __init__(self, host=None, port=None, name=None, **kwargs):
+    def __init__(self, host=None, port=None, _name=None, **kwargs):
         log.info("Connecting to database")
         super().__init__(host=host, port=port, **kwargs)
-        self.database = MongoDatabase(self, name)
+        self.database = MongoDatabase(self, _name)
 
 
     def get(self):

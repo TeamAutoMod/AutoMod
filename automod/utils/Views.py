@@ -81,6 +81,8 @@ class AboutView(View):
         super().__init__(*args, **kwargs)
         self.add_item(Link(_url="https://discord.com/oauth2/authorize?client_id=697487580522086431&permissions=403041534&scope=bot+applications.commands", _label="Invite"))
         self.add_item(Link(_url="https://discord.gg/S9BEBux", _label="Support"))
+        self.add_item(Link(_url="https://top.gg/bot/697487580522086431/vote", _label="Top.gg"))
+        self.add_item(Link(_url="https://discords.com/bots/bot/697487580522086431/vote", _label="discords.com"))
 
 
 class CallbackButton(Button):
