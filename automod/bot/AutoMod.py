@@ -76,7 +76,11 @@ class AutoMod(commands.AutoShardedBot):
         self.command_stats = {}
 
         self.i18next = Translator(self, config.langs)
-        self.db = MongoDB(host=config.mongo_url).database
+        db_name = config.mongo_url.split("net/")[1].split("?")[0]
+        self.db = MongoDB(
+            host=config.mongo_url, 
+            name=db_name if db_name != "" else "main"
+        ).database
         self.schemas = MongoSchemas(self)
         self.cache = Cache(self)
         self.emotes = Emotes(self)

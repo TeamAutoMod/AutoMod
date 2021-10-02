@@ -34,8 +34,6 @@ router.get('/guilds/:guildId/config', async (req, res) => {
 
         const { guildId } = req.params;
         if (guildIds.includes(guildId)) {
-            const t = await GuildConfig.findOne();
-            console.log(GuildConfig);
             const config = await GuildConfig.findOne({ id: `${guildId}` });
             console.log(config)
             return config ? res.send(config) : res.status(404).send({msg: "Not Found"})
