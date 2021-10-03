@@ -77,11 +77,9 @@ class AutoMod(commands.AutoShardedBot):
 
         self.i18next = Translator(self, config.langs)
         db_name = config.mongo_url.split("net/")[1].split("?")[0]
-        n = db_name if db_name != "" else "main"
-        print(n)
         self.db = MongoDB(
             host=config.mongo_url, 
-            _name=n
+            _name=db_name if db_name != "" else "main"
         ).database
         self.schemas = MongoSchemas(self)
         self.cache = Cache(self)

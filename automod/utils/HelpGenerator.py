@@ -69,7 +69,7 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
     )
     e.add_field(
         name=f"❯ Commands",
-        value="\n".join([f"``{prefix}{str(x)}`` - {bot.i18next.t(guild, x.help)}" for x in actual_plugin.get_commands()])
+        value="\n \n".join([f"``{prefix}{str(x)}`` \n{bot.i18next.t(guild, x.help)}" for x in actual_plugin.get_commands()])
     )
 
     view = HelpView(guild, bot, actual_plugin.qualified_name)
