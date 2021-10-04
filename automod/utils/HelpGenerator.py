@@ -65,7 +65,8 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
     actual_plugin = bot.get_cog(plugin)
     e = Embed(
         title=f"{actual_plugin_names[plugin]} Plugin",
-        description=bot.i18next.t(guild, f"{plugin.lower()}_long_description", prefix=prefix)
+        description=f"To get more info about a command, use ``{prefix}help <command>``"
+        #description=bot.i18next.t(guild, f"{plugin.lower()}_long_description", prefix=prefix)
     )
     e.add_field(
         name=f"❯ Commands",

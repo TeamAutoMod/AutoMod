@@ -243,7 +243,7 @@ class WarnsPlugin(PluginBlueprint):
 
 
 
-    @commands.command(aliases=["warns"])
+    @commands.command(aliases=["warns", "fetch"])
     @commands.has_guild_permissions(kick_members=True)
     async def check(
         self,

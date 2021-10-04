@@ -69,6 +69,5 @@ async def updateLogMessage(plugin, ctx, log_id, case, reason):
     except Exception as ex:
         await ctx.send(plugin.i18next.t(ctx.guild, "log_edit_failed", _emote="NO", exc=ex))
     else:
-        print(reason, current)
         plugin.db.inf.update(f"{ctx.guild.id}-{case}", "reason", reason)
         await ctx.send(plugin.i18next.t(ctx.guild, "log_edited", _emote="YES", case=case))

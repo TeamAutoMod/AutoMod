@@ -148,7 +148,7 @@ class Duration(commands.Converter):
 class Reason(commands.Converter):
     async def convert(self, ctx, argument):
         pre_reasons = ctx.bot.db.configs.get(f"{ctx.guild.id}", "pre_reasons")
-        reason = pre_reasons[argument] if argument in pre_reasons else pre_reasons
+        reason = pre_reasons[argument] if argument in pre_reasons else argument
         
         if len(reason) > 200:
             return f"{reason[:197]}..."
