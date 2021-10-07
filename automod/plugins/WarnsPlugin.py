@@ -139,9 +139,10 @@ class WarnsPlugin(PluginBlueprint):
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
 
+        msgs = []
         for user in users:
             if not Permissions.is_allowed(ctx, ctx.author, user):
-                await ctx.send(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO", user=user.name))
+                msgs.append(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO", user=user.name))
 
             else:
                 _, case = await self.action_validator.add_warns(
@@ -156,9 +157,11 @@ class WarnsPlugin(PluginBlueprint):
                 )
 
                 if case == 0:
-                    return await ctx.send(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO", user=user.name))
-
-                await ctx.send(self.i18next.t(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
+                    msgs.append(self.i18next.t(ctx.guild, "warn_not_allowed", _emote="NO", user=user.name))
+                else:
+                    msgs.append(self.i18next.t(ctx.guild, "user_warned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
+        
+        await ctx.send("\n".join(msgs))
 
 
     @commands.command()
@@ -196,50 +199,54 @@ class WarnsPlugin(PluginBlueprint):
         if len(users) < 1:
             return await ctx.send(self.i18next.t(ctx.guild, "no_member", _emote="NO"))
 
+        msgs = []
         for user in users:
             if not Permissions.is_allowed(ctx, ctx.author, user):
-                await ctx.send(self.i18next.t(ctx.guild, "unwarn_not_allowed", _emote="NO", user=user.name))
+                msgs.append(self.i18next.t(ctx.guild, "unwarn_not_allowed", _emote="NO", user=user.name))
 
             else:
                 _id = f"{ctx.guild.id}-{user.id}"
                 if not self.db.warns.exists(_id):
                     self.db.warns.insert(self.schemas.Warn(_id, 0))
-                    return await ctx.send(self.i18next.t(ctx.guild, "no_warns", _emote="NO"))
+                    msgs.append(self.i18next.t(ctx.guild, "no_warns", _emote="NO"))
                 else:
                     current = self.db.warns.get(_id, "warns")
                     if current < 1:
-                        return await ctx.send(self.i18next.t(ctx.guild, "no_warns", _emote="NO"))
-                    new = (current - warns) if (current - warns) >= 0 else 0
-                    self.db.warns.update(_id, "warns", new)
+                        msgs.append(self.i18next.t(ctx.guild, "no_warns", _emote="NO"))
+                    else:
+                        new = (current - warns) if (current - warns) >= 0 else 0
+                        self.db.warns.update(_id, "warns", new)
                 
-                case = self.bot.utils.newCase(ctx.guild, "Unwarn", user, ctx.author, reason)
-                dm_result = await self.bot.utils.dmUser(
-                    ctx.message, 
-                    "unwarn", 
-                    user, 
-                    _emote="ANGEL", 
-                    color=0x5cff9d,
-                    moderator=ctx.message.author, 
-                    warns=warns, 
-                    guild_name=ctx.guild.name, 
-                    reason=reason
-                )
-                
-                await ctx.send(self.i18next.t(ctx.guild, "user_unwarned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
+                    case = self.bot.utils.newCase(ctx.guild, "Unwarn", user, ctx.author, reason)
+                    dm_result = await self.bot.utils.dmUser(
+                        ctx.message, 
+                        "unwarn", 
+                        user, 
+                        _emote="ANGEL", 
+                        color=0x5cff9d,
+                        moderator=ctx.message.author, 
+                        warns=warns, 
+                        guild_name=ctx.guild.name, 
+                        reason=reason
+                    )
+                    
+                    msgs.append(self.i18next.t(ctx.guild, "user_unwarned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
 
-                await self.action_logger.log(
-                    ctx.guild, 
-                    "unwarn",
-                    user=user,
-                    user_id=user.id,
-                    old_warns=current,
-                    new_warns=new,
-                    moderator=ctx.author,
-                    moderator_id=ctx.author.id,
-                    reason=reason,
-                    case=case,
-                    dm=dm_result
-                )
+                    await self.action_logger.log(
+                        ctx.guild, 
+                        "unwarn",
+                        user=user,
+                        user_id=user.id,
+                        old_warns=current,
+                        new_warns=new,
+                        moderator=ctx.author,
+                        moderator_id=ctx.author.id,
+                        reason=reason,
+                        case=case,
+                        dm=dm_result
+                    )
+        
+        await ctx.send("\n".join(msgs))
 
 
 

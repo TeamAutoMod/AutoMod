@@ -54,7 +54,8 @@ class AutoMod(commands.AutoShardedBot):
             emojis=True,
             messages=True,
             reactions=True,
-            voice_states=True
+            voice_states=True,
+            typing=False
         )
         super().__init__(
            command_prefix=_prefix_callable, intents=intents, case_insensitive=True, 
@@ -92,6 +93,8 @@ class AutoMod(commands.AutoShardedBot):
 
 
     def dispatch(self, event_name, *args, **kwargs):
+        # if "typing" in event_name:
+        #     return
         super().dispatch(event_name, *args, **kwargs)
         if event_name == "message":
             super().dispatch("tags_event", *args, **kwargs)

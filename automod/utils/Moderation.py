@@ -15,10 +15,10 @@ from plugins.Types import Embed
 async def banUser(plugin, ctx, user, reason, log_type, ban_type, days=3):
     try:
         if await Permissions.is_banned(ctx, user):
-            return await ctx.send(plugin.i18next.t(ctx.guild, "target_already_banned", _emote="WARN"))
+            return plugin.i18next.t(ctx.guild, "target_already_banned", _emote="WARN")
         await ctx.guild.ban(user, reason=reason, delete_message_days=days)
     except Exception as ex:
-        return await ctx.send(plugin.i18next.t(ctx.guild, "ban_failed", _emote="NO", error=ex))
+        return plugin.i18next.t(ctx.guild, "ban_failed", _emote="NO", error=ex)
     else:
         plugin.bot.ignore_for_event.add("bans_kicks", user.id)
 
@@ -34,8 +34,6 @@ async def banUser(plugin, ctx, user, reason, log_type, ban_type, days=3):
             reason=reason
         )
 
-        await ctx.send(plugin.i18next.t(ctx.guild, f"user_{ban_type}", _emote="YES", user=user, reason=reason, case=case))
-
         await plugin.action_logger.log(
             ctx.guild, 
             log_type, 
@@ -48,14 +46,16 @@ async def banUser(plugin, ctx, user, reason, log_type, ban_type, days=3):
             dm=dm_result
         )
 
+        return plugin.i18next.t(ctx.guild, f"user_{ban_type}", _emote="YES", user=user, reason=reason, case=case)
+
 
 async def kickUser(plugin, ctx, user, reason):
     try:
         if await Permissions.is_banned(ctx, user):
-            return await ctx.send(plugin.i18next.t(ctx.guild, "target_already_banned", _emote="WARN"))
+            return plugin.i18next.t(ctx.guild, "target_already_banned", _emote="WARN")
         await ctx.guild.kick(user, reason=reason)
     except Exception as ex:
-        return await ctx.send(plugin.i18next.t(ctx.guild, "kick_failed", _emote="NO", error=ex))
+        return plugin.i18next.t(ctx.guild, "kick_failed", _emote="NO", error=ex)
     else:
         plugin.bot.ignore_for_event.add("bans_kicks", user.id)
         case = plugin.bot.utils.newCase(ctx.guild, "Kick", user, ctx.author, reason)
@@ -70,7 +70,6 @@ async def kickUser(plugin, ctx, user, reason):
             guild_name=ctx.guild.name, 
             reason=reason
         )
-        await ctx.send(plugin.i18next.t(ctx.guild, f"user_kicked", _emote="YES", user=user, reason=reason, case=case))
 
         await plugin.action_logger.log(
             ctx.guild, 
@@ -83,6 +82,8 @@ async def kickUser(plugin, ctx, user, reason):
             case=case,
             dm=dm_result
         )
+
+        return plugin.i18next.t(ctx.guild, f"user_kicked", _emote="YES", user=user, reason=reason, case=case)
 
 
 async def muteUser(plugin, ctx, user, length, reason):
