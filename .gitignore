@@ -135,7 +135,7 @@ dmypy.json
 /automod/src/future
 /automod/src/migrations
 /automod/src/utils/SlashCommand.py
-
+/automod/plugins/AntispamPlugin.py
 
 
 

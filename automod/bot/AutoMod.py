@@ -93,13 +93,10 @@ class AutoMod(commands.AutoShardedBot):
 
 
     def dispatch(self, event_name, *args, **kwargs):
-        # if "typing" in event_name:
-        #     return
         super().dispatch(event_name, *args, **kwargs)
         if event_name == "message":
             super().dispatch("tags_event", *args, **kwargs)
             super().dispatch("automod_event", *args, **kwargs)
-            super().dispatch("antispam_event", *args, **kwargs)
             super().dispatch("filter_event", *args, **kwargs)
     
     
@@ -119,8 +116,6 @@ class AutoMod(commands.AutoShardedBot):
         if not self.ready:
             self.cache.build()
             await self.chunk_guilds()
-            # self.ready = True
-            # self.locked = False
 
 
     async def chunk_guilds(self):
