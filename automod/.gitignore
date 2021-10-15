@@ -131,3 +131,4 @@ dmypy.json
 /automod/config.json
 /src/config.json
 /src/utils/SlashCommand.py
+/automod/plugins/AntispamPlugin.py

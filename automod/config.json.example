@@ -29,7 +29,6 @@
         "StarboardPlugin",
         "AdminPlugin",
         "LogsPlugin",
-        "AntispamPlugin",
         "PersistPlugin"
     ],
 
