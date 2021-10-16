@@ -124,7 +124,7 @@ class WarnsPlugin(PluginBlueprint):
             try:
                 warns = int(warns)
             except ValueError:
-                reason = " ".join(ctx.message.content.split(" ")[2:])
+                reason = " ".join(ctx.message.content.split(" ")[(len(list(set(users))) + 1):])
                 warns = 1
 
         if warns < 1:
@@ -184,7 +184,7 @@ class WarnsPlugin(PluginBlueprint):
             try:
                 warns = int(warns)
             except ValueError:
-                reason = " ".join(ctx.message.content.split(" ")[2:])
+                reason = " ".join(ctx.message.content.split(" ")[(len(list(set(users))) + 1):])
                 warns = 1
 
         if warns < 1:
