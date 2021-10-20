@@ -10,8 +10,8 @@ log = logging.getLogger(__name__)
 class Translator:
     def __init__(self, bot, langs):
         self.bot = bot
-        self._langs = dict()
-        self._lang_cache = dict()
+        self._langs = {}
+        self._lang_cache = {}
         for l in langs:
             with open(f"i18n/{l}.json", "r", encoding="utf8", errors="ignore") as f:
                 self._langs[l] = json.load(f)

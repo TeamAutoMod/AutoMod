@@ -15,6 +15,7 @@ from services.Caching import Cache
 from services.ActionLogger import ActionLogger
 from services.IgnoreForEvent import IgnoreForEvent
 from services.ActionValidator import ActionValidator
+from services.LogQueue import LogQueue
 from data.Emotes import Emotes
 from utils.ModifyConfig import ModifyConfig
 from utils.BotUtils import BotUtils
@@ -73,7 +74,7 @@ class AutoMod(commands.AutoShardedBot):
         self.used_tags = 0
         self.total_shards = config.shards
         self.version = None
-        self.case_cache = dict()
+        self.case_cache = {}
         self.command_stats = {}
 
         self.i18next = Translator(self, config.langs)
@@ -90,6 +91,9 @@ class AutoMod(commands.AutoShardedBot):
         self.action_validator = ActionValidator(self)
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
+
+        self.log_queue = LogQueue(self)
+        self.log_queue.start()
 
 
     def dispatch(self, event_name, *args, **kwargs):

@@ -17,8 +17,8 @@ from utils.Raid import enableRaidMode, disableRaidMode
 class AutomodPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
-        self.last_joiners = dict()
-        self.raids = dict()
+        self.last_joiners = {}
+        self.raids = {}
 
 
     async def cog_check(self, ctx):

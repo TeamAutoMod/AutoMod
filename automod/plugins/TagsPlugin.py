@@ -29,7 +29,7 @@ async def cacheTags(plugin):
 class TagsPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
-        self.cached_tags = dict()
+        self.cached_tags = {}
         self.bot.loop.create_task(cacheTags(self))
 
     
