@@ -17,7 +17,7 @@ class LogFilter(logging.Filter):
 def SetupLogging():
     try:
         logging.getLogger("discord").propagate = False
-        logging.getLogger("discord.http").propagate = False
+        #logging.getLogger("discord.http").propagate = False
 
         state = logging.getLogger("discord.state")
         state.propagate = False

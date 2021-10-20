@@ -92,8 +92,8 @@ class AutoMod(commands.AutoShardedBot):
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
 
-        self.log_queue = LogQueue(self)
-        self.log_queue.start()
+        #self.log_queue = LogQueue(self)
+        #self.log_queue.start()
 
 
     def dispatch(self, event_name, *args, **kwargs):

@@ -82,6 +82,9 @@ if __name__ == "__main__":
             else:
                 log.info(f"Failed to post server count to discords.com - Status code {status}")
 
-        automod.run()
+        try:
+            automod.run()
+        except Exception as ex:
+            print(ex)
 
         log.info("Shutting down...")
