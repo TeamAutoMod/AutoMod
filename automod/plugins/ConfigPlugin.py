@@ -573,11 +573,12 @@ class ConfigPlugin(PluginBlueprint):
             )
             e.add_field(
                 name="Anti @every1",
-                value=f"``{am['everyone']['warns']} {'everyone' if int(am['invites']['warns']) == 1 else 'warns'}``" if "everyone" in am else "``❌``"
+                value=f"``{am['everyone']['warns']} {'everyone' if int(am['invites']['warns']) == 1 else 'warns'}``" if "everyone" in am else "``❌``",
+                inline=True
             )
             e.add_field(
-                name="Anti Spam", 
-                value=f"``{am['spam']['warns']} {'warn' if int(am['spam']['warns']) == 1 else 'warns'}``" if "spam" in am else "``❌``", 
+                name="Anti Invites", 
+                value=f"``{am['invites']['warns']} {'warn' if int(am['invites']['warns']) == 1 else 'warns'}``" if "invites" in am else "``❌``", 
                 inline=True
             )
             e.add_field(
