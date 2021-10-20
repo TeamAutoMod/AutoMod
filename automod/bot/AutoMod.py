@@ -15,7 +15,7 @@ from services.Caching import Cache
 from services.ActionLogger import ActionLogger
 from services.IgnoreForEvent import IgnoreForEvent
 from services.ActionValidator import ActionValidator
-from services.LogQueue import LogQueue
+#from services.LogQueue import LogQueue
 from data.Emotes import Emotes
 from utils.ModifyConfig import ModifyConfig
 from utils.BotUtils import BotUtils
@@ -92,19 +92,21 @@ class AutoMod(commands.AutoShardedBot):
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
 
-        self.log_queue = LogQueue(self)
-        self.log_queue.start()
+        # self.log_queue = LogQueue(self)
+        # self.log_queue.start()
 
 
     def dispatch(self, event_name, *args, **kwargs):
         super().dispatch(event_name, *args, **kwargs)
         if event_name == "message":
-            super().dispatch("tags_event", *args, **kwargs)
+            #super().dispatch("tags_event", *args, **kwargs)
             super().dispatch("automod_event", *args, **kwargs)
             super().dispatch("filter_event", *args, **kwargs)
     
     
     async def on_ready(self):
+        if self.config.custom_status != "":
+            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=self.config.custom_status))
         for guild in self.guilds:
             if not self.db.configs.exists(f"{guild.id}"):
                 self.db.configs.insert(self.schemas.GuildConfig(guild))
@@ -113,7 +115,7 @@ class AutoMod(commands.AutoShardedBot):
                 if self.db.configs.get(f"{guild.id}", "persist") is True:
                     try:
                         await guild.chunk(cache=True)
-                    except Exception as ex:
+                    except Exception:
                         log.info("Failed to chunk guild {} ({})".format(guild.name, guild.id))
         if not self.ready:
             self.cache.build()
