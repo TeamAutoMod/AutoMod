@@ -153,7 +153,6 @@ class ActionValidator:
         try:
             await guild.ban(user=target)
         except Exception:
-            await self.delete(message, guild, target, **kwargs)
             return "", 0
         else:
             

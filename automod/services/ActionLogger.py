@@ -1,7 +1,8 @@
 import datetime
 import traceback
 import discord
-
+import asyncio
+import threading
 
 from plugins.Types import Embed
 
@@ -199,6 +200,15 @@ class ActionLogger:
 
 
     async def log(self, guild, log_type, **kwargs):
+        self.bot.log_queue.add(
+            self._log,
+            guild,
+            log_type,
+            **kwargs
+        )
+
+
+    async def _log(self, guild, log_type, **kwargs):
         if not log_type in self.log_configs:
             raise Exception("Invalid log type")
         
@@ -256,11 +266,25 @@ class ActionLogger:
             e.description = self.i18next.translate(guild, log_key, _emote=log_emote, **kwargs)
         else:
             e = kwargs.get("_embed")
+
+        thread = None
+        log_msg = []
         try:
-            log_message = await log_channel.send(content=kwargs.get("content", None), embed=e)
+            l = self.bot.loop
+            def runner(_l):
+                future = asyncio.run_coroutine_threadsafe(log_channel.send(content=kwargs.get("content", None), embed=e), l)
+                result = future.result()
+                _l.append(result)
+
+            thread = threading.Thread(target=runner, kwargs={"_l": log_msg})
+            thread.start()
         except Exception:
             pass
         else:
-            if "case" in kwargs:
-                self.bot.db.inf.update(f"{guild.id}-{kwargs.get('case')}", "log_id", f"{log_message.id}")
-                self.bot.db.inf.update(f"{guild.id}-{kwargs.get('case')}", "jump_url", f"{log_message.jump_url}")
+            while thread.is_alive():
+                await asyncio.sleep(0.1)
+                if not thread.is_alive():
+                    log_message = log_msg[0]
+                    if "case" in kwargs:
+                        self.bot.db.inf.update(f"{guild.id}-{kwargs.get('case')}", "log_id", f"{log_message.id}")
+                        self.bot.db.inf.update(f"{guild.id}-{kwargs.get('case')}", "jump_url", f"{log_message.jump_url}")

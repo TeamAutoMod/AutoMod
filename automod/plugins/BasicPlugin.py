@@ -65,7 +65,7 @@ class BasicPlugin(PluginBlueprint):
                 description=self.i18next.t(ctx.guild, "help_description", prefix=self.bot.get_guild_prefix(ctx.guild))
             )
             e.set_image(
-                url="https://cdn.discordapp.com/attachments/874097242598961152/888160308227629076/banner.png"
+                url="https://cdn.discordapp.com/attachments/874097242598961152/899258656078565396/a_banner.png"
             )
             view = HelpView(ctx.guild, self.bot, "None")
             await ctx.send(embed=e, view=view)

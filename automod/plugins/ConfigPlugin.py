@@ -573,7 +573,7 @@ class ConfigPlugin(PluginBlueprint):
             )
             e.add_field(
                 name="Anti @every1",
-                value=f"``{am['everyone']['warns']} {'everyone' if int(am['invites']['warns']) == 1 else 'warns'}``" if "everyone" in am else "``❌``",
+                value=f"``{am['everyone']['warns']} {'warns' if int(am['everyone']['warns']) == 1 else 'warns'}``" if "everyone" in am else "``❌``",
                 inline=True
             )
             e.add_field(
