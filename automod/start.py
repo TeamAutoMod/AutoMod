@@ -9,7 +9,6 @@ import datetime
 import logging
 import discordspy
 
-
 from bot.AutoMod import AutoMod
 from bot.logger import SetupLogging
 
@@ -50,11 +49,9 @@ if __name__ == "__main__":
         print("Missing config file")
         exit(1)
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
     config = json.load(open("./config.json", "r", encoding="utf8", errors="ignore", closefd=True))
     automod = AutoMod(config)
+    
     if not automod.config.dev:
         discords = discordspy.Client(
             automod, 
@@ -65,6 +62,10 @@ if __name__ == "__main__":
 
     with SetupLogging():
         log = logging.getLogger(__name__)
+
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
         try:
             for _s, s in ("SIGINT", "SIGTERM"):
                 asyncio.get_event_loop().add_signal_handler(getattr(_s, s), lambda: asyncio.ensure_future(automod.close()))
@@ -82,9 +83,13 @@ if __name__ == "__main__":
             else:
                 log.info(f"Failed to post server count to discords.com - Status code {status}")
 
-        try:
-            automod.run()
-        except Exception as ex:
-            print(ex)
+
+        @automod.event
+        async def on_dbl_vote(
+            data
+        ):
+            print(data)
+
+        automod.run()
 
         log.info("Shutting down...")

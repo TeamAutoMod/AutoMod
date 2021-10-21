@@ -16,11 +16,10 @@ class LogFilter(logging.Filter):
 @contextlib.contextmanager
 def SetupLogging():
     try:
-        logging.getLogger("discord").propagate = False
-        #logging.getLogger("discord.http").propagate = False
+        # logging.getLogger("discord").propagate = False
+        # logging.getLogger("discord.http").propagate = False
 
-        state = logging.getLogger("discord.state")
-        state.propagate = False
+        # logging.getLogger("discord.state").propagate = False
 
         logging.basicConfig(level=logging.INFO, format="[{levelname:<7}] - {message}", style="{")
         

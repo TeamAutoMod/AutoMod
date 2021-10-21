@@ -210,7 +210,6 @@ class TagsPlugin(PluginBlueprint):
                     if role in message.author.roles:
                         return
 
-        tags = getTags(self, message)
         prefix = self.bot.get_guild_prefix(message.guild)
         if prefix is None:
             return
