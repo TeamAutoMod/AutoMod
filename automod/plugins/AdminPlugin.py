@@ -79,6 +79,14 @@ class AdminPlugin(PluginBlueprint):
     ):
         log.info("Posted server count ({}) and shard count ({})".format(self.bot.topggpy.guild_count, self.bot.shard_count))
         
+    
+    @commands.Cog.listener()
+    async def on_dbl_vote(
+        self,
+        data
+    ):
+        print(f"Got a vote - {data}")
+        log.info(f"Got a vote - {data}")
 
 
     @commands.command()

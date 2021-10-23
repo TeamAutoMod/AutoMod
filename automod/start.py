@@ -84,12 +84,6 @@ if __name__ == "__main__":
                 log.info(f"Failed to post server count to discords.com - Status code {status}")
 
 
-        @automod.event
-        async def on_dbl_vote(
-            data
-        ):
-            print(data)
-
         automod.run()
 
         log.info("Shutting down...")
