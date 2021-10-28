@@ -92,14 +92,11 @@ class AutoMod(commands.AutoShardedBot):
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
 
-        # self.log_queue = LogQueue(self)
-        # self.log_queue.start()
-
 
     def dispatch(self, event_name, *args, **kwargs):
         super().dispatch(event_name, *args, **kwargs)
         if event_name == "message":
-            #super().dispatch("tags_event", *args, **kwargs)
+            super().dispatch("tags_event", *args, **kwargs)
             super().dispatch("automod_event", *args, **kwargs)
             super().dispatch("filter_event", *args, **kwargs)
     

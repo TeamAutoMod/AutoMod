@@ -217,34 +217,34 @@ class WarnsPlugin(PluginBlueprint):
                         new = (current - warns) if (current - warns) >= 0 else 0
                         self.db.warns.update(_id, "warns", new)
                 
-                    case = self.bot.utils.newCase(ctx.guild, "Unwarn", user, ctx.author, reason)
-                    dm_result = await self.bot.utils.dmUser(
-                        ctx.message, 
-                        "unwarn", 
-                        user, 
-                        _emote="ANGEL", 
-                        color=0x5cff9d,
-                        moderator=ctx.message.author, 
-                        warns=warns, 
-                        guild_name=ctx.guild.name, 
-                        reason=reason
-                    )
-                    
-                    msgs.append(self.i18next.t(ctx.guild, "user_unwarned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
+                        case = self.bot.utils.newCase(ctx.guild, "Unwarn", user, ctx.author, reason)
+                        dm_result = await self.bot.utils.dmUser(
+                            ctx.message, 
+                            "unwarn", 
+                            user, 
+                            _emote="ANGEL", 
+                            color=0x5cff9d,
+                            moderator=ctx.message.author, 
+                            warns=warns, 
+                            guild_name=ctx.guild.name, 
+                            reason=reason
+                        )
+                        
+                        msgs.append(self.i18next.t(ctx.guild, "user_unwarned", _emote="YES", user=user, reason=reason, case=case, warns=warns))
 
-                    await self.action_logger.log(
-                        ctx.guild, 
-                        "unwarn",
-                        user=user,
-                        user_id=user.id,
-                        old_warns=current,
-                        new_warns=new,
-                        moderator=ctx.author,
-                        moderator_id=ctx.author.id,
-                        reason=reason,
-                        case=case,
-                        dm=dm_result
-                    )
+                        await self.action_logger.log(
+                            ctx.guild, 
+                            "unwarn",
+                            user=user,
+                            user_id=user.id,
+                            old_warns=current,
+                            new_warns=new,
+                            moderator=ctx.author,
+                            moderator_id=ctx.author.id,
+                            reason=reason,
+                            case=case,
+                            dm=dm_result
+                        )
         
         await ctx.send("\n".join(msgs))
 

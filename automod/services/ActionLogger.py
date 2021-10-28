@@ -18,56 +18,64 @@ class ActionLogger:
                 "key": "log_ban",
                 "on_time": True,
                 "color": 0xff5c5c,
-                "emote": "HAMMER"
+                "emote": "HAMMER",
+                "action": "Ban"
             },
             "kick": {
                 "channel": "mod_log",
                 "key": "log_kick",
                 "on_time": True,
                 "color": 0xf79554,
-                "emote": "SHOE"
+                "emote": "SHOE",
+                "action": "Kick"
             },
             "forceban": {
                 "channel": "mod_log",
                 "key": "log_forceban",
                 "on_time": True,
                 "color": 0xff5c5c,
-                "emote": "HAMMER"
+                "emote": "HAMMER",
+                "action": "Forceban"
             },
             "softban": {
                 "channel": "mod_log",
                 "key": "log_softban",
                 "on_time": True,
                 "color": 0xf79554,
-                "emote": "HAMMER"
+                "emote": "HAMMER",
+                "action": "Softban"
             },
             "restrict": {
                 "channel": "mod_log",
                 "key": "log_restrict",
                 "on_time": True,
                 "color": 0xffdc5c,
-                "emote": "RESTRICT"
+                "emote": "RESTRICT",
+                "action": "Restriction"
             },
             "unban": {
                 "channel": "mod_log",
                 "key": "log_unban",
                 "on_time": True,
                 "color": 0x5cff9d,
-                "emote": "UNLOCK"
+                "emote": "UNLOCK",
+                "action": "Unban"
             },
             "manual_unban": {
                 "channel": "mod_log",
                 "key": "log_manual_unban",
                 "on_time": True,
                 "color": 0x5cff9d,
-                "emote": "UNLOCK"
+                "emote": "UNLOCK",
+                "action": "Manual Unban"
             },
             "cybernuke": {
                 "channel": "mod_log",
                 "key": "log_cybernuke",
                 "on_time": True,
                 "color": 0x4569e1,
-                "emote": "HAMMER"
+                "emote": "HAMMER",
+                "action": "Cybernuke"
             },
 
             "mute": {
@@ -75,28 +83,32 @@ class ActionLogger:
                 "key": "log_mute",
                 "on_time": True,
                 "color": 0xffdc5c,
-                "emote": "MUTE"
+                "emote": "MUTE",
+                "action": "Mute"
             },
             "mute_extended": {
                 "channel": "mod_log",
                 "key": "log_mute_extended",
                 "on_time": True,
                 "color": 0xffdc5c,
-                "emote": "MUTE"
+                "emote": "MUTE",
+                "action": "Mute Extended"
             },
             "unmute": {
                 "channel": "mod_log",
                 "key": "log_unmute",
                 "on_time": True,
                 "color": 0x5cff9d,
-                "emote": "UNMUTE"
+                "emote": "UNMUTE",
+                "action": "Unmute"
             },
             "manual_unmute": {
                 "channel": "mod_log",
                 "key": "log_manual_unmute",
                 "on_time": True,
                 "color": 0x5cff9d,
-                "emote": "UNMUTE"
+                "emote": "UNMUTE",
+                "action": "Manual Unmute"
             },
 
             "warn": {
@@ -104,7 +116,8 @@ class ActionLogger:
                 "key": "log_warn",
                 "on_time": True,
                 "color": 0xffdc5c,
-                "emote": "WARN"
+                "emote": "WARN",
+                "action": "Warn"
             },
 
             "voice_join": {
@@ -112,7 +125,7 @@ class ActionLogger:
                 "key": "voice_channel_join",
                 "on_time": True,
                 "color": 0x5cff9d,
-                "emote": "BLUEDOT"
+                "emote": "BLUEDOT",
             },
             "voice_leave": {
                 "channel": "voice_log",
@@ -171,7 +184,8 @@ class ActionLogger:
                 "key": "log_warns_added",
                 "on_time": True,
                 "color": 0xffdc5c,
-                "emote": "WARN"
+                "emote": "WARN",
+                "action": "Warn"
             },
 
             "unwarn": {
@@ -179,7 +193,8 @@ class ActionLogger:
                 "key": "log_unwarn",
                 "on_time": True,
                 "color": 0x5cff9d,
-                "emote": "ANGEL"
+                "emote": "ANGEL",
+                "action": "Unwarn"
             },
 
             "raid_on": {
@@ -187,14 +202,16 @@ class ActionLogger:
                 "key": "log_raid_on",
                 "on_time": True,
                 "color": 0x202225,
-                "emote": "LOCK"
+                "emote": "LOCK",
+                "action": "Raidmode Enabled"
             },
             "raid_off": {
                 "channel": "mod_log",
                 "key": "log_raid_off",
                 "on_time": True,
                 "color": 0x202225,
-                "emote": "UNLOCK"
+                "emote": "UNLOCK",
+                "action": "Raidmode Disabled"
             }
         }
 
@@ -237,31 +254,24 @@ class ActionLogger:
 
             if kwargs.get("moderator") is None:
                 kwargs.update({"moderator": guild.me, "moderator_id": guild.me.id})
-
+                
             e.set_author(
-                name=f"{kwargs.get('moderator')} ({kwargs.get('moderator_id')})", 
+                name="{}{}".format(
+                    conf["action"] if conf["action"] not in ["Warn", "Unwarn"] else f"{conf['action']} ({kwargs.get('old_warns')} → {kwargs.get('new_warns')})",
+                    f" | Case #{kwargs.get('case')}" if "case" in kwargs else ""
+                ),
                 icon_url=(kwargs.get("moderator")).display_avatar
             )
-
-            if "user" in kwargs:
-                if not isinstance(kwargs.get("user"), str):
-                    e.set_thumbnail(
-                        url=(kwargs.get("user")).display_avatar
-                    )
 
             dm = kwargs.get("dm", None)
             if dm is not None:
                 if "failed" in dm:
-                    dm = " | No DM sent"
+                    dm = "No DM sent"
                 elif dm == "":
-                    dm = " | No DM sent"
+                    dm = "No DM sent"
                 else:
-                    dm = " | DM sent"
-
-            if "case" in kwargs:
-                e.set_footer(
-                    text=f"Case #{kwargs.get('case')}{dm if dm is not None else ''}"
-                )
+                    dm = "DM sent"
+                e.set_footer(text=dm)
                 
             e.description = self.i18next.translate(guild, log_key, _emote=log_emote, **kwargs)
         else:
