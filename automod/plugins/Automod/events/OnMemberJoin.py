@@ -9,6 +9,10 @@ async def run(plugin, member):
     if member.guild is None:
         return
     
+    if not plugin.db.configs.exists(member.guild.id):
+        plugin.db.configs.insert(plugin.bot.schemas.GuildConfig(member.guild))
+        return
+    
     if not "raid" in plugin.db.configs.get(member.guild.id, "automod"):
         return
     

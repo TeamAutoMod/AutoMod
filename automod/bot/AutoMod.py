@@ -15,7 +15,6 @@ from services.Caching import Cache
 from services.ActionLogger import ActionLogger
 from services.IgnoreForEvent import IgnoreForEvent
 from services.ActionValidator import ActionValidator
-#from services.LogQueue import LogQueue
 from data.Emotes import Emotes
 from utils.ModifyConfig import ModifyConfig
 from utils.BotUtils import BotUtils
@@ -103,7 +102,8 @@ class AutoMod(commands.AutoShardedBot):
     
     async def on_ready(self):
         if self.config.custom_status != "":
-            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=self.config.custom_status))
+            if self.activity is None:
+                await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=self.config.custom_status))
         for guild in self.guilds:
             if not self.db.configs.exists(f"{guild.id}"):
                 self.db.configs.insert(self.schemas.GuildConfig(guild))
@@ -164,6 +164,8 @@ class AutoMod(commands.AutoShardedBot):
 
     async def on_message(self, message):
         if message.author.bot:
+            return
+        if message.guild is None:
             return
         ctx = await self.get_context(message, cls=Context) # TODO: fix this
         if ctx.valid and ctx.command is not None:

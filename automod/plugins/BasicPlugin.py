@@ -149,7 +149,7 @@ class BasicPlugin(PluginBlueprint):
             member = ctx.guild.get_member(user.id) or None
 
         e = Embed(
-            color=None if member is None else member.color
+            color=0xfe7e01 if member is None else member.color
         )
         e.set_thumbnail(
             url=user.display_avatar

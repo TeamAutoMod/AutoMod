@@ -577,8 +577,8 @@ class ConfigPlugin(PluginBlueprint):
                 inline=True
             )
             e.add_field(
-                name="Anti Spam", 
-                value=f"``{am['spam']['warns']} {'warn' if int(am['spam']['warns']) == 1 else 'warns'}``" if "spam" in am else "``❌``", 
+                name="Anti Invites", 
+                value=f"``{am['invites']['warns']} {'warn' if int(am['invites']['warns']) == 1 else 'warns'}``" if "invites" in am else "``❌``", 
                 inline=True
             )
             e.add_field(

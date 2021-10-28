@@ -323,7 +323,7 @@
 
     "ban_dm": "You have been banned in **{guild_name}**",
     "forceban_dm": "You have been forcebanned in **{guild_name}**",
-    "softban": "You have been softbanned in **{guild_name}**",
+    "softban_dm": "You have been softbanned in **{guild_name}**",
     "kick_dm": "You have been kicked in **{guild_name}**",
     "warn_dm": "You have been warned in **{guild_name}**",
     "mute_dm": "You have been muted until {until} in **{guild_name}**",

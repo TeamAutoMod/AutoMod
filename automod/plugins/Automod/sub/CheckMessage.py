@@ -1,7 +1,7 @@
 import discord
 
 from ..sub.ShouldPerformAutomod import shouldPerformAutomod
-from ..triggers import Attachments, Invites, Lines, Mentions
+from ..triggers import Attachments, Invites, Lines, Mentions, Everyone
 
 
 
@@ -15,3 +15,5 @@ async def checkMessage(plugin, message):
         await Mentions.check(plugin, message)
     if "lines" in automod:
         await Lines.check(plugin, message)
+    if "everyone" in automod:
+        await Everyone.check(plugin, message)
