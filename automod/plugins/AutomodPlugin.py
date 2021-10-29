@@ -76,8 +76,18 @@ class AutomodPlugin(PluginBlueprint):
     ): 
         """automod_help"""
         if ctx.invoked_subcommand is None:
-            _help = self.bot.get_command("help")
-            await _help.__call__(ctx, query="automod")
+            prefix = self.bot.get_guild_prefix(ctx.guild)
+            e = Embed(
+                title=self.i18next.t(ctx.guild, "automod_title"),
+                description=self.i18next.t(ctx.guild, "automod_description", prefix=prefix)
+            )
+            e.add_field(
+                name="❯ Commands",
+                value=self.i18next.t(ctx.guild, "automod_commands", prefix=prefix)
+            )
+            await ctx.send(embed=e)
+            # _help = self.bot.get_command("help")
+            # await _help.__call__(ctx, query="automod")
 
 
     @automod.command()

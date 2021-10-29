@@ -3,6 +3,10 @@ from discord.ext import commands
 
 import googletrans
 import time
+import requests
+import re
+from PIL import Image
+from io import BytesIO
 
 from .PluginBlueprint import PluginBlueprint
 from .Types import DiscordUser, Embed
@@ -15,6 +19,8 @@ class BasicPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
         self.google = googletrans.Translator()
+        self.EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
+        self.CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
 
     
     @commands.command()
@@ -205,6 +211,51 @@ class BasicPlugin(PluginBlueprint):
         )
 
         await ctx.send(embed=e)
+
+
+    @commands.command()
+    async def jumbo(
+        self,
+        ctx,
+        *,
+        emotes: str
+    ):
+        """jumbo_help"""
+        urls = []
+        for e in emotes.split(" ")[:5]:
+            if self.EMOJI_RE.match(e):
+                _, eid = self.EMOJI_RE.findall(e)[0]
+                urls.append("https://cdn.discordapp.com/emojis/{}.png".format(eid))
+            else:
+                url = self.CDN.format("-".join(
+                    c.encode("unicode_escape").decode("utf-8")[2:].lstrip("0")
+                    for c in e
+                ))
+                urls.append(url)
+
+        width, height, images = 0, 0, []
+        for url in urls:
+            r = requests.get(url)
+            try:
+                r.raise_for_status()
+            except requests.HTTPError:
+                return await ctx.send(self.i18next.t(ctx.guild, "http_error", _emoji="NO"))
+
+            img = Image.open(BytesIO(r.content))
+            height = img.height if img.height > height else height
+            width += img.width + 10
+            images.append(img)
+        
+        image = Image.new("RGBA", (width, height))
+        width_offset = 0
+        for img in images:
+            image.paste(img, (width_offset, 0))
+            width_offset += img.width + 10
+
+        combined = BytesIO()
+        image.save(combined, "png", quality=55)
+        combined.seek(0)
+        await ctx.send(file=discord.File(combined, filename="emoji.png"))
 
 
 
