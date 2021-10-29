@@ -18,31 +18,31 @@
 
     "plugins": [
         "ErrorPlugin",
-        "BasicPlugin",
-        "ModerationPlugin",
-        "CasesPlugin",
-        "ConfigPlugin",
-        "TagsPlugin",
         "AutomodPlugin",
+        "ConfigPlugin",
+        "ModerationPlugin",
         "WarnsPlugin",
+        "TagsPlugin",
+        "CasesPlugin",
+        "BasicPlugin",
         "FiltersPlugin",
         "StarboardPlugin",
         "AdminPlugin",
         "LogsPlugin",
+        "AntispamPlugin",
         "PersistPlugin"
     ],
 
     "enabled_plugins_with_commands": [
-        "BasicPlugin",
-        "ModerationPlugin",
-        "CasesPlugin",
-        "ConfigPlugin",
-        "LocateUserPlugin",
-        "TagsPlugin",
         "AutomodPlugin",
+        "ConfigPlugin",
+        "ModerationPlugin",
         "WarnsPlugin",
         "TagsPlugin",
-        "FiltersPlugin"
+        "CasesPlugin",
+        "BasicPlugin",
+        "FiltersPlugin",
+        "StarboardPlugin"
     ],
     
     "bot_admins": [123456789, 987654321],
