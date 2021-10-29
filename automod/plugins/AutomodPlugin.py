@@ -86,8 +86,6 @@ class AutomodPlugin(PluginBlueprint):
                 value=self.i18next.t(ctx.guild, "automod_commands", prefix=prefix)
             )
             await ctx.send(embed=e)
-            # _help = self.bot.get_command("help")
-            # await _help.__call__(ctx, query="automod")
 
 
     @automod.command()
