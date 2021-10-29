@@ -43,6 +43,11 @@ class BasicPlugin(PluginBlueprint):
         t1 = time.perf_counter()
         msg = await ctx.send("Pinging...")
         t2 = time.perf_counter()
+        if msg == None:
+            return await ctx.send(
+                content="Pong! ``{}ms`` \n*Server Latency: ``{}ms``*"\
+                .format(round((t2 - t1) * 1000), round(bot.latency * 1000, 2))
+            )
 
         await msg.edit(
             allowed_mentions=discord.AllowedMentions(replied_user=False), 
