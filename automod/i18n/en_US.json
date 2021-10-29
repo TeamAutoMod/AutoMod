@@ -163,6 +163,7 @@
     "dashboard_help": "Get a direct link to your servers dashboard", 
     "avatar_help": "Shows a users avatar (or your own)",
     "jumbo_help": "Shows a bigger version of the given emotes",
+    "stats_help": "Shows some message related stats",
 
     "config_help": "Shows the current server config",
     "setup_help": "Shows commands for automatically setting up a feature",
