@@ -5,6 +5,7 @@ import googletrans
 import time
 import requests
 import re
+import datetime
 from PIL import Image
 from io import BytesIO
 
@@ -21,6 +22,76 @@ class BasicPlugin(PluginBlueprint):
         self.google = googletrans.Translator()
         self.EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
         self.CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
+        self.emote_stats = {}
+        self.cached_users = {}
+
+
+    @commands.Cog.listener()
+    async def on_stats_event(
+        self,
+        message: discord.Message
+    ):
+        if message.guild is None:
+            return
+        
+        _update = {}
+        if not self.db.stats.exists(message.author.id):
+            schema = self.schemas.UserStats(message.author)
+            self.db.stats.insert(schema)
+            self.cached_users.update({message.author.id: schema})
+        else:
+            if not message.author.id in self.cached_users:
+                data = self.db.stats.get_doc(message.author.id)
+                self.cached_users.update({message.author.id: data})
+        _update.update({
+            "total_sent": self.cached_users[message.author.id]["messages"]["total_sent"]+1,
+            "last": datetime.datetime.utcnow()
+        })
+        for k, v in {
+            "total_emotes": len(self.EMOJI_RE.findall(message.content)),
+            "total_pings": len(message.mentions),
+            "total_attachments": len(message.attachments),
+        }.items():
+            if v > 0:
+                _update.update({k: self.cached_users[message.author.id]["messages"][k]+v})
+                if k == "total_emotes":
+                    if not message.author.id in self.emote_stats:
+                        emotes = self.cached_users[message.author.id]["messages"]["used_emotes"]
+                        self.emote_stats.update({message.author.id: emotes})
+                    else:
+                        emotes = self.emote_stats[message.author.id]
+
+                    for name, eid in self.EMOJI_RE.findall(message.content):
+                        eid = str(eid)
+                        if not eid in emotes:
+                            if len(emotes) <= 1:
+                                _update.update({
+                                    "most_used_emote": {
+                                        "name": name,
+                                        "id": eid,
+                                        "used": 1
+                                    }
+                                })
+                            emotes.update({eid: 1})
+                        else:
+                            emotes.update({eid: emotes[eid]+1})
+                            top = max(emotes, key=emotes.get)
+                            if emotes[top] <= emotes[eid]:
+                                _update.update({
+                                    "most_used_emote": {
+                                        "name": name,
+                                        "id": eid,
+                                        "used": emotes[eid]
+                                    }
+                                })
+                        self.emote_stats.update({message.author.id: emotes})
+                        _update.update({"used_emotes": self.emote_stats[message.author.id]})
+
+        new = self.cached_users[message.author.id]["messages"]
+        for k, v in _update.items(): new.update({k: v})
+        self.db.stats.update_stats(message.author.id, new)
+        
+        
 
     
     @commands.command()
@@ -154,7 +225,7 @@ class BasicPlugin(PluginBlueprint):
             else:
                 user = member = ctx.message.reference.resolved.author
         else:
-            member = ctx.guild.get_member(user.id) or None
+            member: discord.Member = ctx.guild.get_member(user.id) or None
 
         e = Embed(
             color=0xfe7e01 if member is None else member.color
@@ -163,7 +234,7 @@ class BasicPlugin(PluginBlueprint):
             url=user.display_avatar
         )
         e.add_field(
-            name="❯ Information",
+            name="❯ User Information",
             value="• ID: {} \n• Profile: {} \n• Created at: <t:{}>"\
             .format(
                 user.id,
@@ -175,12 +246,23 @@ class BasicPlugin(PluginBlueprint):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
             e.add_field(
                 name="❯ Server Information",
-                value="• Joined at: <t:{}> \n• Roles: {}"\
+                value="• Nickname: {} \n• Joined at: <t:{}> \n• Roles: {}"\
                 .format(
+                    member.nick,
                     round(member.joined_at.timestamp()),
                     len(roles)
                 )
             )
+
+            activity_data = self.db.stats.get_doc(member.id)
+            if activity_data != None:
+                e.add_field(
+                    name="❯ Activity",
+                    value="• Last message: <t:{}> \n• First Message: <t:{}>".format(
+                        round((activity_data["messages"]["last"]).timestamp()),
+                        round((activity_data["messages"]["first"]).timestamp())
+                    )
+                )
         warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
         cases = list(filter(lambda x: x["guild"] == str(ctx.guild.id) and x["target_id"] == str(user.id), self.db.inf.find()))
         e.add_field(
@@ -216,6 +298,7 @@ class BasicPlugin(PluginBlueprint):
 
 
     @commands.command()
+    @commands.has_permissions(manage_messages=True)
     async def jumbo(
         self,
         ctx,
@@ -258,6 +341,72 @@ class BasicPlugin(PluginBlueprint):
         image.save(combined, "png", quality=55)
         combined.seek(0)
         await ctx.send(file=discord.File(combined, filename="emoji.png"))
+
+
+    @commands.command()
+    async def stats(
+        self,
+        ctx,
+        user: discord.Member = None
+    ):
+        """stats_help"""
+        if user is None:
+            user = ctx.author
+        
+        if not self.db.stats.exists(user.id):
+            return await ctx.send(self.i18next.t(ctx.guild, "no_stats", _emote="NO"))
+
+        if user.id in self.cached_users:
+            data = self.cached_users[user.id]
+        else:
+            data = self.db.stats.get_doc(user.id)
+        data = data["messages"]
+        
+        e = Embed(
+            title="Message Stats",
+            description="These stats from {0.name}#{0.discriminator} we're started to be tracked when I joined this server.".format(user)
+        )
+        e.add_field(
+            name="❯ Messages Sent",
+            value=str(data["total_sent"]),
+            inline=True
+        )
+        e.add_field(
+            name="❯ Messages Deleted",
+            value=str(data["total_deleted"]),
+            inline=True
+        )
+        e.add_field(
+            name="❯ Emotes Used",
+            value=str(data["total_emotes"]),
+            inline=True
+        )
+        e.add_field(
+            name="❯ Total Mentions",
+            value=str(data["total_pings"]),
+            inline=True
+        )
+        e.add_field(
+            name="❯ Total Attachments",
+            value=str(data["total_attachments"]),
+            inline=True
+        )
+        data = data["most_used_emote"]
+        e.add_field(
+            name="❯ Favorite Emote",
+            value="{}(``{}``, used {} time{})".format(
+                "<:{}:{}> ".format(
+                    data["name"],
+                    data["id"]
+                ) if self.bot.get_emoji(int(data["id"])) != None else "",
+                data["name"],
+                data["used"],
+                "" if data["used"] == 1 else "s"
+            ) if data["id"] != "" else "None",
+            inline=True
+        )
+
+        await ctx.send(embed=e)
 
 
 

@@ -3,6 +3,7 @@ from pymongo.collection import Collection
 from pymongo.database import Database
 
 import logging
+import datetime
 
 
 
@@ -30,6 +31,10 @@ class MongoCollection(Collection):
     
     def update(self, filter_value, key, new_value):
         super().update({f"{self.key}": f"{filter_value}"}, {"$set": {f"{key}": new_value}}, upsert=False, multi=False)
+
+
+    def update_stats(self, filter_value, updates):
+        super().update({f"{self.key}": f"{filter_value}"}, {"$set": {"messages": updates}}, upsert=False, multi=False)
 
     
     def delete(self, filter_value):
@@ -67,6 +72,8 @@ class MongoDatabase(Database):
         self.persists = MongoCollection(self, "persists")
         self.follows = MongoCollection(self, "follows")
         self.stars = MongoCollection(self, "stars")
+
+        self.stats = MongoCollection(self, "stats") # this is just experimental
 
 
 
@@ -222,5 +229,34 @@ class MongoSchemas:
             "author": f"{message.author.id}",
             "log_message": "",
             "stars": 1
+        }
+        return schema
+
+
+    def UserStats(self, user):
+        schema = {
+            "id": f"{user.id}",
+            "messages": {
+                "first": datetime.datetime.utcnow(),
+                "last": datetime.datetime.utcnow(),
+
+                "total_sent": 0,
+                "total_deleted": 0,
+
+                "total_emotes": 0,
+                "total_pings": 0,
+                "total_attachments": 0,
+
+                "used_emotes": {},
+                "most_used_emote": {
+                    "name": "",
+                    "id": "",
+                    "used": 0
+                }
+            },
+            "voice": {
+                "sessions": 0,
+                "total_time": 0,
+            }
         }
         return schema
