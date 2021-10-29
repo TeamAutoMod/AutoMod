@@ -474,7 +474,7 @@
     "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Badfiles has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns",
 
     "help_title": "Help Menu",
-    "help_description": "Select one of the categories below to view its commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+    "help_description": "Select one of the categories below to view its (sub-)commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
     "automodplugin_short_description": "Commands for the automod",
     "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",
@@ -524,5 +524,7 @@
     "automod_title": "How to configure the automod",
     "automod_description": "• Use ``off`` as the argument in all commands to disable the feature \n• To use the default automod config, run ``{prefix}setup automod`` \n• To manage allowed invites, use the ``{prefix}allowed_invites`` command \n• Actions are only taken on non-mods (People without ban members perms) \n• Use the ``{prefix}ignore`` & ``{prefix}unignore`` commands for configuring who is targetable",
 
-    "automod_commands": "``{prefix}automod invite <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod everyone <warns>`` - *Warns a user gets who pings @everyone or @here* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod lines <number>`` - *Max number of new-lines allowed per message* \n\n``{prefix}automod raid <threshold>`` - *Allowed users per second join rate. The correct syntax is users/seconds, e.g. 5/10 would mean 5 users can join within 10 seconds*"
+    "automod_commands": "``{prefix}automod invite <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod everyone <warns>`` - *Warns a user gets who pings @everyone or @here* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod lines <number>`` - *Max number of new-lines allowed per message* \n\n``{prefix}automod raid <threshold>`` - *Allowed users per second join rate. The correct syntax is users/seconds, e.g. 5/10 would mean 5 users can join within 10 seconds*",
+
+    "http_error": "{emote} There was an HTTP error. Either we are ratelimited or Discord has an issue. Please try again later."
 }

@@ -55,9 +55,6 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
             title=bot.i18next.t(guild, "help_title"),
             description=bot.i18next.t(guild, "help_description", prefix=prefix)
         )
-        e.set_image(
-            url="https://cdn.discordapp.com/attachments/874097242598961152/899258656078565396/a_banner.png"
-        )
         view = HelpView(guild, bot, "None")
         return e, view
     
@@ -66,7 +63,6 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
     e = Embed(
         title=f"{actual_plugin_names[plugin]} Plugin",
         description=f"To get more info about a command, use ``{prefix}help <command>``"
-        #description=bot.i18next.t(guild, f"{plugin.lower()}_long_description", prefix=prefix)
     )
     e.add_field(
         name=f"❯ Commands",
