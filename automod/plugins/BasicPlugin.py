@@ -26,6 +26,17 @@ class BasicPlugin(PluginBlueprint):
         self.cached_users = {}
 
 
+    def handle_cache_state(self, user):
+        if not self.db.stats.exists(user.id):
+            schema = self.schemas.UserStats(user)
+            self.db.stats.insert(schema)
+            self.cached_users.update({user.id: schema})
+        else:
+            if not user.id in self.cached_users:
+                data = self.db.stats.get_doc(user.id)
+                self.cached_users.update({user.id: data})
+
+
     @commands.Cog.listener()
     async def on_stats_event(
         self,
@@ -35,14 +46,7 @@ class BasicPlugin(PluginBlueprint):
             return
         
         _update = {}
-        if not self.db.stats.exists(message.author.id):
-            schema = self.schemas.UserStats(message.author)
-            self.db.stats.insert(schema)
-            self.cached_users.update({message.author.id: schema})
-        else:
-            if not message.author.id in self.cached_users:
-                data = self.db.stats.get_doc(message.author.id)
-                self.cached_users.update({message.author.id: data})
+        self.handle_cache_state(message.author)
         _update.update({
             "total_sent": self.cached_users[message.author.id]["messages"]["total_sent"]+1,
             "last": datetime.datetime.utcnow()
@@ -90,9 +94,20 @@ class BasicPlugin(PluginBlueprint):
         new = self.cached_users[message.author.id]["messages"]
         for k, v in _update.items(): new.update({k: v})
         self.db.stats.update_stats(message.author.id, new)
-        
-        
 
+
+    @commands.Cog.listener()
+    async def on_message_delete(
+        self,
+        message: discord.Message
+    ):
+        if message.guild is None:
+            return
+
+        self.handle_cache_state(message.author)
+        self.cached_users[message.author.id]["messages"].update({"total_deleted": self.cached_users[message.author.id]["messages"]["total_deleted"]+1})
+        self.db.stats.update(message.author.id, "messages", self.cached_users[message.author.id]["messages"])
+        
     
     @commands.command()
     async def about(
