@@ -8,7 +8,8 @@ from utils.RegEx import getPattern
 
 
 class Embed(discord.Embed):
-    def __init__(self, color=0xfe7e01, **kwargs): # normal color -> 5765f0 (orange during october)
+    #fe7e01
+    def __init__(self, color=0xecf1f4, **kwargs): # normal color -> 5765f0 (orange during october)
         super().__init__(color=color, **kwargs)
     
 

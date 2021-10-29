@@ -3,8 +3,13 @@ import discord
 from typing import Tuple
 import re
 
-from plugins.Types import Embed
+from plugins.Types import Embed as _Embed
 
+
+
+class Embed(_Embed):
+    def __init__(self, *args, color=0xffd900, **kwargs):
+        super().__init__(*args, color=color, **kwargs)
 
 
 def get_star_emoji(stars: int) -> str:
