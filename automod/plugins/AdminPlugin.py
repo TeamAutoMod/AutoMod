@@ -81,12 +81,27 @@ class AdminPlugin(PluginBlueprint):
         
     
     @commands.Cog.listener()
-    async def on_dbl_vote(
+    async def on_shard_connect(
         self,
-        data
+        sid
     ):
-        print(f"Got a vote - {data}")
-        log.info(f"Got a vote - {data}")
+        await self.bot.utils.sendShardLog("connect", sid)
+
+
+    @commands.Cog.listener()
+    async def on_shard_resume(
+        self,
+        sid
+    ):
+        await self.bot.utils.sendShardLog("resume", sid)
+
+
+    @commands.Cog.listener()
+    async def on_shard_disconnect(
+        self,
+        sid
+    ):
+        await self.bot.utils.sendShardLog("disconnect", sid)
 
 
     @commands.command()

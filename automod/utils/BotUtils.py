@@ -17,7 +17,13 @@ class BotUtils:
     def __init__(self, bot):
         self.bot = bot
         self.error_log = None
+        self.shard_log = None
         self.last_fetches = {}
+        self.shard_log_colors  = {
+            "connect": 0x5cff9d,
+            "resume": 0xffdc5c,
+            "disconnect": 0xff5c5c
+        }
         global _bot
         _bot = bot
     
@@ -173,3 +179,14 @@ class BotUtils:
         if self.error_log is None:
             self.error_log = await self.bot.fetch_channel(self.bot.config.error_log_channel)
         await self.error_log.send(embed=embed)
+
+
+    async def sendShardLog(self, event, shard_id):
+        e = Embed(
+            color=self.shard_log_colors[event],
+            description=self.bot.i18next.get(f"log_{event}", shard_id=shard_id)
+        )
+        if self.shard_log is None:
+            self.shard_log = await self.bot.fetch_channel(self.bot.config.shard_log_channel)
+        await self.shard_log.send(embed=e)
+

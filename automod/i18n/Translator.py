@@ -43,3 +43,12 @@ class Translator:
 
     def t(self, guild, key, _emote=None, **kwargs):
         return self.translate(guild, key, _emote=_emote, **kwargs)
+
+
+    def get(self, key, lang="en_US", **kwargs):
+        try:
+            string = self._langs[lang][key]
+        except KeyError:
+            return None
+        else:
+            return string.format(**kwargs)

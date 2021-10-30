@@ -16,7 +16,7 @@ from utils.HelpGenerator import getHelpForCommand
 
 
 
-class BasicPlugin(PluginBlueprint):
+class UtilityPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
         self.google = googletrans.Translator()
@@ -185,15 +185,16 @@ class BasicPlugin(PluginBlueprint):
             )
         e.add_field(
             name="❯ Information",
-            value="• ID: {} \n• Owner: {} ({})"\
+            value="• ID: {} \n• Owner: {} ({}) \n• Created at: <t:{}>"\
             .format(
-                g.id, g.owner, g.owner.id
+                g.id, g.owner, g.owner.id, round(g.created_at.timestamp())
             )
         )
         e.add_field(
             name="❯ Channels",
-            value="• Text: {} \n• Voice: {}"\
+            value="• Categories: {} \n• Text: {} \n• Voice: {}"\
             .format(
+                len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
                 len(g.text_channels), 
                 len(g.voice_channels)
             )
@@ -209,18 +210,17 @@ class BasicPlugin(PluginBlueprint):
         )
         e.add_field(
             name="❯ Other",
-            value="• Roles: {} \n• Emojis: {} \n• Created at: <t:{}>\n• Features: {}"\
+            value="• Roles: {} \n• Emojis: {} \n• Features: {}"\
             .format(
                 len(g.roles), 
                 len(g.emojis), 
-                round(g.created_at.timestamp()),
                 ", ".join(g.features) if len(g.features) > 0 else "None"
             )
         )
         await ctx.send(embed=e)
 
 
-    @commands.command(aliases=["whois"])
+    @commands.command(aliases=["whois", "info"])
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     async def userinfo(
@@ -265,14 +265,13 @@ class BasicPlugin(PluginBlueprint):
             )
 
             activity_data = self.db.stats.get_doc(member.id)
-            if activity_data != None:
-                e.add_field(
-                    name="❯ Activity",
-                    value="• Last message: <t:{}> \n• First Message: <t:{}>".format(
-                        round((activity_data["messages"]["last"]).timestamp()),
-                        round((activity_data["messages"]["first"]).timestamp())
-                    )
-                )
+            e.add_field(
+                name="❯ Activity",
+                value="• Last message: {} \n• First Message: {}".format(
+                    f"<t:{round((activity_data['messages']['last']).timestamp())}>" if activity_data != None else "Never",
+                    f"<t:{round((activity_data['messages']['first']).timestamp())}>" if activity_data != None else "Never"
+                ) 
+            )
         warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
         cases = list(filter(lambda x: x["guild"] == str(ctx.guild.id) and x["target_id"] == str(user.id), self.db.inf.find()))
         e.add_field(
@@ -421,4 +420,4 @@ class BasicPlugin(PluginBlueprint):
 
 
 def setup(bot):
-    bot.add_cog(BasicPlugin(bot))
+    bot.add_cog(UtilityPlugin(bot))
