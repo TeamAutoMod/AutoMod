@@ -5,9 +5,6 @@ from discord.ext import commands
 import re
 
 from .PluginBlueprint import PluginBlueprint
-from .Automod.events import (
-    OnMemberJoin
-)
 from .Automod.sub.CheckMessage import checkMessage
 from .Automod.sub.ShouldPerformAutomod import shouldPerformAutomod
 from .Types import Duration, Embed

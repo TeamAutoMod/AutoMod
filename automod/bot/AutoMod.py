@@ -19,7 +19,7 @@ from data.Emotes import Emotes
 from utils.ModifyConfig import ModifyConfig
 from utils.BotUtils import BotUtils
 from plugins.Types import Embed
-from utils.HelpGenerator import getHelpForPlugin
+from utils.HelpUtils import getHelpForPlugin
 from utils.Context import Context
 
 
