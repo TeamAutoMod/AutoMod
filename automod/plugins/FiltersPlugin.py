@@ -23,6 +23,7 @@ def parseFilter(_filter):
     
     return re.compile(r"|".join([*normal, *wildcards]))
 
+
 class FiltersPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)

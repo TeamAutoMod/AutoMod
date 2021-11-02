@@ -10,15 +10,29 @@ from .Automod.events import (
 )
 from .Automod.sub.CheckMessage import checkMessage
 from .Automod.sub.ShouldPerformAutomod import shouldPerformAutomod
-from .Types import Reason, Embed
-from utils.Raid import enableRaidMode, disableRaidMode
+from .Types import Duration, Embed
+
+
+
+valid_actions = [
+    "ban",
+    "kick",
+    "mute",
+    "none"
+]
+
+
+async def getNewPunishments(plugin, ctx):
+    cfg = plugin.db.configs.get(ctx.guild.id, "punishments")
+    f = plugin.emotes.get('WARN')
+    punishments = [f"``{x} {f}``: {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" for x, y in cfg.items()]
+    punishments = sorted(punishments, key=lambda i: i.split(" ")[0])
+    return punishments
 
 
 class AutomodPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
-        self.last_joiners = {}
-        self.raids = {}
 
 
     async def cog_check(self, ctx):
@@ -59,14 +73,6 @@ class AutomodPlugin(PluginBlueprint):
             return
         
         await checkMessage(self, after)
-
-
-    @commands.Cog.listener()
-    async def on_member_join(
-        self,
-        member
-    ):
-        await OnMemberJoin.run(self, member)
 
 
     @commands.group()
@@ -168,46 +174,6 @@ class AutomodPlugin(PluginBlueprint):
                 await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they attempt to mention @everyone/here"))
 
 
-    # @automod.command()
-    # async def caps(
-    #     self, 
-    #     ctx,
-    #     warns: str
-    # ):
-    #     """caps_help"""
-    #     warns = warns.lower()
-    #     if warns == "off":
-    #         automod = self.db.configs.get(ctx.guild.id, "automod")
-    #         if "caps" in automod:
-    #             del automod["caps"]
-    #         self.db.configs.update(ctx.guild.id, "automod", automod)
-            
-    #         await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-caps"))
-    #     else:
-    #         try:
-    #             warns = int(warns)
-    #         except ValueError:
-    #             e = Embed(
-    #                 title="Invalid paramater",
-    #                 description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="caps <warns>", off_command="caps off")
-    #             )
-    #             await ctx.send(embed=e)
-    #         else:
-    #             if warns < 1:
-    #                 return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
-
-    #             if warns > 100:
-    #                 return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
-
-    #             automod = self.db.configs.get(ctx.guild.id, "automod")
-    #             automod.update({
-    #                 "caps": {"warns": warns}
-    #             })
-    #             self.db.configs.update(ctx.guild.id, "automod", automod)
-
-    #             await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message consists of more than 75% capital letters"))
-
-
     @automod.command()
     async def files(
         self, 
@@ -246,46 +212,6 @@ class AutomodPlugin(PluginBlueprint):
                 self.db.configs.update(ctx.guild.id, "automod", automod)
 
                 await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they send forbidden/uncommon attachment types"))
-
-
-    # @automod.command()
-    # async def zalgo(
-    #     self, 
-    #     ctx,
-    #     warns: str
-    # ):
-    #     """zalgo_help"""
-    #     warns = warns.lower()
-    #     if warns == "off":
-    #         automod = self.db.configs.get(ctx.guild.id, "automod")
-    #         if "zalgo" in automod:
-    #             del automod["zalgo"]
-    #         self.db.configs.update(ctx.guild.id, "automod", automod)
-            
-    #         await ctx.send(self.i18next.t(ctx.guild, "automod_feature_disabled", _emote="YES", what="anti-zalgo"))
-    #     else:
-    #         try:
-    #             warns = int(warns)
-    #         except ValueError:
-    #             e = Embed(
-    #                 title="Invalid paramater",
-    #                 description=self.i18next.t(ctx.guild, "invalid_automod_feature_param", prefix=self.bot.get_guild_prefix(ctx.guild), command="zalgo <warns>", off_command="zalgo off")
-    #             )
-    #             await ctx.send(embed=e)
-    #         else:
-    #             if warns < 1:
-    #                 return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
-
-    #             if warns > 100:
-    #                 return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
-
-    #             automod = self.db.configs.get(ctx.guild.id, "automod")
-    #             automod.update({
-    #                 "zalgo": {"warns": warns}
-    #             })
-    #             self.db.configs.update(ctx.guild.id, "automod", automod)
-
-    #             await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="there message contains zalgo letters."))
 
 
     @automod.command()
@@ -367,77 +293,6 @@ class AutomodPlugin(PluginBlueprint):
 
                 await ctx.send(self.i18next.t(ctx.guild, "lines_set", _emote="YES", lines=lines))
 
-
-    @automod.command()
-    async def raid(
-        self, 
-        ctx,
-        threshold: str
-    ):
-        """raid_help"""
-        threshold = threshold.lower()
-        automod = self.db.configs.get(ctx.guild.id, "automod")
-        
-        if threshold == "off":
-            automod.update({
-                "raid": {"status": False, "threshold": automod["raid"]["threshold"] if "raid" in automod else "100/100"}
-            })
-            self.db.configs.update(ctx.guild.id, "automod", automod)
-
-            return await ctx.send(self.i18next.t(ctx.guild, "raid_off", _emote="YES"))
-        
-        elif len(threshold.split("/")) == 2 and re.match(r"^[-+]?[0-9]+$", threshold.split("/")[0]) is not None and re.match(r"^[-+]?[0-9]+$", threshold.split("/")[1]) is not None:
-            if int(threshold.split("/")[0]) < 5 or int(threshold.split("/")[1]) < 5:
-                return await ctx.send(self.i18next.t(ctx.guild, "threshold_too_low", _emote="NO"))
-
-            automod.update({
-                "raid": {"status": True, "threshold": f"{threshold}"}
-            })
-            self.db.configs.update(ctx.guild.id, "automod", automod)
-
-            return await ctx.send(self.i18next.t(ctx.guild, "raid_on", _emote="YES", users=threshold.split("/")[0], seconds=threshold.split("/")[1]))
-
-        else:
-            prefix = self.bot.get_guild_prefix(ctx.guild)
-            return await ctx.send(self.i18next.t(ctx.guild, "raid_help_2", _emote="BULB", prefix=prefix)) 
-
-
-    # @automod.command()
-    # async def spam(
-    #     self, 
-    #     ctx,
-    #     warns: str
-    # ):
-    #     """spam_help"""
-    #     warns = warns.lower()
-    #     automod = self.db.configs.get(ctx.guild.id, "automod")
-    #     if warns == "off":
-    #         automod.update({
-    #             "spam": {"status": False, "warns": 0}
-    #         })
-    #         self.db.configs.update(ctx.guild.id, "automod", automod)
-
-    #         return await ctx.send(self.i18next.t(ctx.guild, "spam_off", _emote="YES"))
-
-    #     elif warns.isnumeric():
-    #         warns = int(warns)
-    #         if warns < 1:
-    #             return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
-
-    #         if warns > 100:
-    #             return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
-
-    #         automod.update({
-    #             "spam": {"status": True, "warns": warns}
-    #         })
-    #         self.db.configs.update(ctx.guild.id, "automod", automod)
-
-    #         await ctx.send(self.i18next.t(ctx.guild, "warns_set", _emote="YES", warns=warns, what="they spam more than 10 messages within the last 10 seconds"))
-
-    #     else:
-    #         prefix = self.bot.get_guild_prefix(ctx.guild)
-    #         return await ctx.send(self.i18next.t(ctx.guild, "spam_help_2", _emote="BULB", prefix=prefix))
-
     
     @commands.command()
     async def ignore(
@@ -505,32 +360,6 @@ class AutomodPlugin(PluginBlueprint):
             self.db.configs.update(ctx.guild.id, "ignored_channels", channels)
             return await ctx.send(self.i18next.t(ctx.guild, "channel_unignored", _emote="YES", channel=cu.name))
 
-    
-    @commands.command()
-    async def raidmode(
-        self,
-        ctx,
-        state,
-        *,
-        reason: Reason = None
-    ):
-        """raidmode_help"""
-        state = state.lower()
-        if state == "off":
-            if ctx.guild.id not in self.raids:
-                return await ctx.send(self.i18next.t(ctx.guild, "no_raid", _emote="NO"))
-            else:
-                await disableRaidMode(self, ctx.guild, ctx.author, reason)
-                await ctx.send(self.i18next.t(ctx.guild, "disabled_raid", _emote="YES"))
-        elif state == "on":
-            if ctx.guild.id in self.raids:
-                return await ctx.send(self.i18next.t(ctx.guild, "already_raid", _emote="NO"))
-            else:
-                await enableRaidMode(self, ctx.guild, ctx.author, reason)
-                await ctx.send(self.i18next.t(ctx.guild, "enabled_raid", _emote="YES"))
-        else:
-            await ctx.send(self.i18next.t(ctx.guild, "invalid_raid_opt", _emote="WARN"))
-
 
     @commands.group()
     async def allowed_invites(
@@ -587,6 +416,80 @@ class AutomodPlugin(PluginBlueprint):
         
         await ctx.send(self.i18next.t(ctx.guild, "removed_invite", _emote="YES", server=guild_id))
 
+
+    @commands.command()
+    async def punishment(
+        self, 
+        ctx,
+        warn: int,
+        action: str,
+        time: Duration = None
+    ):
+        """punishment_help"""
+        warns = warn
+        action = action.lower()
+        prefix = self.bot.get_guild_prefix(ctx.guild)
+        e = Embed()
+        if not action in valid_actions:
+            return await ctx.send(self.i18next.t(ctx.guild, "invalid_action", _emote="WARN", prefix=prefix))
+
+        if warns < 1:
+            return await ctx.send(self.i18next.t(ctx.guild, "min_warns", _emote="NO"))
+
+        if warns > 100:
+            return await ctx.send(self.i18next.t(ctx.guild, "max_warns", _emote="NO"))
+
+        current = self.db.configs.get(ctx.guild.id, "punishments")
+        if action == "none":
+            new = {x: y for x, y in current.items() if str(x) != str(warns)}
+            self.db.configs.update(ctx.guild.id, "punishments", new)
+
+            desc = await getNewPunishments(self, ctx)
+            e.add_field(
+                name="❯ Punishments",
+                value="{}".format("\n".join(desc) if len(desc) > 0 else "None")
+            )
+
+            return await ctx.send(content=self.i18next.t(ctx.guild, "set_none", _emote="YES", warns=warns), embed=e)
+        
+        elif action != "mute":
+            current.update({
+                str(warns): action
+            })
+            self.db.configs.update(ctx.guild.id, "punishments", current)
+
+            desc = await getNewPunishments(self, ctx)
+            e.add_field(
+                name="❯ Punishments",
+                value="{}".format("\n".join(desc) if len(desc) > 0 else "None")
+            )
+
+            return await ctx.send(content=self.i18next.t(ctx.guild, f"set_{action}", _emote="YES", warns=warns), embed=e)
+
+        else:
+            if time is None:
+                return await ctx.send(self.i18next.t(ctx.guild, "time_needed", _emote="NO", prefix=prefix))
+            
+            as_seconds = time.to_seconds(ctx)
+            if as_seconds > 0:
+                length = time.length
+                unit = time.unit
+                
+                current.update({
+                    str(warns): f"{action} {as_seconds} {length} {unit}"
+                })
+                self.db.configs.update(ctx.guild.id, "punishments", current)
+
+                desc = await getNewPunishments(self, ctx)
+                e.add_field(
+                    name="❯ Punishments",
+                    value="{}".format("\n".join(desc) if len(desc) > 0 else "None")
+                )
+
+                return await ctx.send(content=self.i18next.t(ctx.guild, f"set_{action}", _emote="YES", warns=warns, length=length, unit=unit), embed=e)
+            
+            else:
+                raise commands.BadArgument("number_too_small")
 
 
 def setup(bot):

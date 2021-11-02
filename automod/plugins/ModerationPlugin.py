@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 
 import datetime
-import asyncio
 import time
 import pytz
 utc = pytz.UTC
@@ -16,35 +16,34 @@ from utils.Moderation import *
 
 
 
+@tasks.loop(seconds=10)
 async def unmuteTask(bot):
-    while True:
-        await asyncio.sleep(10)
-        if len(list(bot.db.mutes.find({}))) > 0:
-            for m in bot.db.mutes.find():
-                if m["ending"] < datetime.datetime.utcnow():
-                    guild = bot.get_guild(int(m["id"].split("-")[0]))
-                    if guild is not None:
+    if len(list(bot.db.mutes.find({}))) > 0:
+        for m in bot.db.mutes.find():
+            if m["ending"] < datetime.datetime.utcnow():
+                guild = bot.get_guild(int(m["id"].split("-")[0]))
+                if guild is not None:
 
-                        target = await bot.utils.getMember(guild, int(m["id"].split("-")[1]))
-                        if target is None:
-                            target = "Unknown#0000"
-                        else:
+                    target = await bot.utils.getMember(guild, int(m["id"].split("-")[1]))
+                    if target is None:
+                        target = "Unknown#0000"
+                    else:
 
-                            try:
-                                mute_role_id = bot.db.configs.get(guild.id, "mute_role")
-                                mute_role = await bot.utils.getRole(guild, int(mute_role_id))
+                        try:
+                            mute_role_id = bot.db.configs.get(guild.id, "mute_role")
+                            mute_role = await bot.utils.getRole(guild, int(mute_role_id))
 
-                                await target.remove_roles(mute_role)
-                            except Exception:
-                                pass
-                        
-                        await bot.action_logger.log(
-                            guild,
-                            "unmute",
-                            user=target,
-                            user_id=m["id"].split("-")[1]
-                        )
-                    bot.db.mutes.delete(m["id"])
+                            await target.remove_roles(mute_role)
+                        except Exception:
+                            pass
+                    
+                    await bot.action_logger.log(
+                        guild,
+                        "unmute",
+                        user=target,
+                        user_id=m["id"].split("-")[1]
+                    )
+                bot.db.mutes.delete(m["id"])
 
 
 class ModerationPlugin(PluginBlueprint):
@@ -52,6 +51,11 @@ class ModerationPlugin(PluginBlueprint):
         super().__init__(bot)
         self.bot.loop.create_task(unmuteTask(self.bot))
         self.running_cybernukes = list()
+        unmuteTask.start()
+
+    
+    def cog_unload(self):
+        unmuteTask.stop()
 
     
     @commands.command()
@@ -230,15 +234,25 @@ class ModerationPlugin(PluginBlueprint):
         await unbanUser(self, ctx, user, reason)
 
 
-
-    @commands.command()
+    @commands.group()
     @commands.has_guild_permissions(manage_messages=True)
-    async def purge(
+    async def clean(
+        self,
+        ctx,
+    ):
+        """clean_help"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.bot.get_command("help"), query="clean")
+
+
+    @clean.command(name="all")
+    @commands.has_guild_permissions(manage_messages=True)
+    async def _all(
         self,
         ctx,
         amount: int = None
     ):
-        """purge_help"""
+        """clean_all_help"""
         if amount is None:
             amount = 10
         
@@ -256,17 +270,6 @@ class ModerationPlugin(PluginBlueprint):
             lambda m: True, 
             check_amount=amount
         )
-
-
-    @commands.group()
-    @commands.has_guild_permissions(manage_messages=True)
-    async def clean(
-        self,
-        ctx,
-    ):
-        """clean_help"""
-        if ctx.invoked_subcommand is None:
-            await ctx.invoke(self.bot.get_command("help"), query="clean")
             
 
     @clean.command()
@@ -388,131 +391,6 @@ class ModerationPlugin(PluginBlueprint):
             after=discord.Object(start.id)
         )
 
-
-    @commands.command()
-    @commands.has_guild_permissions(ban_members=True)
-    async def cybernuke(
-        self, 
-        ctx, 
-        join: Duration,
-        age: Duration
-    ):
-        """cybernuke_help"""
-        if ctx.guild.id in self.running_cybernukes:
-            return await ctx.send(self.i18next.t(ctx.guild, "cybernuke_running", _emote="NO"))
-
-        if join.unit is None:
-            join.unit = "m"
-        if age.unit is None:
-            age.unit = "m"
-
-        join = utc.localize(datetime.datetime.utcfromtimestamp(time.time() - join.to_seconds(ctx)))
-        age = utc.localize(datetime.datetime.utcfromtimestamp(time.time() - age.to_seconds(ctx)))
-
-        targets = list(filter(lambda x: x.joined_at >= join and x.created_at >= age, ctx.guild.members))
-        if len(targets) < 1:
-            return await ctx.send(self.i18next.t(ctx.guild, "no_targets", _emote="NO"))
-        if len(targets) > 100:
-            return await ctx.send(self.i18next.t(ctx.guild, "too_many_targets", _emote="NO"))
-
-
-        message = None
-        async def cancel(interaction):
-            self.running_cybernukes.remove(ctx.guild.id)
-            e = Embed(
-                description=self.i18next.t(ctx.guild, "aborting")
-            )
-            await interaction.response.edit_message(embed=e, view=None)
-
-        async def timeout():
-            if message is not None:
-                e = Embed(
-                    description=self.i18next.t(ctx.guild, "aborting")
-                )
-                await message.edit(embed=e, view=None)
-
-        def check(interaction):
-            return interaction.user.id == ctx.author.id and interaction.message.id == message.id
-
-        async def confirm(interaction):
-            case = self.bot.utils.newCase(ctx.guild, "Cybernuke", targets[0], ctx.author, f"Cybernuke ({len(targets)})")
-            banned = 0
-            for i, t in enumerate(targets):
-                reason = f"Cybernuke ``({i+1}/{len(targets)})``"
-
-                if not Permissions.is_allowed(ctx, ctx.author, t):
-                    pass
-                else:
-                    try:
-                        await ctx.guild.ban(t, reason=reason)
-                    except Exception:
-                        pass
-                    else:
-                        banned += 1
-                        dm_result = await self.bot.utils.dmUser(
-                            ctx.message, 
-                            "cybernuke", 
-                            t, 
-                            _emote="HAMMER", 
-                            color=0xff5c5c,
-                            moderator=ctx.message.author, 
-                            guild_name=ctx.guild.name, 
-                            reason=reason
-                        )
-
-                        await self.action_logger.log(
-                            ctx.guild,
-                            "cybernuke",
-                            moderator=ctx.message.author, 
-                            moderator_id=ctx.message.author.id,
-                            user=t,
-                            user_id=t.id,
-                            reason=reason,
-                            case=case,
-                            dm=dm_result
-                        )
-            
-            self.running_cybernukes.remove(ctx.guild.id)
-            await interaction.response.edit_message(
-                content=self.i18next.t(ctx.guild, "users_cybernuked", _emote="YES", banned=banned, total=len(targets), case=case), 
-                embed=None, 
-                view=None
-            )
-
-        self.running_cybernukes.append(ctx.guild.id)
-        e = Embed(
-            description=self.i18next.t(ctx.guild, "cybernuke_description", targets=len(targets))
-        )
-        message = await ctx.send(
-            embed=e,
-            view=ConfirmView(
-                ctx.guild.id, 
-                on_confirm=confirm, 
-                on_cancel=cancel, 
-                on_timeout=timeout,
-                check=check
-            )
-        )
-
-
-    @commands.command()
-    @commands.has_guild_permissions(kick_members=True)
-    async def restrict(
-        self,
-        ctx,
-        restriction: str,
-        user: discord.Member,
-        *,
-        reason: Reason = None
-    ):
-        """restrict_help"""
-        if reason is None:
-            reason = self.i18next.t(ctx.guild, "no_reason")
-        
-        if not Permissions.is_allowed(ctx, ctx.author, user):
-            return await ctx.send(self.i18next.t(ctx.guild, "restrict_not_allowed", _emote="NO", user=user.name))
-
-        await restrictUser(self, ctx, restriction, user, reason)
 
 
 def setup(bot):
