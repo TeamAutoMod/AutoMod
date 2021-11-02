@@ -12,7 +12,7 @@ from io import BytesIO
 from .PluginBlueprint import PluginBlueprint
 from .Types import DiscordUser, Embed
 from utils.Views import AboutView, HelpView
-from utils.HelpGenerator import getHelpForCommand
+from utils.HelpUtils import getHelpForCommand
 
 
 
