@@ -42,11 +42,10 @@ class MongoCollection(Collection):
 
 
     def exists(self, filter_value):
-        found = [x for x in super().find({f"{self.key}": f"{filter_value}"})]
-        if len(found) <= 0 or found == "":
-            return False
-        else:
+        if super().count_documents({f"{self.key}": f"{filter_value}"}, limit=1) == 1:
             return True
+        else:
+            return False
 
 
     def get_doc(self, filter_value):

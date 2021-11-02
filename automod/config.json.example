@@ -10,6 +10,7 @@
     "discords_token": "",
     "shards": 1,
     "error_log_channel": 123456789,
+    "shard_log_channel": 123456789,
     "custom_status": "",
 
     "langs": [
@@ -24,7 +25,7 @@
         "WarnsPlugin",
         "TagsPlugin",
         "CasesPlugin",
-        "BasicPlugin",
+        "UtilityPlugin",
         "FiltersPlugin",
         "StarboardPlugin",
         "AdminPlugin",
@@ -40,7 +41,7 @@
         "WarnsPlugin",
         "TagsPlugin",
         "CasesPlugin",
-        "BasicPlugin",
+        "UtilityPlugin",
         "FiltersPlugin",
         "StarboardPlugin"
     ],

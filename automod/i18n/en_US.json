@@ -477,11 +477,11 @@
     "help_title": "Help Menu",
     "help_description": "Select one of the categories below to view its (sub-)commands. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "automodplugin_short_description": "Commands for the automod",
+    "automodplugin_short_description": "Commands for configuring the automod",
     "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",
 
-    "basicplugin_short_description": "Commands for basic info",
-    "basicplugin_long_description": "These are some basic commands mainly for information. \nTo get more info about a command, use ``{prefix}help <command>``",
+    "utilityplugin_short_description": "Useful utility commands",
+    "utilityplugin_long_description": "These are some basic commands mainly for information. \nTo get more info about a command, use ``{prefix}help <command>``",
 
     "moderationplugin_short_description": "Commands for moderation",
     "moderationplugin_long_description": "These commands will help you and your moderators to keep the community safe. \nTo get more info about a command, use ``{prefix}help <command>``",
@@ -528,5 +528,9 @@
     "automod_commands": "``{prefix}automod invite <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod everyone <warns>`` - *Warns a user gets who pings @everyone or @here* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod lines <number>`` - *Max number of new-lines allowed per message* \n\n``{prefix}automod raid <threshold>`` - *Allowed users per second join rate. The correct syntax is users/seconds, e.g. 5/10 would mean 5 users can join within 10 seconds*",
 
     "http_error": "{emote} There was an HTTP error. Either we are ratelimited or Discord has an issue. Please try again later.",
-    "no_stats": "{emote} This user doesn't have any stats tracked yet."
+    "no_stats": "{emote} This user doesn't have any stats tracked yet.",
+
+    "log_connect": " Shard ID {shard_id} has connected to Discord",
+    "log_resume": " Shard ID {shard_id} has resumed its session",
+    "log_disconnect": " Shard ID {shard_id} has disconnected from Discord"
 }

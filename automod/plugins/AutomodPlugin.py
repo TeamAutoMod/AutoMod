@@ -466,10 +466,10 @@ class AutomodPlugin(PluginBlueprint):
 
         cu = role_or_channel
         if cu.id in roles:
-            return await ctx.send(self.db.configs.get(ctx.guild.id, "role_already_ignored", _emote="WARN"))
+            return await ctx.send(self.i18next.t(ctx.guild.id, "role_already_ignored", _emote="WARN"))
 
         if cu.id in channels:
-            return await ctx.send(self.db.configs.get(ctx.guild.id, "channel_already_ignored", _emote="WARN"))
+            return await ctx.send(self.i18next.t(ctx.guild.id, "channel_already_ignored", _emote="WARN"))
         
         if isinstance(cu, discord.Role):
             roles.append(cu.id)

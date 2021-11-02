@@ -175,7 +175,7 @@ async def get_cases_from_cache(i: discord.Interaction, diff):
 def set_select(v: View, guild, bot, cur_plugin):
     actual_plugin_names = {
         "AutomodPlugin": "Automod",
-        "BasicPlugin": "Basic",
+        "UtilityPlugin": "Utility",
         "ModerationPlugin": "Moderation",
         "WarnsPlugin": "Warning",
         "CasesPlugin": "Cases",

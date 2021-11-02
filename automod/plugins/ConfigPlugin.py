@@ -723,7 +723,7 @@ class ConfigPlugin(PluginBlueprint):
             return await ctx.send(self.i18next.t(ctx.guild, "show_mod_in_dm_true", _emote="YES"))
 
 
-    @commands.group()
+    @commands.group(aliases=["preset_reasons", "pr"])
     async def preset_reason(
         self, 
         ctx

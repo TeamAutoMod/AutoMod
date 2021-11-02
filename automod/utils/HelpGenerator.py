@@ -11,7 +11,7 @@ async def getHelpForAllCommands(plugin, ctx):
     prefix = plugin.bot.get_guild_prefix(ctx.guild)
     actual_plugin_names = {
         "AutomodPlugin": f"❯ Automod Commands",
-        "BasicPlugin": f"❯ Basic Commands",
+        "UtilityPlugin": f"❯ Utility Commands",
         "ModerationPlugin": f"❯ Moderation Commands",
         "WarnsPlugin": f"❯ Warn Commands",
         "CasesPlugin": f"❯ Case Commands",
@@ -36,7 +36,7 @@ async def getHelpForAllCommands(plugin, ctx):
 
 actual_plugin_names = {
     "AutomodPlugin": "Automod",
-    "BasicPlugin": "Basic",
+    "UtilityPlugin": "Utility",
     "ModerationPlugin": "Moderation",
     "WarnsPlugin": "Warning",
     "CasesPlugin": "Cases",

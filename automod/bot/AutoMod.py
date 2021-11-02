@@ -263,6 +263,6 @@ class AutoMod(commands.AutoShardedBot):
 
     def run(self):
         try:
-            super().run(self.config.token, reconnect=True)
+            super().run(self.config.token)
         finally:
             pass
