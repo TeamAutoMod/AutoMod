@@ -196,7 +196,7 @@ def set_select(v: View, guild, bot, cur_plugin):
         options.append(discord.SelectOption(
             label=actual_plugin_names[plugin.qualified_name],
             value=actual_plugin_names[plugin.qualified_name], 
-            description=bot.i18next.t(guild, f"{plugin.qualified_name.lower()}_short_description"),
+            #description=bot.i18next.t(guild, f"{plugin.qualified_name.lower()}_short_description"),
             default=cur_plugin.lower() == plugin.qualified_name.lower(),
             emoji=bot.emotes.get("HELP")
         ))

@@ -60,13 +60,10 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
     
     plugin = {v: k for k, v in actual_plugin_names.items()}.get(_plugin)
     actual_plugin = bot.get_cog(plugin)
+
     e = Embed(
         title=f"{actual_plugin_names[plugin]} Plugin",
-        description=f"To get more info about a command, use ``{prefix}help <command>``"
-    )
-    e.add_field(
-        name=f"❯ Commands",
-        value="\n \n".join([f"``{prefix}{str(x)}`` \n{bot.i18next.t(guild, x.help)}" for x in actual_plugin.get_commands()])
+        description="\n \n".join([f"``{prefix}{str(x)}`` \n{bot.i18next.t(guild, x.help)}" for x in actual_plugin.get_commands()])
     )
 
     view = HelpView(guild, bot, actual_plugin.qualified_name)
