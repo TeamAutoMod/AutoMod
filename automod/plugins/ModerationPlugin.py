@@ -8,50 +8,49 @@ import pytz
 utc = pytz.UTC
 
 from .PluginBlueprint import PluginBlueprint
-from .Types import Reason, DiscordUser, Duration, Embed
+from .Types import Reason, DiscordUser, Duration
 
 from utils import Permissions
-from utils.Views import ConfirmView
 from utils.Moderation import *
 
 
 
-@tasks.loop(seconds=10)
 async def unmuteTask(bot):
-    if len(list(bot.db.mutes.find({}))) > 0:
-        for m in bot.db.mutes.find():
-            if m["ending"] < datetime.datetime.utcnow():
-                guild = bot.get_guild(int(m["id"].split("-")[0]))
-                if guild is not None:
+    while True:
+        await asyncio.sleep(10)
+        if len(list(bot.db.mutes.find({}))) > 0:
+            for m in bot.db.mutes.find():
+                if m["ending"] < datetime.datetime.utcnow():
+                    guild = bot.get_guild(int(m["id"].split("-")[0]))
+                    if guild is not None:
 
-                    target = await bot.utils.getMember(guild, int(m["id"].split("-")[1]))
-                    if target is None:
-                        target = "Unknown#0000"
-                    else:
+                        target = await bot.utils.getMember(guild, int(m["id"].split("-")[1]))
+                        if target is None:
+                            target = "Unknown#0000"
+                        else:
 
-                        try:
-                            mute_role_id = bot.db.configs.get(guild.id, "mute_role")
-                            mute_role = await bot.utils.getRole(guild, int(mute_role_id))
+                            try:
+                                mute_role_id = bot.db.configs.get(guild.id, "mute_role")
+                                mute_role = await bot.utils.getRole(guild, int(mute_role_id))
 
-                            await target.remove_roles(mute_role)
-                        except Exception:
-                            pass
-                    
-                    await bot.action_logger.log(
-                        guild,
-                        "unmute",
-                        user=target,
-                        user_id=m["id"].split("-")[1]
-                    )
-                bot.db.mutes.delete(m["id"])
+                                await target.remove_roles(mute_role)
+                            except Exception:
+                                pass
+                        
+                        await bot.action_logger.log(
+                            guild,
+                            "unmute",
+                            user=target,
+                            user_id=m["id"].split("-")[1]
+                        )
+                    bot.db.mutes.delete(m["id"])
 
 
 class ModerationPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
-        self.bot.loop.create_task(unmuteTask(self.bot))
+        self.bot.loop.create_task(unmuteTask(bot))
         self.running_cybernukes = list()
-        unmuteTask.start()
 
     
     def cog_unload(self):

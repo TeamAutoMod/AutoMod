@@ -30,6 +30,8 @@ class BotUtils:
 
 
     async def getMember(self, guild, user_id):
+        if not guild.chunked:
+            await guild.chunk(cache=True)
         cache_result = self.bot.cache.members.get(guild, user_id)
         if cache_result is not None and isinstance(cache_result, discord.Member):
             return cache_result
