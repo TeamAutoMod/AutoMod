@@ -1,22 +1,22 @@
 {
-    "log_ban": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_kick": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_forceban": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_softban": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_cleanban": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_mass_ban": "**Member:** {users} ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_mass_kick": "**Member:** {users} \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_unban": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_cybernuke": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
-    "log_restrict": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
+    "log_ban": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_kick": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_forceban": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_softban": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_cleanban": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_mass_ban": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_mass_kick": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_unban": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_cybernuke": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
+    "log_restrict": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason}",
     
-    "log_mute": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Expiration:** {expiration} \n**Reason:** {reason}",
-    "log_mute_extended": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Expiration:** {expiration}\n**Reason:** {reason}",
-    "log_unmute": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** Mute expired",
+    "log_mute": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason} \n**Expiration:** {expiration}",
+    "log_mute_extended": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason} \n**Expiration:** {expiration}",
+    "log_unmute": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** [ Automatic ] Mute has expired",
     
-    "log_warn": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) {context}\n**Reason:** {reason}",
-    "log_warns_added": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) {context}\n**Reason:** {reason}",
-    "log_unwarn": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** {reason}",
+    "log_warn": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns} ",
+    "log_warns_added": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
+    "log_unwarn": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
 
     "log_censor": "**Member:** ``{user}`` ({user_id}) \n**Action:** Message censorship \n**Channel:** {channel} \n**Reason:** NSFW language (Using slurs) \n**Words:** {words}",
     "log_invite": "**Member:** ``{user}`` ({user_id}) \n**Action:** Invite censorship \n**Channel:** {channel} \n**Reason:** Advertising (Invite) \n**Link:** {link}",
@@ -27,15 +27,13 @@
     "log_spam": "**Member:** ``{user}`` ({user_id}) \n**Action:** Anti-spam \n**Channel:** {channel} \n**Reason:** Spamming messages",
 
     "log_warn_clearing": "``[{on_time} UTC]`` {emote} Warnings of **{user}** (``{user_id}``) were cleared by **{moderator}** (``{moderator_id}``). Reason: \n```\n{reason} \n```",
-    "log_inf_claim": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Case:** #{case} \n**Reason:** {reason}",
-    "log_manual_unban": "**Member:** ``{user}`` ({user_id})",
-    "log_reapplied_mute": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id}) \n**Reason:** Reapplied active mute on rejoin",
-    "log_manual_unmute": "**Member:** ``{user}`` ({user_id}) \n**Moderator:** ``{moderator}`` ({moderator_id})",
-
+    "log_inf_claim": "**Moderator:** {moderator} ({moderator_id}) \n**Case:** #{case} \n**Reason:** {reason}",
+    "log_manual_unban": "**Reason:** [ Manual ]",
+    "log_reapplied_mute": "**Moderator:** {moderator} ({moderator_id}) \n**Reason:** Reapplied active mute on rejoin",
+    "log_manual_unmute": "**Moderator:** {moderator} ({moderator_id})",
 
     "log_message_deletion": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been manually deleted:",
     "log_message_edit": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``)'s message in {channel} has been edited:",
-
 
     "log_join": "``[{on_time} UTC]`` {emote} **{user}** (``{user_id}``) has joined, (created {age} days ago)",
     "log_leave": "``[{on_time} UTC]`` {emote} **{user}** (`{user_id}`) has left the server (joined {joined} days ago)",

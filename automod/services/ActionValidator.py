@@ -47,6 +47,11 @@ class ActionValidator:
             self.bot.db.warns.insert(self.bot.schemas.Warn(_id, new_warns))
         else:
             self.bot.db.warns.update(_id, "warns", new_warns)
+
+        if str(kwargs.get("moderator_id")) == f"{self.bot.user.id}":
+            kwargs.update({
+                "reason": f"[ Automatic ] {kwargs.get('reason')}"
+            })
         
         punishments = OrderedDict(sorted({int(x): y for x, y in self.bot.db.configs.get(message.guild.id, "punishments").items() if int(x) <= new_warns}.items()))
         if len(punishments) > 0:
@@ -55,7 +60,7 @@ class ActionValidator:
             _to = list(punishments.keys())[-1]
             if len(action.split(" ")) == 1:
                 kwargs.update({
-                    "reason": f"Automatic punishment ({_to}): {kwargs.get('reason')}", 
+                    "reason": f"[ Automatic {_to} ] {kwargs.get('reason')}", 
                     "old_warns": _from,
                     "new_warns": _to
                 })
@@ -100,14 +105,14 @@ class ActionValidator:
                     moderator=kwargs.get("moderator"),
                     guild_name=message.guild.name, 
                     until=f"<t:{round(until.timestamp())}>", 
-                    reason=f"Automatic punishment ({_to}): {kwargs.get('reason')}")
+                    reason=f"[ Automatic ({_to}) ] {kwargs.get('reason')}")
                 new_kwargs = {
                     "user": target,
                     "user_id": target.id,
                     "moderator": kwargs.get("moderator"),
                     "moderator_id": kwargs.get("moderator_id"),
                     "expiration": f"<t:{round(until.timestamp())}:D>",
-                    "reason": f"Automatic punishment ({_to}): {kwargs.get('reason')}",
+                    "reason": f"[ Automatic ({_to}) ] {kwargs.get('reason')}",
                     "case": case,
                     "dm": dm
                 }
