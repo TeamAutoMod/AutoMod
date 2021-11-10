@@ -242,8 +242,9 @@ class ActionLogger:
             if kwargs.get("moderator") is None:
                 kwargs.update({"moderator": guild.me, "moderator_id": guild.me.id})
                 
-            e.description = "{} **{}:** {} ({}) \n\n{}".format(
+            e.description = "{} **{}{}:** {} ({}) \n\n{}".format(
                 self.emotes.get(conf["emote"]),
+                f"#{kwargs.get('case')} " if "case" in kwargs else "",
                 conf["action"],
                 kwargs.get("user"),
                 kwargs.get("user_id"),

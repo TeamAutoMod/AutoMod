@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from typing import Optional
 import datetime
+import re
 
 from .PluginBlueprint import PluginBlueprint
 from .Types import Reason as _Reason
@@ -47,6 +48,7 @@ options = {
 class CasesPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
+        self.no_reason_re = re.compile(r"(\[ Automatic (\(\w\))?( )?\])?( )?(No reason)")
 
 
     @commands.command()
@@ -358,7 +360,7 @@ class CasesPlugin(PluginBlueprint):
     ):
         """reason_help"""
         if case is None:
-            recent = sorted([x for x in self.db.inf.find({"guild": f"{ctx.guild.id}"}) if x["reason"] == self.i18next.t(ctx.guild, "no_reason") or x["reason"] == "No reason provided"], key=lambda k: int(k['id'].split('-')[1]))
+            recent = sorted([x for x in self.db.inf.find({"guild": f"{ctx.guild.id}"}) if self.no_reason_re.match(x["reason"]) != None], key=lambda k: int(k['id'].split('-')[1]))
             if len(recent) < 1:
                 return await ctx.send(self.i18next.t(ctx.guild, "no_recent_case", _emote="NO"))
             else:

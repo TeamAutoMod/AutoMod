@@ -45,11 +45,10 @@ class TagsPlugin(PluginBlueprint):
             if len(tags) < 1:
                 return await ctx.send(self.i18next.t(ctx.guild, "no_tags", _emote="NO"))
 
-            prefix = self.bot.get_guild_prefix(ctx.guild)
             e = Embed()
             e.add_field(
                 name="❯ Tags",
-                value=" | ".join([f"``{prefix}{x}``" for x in tags])
+                value="```fix\n{}\n```".format("\n".join([f"[{str(i).zfill(2) if i <= 9 else i}] {x}" for i, x in enumerate(tags, start=1)]))
             )
             await ctx.send(embed=e)
 

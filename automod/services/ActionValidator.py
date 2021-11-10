@@ -35,6 +35,11 @@ class ActionValidator:
 
 
     async def add_warns(self, message, target, warns, **kwargs):
+        if str(kwargs.get("moderator_id")) == f"{self.bot.user.id}":
+            kwargs.update({
+                "reason": f"[ Automatic ] {kwargs.get('reason')}"
+            })
+            
         _id = f"{message.guild.id}-{target.id}"
         if not self.bot.db.warns.exists(_id):
             old_warns = 0
@@ -47,11 +52,6 @@ class ActionValidator:
             self.bot.db.warns.insert(self.bot.schemas.Warn(_id, new_warns))
         else:
             self.bot.db.warns.update(_id, "warns", new_warns)
-
-        if str(kwargs.get("moderator_id")) == f"{self.bot.user.id}":
-            kwargs.update({
-                "reason": f"[ Automatic ] {kwargs.get('reason')}"
-            })
         
         punishments = OrderedDict(sorted({int(x): y for x, y in self.bot.db.configs.get(message.guild.id, "punishments").items() if int(x) <= new_warns}.items()))
         if len(punishments) > 0:
@@ -89,7 +89,7 @@ class ActionValidator:
                     return
                 self.bot.db.mutes.insert(self.bot.schemas.Mute(message.guild.id, target.id, until))
 
-                case = self.bot.utils.newCase(message.guild, "Mute", target, kwargs.get("moderator"), kwargs.get("reason"))
+                case = self.bot.utils.newCase(message.guild, "Mute", target, kwargs.get("moderator"), f"[ Automatic ({_to}) ] {kwargs.get('reason')}")
 
                 try:
                     last = message

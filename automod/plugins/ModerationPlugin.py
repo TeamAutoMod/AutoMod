@@ -41,7 +41,9 @@ async def unmuteTask(bot):
                             guild,
                             "unmute",
                             user=target,
-                            user_id=m["id"].split("-")[1]
+                            user_id=m["id"].split("-")[1],
+                            moderator=bot.user,
+                            moderator_id=bot.user.id
                         )
                     bot.db.mutes.delete(m["id"])
 
