@@ -168,7 +168,7 @@ class FiltersPlugin(PluginBlueprint):
         footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
         for name in dict(itertools.islice(filters.items(), 10)):
             i = filters[name]
-            e.add_field(name=f"❯ {name} ({i['warns']} {'warn' if int(i['warns']) == 1 else 'warns'})", value=" | ".join([f"``{x}``" for x in i["words"]]))
+            e.add_field(name=f"❯ {name} ({i['warns']} {'warn' if int(i['warns']) == 1 else 'warns'})", value="```fix\n{}\n```".format("\n".join([f"``{x}``" for x in i["words"]])))
 
         if footer is not None:
             e.set_footer(text=footer)
