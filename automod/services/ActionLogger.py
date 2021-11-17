@@ -8,6 +8,7 @@ class ActionLogger:
     def __init__(self, bot):
         self.bot = bot
         self.i18next = bot.i18next
+        self.emotes = bot.emotes
         self.log_configs = {
             "ban": {
                 "channel": "mod_log",
@@ -15,7 +16,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xff5c5c,
                 "emote": "HAMMER",
-                "action": "Ban"
+                "action": "User banned"
             },
             "kick": {
                 "channel": "mod_log",
@@ -23,7 +24,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xf79554,
                 "emote": "SHOE",
-                "action": "Kick"
+                "action": "User kicked"
             },
             "forceban": {
                 "channel": "mod_log",
@@ -31,7 +32,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xff5c5c,
                 "emote": "HAMMER",
-                "action": "Forceban"
+                "action": "User forcebanned"
             },
             "softban": {
                 "channel": "mod_log",
@@ -39,7 +40,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xf79554,
                 "emote": "HAMMER",
-                "action": "Softban"
+                "action": "User softbanned"
             },
             "restrict": {
                 "channel": "mod_log",
@@ -47,7 +48,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xffdc5c,
                 "emote": "RESTRICT",
-                "action": "Restriction"
+                "action": "User restricted"
             },
             "unban": {
                 "channel": "mod_log",
@@ -55,7 +56,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0x5cff9d,
                 "emote": "UNLOCK",
-                "action": "Unban"
+                "action": "User unbanned"
             },
             "manual_unban": {
                 "channel": "mod_log",
@@ -63,7 +64,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0x5cff9d,
                 "emote": "UNLOCK",
-                "action": "Manual Unban"
+                "action": "User manually unbanned"
             },
             "cybernuke": {
                 "channel": "mod_log",
@@ -71,7 +72,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0x4569e1,
                 "emote": "HAMMER",
-                "action": "Cybernuke"
+                "action": "User cybernuked"
             },
 
             "mute": {
@@ -80,7 +81,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xffdc5c,
                 "emote": "MUTE",
-                "action": "Mute"
+                "action": "User muted"
             },
             "mute_extended": {
                 "channel": "mod_log",
@@ -88,7 +89,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0xffdc5c,
                 "emote": "MUTE",
-                "action": "Mute Extended"
+                "action": "Mute extended"
             },
             "unmute": {
                 "channel": "mod_log",
@@ -96,7 +97,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0x5cff9d,
                 "emote": "UNMUTE",
-                "action": "Unmute"
+                "action": "User unmuted"
             },
             "manual_unmute": {
                 "channel": "mod_log",
@@ -104,7 +105,7 @@ class ActionLogger:
                 "on_time": True,
                 "color": 0x5cff9d,
                 "emote": "UNMUTE",
-                "action": "Manual Unmute"
+                "action": "User unmuted"
             },
 
             "warn": {
@@ -112,8 +113,8 @@ class ActionLogger:
                 "key": "log_warn",
                 "on_time": True,
                 "color": 0xffdc5c,
-                "emote": "WARN",
-                "action": "Warn"
+                "emote": "ALARM",
+                "action": "User warned"
             },
 
             "voice_join": {
@@ -180,8 +181,8 @@ class ActionLogger:
                 "key": "log_warns_added",
                 "on_time": True,
                 "color": 0xffdc5c,
-                "emote": "WARN",
-                "action": "Warn"
+                "emote": "ALARM",
+                "action": "User warned"
             },
 
             "unwarn": {
@@ -189,8 +190,8 @@ class ActionLogger:
                 "key": "log_unwarn",
                 "on_time": True,
                 "color": 0x5cff9d,
-                "emote": "ANGEL",
-                "action": "Unwarn"
+                "emote": "UNLOCK",
+                "action": "User unwarned"
             },
 
             "raid_on": {
@@ -235,32 +236,20 @@ class ActionLogger:
 
         if kwargs.get("_embed") is None:
             e = Embed(
-                color=conf["color"],
-                timestamp=datetime.datetime.utcnow()
+                color=conf["color"]
             )
 
             if kwargs.get("moderator") is None:
                 kwargs.update({"moderator": guild.me, "moderator_id": guild.me.id})
                 
-            e.set_author(
-                name="{}{}".format(
-                    conf["action"] if conf["action"] not in ["Warn", "Unwarn"] else f"{conf['action']} ({kwargs.get('old_warns')} → {kwargs.get('new_warns')})",
-                    f" | Case #{kwargs.get('case')}" if "case" in kwargs else ""
-                ),
-                icon_url=(kwargs.get("moderator")).display_avatar
+            e.description = "{} **{}{}:** {} ({}) \n\n{}".format(
+                self.emotes.get(conf["emote"]),
+                f"#{kwargs.get('case')} " if "case" in kwargs else "",
+                conf["action"],
+                kwargs.get("user"),
+                kwargs.get("user_id"),
+                self.i18next.translate(guild, log_key, _emote=log_emote, **kwargs)
             )
-
-            dm = kwargs.get("dm", None)
-            if dm is not None:
-                if "failed" in dm:
-                    dm = "No DM sent"
-                elif dm == "":
-                    dm = "No DM sent"
-                else:
-                    dm = "DM sent"
-                e.set_footer(text=dm)
-                
-            e.description = self.i18next.translate(guild, log_key, _emote=log_emote, **kwargs)
         else:
             e = kwargs.get("_embed")
 

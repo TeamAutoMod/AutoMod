@@ -35,6 +35,11 @@ class ActionValidator:
 
 
     async def add_warns(self, message, target, warns, **kwargs):
+        if str(kwargs.get("moderator_id")) == f"{self.bot.user.id}":
+            kwargs.update({
+                "reason": f"[ Automatic ] {kwargs.get('reason')}"
+            })
+            
         _id = f"{message.guild.id}-{target.id}"
         if not self.bot.db.warns.exists(_id):
             old_warns = 0
@@ -55,7 +60,7 @@ class ActionValidator:
             _to = list(punishments.keys())[-1]
             if len(action.split(" ")) == 1:
                 kwargs.update({
-                    "reason": f"Automatic punishment ({_to}): {kwargs.get('reason')}", 
+                    "reason": f"[ Automatic {_to} ] {kwargs.get('reason')}", 
                     "old_warns": _from,
                     "new_warns": _to
                 })
@@ -84,7 +89,7 @@ class ActionValidator:
                     return
                 self.bot.db.mutes.insert(self.bot.schemas.Mute(message.guild.id, target.id, until))
 
-                case = self.bot.utils.newCase(message.guild, "Mute", target, kwargs.get("moderator"), kwargs.get("reason"))
+                case = self.bot.utils.newCase(message.guild, "Mute", target, kwargs.get("moderator"), f"[ Automatic ({_to}) ] {kwargs.get('reason')}")
 
                 try:
                     last = message
@@ -100,14 +105,14 @@ class ActionValidator:
                     moderator=kwargs.get("moderator"),
                     guild_name=message.guild.name, 
                     until=f"<t:{round(until.timestamp())}>", 
-                    reason=f"Automatic punishment ({_to}): {kwargs.get('reason')}")
+                    reason=f"[ Automatic ({_to}) ] {kwargs.get('reason')}")
                 new_kwargs = {
                     "user": target,
                     "user_id": target.id,
                     "moderator": kwargs.get("moderator"),
                     "moderator_id": kwargs.get("moderator_id"),
                     "expiration": f"<t:{round(until.timestamp())}:D>",
-                    "reason": f"Automatic punishment ({_to}): {kwargs.get('reason')}",
+                    "reason": f"[ Automatic ({_to}) ] {kwargs.get('reason')}",
                     "case": case,
                     "dm": dm
                 }
