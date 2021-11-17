@@ -26,8 +26,8 @@ class UtilityPlugin(PluginBlueprint):
         self.cached_users = {}
 
 
-    def handle_cache_state(self, user):
-        _id = f"{user.guild.id}-{user.id}"
+    def handle_cache_state(self, guild, user):
+        _id = f"{guild.id}-{user.id}"
         if not self.db.stats.exists(_id):
             schema = self.schemas.UserStats(_id)
             self.db.stats.insert(schema)
@@ -50,8 +50,8 @@ class UtilityPlugin(PluginBlueprint):
             return
         
         _update = {}
-        _id = f"{message.author.guild.id}-{message.author.id}"
-        self.handle_cache_state(message.author)
+        _id = f"{message.guild.id}-{message.author.id}"
+        self.handle_cache_state(message.guild, message.author)
         _update.update({
             "total_sent": self.cached_users[_id]["messages"]["total_sent"]+1,
             "last": datetime.datetime.utcnow()
@@ -121,8 +121,8 @@ class UtilityPlugin(PluginBlueprint):
         if self.db.configs.get(message.guild.id, "message_logging") is False:
             return
 
-        _id = f"{message.author.guild.id}-{message.author.id}"
-        self.handle_cache_state(message.author)
+        _id = f"{message.guild.id}-{message.author.id}"
+        self.handle_cache_state(message.guild, message.author)
         self.cached_users[_id]["messages"].update({"total_deleted": self.cached_users[_id]["messages"]["total_deleted"]+1})
         self.db.stats.update(_id, "messages", self.cached_users[_id]["messages"])
         

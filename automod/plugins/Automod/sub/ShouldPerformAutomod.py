@@ -7,6 +7,10 @@ from utils import Permissions
 def shouldPerformAutomod(plugin, message):
     if message.guild is None:
         return False
+    
+    if not plugin.db.configs.exists(message.guild.id):
+        plugin.db.configs.insert(plugin.schemas.GuildConfig(message.guild))
+        return
 
     if not isinstance(message.author, discord.Member):
         return

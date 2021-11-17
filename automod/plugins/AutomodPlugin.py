@@ -41,11 +41,11 @@ class AutomodPlugin(PluginBlueprint):
         self, 
         message
     ):
+        if not self.db.configs.exists(message.guild.id):
+            return
         if not shouldPerformAutomod(self, message):
             return
         if message.guild is None or not isinstance(message.guild, discord.Guild):
-            return
-        if not self.db.configs.exists(message.guild.id):
             return
         if len(self.db.configs.get(message.guild.id, "automod")) < 1:
             return
@@ -59,11 +59,11 @@ class AutomodPlugin(PluginBlueprint):
         before, 
         after
     ):
+        if not self.db.configs.get(after.guild.id, "automod"):
+            return
         if not shouldPerformAutomod(self, after):
             return
         if after.guild is None:
-            return
-        if not self.db.configs.get(after.guild.id, "automod"):
             return
         
         if before.content != after.content and after.content == None:
