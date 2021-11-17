@@ -9,13 +9,103 @@ import datetime
 
 log = logging.getLogger(__name__)
 
+
+
+class CollectionCache:
+    def __init__(self, _type, collection):
+        self.collection = collection
+        self.data = {}
+        if _type != "stats":
+            for i in collection.find({}):
+                if not str(i["id"]) in self.data:
+                    self.data[str(i["id"])] = i
+
+
+    def get(self, _id, key):
+        try:
+            r = self.data[str(_id)].get(key, None)
+        except KeyError:
+            r = self.collection.actual_get(_id, key)
+            if r is not None:
+                self.data[_id].update({
+                    key: r
+                }) 
+        finally:
+            return r
+
+
+    def exists(self, _id):
+        return str(_id) in self.data
+
+
+    def update(self, _id, key, value):
+        if str(_id) in self.data:
+            self.data[str(_id)].update({
+                key: value
+            })
+            self.collection.actual_update(_id, key, value)
+
+
+    def insert(self, schema):
+        _id = schema["id"]
+        if not str(_id) in self.data:
+            self.data[str(_id)] = schema
+
+
+    def get_doc(self, _id):
+        if str(_id) in self.data:
+            return self.data[str(_id)]
+        else:
+            return self.collection.actual_get_doc(_id)
+
+
+    def delete(self, _id):
+        if str(_id) in self.data:
+            del self.data[str(_id)]
+
+
+
 class MongoCollection(Collection):
     def __init__(self, database, name, **kwargs):
         super().__init__(database, name, **kwargs)
         self.key = "id"
+        self._cache = CollectionCache(name, self)
+
+    
+    def get(self, v, k):
+        self._cache.get(v, k)
+
+    
+    def exists(self, _id):
+        if self._cache.exists(_id):
+            return True
+        else:
+            found = [x for x in super().find({f"{self.key}": f"{_id}"})]
+            if len(found) <= 0 or found == "":
+                return False
+            else:
+                return True
 
 
-    def get(self, filter_value, key):
+    def update(self, _id, key, value):
+        self._cache.update(_id, key, value)
+
+
+    def get_doc(self, _id):
+        return self._cache.get_doc(_id)
+
+    
+    def insert(self, schema):
+        self._cache.insert(schema)
+        super().insert_one(schema)
+
+
+    def delete(self, filter_value):
+        self._cache.delete(filter_value)
+        super().delete_one({f"{self.key}": f"{filter_value}"})
+
+
+    def actual_get(self, filter_value, key):
         if isinstance(filter_value, int):
             filter_value = str(filter_value)
         try:
@@ -24,32 +114,16 @@ class MongoCollection(Collection):
         except Exception:
             return None
 
-
-    def insert(self, schema):
-        super().insert_one(schema)
-
     
-    def update(self, filter_value, key, new_value):
-        super().update({f"{self.key}": f"{filter_value}"}, {"$set": {f"{key}": new_value}}, upsert=False, multi=False)
+    def actual_update(self, filter_value, key, new_value):
+        super().update_one({f"{self.key}": f"{filter_value}"}, {"$set": {f"{key}": new_value}}, upsert=False)
 
 
     def update_stats(self, filter_value, updates):
-        super().update({f"{self.key}": f"{filter_value}"}, {"$set": {"messages": updates}}, upsert=False, multi=False)
-
-    
-    def delete(self, filter_value):
-        super().delete_one({f"{self.key}": f"{filter_value}"})
+        super().update_one({f"{self.key}": f"{filter_value}"}, {"$set": {"messages": updates}}, upsert=False)
 
 
-    def exists(self, filter_value):
-        found = [x for x in super().find({f"{self.key}": f"{filter_value}"})]
-        if len(found) <= 0 or found == "":
-            return False
-        else:
-            return True
-
-
-    def get_doc(self, filter_value):
+    def actual_get_doc(self, filter_value):
         try:
             return list(super().find({f"{self.key}": f"{filter_value}"}))[0]
         except Exception:
@@ -233,9 +307,9 @@ class MongoSchemas:
         return schema
 
 
-    def UserStats(self, user):
+    def UserStats(self, _id):
         schema = {
-            "id": f"{user.id}",
+            "id": f"{_id}",
             "messages": {
                 "first": datetime.datetime.utcnow(),
                 "last": datetime.datetime.utcnow(),

@@ -29,8 +29,7 @@
         "FiltersPlugin",
         "StarboardPlugin",
         "AdminPlugin",
-        "LogsPlugin",
-        "PersistPlugin"
+        "LogsPlugin"
     ],
 
     "enabled_plugins_with_commands": [

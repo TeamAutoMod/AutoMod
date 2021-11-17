@@ -27,14 +27,15 @@ class UtilityPlugin(PluginBlueprint):
 
 
     def handle_cache_state(self, user):
-        if not self.db.stats.exists(user.id):
-            schema = self.schemas.UserStats(user)
+        _id = f"{user.guild.id}-{user.id}"
+        if not self.db.stats.exists(_id):
+            schema = self.schemas.UserStats(_id)
             self.db.stats.insert(schema)
-            self.cached_users.update({user.id: schema})
+            self.cached_users.update({_id: schema})
         else:
-            if not user.id in self.cached_users:
-                data = self.db.stats.get_doc(user.id)
-                self.cached_users.update({user.id: data})
+            if not _id in self.cached_users:
+                data = self.db.stats.get_doc(_id)
+                self.cached_users.update({_id: data})
 
 
     @commands.Cog.listener()
@@ -44,11 +45,15 @@ class UtilityPlugin(PluginBlueprint):
     ):
         if message.guild is None:
             return
+
+        if self.db.configs.get(message.guild.id, "message_logging") is False:
+            return
         
         _update = {}
+        _id = f"{message.author.guild.id}-{message.author.id}"
         self.handle_cache_state(message.author)
         _update.update({
-            "total_sent": self.cached_users[message.author.id]["messages"]["total_sent"]+1,
+            "total_sent": self.cached_users[_id]["messages"]["total_sent"]+1,
             "last": datetime.datetime.utcnow()
         })
         for k, v in {
@@ -57,13 +62,13 @@ class UtilityPlugin(PluginBlueprint):
             "total_attachments": len(message.attachments),
         }.items():
             if v > 0:
-                _update.update({k: self.cached_users[message.author.id]["messages"][k]+v})
+                _update.update({k: self.cached_users[_id]["messages"][k]+v})
                 if k == "total_emotes":
-                    if not message.author.id in self.emote_stats:
-                        emotes = self.cached_users[message.author.id]["messages"]["used_emotes"]
-                        self.emote_stats.update({message.author.id: emotes})
+                    if not _id in self.emote_stats:
+                        emotes = self.cached_users[_id]["messages"]["used_emotes"]
+                        self.emote_stats.update({_id: emotes})
                     else:
-                        emotes = self.emote_stats[message.author.id]
+                        emotes = self.emote_stats[_id]
 
                     for name, eid in self.EMOJI_RE.findall(message.content):
                         eid = str(eid)
@@ -88,12 +93,12 @@ class UtilityPlugin(PluginBlueprint):
                                         "used": emotes[eid]
                                     }
                                 })
-                        self.emote_stats.update({message.author.id: emotes})
-                        _update.update({"used_emotes": self.emote_stats[message.author.id]})
+                        self.emote_stats.update({_id: emotes})
+                        _update.update({"used_emotes": self.emote_stats[_id]})
 
-        new = self.cached_users[message.author.id]["messages"]
+        new = self.cached_users[_id]["messages"]
         for k, v in _update.items(): new.update({k: v})
-        self.db.stats.update_stats(message.author.id, new)
+        self.db.stats.update_stats(_id, new)
 
 
     @commands.Cog.listener()
@@ -104,9 +109,13 @@ class UtilityPlugin(PluginBlueprint):
         if message.guild is None:
             return
 
+        if self.db.configs.get(message.guild.id, "message_logging") is False:
+            return
+
+        _id = f"{message.author.guild.id}-{message.author.id}"
         self.handle_cache_state(message.author)
-        self.cached_users[message.author.id]["messages"].update({"total_deleted": self.cached_users[message.author.id]["messages"]["total_deleted"]+1})
-        self.db.stats.update(message.author.id, "messages", self.cached_users[message.author.id]["messages"])
+        self.cached_users[_id]["messages"].update({"total_deleted": self.cached_users[_id]["messages"]["total_deleted"]+1})
+        self.db.stats.update(_id, "messages", self.cached_users[_id]["messages"])
         
     
     @commands.command()
@@ -359,16 +368,20 @@ class UtilityPlugin(PluginBlueprint):
         user: discord.Member = None
     ):
         """stats_help"""
+        if self.db.configs.get(ctx.guild.id, "message_logging") is False:
+            return await ctx.send(self.i18next.t(ctx.guild, "msg_logging_deactivated", _emote="NO", prefix=self.bot.get_guild_prefix(ctx.guild)))
+        
         if user is None:
             user = ctx.author
         
-        if not self.db.stats.exists(user.id):
+        _id = f"{ctx.guild.id}-{user.id}"
+        if not self.db.stats.exists(_id):
             return await ctx.send(self.i18next.t(ctx.guild, "no_stats", _emote="NO"))
 
-        if user.id in self.cached_users:
-            data = self.cached_users[user.id]
+        if _id in self.cached_users:
+            data = self.cached_users[_id]
         else:
-            data = self.db.stats.get_doc(user.id)
+            data = self.db.stats.get_doc(_id)
         data = data["messages"]
         
         e = Embed(
