@@ -530,5 +530,7 @@
 
     "log_connect": " Shard ID {shard_id} has connected to Discord",
     "log_resume": " Shard ID {shard_id} has resumed its session",
-    "log_disconnect": " Shard ID {shard_id} has disconnected from Discord"
+    "log_disconnect": " Shard ID {shard_id} has disconnected from Discord",
+
+    "msg_logging_deactivated": "{emote} You can only use this feature, if message logging is enabled. You can do so, by  running ``{prefix}messagelog <channel>``"
 }

@@ -29,9 +29,7 @@
         "FiltersPlugin",
         "StarboardPlugin",
         "AdminPlugin",
-        "LogsPlugin",
-        "AntispamPlugin",
-        "PersistPlugin"
+        "LogsPlugin"
     ],
 
     "enabled_plugins_with_commands": [

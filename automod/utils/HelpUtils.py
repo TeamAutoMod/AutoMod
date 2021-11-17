@@ -50,17 +50,16 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
     guild = bot.get_guild(i.guild_id)
     prefix = bot.get_guild_prefix(guild)
 
-    if _plugin == None:
+    plugin = {v: k for k, v in actual_plugin_names.items()}.get(_plugin)
+    if _plugin == None or plugin == None:
         e = Embed(
             title=bot.i18next.t(guild, "help_title"),
             description=bot.i18next.t(guild, "help_description", prefix=prefix)
         )
         view = HelpView(guild, bot, "None")
         return e, view
-    
-    plugin = {v: k for k, v in actual_plugin_names.items()}.get(_plugin)
-    actual_plugin = bot.get_cog(plugin)
 
+    actual_plugin = bot.get_cog(plugin)
     e = Embed(
         title=f"{actual_plugin_names[plugin]} Plugin",
         description="\n \n".join([f"``{prefix}{str(x)}`` \n{bot.i18next.t(guild, x.help)}" for x in actual_plugin.get_commands()])
