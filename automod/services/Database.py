@@ -18,7 +18,11 @@ class CollectionCache:
         if _type != "stats":
             for i in collection.find({}):
                 if not str(i["id"]) in self.data:
-                    self.data[str(i["id"])] = i
+                    self.data.update(
+                        {
+                            str(i["id"]): i
+                        }
+                    )
 
 
     def get(self, _id, key):
@@ -69,43 +73,40 @@ class MongoCollection(Collection):
     def __init__(self, database, name, **kwargs):
         super().__init__(database, name, **kwargs)
         self.key = "id"
-        self._cache = CollectionCache(name, self)
+        #self._cache = CollectionCache(name, self)
 
     
-    def get(self, v, k):
+    def i_get(self, v, k):
         self._cache.get(v, k)
 
     
     def exists(self, _id):
-        if self._cache.exists(_id):
-            return True
+        found = [x for x in super().find({f"{self.key}": f"{_id}"})]
+        if len(found) <= 0 or found == "":
+            return False
         else:
-            found = [x for x in super().find({f"{self.key}": f"{_id}"})]
-            if len(found) <= 0 or found == "":
-                return False
-            else:
-                return True
+            return True
 
 
-    def update(self, _id, key, value):
+    def i_update(self, _id, key, value):
         self._cache.update(_id, key, value)
 
 
-    def get_doc(self, _id):
+    def i_get_doc(self, _id):
         return self._cache.get_doc(_id)
 
     
     def insert(self, schema):
-        self._cache.insert(schema)
+        #self._cache.insert(schema)
         super().insert_one(schema)
 
 
     def delete(self, filter_value):
-        self._cache.delete(filter_value)
+        #self._cache.delete(filter_value)
         super().delete_one({f"{self.key}": f"{filter_value}"})
 
 
-    def actual_get(self, filter_value, key):
+    def get(self, filter_value, key):
         if isinstance(filter_value, int):
             filter_value = str(filter_value)
         try:
@@ -115,7 +116,7 @@ class MongoCollection(Collection):
             return None
 
     
-    def actual_update(self, filter_value, key, new_value):
+    def update(self, filter_value, key, new_value):
         super().update_one({f"{self.key}": f"{filter_value}"}, {"$set": {f"{key}": new_value}}, upsert=False)
 
 
@@ -123,7 +124,7 @@ class MongoCollection(Collection):
         super().update_one({f"{self.key}": f"{filter_value}"}, {"$set": {"messages": updates}}, upsert=False)
 
 
-    def actual_get_doc(self, filter_value):
+    def get_doc(self, filter_value):
         try:
             return list(super().find({f"{self.key}": f"{filter_value}"}))[0]
         except Exception:

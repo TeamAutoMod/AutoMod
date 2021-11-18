@@ -7,10 +7,6 @@ from utils import Permissions
 def shouldPerformAutomod(plugin, message):
     if message.guild is None:
         return False
-    
-    if not plugin.db.configs.exists(message.guild.id):
-        plugin.db.configs.insert(plugin.schemas.GuildConfig(message.guild))
-        return
 
     if not isinstance(message.author, discord.Member):
         return
@@ -27,7 +23,10 @@ def shouldPerformAutomod(plugin, message):
     if message.author.top_role.position >= message.guild.me.top_role.position:
         return
 
-    if len(plugin.db.configs.get(message.guild.id, "automod")) < 1:
+    try:
+        if len(plugin.db.configs.get(message.guild.id, "automod")) < 1:
+            return False
+    except Exception:
         return False
     
     if message.type != discord.MessageType.default:

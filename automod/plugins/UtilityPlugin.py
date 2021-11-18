@@ -94,7 +94,7 @@ class UtilityPlugin(PluginBlueprint):
                                     }
                                 })
                             else:
-                                data = self.cached_users[message.author.id]["messages"]["most_used_emote"]
+                                data = self.cached_users[_id]["messages"]["most_used_emote"]
                                 _update.update({
                                     "most_used_emote": {
                                         "name": data["name"],
@@ -102,8 +102,8 @@ class UtilityPlugin(PluginBlueprint):
                                         "used": data["used"]+1
                                     }
                                 })
-                        self.emote_stats.update({message.author.id: emotes})
-                        _update.update({"used_emotes": self.emote_stats[message.author.id]})
+                        self.emote_stats.update({_id: emotes})
+                        _update.update({"used_emotes": self.emote_stats[_id]})
 
         new = self.cached_users[_id]["messages"]
         for k, v in _update.items(): new.update({k: v})
