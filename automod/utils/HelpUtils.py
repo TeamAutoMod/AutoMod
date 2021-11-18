@@ -6,32 +6,32 @@ from .Views import HelpView
 
 
 
-async def getHelpForAllCommands(plugin, ctx):
-    plugin.bot.help_command.context = ctx
-    prefix = plugin.bot.get_guild_prefix(ctx.guild)
-    actual_plugin_names = {
-        "AutomodPlugin": f"❯ Automod Commands",
-        "UtilityPlugin": f"❯ Utility Commands",
-        "ModerationPlugin": f"❯ Moderation Commands",
-        "WarnsPlugin": f"❯ Warn Commands",
-        "CasesPlugin": f"❯ Case Commands",
-        "ConfigPlugin": f"❯ Configuration Commands",
-        "TagsPlugin": f"❯ Tag Commands",
-        "FiltersPlugin": f"❯ Filter Commands",
-        "StarboardPlugin": f"❯ Starboard Commands"
-    }
+# async def getHelpForAllCommands(plugin, ctx):
+#     plugin.bot.help_command.context = ctx
+#     prefix = plugin.bot.get_guild_prefix(ctx.guild)
+#     actual_plugin_names = {
+#         "AutomodPlugin": f"❯ Automod Commands",
+#         "UtilityPlugin": f"❯ Utility Commands",
+#         "ModerationPlugin": f"❯ Moderation Commands",
+#         "WarnsPlugin": f"❯ Warn Commands",
+#         "CasesPlugin": f"❯ Case Commands",
+#         "ConfigPlugin": f"❯ Configuration Commands",
+#         "TagsPlugin": f"❯ Tag Commands",
+#         "FiltersPlugin": f"❯ Filter Commands",
+#         "StarboardPlugin": f"❯ Starboard Commands"
+#     }
 
-    valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
-    e = Embed(
-        title="Commands",
-        description=f"This is a list of all available commands. \nTo get more info about a command, use ``{prefix}help <command>``"
-    )
-    for p in valid_plugins:
-        e.add_field(
-            name=actual_plugin_names[p.qualified_name],
-            value=" | ".join([f"``{prefix}{x}``" for x in p.get_commands()])
-        )
-    return e
+#     valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
+#     e = Embed(
+#         title="Commands",
+#         description=f"This is a list of all available commands. \nTo get more info about a command, use ``{prefix}help <command>``"
+#     )
+#     for p in valid_plugins:
+#         e.add_field(
+#             name=actual_plugin_names[p.qualified_name],
+#             value=" | ".join([f"``{prefix}{x}``" for x in p.get_commands()])
+#         )
+#     return e
 
 
 actual_plugin_names = {
@@ -52,10 +52,21 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
 
     plugin = {v: k for k, v in actual_plugin_names.items()}.get(_plugin)
     if _plugin == None or plugin == None:
+        valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
+
         e = Embed(
             title=bot.i18next.t(guild, "help_title"),
-            description=bot.i18next.t(guild, "help_description", prefix=prefix)
+            #description=bot.i18next.t(guild, "help_description", prefix=prefix)
         )
+        e.set_footer(
+                text=bot.i18next.t(guild, "help_footer", prefix=prefix)
+            )
+        for p in valid_plugins:
+            e.add_field(
+                name=f"❯ {actual_plugin_names[p.qualified_name]}",
+                value=" | ".join(f"``{prefix}{x}``" for x in p.get_commands())
+            )
+        
         view = HelpView(guild, bot, "None")
         return e, view
 

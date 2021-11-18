@@ -473,7 +473,8 @@
     "automod_basic": "• Anti-Invite has been set to ``1`` warn \n• Max-Mentions have been set to ``10`` \n• Max-Newlines have been set to ``15`` \n• Anti-Zalgo has been set to ``1`` warn \n• Anti-Badfiles has been set to ``1`` warn \n• Anti-Spam has been set to ``3`` warns",
 
     "help_title": "Help Menu",
-    "help_description": "Select one of the categories below to view its (sub-)commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+    "help_description": "This is a list of all available commands. \nTo get more info about a command, use ``{prefix}help <command>``",
+    "help_footer": "To get more info about a command, use {prefix}help <command>",
 
     "automodplugin_short_description": "Commands for configuring the automod",
     "automodplugin_long_description": "You can use these commands to configure the automoderator. \nTo get more info about a command, use ``{prefix}help <command>``",

@@ -8,6 +8,7 @@ import pytz
 utc = pytz.UTC
 
 from .PluginBlueprint import PluginBlueprint
+from .WarnsPlugin import WarnsPlugin
 from .Types import Reason, DiscordUser, Duration
 
 from utils import Permissions
@@ -48,7 +49,7 @@ async def unmuteTask(bot):
                     bot.db.mutes.delete(m["id"])
 
 
-class ModerationPlugin(PluginBlueprint):
+class ModerationPlugin(WarnsPlugin):
     def __init__(self, bot):
         super().__init__(bot)
         self.bot.loop.create_task(unmuteTask(bot))

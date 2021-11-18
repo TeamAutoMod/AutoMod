@@ -16,6 +16,18 @@ from utils.HelpUtils import getHelpForCommand
 
 
 
+actual_plugin_names = {
+    "AutomodPlugin": "Automod",
+    "UtilityPlugin": "Utility",
+    "ModerationPlugin": "Moderation",
+    "WarnsPlugin": "Warning",
+    "CasesPlugin": "Cases",
+    "ConfigPlugin": "Configuration",
+    "TagsPlugin": "Tags",
+    "FiltersPlugin": "Filters",
+    "StarboardPlugin": "Starboard"
+}
+
 class UtilityPlugin(PluginBlueprint):
     def __init__(self, bot):
         super().__init__(bot)
@@ -24,6 +36,7 @@ class UtilityPlugin(PluginBlueprint):
         self.CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
         self.emote_stats = {}
         self.cached_users = {}
+        
 
 
     def handle_cache_state(self, guild, user):
@@ -174,10 +187,22 @@ class UtilityPlugin(PluginBlueprint):
     ):
         """help_help"""
         if query is None:
+            prefix = self.bot.get_guild_prefix(ctx.guild)
+            valid_plugins = [self.bot.get_cog(x) for x in self.bot.cogs if x in self.bot.config.enabled_plugins_with_commands]
+
             e = Embed(
                 title=self.i18next.t(ctx.guild, "help_title"),
-                description=self.i18next.t(ctx.guild, "help_description", prefix=self.bot.get_guild_prefix(ctx.guild))
+                #description=self.i18next.t(ctx.guild, "help_footer", prefix=prefix)
             )
+            e.set_footer(
+                text=self.i18next.t(ctx.guild, "help_footer", prefix=prefix)
+            )
+            for p in valid_plugins:
+                e.add_field(
+                    name=f"❯ {actual_plugin_names[p.qualified_name]}",
+                    value=" | ".join(f"``{prefix}{x}``" for x in p.get_commands())
+                )
+            
             view = HelpView(ctx.guild, self.bot, "None")
             await ctx.send(embed=e, view=view)
         else:
