@@ -1,15 +1,13 @@
 import discord
 
 import asyncio
-import logging
+import logging; log = logging.getLogger(__name__)
 import datetime
 
 from plugins.Types import Embed
 from . import Shell
 
 
-
-log = logging.getLogger(__name__)
 
 _bot = None
 

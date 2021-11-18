@@ -2,12 +2,8 @@ from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.database import Database
 
-import logging
+import logging; log = logging.getLogger(__name__)
 import datetime
-
-
-
-log = logging.getLogger(__name__)
 
 
 

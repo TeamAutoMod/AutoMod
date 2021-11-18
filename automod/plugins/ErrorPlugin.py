@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-import logging
+import logging; log = logging.getLogger(__name__)
 import traceback
 
 from .PluginBlueprint import PluginBlueprint
@@ -19,8 +19,6 @@ class PostParseError(commands.BadArgument):
         self.type = type
         self.error = error
 
-
-log = logging.getLogger(__name__)
 
 
 class ErrorPlugin(PluginBlueprint):

@@ -101,7 +101,6 @@ async def edit_or_send(plugin, new, message, channel, content, embed):
         if msg == None:
             return
         await msg.edit(
-            allowed_mentions=discord.AllowedMentions(replied_user=False), 
             content=content,
             embed=embed
         )

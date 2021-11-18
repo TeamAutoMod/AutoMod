@@ -41,6 +41,7 @@ class TagsPlugin(PluginBlueprint):
         """tags_help"""
         if ctx.subcommand_passed is None:
             tags = ["-".join(x["id"].split("-")[1:]) for x in self.db.tags.find({}) if x["id"].split("-")[0] == str(ctx.guild.id)]
+            prefix = self.bot.get_guild_prefix(ctx.guild)
 
             if len(tags) < 1:
                 return await ctx.send(self.i18next.t(ctx.guild, "no_tags", _emote="NO"))
@@ -48,7 +49,7 @@ class TagsPlugin(PluginBlueprint):
             e = Embed()
             e.add_field(
                 name="❯ Tags",
-                value="```fix\n{}\n```".format("\n".join([f"[{str(i).zfill(2) if i <= 9 else i}] {x}" for i, x in enumerate(tags, start=1)]))
+                value="```fix\n{}\n```".format("\n".join([f"{prefix}{x}" for x in tags]))
             )
             await ctx.send(embed=e)
 

@@ -1,10 +1,7 @@
 import unicodedata
-import threading
-import logging
+import logging; log = logging.getLogger(__name__)
 
 
-
-log = logging.getLogger(__name__)
 
 def toStr(char):
     digit = f"{ord(char):x}".upper()

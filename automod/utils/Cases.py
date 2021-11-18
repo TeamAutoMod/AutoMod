@@ -65,7 +65,7 @@ async def updateLogMessage(plugin, ctx, log_id, case, reason):
         current = plugin.db.inf.get(f"{ctx.guild.id}-{case}", "reason")
         e = msg.embeds[0]
         e.description = e.description.replace(f"**Reason:** {current}", f"**Reason:** {reason}")
-        await msg.edit(allowed_mentions=discord.AllowedMentions(replied_user=False), embed=e)
+        await msg.edit(embed=e)
     except Exception as ex:
         await ctx.send(plugin.i18next.t(ctx.guild, "log_edit_failed", _emote="NO", exc=ex))
     else:

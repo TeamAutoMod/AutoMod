@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-import logging
+import logging; log = logging.getLogger(__name__)
 import asyncio
 import datetime
 import traceback
@@ -22,9 +22,6 @@ from plugins.Types import Embed
 from utils.HelpUtils import getHelpForPlugin
 from utils.Context import Context
 
-
-
-log = logging.getLogger(__name__)
 
 
 def _prefix_callable(bot, message):

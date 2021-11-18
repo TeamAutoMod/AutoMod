@@ -1,5 +1,4 @@
-import discord.http
-discord.http.Route.BASE = "https://discordapp.com/api/v9"
+import discord.http; discord.http.Route.BASE = "https://discordapp.com/api/v9"
 
 import os
 import json
@@ -7,7 +6,6 @@ import asyncio
 import sentry_sdk
 import datetime
 import logging
-import discordspy
 
 from bot.AutoMod import AutoMod
 from bot.logger import SetupLogging
@@ -52,12 +50,6 @@ if __name__ == "__main__":
     config = json.load(open("./config.json", "r", encoding="utf8", errors="ignore", closefd=True))
     automod = AutoMod(config)
     
-    if not automod.config.dev:
-        discords = discordspy.Client(
-            automod, 
-            automod.config.discords_token, 
-            post=discordspy.Post.auto()
-        )
     automod.remove_command("help")
 
     with SetupLogging():
@@ -73,16 +65,6 @@ if __name__ == "__main__":
             pass
 
         loop.run_until_complete(boot(automod, log))
-
-        @automod.event
-        async def on_discords_server_post(
-            status
-        ):
-            if status == 200:
-                log.info(f"Posted server count ({discords.servers()}) on discords.com")
-            else:
-                log.info(f"Failed to post server count to discords.com - Status code {status}")
-
 
         automod.run()
 

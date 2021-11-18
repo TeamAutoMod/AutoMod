@@ -160,7 +160,6 @@ class UtilityPlugin(PluginBlueprint):
             )
 
         await msg.edit(
-            allowed_mentions=discord.AllowedMentions(replied_user=False), 
             content="Pong! ``{}ms`` \n*Server Latency: ``{}ms``*"\
             .format(round((t2 - t1) * 1000), round(bot.latency * 1000, 2))
         )

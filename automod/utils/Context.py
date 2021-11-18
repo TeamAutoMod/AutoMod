@@ -22,11 +22,11 @@ class Context(commands.Context):
             return await self.send(content)
 
 
-    async def send(self, *args, **kwargs):
-        msg = None
-        try:
-            msg = await self.reply(*args, mention_author=False, **kwargs)
-        except Exception:
-            msg = await super().send(*args, **kwargs)
-        finally:
-            return msg
+    # async def send(self, *args, **kwargs):
+    #     msg = None
+    #     try:
+    #         msg = await self.reply(*args, mention_author=False, **kwargs)
+    #     except Exception:
+    #         msg = await super().send(*args, **kwargs)
+    #     finally:
+    #         return msg

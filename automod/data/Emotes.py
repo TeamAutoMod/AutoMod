@@ -1,10 +1,8 @@
 import json
-import logging
+import logging; log = logging.getLogger(__name__)
 import pathlib
 
 
-
-log = logging.getLogger(__name__)
 
 class Emotes:
     def __init__(self, bot):
