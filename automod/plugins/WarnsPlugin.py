@@ -200,5 +200,5 @@ class WarnsPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(WarnsPlugin(bot))
+# def setup(bot):
+#     bot.add_cog(WarnsPlugin(bot))
