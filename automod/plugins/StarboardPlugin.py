@@ -178,5 +178,4 @@ class StarboardPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(StarboardPlugin(bot))
+def setup(bot): bot.add_cog(StarboardPlugin(bot))

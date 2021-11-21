@@ -470,5 +470,4 @@ class UtilityPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(UtilityPlugin(bot))
+def setup(bot): bot.add_cog(UtilityPlugin(bot))

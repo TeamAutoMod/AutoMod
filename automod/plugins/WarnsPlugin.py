@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 from .PluginBlueprint import PluginBlueprint
-from .Types import Duration, Reason, DiscordUser, Embed
+from .Types import Reason, DiscordUser, Embed
 from utils import Permissions
 
 
@@ -198,7 +198,6 @@ class WarnsPlugin(PluginBlueprint):
 
         await ctx.send(embed=e)
 
-
-
-def setup(bot):
-    bot.add_cog(WarnsPlugin(bot))
+# This plugin doesn't need a setup function
+# The moderation plugin will be subclassed 
+# from this, so it holds the warn commands

@@ -232,5 +232,4 @@ class TagsPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(TagsPlugin(bot))
+def setup(bot): bot.add_cog(TagsPlugin(bot))

@@ -242,5 +242,4 @@ class LogsPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(LogsPlugin(bot))
+def setup(bot): bot.add_cog(LogsPlugin(bot))

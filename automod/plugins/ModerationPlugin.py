@@ -4,10 +4,8 @@ from discord.ext import tasks
 
 import datetime
 import time
-import pytz
-utc = pytz.UTC
+import pytz; utc = pytz.UTC
 
-from .PluginBlueprint import PluginBlueprint
 from .WarnsPlugin import WarnsPlugin
 from .Types import Reason, DiscordUser, Duration
 
@@ -395,5 +393,4 @@ class ModerationPlugin(WarnsPlugin):
 
 
 
-def setup(bot):
-    bot.add_cog(ModerationPlugin(bot))
+def setup(bot): bot.add_cog(ModerationPlugin(bot))

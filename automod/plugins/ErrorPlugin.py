@@ -94,5 +94,4 @@ class ErrorPlugin(PluginBlueprint):
             await self.bot.utils.sendErrorLog(e)
 
 
-def setup(bot):
-    bot.add_cog(ErrorPlugin(bot))
+def setup(bot): bot.add_cog(ErrorPlugin(bot))

@@ -6,7 +6,6 @@ import datetime
 import re
 
 from .PluginBlueprint import PluginBlueprint
-from .Types import Reason as _Reason
 from .Types import DiscordUser, Embed
 from utils.Views import MultiPageView, ConfirmView
 from utils.Cases import *
@@ -376,5 +375,4 @@ class CasesPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(CasesPlugin(bot))
+def setup(bot): bot.add_cog(CasesPlugin(bot))

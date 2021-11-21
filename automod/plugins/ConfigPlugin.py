@@ -485,5 +485,4 @@ class ConfigPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(ConfigPlugin(bot))
+def setup(bot): bot.add_cog(ConfigPlugin(bot))
