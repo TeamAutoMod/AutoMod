@@ -32,15 +32,11 @@ class FiltersPlugin(PluginBlueprint):
     async def cog_check(self, ctx):
         return ctx.author.guild_permissions.ban_members
 
-
     @commands.Cog.listener()
     async def on_filter_event(
         self,
         message
     ):
-        if not shouldPerformAutomod(self, message):
-            return
-
         filters = self.db.configs.get(message.guild.id, "filters")
         if len(filters) < 1:
             return

@@ -106,7 +106,6 @@ class AutoMod(commands.AutoShardedBot):
         if event_name == "message":
             super().dispatch("tags_event", *args, **kwargs)
             super().dispatch("automod_event", *args, **kwargs)
-            super().dispatch("filter_event", *args, **kwargs)
             super().dispatch("stats_event", *args, **kwargs)
     
     
