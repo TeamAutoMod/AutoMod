@@ -150,17 +150,14 @@ class Cluster:
     async def start(self, *, force=False):
         if self.process and self.process.is_alive():
             if not force:
-                self.log.warning(
-                    "Start called with already running cluster, pass `force=True` to override"
-                )
                 return
-            self.log.info("Terminating existing process")
+            self.log.info("Terminating process")
             self.process.terminate()
             self.process.close()
 
         self.process = multiprocessing.Process(target=AutoMod, kwargs=self.kwargs, daemon=True)
         self.process.start()
-        self.log.info(f"Process started with PID {self.process.pid}")
+        self.log.info(f"Process started with ID {self.process.pid}")
 
         return True
 
