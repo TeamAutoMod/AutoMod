@@ -88,6 +88,18 @@ class AutoMod(commands.AutoShardedBot):
         self.utils = BotUtils(self)
         self.modify_config = ModifyConfig(self)
 
+        if not hasattr(self, "uptime"):
+            self.uptime = datetime.datetime.utcnow()
+        self.remove_command("help")
+
+        for plugin in self.config.plugins:
+            try:
+                self.load_extension("plugins.{}".format(plugin))
+                log.info("Loaded {}".format(plugin))
+            except Exception as ex:
+                log.warning("Failed to load {} - {}".format(plugin, ex))
+
+        self.run()
 
     def dispatch(self, event_name, *args, **kwargs):
         super().dispatch(event_name, *args, **kwargs)
@@ -106,58 +118,9 @@ class AutoMod(commands.AutoShardedBot):
             if not self.db.configs.exists(f"{guild.id}"):
                 self.db.configs.insert(self.schemas.GuildConfig(guild))
                 log.info("Filled up missing guild {} ({})".format(guild.name, guild.id))
-            else:
-                if self.db.configs.get(f"{guild.id}", "persist") is True:
-                    try:
-                        await guild.chunk(cache=True)
-                    except Exception:
-                        log.info("Failed to chunk guild {} ({})".format(guild.name, guild.id))
-        if not self.ready:
-            self.cache.build()
-            await self.chunk_guilds()
 
-
-    async def chunk_guilds(self):
-        await asyncio.wait_for(self._chunk_guilds(), 60 * 25)
-
-
-    async def _chunk_guilds(self):
-        if self.pending_chunk == True:
-            return
-        
-        self.pending_chunk = True
-        c = 0
-        while self.active_chunk:
-            self.terminate_chunk = True
-            await asyncio.sleep(0.5)
-            c += 1
-            if c > 120:
-                log.warn("Failed to reset chunking task after reconnect.")
-                break
-
-        self.pending_chunk = False
-        self.active_chunk = True
-        self.terminate_chunk = False
-
-        ids = [g.id for g in self.guilds]
-        chunked = 0
-        for g in ids:
-            if self.terminate_chunk == True:
-                return
-            guild = self.get_guild(g)
-            if guild is None:
-                log.info("Couldn't chunk {} - Seems like we have been removed during the task".format(g))
-            else:
-                await guild.chunk(cache=True)
-                log.info("Chunked {}".format(guild.id))
-                await asyncio.sleep(0.1)
-                chunked += 1
-        self.active_chunk = False
-
-        if self.terminate_chunk:
-            log.warn("Chunking task aborted with {} left to go!".format(len(ids) - chunked))
-        else:
-            log.info("Chunking task completed!")
+        self.ready = True
+        self.locked = False
 
 
     async def on_message(self, message):

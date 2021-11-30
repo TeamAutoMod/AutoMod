@@ -489,5 +489,4 @@ class AutomodPlugin(PluginBlueprint):
                 raise commands.BadArgument("number_too_small")
 
 
-def setup(bot):
-    bot.add_cog(AutomodPlugin(bot))
+def setup(bot): bot.add_cog(AutomodPlugin(bot))

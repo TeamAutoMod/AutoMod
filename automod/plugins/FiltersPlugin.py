@@ -178,5 +178,4 @@ class FiltersPlugin(PluginBlueprint):
 
 
 
-def setup(bot):
-    bot.add_cog(FiltersPlugin(bot))
+def setup(bot): bot.add_cog(FiltersPlugin(bot))
