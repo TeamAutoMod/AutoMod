@@ -30,6 +30,10 @@ class StarboardPlugin(PluginBlueprint):
             return
 
         config = self.db.configs.get(f"{payload.guild_id}", "starboard")
+        if config == None:
+            if self.db.configs.exists(f"{payload.guild_id}"):
+                self.db.configs.insert(self.bot.schemas.GuildConfig(guild))
+            return
         if config["enabled"] == False or config["channel"] == "":
             return
 

@@ -52,11 +52,10 @@ async def getHelpForPlugin(bot, _plugin, i: discord.Interaction):
 
     plugin = {v: k for k, v in actual_plugin_names.items()}.get(_plugin)
     if _plugin == None or plugin == None:
-        valid_plugins = [plugin.bot.get_cog(x) for x in plugin.bot.cogs if x in plugin.bot.config.enabled_plugins_with_commands]
+        valid_plugins = [bot.get_cog(x) for x in bot.cogs if x in bot.config.enabled_plugins_with_commands]
 
         e = Embed(
-            title=bot.i18next.t(guild, "help_title"),
-            #description=bot.i18next.t(guild, "help_description", prefix=prefix)
+            title=bot.i18next.t(guild, "help_title")
         )
         e.set_footer(
                 text=bot.i18next.t(guild, "help_footer", prefix=prefix)
