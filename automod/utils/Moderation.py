@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+import logging; log = logging.getLogger(__name__)
 import datetime
 import asyncio
 import pytz
@@ -90,15 +91,6 @@ async def muteUser(plugin, ctx, user, length, reason):
     if length.unit is None:
         length.unit = "m"
 
-    prefix = plugin.bot.get_guild_prefix(ctx.guild)
-    mute_role_id = plugin.db.configs.get(ctx.guild.id, "mute_role")
-    if mute_role_id == "":
-        return await ctx.send(plugin.i18next.t(ctx.guild, "no_mute_role", _emote="NO", prefix=prefix))
-    
-    mute_role = await plugin.bot.utils.getRole(ctx.guild, mute_role_id)
-    if mute_role is None:
-        return await ctx.send(plugin.i18next.t(ctx.guild, "no_mute_role", _emote="NO", prefix=prefix))
-
     mute_id = f"{ctx.guild.id}-{user.id}"
     # Check if user is already muted. If so, should we extend their mute?
     if plugin.db.mutes.exists(mute_id):
@@ -122,11 +114,8 @@ async def muteUser(plugin, ctx, user, length, reason):
                 expiration=f"<t:{round(until.timestamp())}:D>",
                 reason=reason
             )
-            if not mute_role in user.roles:
-                try:
-                    await user.add_roles(mute_role)
-                except Exception:
-                    return
+            
+            plugin.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
             return
 
         async def cancel(interaction):
@@ -160,48 +149,45 @@ async def muteUser(plugin, ctx, user, length, reason):
         )
 
     else:
-        if ctx.guild.me.top_role.position > mute_role.position:
-            seconds = length.to_seconds(ctx)
-            if seconds >= 1:
-                try:
-                    await user.add_roles(mute_role)
-                except Exception as ex:
-                    await ctx.send(plugin.i18next.t(ctx.guild, "mute_failed", _emote="NO", error=ex))
-                else:
-                    until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
-                    plugin.db.mutes.insert(plugin.schemas.Mute(ctx.guild.id, user.id, until))
-
-                    case = plugin.bot.utils.newCase(ctx.guild, "Mute", user, ctx.author, reason)
-
-                    dm_result = await plugin.bot.utils.dmUser(
-                        ctx.message, 
-                        "mute", 
-                        user, 
-                        _emote="MUTE", 
-                        color=0xffdc5c,
-                        moderator=ctx.message.author,
-                        guild_name=ctx.guild.name, 
-                        until=f"<t:{round(until.timestamp())}>", 
-                        reason=reason
-                    )
-                    await ctx.send(plugin.i18next.t(ctx.guild, "user_muted", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>", reason=reason, case=case))
-                    
-                    await plugin.action_logger.log(
-                        ctx.guild, 
-                        "mute", 
-                        moderator=ctx.message.author, 
-                        moderator_id=ctx.message.author.id,
-                        user=user,
-                        user_id=user.id,
-                        expiration=f"<t:{round(until.timestamp())}:D>",
-                        reason=reason, 
-                        case=case,
-                        dm=dm_result
-                    )
+        seconds = length.to_seconds(ctx)
+        if seconds >= 1:
+            until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
+            exc = plugin.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
+            
+            if exc != "":
+                await ctx.send(plugin.i18next.t(ctx.guild, "mute_failed", _emote="NO", error=exc))
             else:
-                raise commands.BadArgument("number_too_small")
+                plugin.db.mutes.insert(plugin.schemas.Mute(ctx.guild.id, user.id, until))
+
+                case = plugin.bot.utils.newCase(ctx.guild, "Mute", user, ctx.author, reason)
+
+                dm_result = await plugin.bot.utils.dmUser(
+                    ctx.message, 
+                    "mute", 
+                    user, 
+                    _emote="MUTE", 
+                    color=0xffdc5c,
+                    moderator=ctx.message.author,
+                    guild_name=ctx.guild.name, 
+                    until=f"<t:{round(until.timestamp())}>", 
+                    reason=reason
+                )
+                await ctx.send(plugin.i18next.t(ctx.guild, "user_muted", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>", reason=reason, case=case))
+                
+                await plugin.action_logger.log(
+                    ctx.guild, 
+                    "mute", 
+                    moderator=ctx.message.author, 
+                    moderator_id=ctx.message.author.id,
+                    user=user,
+                    user_id=user.id,
+                    expiration=f"<t:{round(until.timestamp())}:D>",
+                    reason=reason, 
+                    case=case,
+                    dm=dm_result
+                )
         else:
-            await ctx.send(plugin.i18next.t(ctx.guild, "role_too_high", _emote="NO"))
+            raise commands.BadArgument("number_too_small")
 
 
 async def finishCleaning(plugin, channel_id):
@@ -324,6 +310,7 @@ async def restrictUser(plugin, ctx, restriction, user, reason):
             dm=dm_result
         )
 
+
 async def unbanUser(plugin, ctx, user, reason, softban=False):
     try:
         if not await Permissions.is_banned(ctx, user):
@@ -360,20 +347,12 @@ async def unmuteUser(plugin, ctx, user):
     plugin.db.mutes.delete(mute_id)
     await ctx.send(plugin.i18next.t(ctx.guild, "mute_lifted", _emote="YES", user=user))
 
-    # Can we remove the role?
-    try:
-        mute_role_id = plugin.db.configs.get(ctx.guild.id, "mute_role")
-        mute_role = await plugin.bot.utils.getRole(ctx.guild, mute_role_id)
-        member = ctx.guild.get_member(user.id)
-        await member.remove_roles(mute_role)
-    except Exception:
-        pass
-    finally:
-        await plugin.action_logger.log(
-            ctx.guild, 
-            "manual_unmute", 
-            moderator=ctx.message.author, 
-            moderator_id=ctx.message.author.id,
-            user=user,
-            user_id=user.id
-        )
+    plugin.bot.handle_timeout(False, ctx.guild, user, None)
+    await plugin.action_logger.log(
+        ctx.guild, 
+        "manual_unmute", 
+        moderator=ctx.message.author, 
+        moderator_id=ctx.message.author.id,
+        user=user,
+        user_id=user.id
+    )

@@ -27,15 +27,7 @@ async def unmuteTask(bot):
                         if target is None:
                             target = "Unknown#0000"
                         else:
-
-                            try:
-                                mute_role_id = bot.db.configs.get(guild.id, "mute_role")
-                                mute_role = await bot.utils.getRole(guild, int(mute_role_id))
-
-                                await target.remove_roles(mute_role)
-                            except Exception:
-                                pass
-                        
+                            bot.handle_timeout(False, guild, target, None)
                         await bot.action_logger.log(
                             guild,
                             "unmute",
