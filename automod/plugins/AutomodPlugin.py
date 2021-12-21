@@ -46,10 +46,7 @@ class AutomodPlugin(PluginBlueprint):
         if not shouldPerformAutomod(self, message):
             return
         if message.guild is None or not isinstance(message.guild, discord.Guild):
-            return
-        
-        self.bot.dispatch("filter_event", message, **{})
-        
+            return   
         if len(self.db.configs.get(message.guild.id, "automod")) < 1:
             return
 

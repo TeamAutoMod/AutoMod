@@ -78,14 +78,9 @@ class MongoCollection(Collection):
     
     def exists(self, _id):
         try:
-            found = [x for x in super().find({f"{self.key}": f"{_id}"})]
+            return self.find({"id": _id}).count() > 0
         except Exception:
             return False
-        else:
-            if len(found) <= 0 or found == "":
-                return False
-            else:
-                return True
 
 
     def i_update(self, _id, key, value):

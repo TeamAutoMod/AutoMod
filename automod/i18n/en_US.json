@@ -352,9 +352,9 @@
 
     "start_mute": "{emote} Starting to setup the mute role...",
     "role_fail": "{emote} Failed to create the mute role: {exc}",
-    "category_fail": "{emote} Failed to overwrites permissions for category {category}: {exc}",
-    "text_fail": "{emote} Failed to overwrites permissions for text channel {channel}: {exc}",
-    "voice_fail": "{emote} Failed to overwrites permissions for voice channel {channel}: {exc}",
+    "category_fail": "{emote} Failed to overwrite permissions for category {category}: {exc}",
+    "text_fail": "{emote} Failed to overwrite permissions for text channel {channel}: {exc}",
+    "voice_fail": "{emote} Failed to overwrite permissions for voice channel {channel}: {exc}",
     "clean_fail": "{emote} Failed to clean messages ||{exc}||",
     "mute_done": "{emote} Mute role setup complete!",
 

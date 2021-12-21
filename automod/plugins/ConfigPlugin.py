@@ -199,6 +199,19 @@ class ConfigPlugin(PluginBlueprint):
             global role
             if role_id != "":
                 role = await self.bot.utils.getRole(ctx.guild, int(role_id))
+                if role == None:
+                    try:
+                        role = await ctx.guild.create_role(name="Muted")
+                    except Exception as ex:
+                        return await msg.edit(
+                            allowed_mentions=discord.AllowedMentions(replied_user=False), 
+                            content=self.i18next.t(
+                                ctx.guild, 
+                                "role_fail",
+                                _emote="NO", 
+                                exc=ex
+                            )
+                        )
             else:
                 try:
                     role = await ctx.guild.create_role(name="Muted")
@@ -242,11 +255,14 @@ class ConfigPlugin(PluginBlueprint):
             )
             try:
                 for c in ctx.guild.text_channels:
-                    ov = c.overwrites
-                    ov.update({
-                        role: discord.PermissionOverwrite(send_messages=False)
-                    })
-                    await c.edit(overwrites=ov)
+                    try:
+                        ov = c.overwrites
+                        ov.update({
+                            role: discord.PermissionOverwrite(send_messages=False)
+                        })
+                        await c.edit(overwrites=ov)
+                    except Exception:
+                        pass
             except Exception as ex:
                 return await msg.edit(
                     allowed_mentions=discord.AllowedMentions(replied_user=False), 
@@ -265,11 +281,14 @@ class ConfigPlugin(PluginBlueprint):
             )
             try:
                 for c in ctx.guild.voice_channels:
-                    ov = c.overwrites
-                    ov.update({
-                        role: discord.PermissionOverwrite(send_messages=False)
-                    })
-                    await c.edit(overwrites=ov)
+                    try:
+                        ov = c.overwrites
+                        ov.update({
+                            role: discord.PermissionOverwrite(send_messages=False)
+                        })
+                        await c.edit(overwrites=ov)
+                    except Exception:
+                        pass
             except Exception as ex:
                 return await msg.edit(
                     allowed_mentions=discord.AllowedMentions(replied_user=False), 

@@ -70,17 +70,17 @@ class ActionValidator:
             else:
                 # Mute
                 if self.bot.db.configs.get(message.guild.id, "mute_role") == "":
-                    return
+                    return None, 0
                 
                 mute_role = await self.bot.utils.getRole(message.guild, self.bot.db.configs.get(message.guild.id, "mute_role"))
                 if mute_role is None:
-                    return
+                    return None, 0
 
                 try:
                     await target.add_roles(mute_role)
                 except Exception:
                     if not mute_role in target.roles:
-                        return
+                        return None, 0
 
                 length = int(action.split(" ")[1])
                 until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=length))

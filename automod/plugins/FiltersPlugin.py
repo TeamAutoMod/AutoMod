@@ -38,13 +38,20 @@ class FiltersPlugin(PluginBlueprint):
         message
     ):
         filters = self.db.configs.get(message.guild.id, "filters")
+        if filters == None:
+            if not self.db.configs.exists(f"{message.guild.id}"):
+                self.db.configs.insert(self.bot.schemas.GuildConfig(message.guild))
+            return 
         if len(filters) < 1:
             return
 
         content = message.content.replace("\\", "")
         for name in filters:
             f = filters[name]
-            parsed = parseFilter(f["words"])
+            try:
+                parsed = parseFilter(f["words"])
+            except Exception:
+                return
             found = parsed.findall(content)
             if found:
                 self.bot.ignore_for_event.add("messages", message.id)
