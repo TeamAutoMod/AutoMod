@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 import logging; log = logging.getLogger(__name__)
-import asyncio
+import requests
 import datetime
 import traceback
 import sys
@@ -219,6 +219,25 @@ class AutoMod(commands.AutoShardedBot):
     def get_guild_prefix(self, guild):
         prefix = self.db.configs.get(guild.id, "prefix")
         return prefix
+
+    
+    def handle_timeout(self, mute, guild, user, ios8601_ts):
+        exc = ""
+        try:
+            resp = requests.patch(
+                f"https://discord.com/api/v9/guilds/{guild.id}/members/{user.id}",
+                json={
+                    "communication_disabled_until": None if mute == False else ios8601_ts
+                }, 
+                headers={
+                    "Authorization": f"Bot {self.config.token}"
+                }
+            )
+            if resp.status_code != 200: exc = resp.text
+        except Exception as ex:
+            log.warn(f"Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}"); exc = ex
+        finally:
+            return exc
 
 
     def run(self):
