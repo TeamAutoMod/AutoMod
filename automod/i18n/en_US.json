@@ -534,5 +534,5 @@
     "log_disconnect": " Shard ID {shard_id} has disconnected from Discord",
 
     "msg_logging_deactivated": "{emote} You can only use this feature, if message logging is enabled. You can do so, by  running ``{prefix}messagelog <channel>``",
-    "no_timeout_perms": "{emote} The (un-)mute command now uses the timeout feature. It looks like I don't have the correct permissions to us this feature though, so please make sure to give me either the ``Adminstrator`` permission or, if you're not comfortable with that, simply the ``Timeout Members`` permission"
+    "no_timeout_perms": "{emote} The (un-)mute command now uses the timeout feature. It looks like I don't have the correct permissions to use this feature though, so please make sure to give me either the ``administrator`` permission or, if you're not comfortable with that, simply the ``Timeout Members`` permission"
 }

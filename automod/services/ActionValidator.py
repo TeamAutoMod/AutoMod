@@ -69,17 +69,8 @@ class ActionValidator:
                 return dm, case
             else:
                 # Mute
-                if self.bot.db.configs.get(message.guild.id, "mute_role") == "":
-                    return None, 0
-                
-                mute_role = await self.bot.utils.getRole(message.guild, self.bot.db.configs.get(message.guild.id, "mute_role"))
-                if mute_role is None:
-                    return None, 0
-
-                try:
-                    await target.add_roles(mute_role)
-                except Exception:
-                    if not mute_role in target.roles:
+                if (message.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
+                    if message.guild.me.guild_permissions.administrator == False:
                         return None, 0
 
                 length = int(action.split(" ")[1])
@@ -88,6 +79,10 @@ class ActionValidator:
                 if self.bot.db.mutes.exists(f"{message.guild.id}-{target.id}"):
                     return
                 self.bot.db.mutes.insert(self.bot.schemas.Mute(message.guild.id, target.id, until))
+
+                exc = self.bot.handle_timeout(True, message.guild, target, until.isoformat())
+                if exc != "":
+                    return None, 0
 
                 case = self.bot.utils.newCase(message.guild, "Mute", target, kwargs.get("moderator"), f"[ Automatic ({_to}) ] {kwargs.get('reason')}")
 

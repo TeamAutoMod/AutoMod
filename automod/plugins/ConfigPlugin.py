@@ -84,6 +84,15 @@ class ConfigPlugin(PluginBlueprint):
                 value=f"``✅``" if cfg['starboard']['enabled'] is True else "``❌``",
                 inline=True
             )
+            perm = "``❌``"
+            if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
+                if ctx.guild.me.guild_permissions.administrator == True:
+                    perm = "``✅``"
+            e.add_field(
+                name="Mute Perm",
+                value=perm,
+                inline=False
+            )
             
             am = cfg['automod']
             e.add_field(

@@ -88,8 +88,9 @@ async def kickUser(plugin, ctx, user, reason):
 
 
 async def muteUser(plugin, ctx, user, length, reason):
-    if ctx.guild.me.guild_permissions.timeout_members == False:
-        return await ctx.send(plugin.i18next.t(ctx.guild, "no_timeout_perms", _emote="NO"))
+    if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
+        if ctx.guild.me.guild_permissions.administrator == False:
+            return await ctx.send(plugin.i18next.t(ctx.guild, "no_timeout_perms", _emote="NO"))
     if length.unit is None:
         length.unit = "m"
 
@@ -342,8 +343,9 @@ async def unbanUser(plugin, ctx, user, reason, softban=False):
     
 
 async def unmuteUser(plugin, ctx, user):
-    if ctx.guild.me.guild_permissions.timeout_members == False:
-        return await ctx.send(plugin.i18next.t(ctx.guild, "no_timeout_perms", _emote="NO"))
+    if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
+        if ctx.guild.me.guild_permissions.administrator == False:
+            return await ctx.send(plugin.i18next.t(ctx.guild, "no_timeout_perms", _emote="NO"))
     mute_id = f"{ctx.guild.id}-{user.id}"
     if not plugin.db.mutes.exists(mute_id):
         return await ctx.send(plugin.i18next.t(ctx.guild, "not_muted", _emote="NO"))
