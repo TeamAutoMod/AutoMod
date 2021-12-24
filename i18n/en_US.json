@@ -1,0 +1,80 @@
+{
+    "help_desc": "To get more information about a command, use ``{prefix}help <command>``",
+    "no_reason": "No reason",
+    "aborting": "Aborting",
+
+    "eval_help": "Evaluates a block of code",
+    "debug_help": "Shows useful developer information",
+
+    "ban_help": "Bans the specified user from the server",
+    "softban_help": "Softbans the specified user from the server (ban & unban)",
+    "hackban_help": "Bans the specified user from the server (even if they're currently not in the server)",
+    "kick_help": "Kicks the specified user from the server",
+    "mute_help": "Mutes (timeouts) the a user for the specified time or extends their mute",
+    "unmute_help": "Unmutes a muted user (removes their timeout)",
+    "clean_help": "Deletes between 1 and 300 messages from a channel",
+    "warn_help": "Adds a specific amount of warns to the speicifed user (default amount of warns is 1)",
+    "unwarn_help": "Removes a specific amount of warns from the specified user (default amount of warns is 1)",
+
+    "tags_help": "Base command for managing custom tags. When used withoud a subcommand, this shows a list of all tags in this guild",
+    "tags_add_help": "Creates a tag with the given name and content",
+    "tags_remove_help": "Removes the tag with the speicified name",
+
+    "ping_help": "Shows the bots latencies",
+    "about_help": "Shows some stats and what AutoMod is about",
+    "help_help": "Shows help for a specific (sub-)command or a full list of commands when used without any arguments",
+    "avatar_help": "Shows a bigger version of a users avatar",
+    "jumbo_help": "Shows a bigger version of one or more emotes",
+    "whois_help": "Shows some information about a specific user",
+    "server_help": "Shows some information about this server",
+    
+    "log_ban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
+    "log_warn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
+    "log_unwarn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
+    "log_mute": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
+    "log_manual_unmute": "**Moderator:** {moderator} ({moderator_id})",
+
+    "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
+    "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",
+    "check_fail": "{emote} A command check failed, looks like you're missing the required permissions",
+    "on_cooldown": "{emote} Command is on cooldown, you can use it again in {retry_after} seconds",
+    "forbidden": "{emote} Looks like there's a permissions error ||{exc}||",
+    "missing_arg": "{emote} Missing required argument: {param} \n• Usage: ``{usage}`` \n• Info: ``{info}``",
+    "bad_arg": "{emote} Failed to parse the {param} argument: {error} \n•Usage: ``{usage}``\n• Info: ``{info}``",
+    "bad_arg_no_param": "{emote} Failed to parse one or more arguments: {error} \n• Usage: ``{usage}``\n• Info: ``{info}``",
+
+    "not_in_server": "{emote} This user is not in the server anymore",
+    "cant_act": "{emote} You're not allowed to do this",
+    "alr_banned": "{emote} User is already banned",
+    "not_banned": "{emote} This user isn't banned",
+    "fail": "{emote} Looks like an error occured ||{exc}||",
+
+    "banned": "{emote} User has been banned",
+    "softbanned": "{emote} User has been softbanned",
+    "hackbanned": "{emote} User has been banned",
+    "kicked": "{emote} User has been kicked", 
+    "warned": "{emote} User has been warned",
+    "unwarned": "{emote} User has been unwarned",
+    "muted": "{emote} User has been muted",
+    "unmuted": "{emote} User has been unmuted",
+    "cleaned": "{emote} Deleted **{amount}** message{plural}",
+
+    "name_too_long": "{emote} Tag name is too long (>30 chars)",
+    "content_too_long": "{emote} Tg content is too long (>1900 chars)",
+    "tag_alr_exists": "{emote} Tag with that name already exists",
+    "tag_added": "{emote} Leave it to me! Tag has been created, you can use it with {prefix}{tag}",
+    "tag_doesnt_exists": "{emote} Tag with that name doesn't exist",
+    "tag_removed": "{emote} Tag has been deleted",
+    "no_tags": "{emote} This server doesn't have any tags yet",
+
+    "min_warns": "{emote} Too few warns (<1)",
+    "max_warns": "{emote} Too many warns (>100)",
+
+    "role_too_high": "{emote} Mute role is above my highest role. Please put it below my highest role, so I can add it to users",
+    "already_muted_description": "User is already muted. Do you want to extend their mute?",
+
+    "amount_too_small": "{emote} Too few messages (<1)",
+    "amount_too_big": "{emote} Too many messages (>300)",
+
+    "about_description": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax."
+}

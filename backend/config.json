@@ -1,0 +1,39 @@
+{
+    "dev": true,
+    "default_prefix": "+",
+    "custom_status": "+help",
+
+    "token": "ODE0NTExMDcxOTQyOTM0NTk4.YDe6jA.efVLvr7ZR5pyUXzcKK3zAASmSlY",
+    "sentry_dsn": "",
+    "discords_token": "",
+    "support_invite": "https://discord.gg/S9BEBux",
+
+    "mongo_host": "mongodb+srv://automod:secret1337@cluster0.olijx.mongodb.net/main?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",
+    "db_name": "main",
+    
+    "cluster_names": [
+        "C1",
+        "C2",
+        "C3"
+    ],
+    "cache_options": [
+        "configs",
+        "mutes"
+    ],
+    "langs": [
+        "en_US"
+    ],
+    "plugins": [
+        "error",
+        "utility",
+        "admin",
+        "internal",
+        "mod",
+        "tags",
+        "config"
+    ],
+    
+    "bot_admins": [],
+    "blocked_guilds": [],
+    "error_log_channel": 879185406120329226
+}
