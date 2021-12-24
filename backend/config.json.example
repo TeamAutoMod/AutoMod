@@ -1,0 +1,38 @@
+{
+    "dev": true,
+    "default_prefix": "+",
+    "custom_status": "+help",
+
+    "token": "",
+    "sentry_dsn": "",
+    "discords_token": "",
+    "support_invite": "https://discord.gg/S9BEBux",
+
+    "mongo_host": "",
+    "db_name": "main",
+    
+    "cluster_names": [
+        "C1",
+        "C2",
+        "C3"
+    ],
+    "cache_options": [
+        "configs",
+        "mutes"
+    ],
+    "langs": [
+        "en_US"
+    ],
+    "plugins": [
+        "error",
+        "utility",
+        "admin",
+        "internal",
+        "mod",
+        "tags",
+        "config"
+    ],
+    
+    "bot_admins": [],
+    "blocked_guilds": []
+}
