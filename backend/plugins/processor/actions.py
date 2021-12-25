@@ -98,6 +98,7 @@ class ActionProcessor(object):
                 }
             )
             await self.modlog_processor.execute(msg.guild, "warn", **log_kwargs)
+            return None
 
 
     async def ban(self, msg, mod, user, reason, **log_kwargs):
@@ -132,7 +133,11 @@ class ActionProcessor(object):
 
     async def mute(self, msg, mod, user, reason, **log_kwargs):
         user = msg.guild.get_member(user.id);
-        if user == None: return
+        if user == None: return "User not found"
+
+        if (msg.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
+            if msg.guild.me.guild_permissions.administrator == False: 
+                return "Missing permissions. Make sure I have the ``Timeout members`` permission"
         
         length = log_kwargs["length"]
         until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=length))

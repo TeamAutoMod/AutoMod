@@ -122,8 +122,9 @@ class ModerationPlugin(WarnPlugin):
         if not self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
-        if ctx.guild.me.guild_permissions.timeout_members == False: 
-           return await ctx.send(self.locale.t(ctx.guild, "no_timeout_perms", _emote="NO"))
+        if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
+            if ctx.guild.me.guild_permissions.administrator == False: 
+                return await ctx.send(self.locale.t(ctx.guild, "no_timeout_perms", _emote="NO"))
 
         _id = f"{ctx.guild.id}-{user.id}"
         if self.db.mutes.exists(_id):
@@ -199,6 +200,10 @@ class ModerationPlugin(WarnPlugin):
         _id = f"{ctx.guild.id}-{user.id}"
         if not self.db.mutes.exists(_id):
             return await ctx.send(self.locale.t(ctx.guild, "not_muted", _emote="NO"))
+
+        if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
+            if ctx.guild.me.guild_permissions.administrator == False: 
+                return await ctx.send(self.locale.t(ctx.guild, "no_timeout_perms", _emote="NO"))
 
         exc = self.bot.handle_timeout(False, ctx.guild, user, None)
         if exc != "":

@@ -12,11 +12,6 @@ def GuildConfig(guild, prefix):
         "server_log": "",
         "voice_log": "", 
 
-        "antispam": False,
-        "server_logging": False,
-        "message_logging": False,
-        "voice_logging": False,
-
         "ignored_channels": [],
         "ignored_roles": [],
         "whitelisted_invites": [],

@@ -123,7 +123,7 @@ class ModlogProcessor(object):
             pass
         else:
             if "case" in log_kwargs:
-                self.db.cases.updates(f"{guild.id}-{log_kwargs.get('case')}", {
+                self.db.cases.multi_update(f"{guild.id}-{log_kwargs.get('case')}", {
                     "log_id", f"{log_message.id}",
                     "jump_url", f"{log_message.jump_url}"
                 })

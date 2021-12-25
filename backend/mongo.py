@@ -20,7 +20,7 @@ class MongoCollection(Collection):
         if self.cached: (getattr(self.bot.cache, self.collection_name)).update(_id, key, value)
 
 
-    def updates(self, _id, updates: dict):
+    def multi_update(self, _id, updates: dict):
         for k, v in updates.items():
             self.update(_id, k, v)
 

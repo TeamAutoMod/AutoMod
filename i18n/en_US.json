@@ -27,6 +27,11 @@
     "jumbo_help": "Shows a bigger version of one or more emotes",
     "whois_help": "Shows some information about a specific user",
     "server_help": "Shows some information about this server",
+
+    "config_help": "Shows the current server config",
+    "punishment_help": "Sets a punishment for a specific amount of warns",
+    "log_help": "Base command for configuring logging",
+    "prefix_help": "Sets a new server prefix for the bot",
     
     "log_ban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
     "log_warn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
@@ -76,5 +81,22 @@
     "amount_too_small": "{emote} Too few messages (<1)",
     "amount_too_big": "{emote} Too many messages (>300)",
 
-    "about_description": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax."
+    "about_description": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
+
+    "invalid_action": "{emote} This isn't a valid punishment action. Valid actions are: \n• kick \n• ban \n• mute \n• none",
+    "set_none": "{emote} Removed the punishment for {warns} warns. To view all current punishments, use ``{prefix}config``",
+    "set_kick": "{emote} Users will now be kicked when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
+    "set_ban": "{emote} Users will now be banned when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
+    "set_mute": "{emote} Users will now be muted for {length} {unit} when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
+    "time_needed": "{emote} The mute option needs an additional time, for example **10m** which would mean 10 minutes.",
+
+    "invalid_log_option": "{emote} Invalid log options. Valid options are: \n• mod \n• voice \n• server \n• messages",
+    "log_off": "{emote} Disabled {_type}",
+    "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **off** as the second argument. Here's a little help: \n• ``{prefix}log {option} #channel`` - Sets the log channel \n• ``{prefix}log {option} off`` - Disables this log option",
+    "log_on": "{emote} Enabled {_type} and will send them to {channel}",
+
+    "prefix_too_long": "{emote} Prefix is too long (>20)",
+    "prefix_updated": "{emote} Updated prefix to **{prefix}**",
+
+    "no_timeout_perms": "{emote} The (un-)mute command now uses the timeout feature. It looks like I don't have the correct permissions to use this feature though, so please make sure to give me either the ``administrator`` permission or, if you're not comfortable with that, simply the ``Timeout Members`` permission"
 }

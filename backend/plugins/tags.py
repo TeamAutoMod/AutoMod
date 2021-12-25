@@ -111,35 +111,35 @@ class TagsPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message(self, message: discord.Message):
-        if message.guild == None \
-            or message.author.bot \
-            or message.webhook_id != None \
-            or message.author.id == self.bot.user.id: return
-        if not message.guild.id in self._tags: return
-        if not message.guild.chunked:
-            await message.guild.chunk(cache=True)
+    async def on_message(self, msg: discord.Message):
+        if msg.guild == None \
+            or msg.author.bot \
+            or msg.webhook_id != None \
+            or msg.author.id == self.bot.user.id: return
+        if not msg.guild.id in self._tags: return
+        if not msg.guild.chunked:
+            await msg.guild.chunk(cache=True)
 
-        prefix = self.get_prefix(message.guild)
-        if message.content.startswith(prefix, 0) and len(self._tags[message.guild.id]) > 0:
-            for name in self._tags[message.guild.id]:
-                if message.content.lower() == prefix + name or (message.content.lower().startswith(name, len(prefix)) and message.content.lower()[len(prefix + name)] == " "):
-                    tag = S(self._tags[message.guild.id][name])
-                    self.update_uses(f"{message.guild.id}-{name}")
+        prefix = self.get_prefix(msg.guild)
+        if msg.content.startswith(prefix, 0) and len(self._tags[msg.guild.id]) > 0:
+            for name in self._tags[msg.guild.id]:
+                if msg.content.lower() == prefix + name or (msg.content.lower().startswith(name, len(prefix)) and msg.content.lower()[len(prefix + name)] == " "):
+                    tag = S(self._tags[msg.guild.id][name])
+                    self.update_uses(f"{msg.guild.id}-{name}")
 
                     resp = Embed(
                         color=0x202225,
                         description=tag.content
                     )
                     
-                    author = message.guild.get_member(tag.author)
+                    author = msg.guild.get_member(tag.author)
                     if author != None:
                         resp.set_footer(
                             text="Created by {0.name}#{0.discriminator} ({0.id})".format(author),
                             icon_url=author.display_avatar
                         )
 
-                    await message.channel.send(embed=resp)
+                    await msg.channel.send(embed=resp)
 
 
 def setup(bot): bot.register_plugin(TagsPlugin(bot))
