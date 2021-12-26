@@ -10,6 +10,14 @@ class MongoCollection(Collection):
         self.cached = name in bot.config.cache_options
 
 
+    def get(self, _id, key):
+        return (getattr(self.bot.cache, self.collection_name)).get(_id, key)
+
+    
+    def get_from_db(self, _id, key):
+        return super().get(_id, key)
+
+
     def insert(self, schema):
         super().insert(schema)
         if self.cached: (getattr(self.bot.cache, self.collection_name)).insert(schema)
@@ -33,7 +41,6 @@ class MongoCollection(Collection):
 class MongoDB(Database):
     def __init__(self, bot):
         super().__init__(name=bot.config.db_name, host=bot.config.mongo_host)
-
         for obj_name, db_name in {
             "configs": "guildconfigs",
             "tags": "tags",

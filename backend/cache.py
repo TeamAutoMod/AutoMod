@@ -15,7 +15,7 @@ class InternalCacheType(object):
         try:
             r = self.data[str(_id)].get(key, None)
         except KeyError:
-            r = (getattr(self.bot.db, self._type)).get(_id, key)
+            r = (getattr(self.bot.db, self._type)).get_from_db(_id, key)
             if r is not None:
                 self.data[_id].update({
                     key: r
