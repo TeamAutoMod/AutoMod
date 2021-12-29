@@ -4,7 +4,7 @@ from discord.ext import commands
 import json
 import traceback
 import requests
-from toolbox import S
+from toolbox import S as Object
 import logging; log = logging.getLogger()
 
 from .cache import InternalCache
@@ -44,7 +44,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     )
     def __init__(self, *args, **kwargs):
         with open("backend/config.json", "r") as config_file:
-            self.config = config = S(json.load(config_file))
+            self.config = config = Object(json.load(config_file))
         super().__init__(
             command_prefix=prefix_callable, intents=self.intents, 
             case_insensitive=True, max_messages=1000, chunk_guilds_at_startup=False, 

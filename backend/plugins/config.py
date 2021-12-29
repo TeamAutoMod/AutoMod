@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 import logging; log = logging.getLogger()
-from toolbox import S
+from toolbox import S as Object
 from typing import Union
 
 from . import AutoModPlugin
@@ -14,10 +14,6 @@ LOG_OPTIONS = {
     "mod": {
         "db_field": "mod_log",
         "i18n_type": "moderation logs"
-    },
-    "voice": {
-        "db_field": "voice_log",
-        "i18n_type": "voice logs"
     },
     "server": {
         "db_field": "server_log",
@@ -42,7 +38,7 @@ class ConfigPlugin(AutoModPlugin):
     @commands.has_permissions(ban_members=True)
     async def config(self, ctx):
         """config_help"""
-        config = S(self.db.configs.get_doc(ctx.guild.id))
+        config = Object(self.db.configs.get_doc(ctx.guild.id))
         y = self.bot.emotes.get("YES")
         n = self.bot.emotes.get("NO")
 
@@ -53,14 +49,13 @@ class ConfigPlugin(AutoModPlugin):
         e = Embed(
             title=f"Config for {ctx.guild.name}",
         )
-        e.set_thumbnail(url=ctx.guild.icon.url)
+        #e.set_thumbnail(url=ctx.guild.icon.url)
         e.add_fields([
             {
                 "name": "❯ General",
-                "value": "> **• Prefix:** {} \n> **• Starboard:** {} \n> **• Can mute:** {} \n> **• Filters:** {}"\
+                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Premium:** {} \n> **• Filters:** {}"\
                 .format(
                     config.prefix,
-                    y if config.starboard == True else n,
                     mute_perm,
                     len(config.filters)
                 ),
@@ -68,11 +63,10 @@ class ConfigPlugin(AutoModPlugin):
             },
             {
                 "name": "❯ Logging",
-                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Voice Log:** {} \n> **• Server Log:** {}"\
+                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}"\
                 .format(
                     n if config.mod_log == "" else f"<#{config.mod_log}>",
                     n if config.message_log == "" else f"<#{config.message_log}>",
-                    n if config.voice_log == "" else f"<#{config.voice_log}>",
                     n if config.server_log == "" else f"<#{config.server_log}>"
                 ),
                 "inline": True
@@ -86,7 +80,8 @@ class ConfigPlugin(AutoModPlugin):
                     n if not hasattr(config, "invites") else f"{config.invites.warns} warn{'' if config.invites.warns == 1 else 's'}",
                     n if not hasattr(config, "files") else f"{config.files.warns} warn{'' if config.files.warns == 1 else 's'}",
                     n if not hasattr(config, "lines") else f"{config.mention.threshold} lines"
-                )
+                ),
+                "inline": True
             },
             {
                 "name": "❯ Punishments",
@@ -148,7 +143,7 @@ class ConfigPlugin(AutoModPlugin):
         if not option in LOG_OPTIONS: 
             return await ctx.send(self.locale.t(ctx.guild, "invalid_log_option", _emote="NO"))
         
-        data = S(LOG_OPTIONS[option])
+        data = Object(LOG_OPTIONS[option])
         if isinstance(channel, str):
             if channel.lower() == "off":
                 self.db.configs.update(ctx.guild.id, data.db_field, ""); 

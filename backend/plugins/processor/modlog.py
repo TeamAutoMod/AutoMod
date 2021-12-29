@@ -1,4 +1,4 @@
-from toolbox import S
+from toolbox import S as Object
 
 from ...types import Embed
 
@@ -94,7 +94,7 @@ class ModlogProcessor(object):
 
 
     async def execute(self, guild, log_type, **log_kwargs):
-        config = S(LOG_TYPES[log_type])
+        config = Object(LOG_TYPES[log_type])
 
         log_channel_id = self.db.configs.get(guild.id, config.channel)
         if log_channel_id == None or log_channel_id == "": return

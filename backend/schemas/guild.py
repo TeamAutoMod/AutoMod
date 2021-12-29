@@ -10,7 +10,6 @@ def GuildConfig(guild, prefix):
         "mod_log": "", 
         "message_log": "",
         "server_log": "",
-        "voice_log": "", 
 
         "ignored_channels": [],
         "ignored_roles": [],
@@ -23,12 +22,6 @@ def GuildConfig(guild, prefix):
 
         "cases": 0,
         "case_ids": {},
-
-        "starboard": {
-            "enabled": False,
-            "channel": "",
-            "ignored_channels": []
-        },
 
         "pre_reasons": {},
 

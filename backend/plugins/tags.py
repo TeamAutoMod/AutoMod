@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from toolbox import S
+from toolbox import S as Object
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
@@ -124,7 +124,7 @@ class TagsPlugin(AutoModPlugin):
         if msg.content.startswith(prefix, 0) and len(self._tags[msg.guild.id]) > 0:
             for name in self._tags[msg.guild.id]:
                 if msg.content.lower() == prefix + name or (msg.content.lower().startswith(name, len(prefix)) and msg.content.lower()[len(prefix + name)] == " "):
-                    tag = S(self._tags[msg.guild.id][name])
+                    tag = Object(self._tags[msg.guild.id][name])
                     self.update_uses(f"{msg.guild.id}-{name}")
 
                     resp = Embed(

@@ -19,8 +19,8 @@ class MongoCollection(Collection):
 
 
     def insert(self, schema):
-        super().insert(schema)
-        if self.cached: (getattr(self.bot.cache, self.collection_name)).insert(schema)
+        super().insert_one(schema)
+        if self.cached: (getattr(self.bot.cache, self.collection_name)).insert(schema["id"], schema)
 
 
     def update(self, _id, key, value):
@@ -42,7 +42,7 @@ class MongoDB(Database):
     def __init__(self, bot):
         super().__init__(name=bot.config.db_name, host=bot.config.mongo_host)
         for obj_name, db_name in {
-            "configs": "guildconfigs",
+            "configs": "configs",
             "tags": "tags",
             "cases": "cases",
             "warns": "warns",
