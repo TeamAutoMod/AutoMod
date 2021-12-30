@@ -53,7 +53,7 @@ class ConfigPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ General",
-                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Premium:** {} \n> **• Filters:** {}"\
+                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
@@ -73,13 +73,13 @@ class ConfigPlugin(AutoModPlugin):
             },
             {
                 "name": "❯ Automod Rules",
-                "value": "> **• Max Mentions:** {} \n> **• Anti @every1:** {} \n> **• Anti Invites:** {} \n> **• Bad Files:** {} \n> **• Max Newlines:** {}"\
+                "value": "> **• Max Mentions:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {}"\
                 .format(
-                    n if not hasattr(config, "mention") else f"{config.mention.threshold} mentions",
-                    n if not hasattr(config, "everyone") else f"{config.everyone.warns} warn{'' if config.everyone.warns == 1 else 's'}",
+                    n if not hasattr(config, "mentions") else f"{config.mentions.threshold} mentions",
+                    n if not hasattr(config, "links") else f"{config.links.warns} warn{'' if config.links.warns == 1 else 's'}",
                     n if not hasattr(config, "invites") else f"{config.invites.warns} warn{'' if config.invites.warns == 1 else 's'}",
                     n if not hasattr(config, "files") else f"{config.files.warns} warn{'' if config.files.warns == 1 else 's'}",
-                    n if not hasattr(config, "lines") else f"{config.mention.threshold} lines"
+                    n if not hasattr(config, "zalgo") else f"{config.zalgo.warns} warn{'' if config.zalgo.warns == 1 else 's'}",
                 ),
                 "inline": True
             },
@@ -89,7 +89,7 @@ class ConfigPlugin(AutoModPlugin):
                     f"> **• {x} Warn {'' if x == 1 else ''}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in config.punishments.items()
                 ]) if len(config.punishments.items()) > 0 else n,
-                "inline": True
+                "inline": False
             }
         ])
         await ctx.send(embed=e)
@@ -164,6 +164,11 @@ class ConfigPlugin(AutoModPlugin):
 
         self.db.configs.update(ctx.guild.id, "prefix", prefix)
         await ctx.send(self.locale.t(ctx.guild, "prefix_updated", _emote="YES", prefix=prefix))
+
+
+    @commands.group()
+    async def automod(self, ctx):
+        pass
 
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))

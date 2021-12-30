@@ -11,7 +11,10 @@ class MongoCollection(Collection):
 
 
     def get(self, _id, key):
-        return (getattr(self.bot.cache, self.collection_name)).get(_id, key)
+        if self.cached:
+            return (getattr(self.bot.cache, self.collection_name)).get(_id, key)
+        else:
+            return super().get(_id, key)
 
     
     def get_from_db(self, _id, key):

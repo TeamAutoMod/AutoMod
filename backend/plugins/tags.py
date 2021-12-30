@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 
 from toolbox import S as Object
+import datetime
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
@@ -37,6 +38,17 @@ class TagsPlugin(AutoModPlugin):
         self.db.tags.delete(f"{guild.id}-{name}")
 
 
+    def update_tag(self, ctx, name, content):
+        self._tags[ctx.guild.id][name].update({
+            "content": content
+        })
+        self.db.tags.multi_update(f"{ctx.guild.id}-{name}", {
+            "content": content,
+            "editor": f"{ctx.author.id}",
+            "edited": datetime.datetime.now()
+        })
+
+
     def cache_tags(self):
         for e in self.db.tags.find({}):
             _id = int(e["id"].split("-")[0])
@@ -66,12 +78,12 @@ class TagsPlugin(AutoModPlugin):
                 tags = self._tags[ctx.guild.id]
                 prefix = self.get_prefix(ctx.guild)
                 if len(tags) > 0:
-                    await ctx.send("**Available tags in {}** \n```\n{}\n```".format(
-                        ctx.guild.name,
-                        "\n".join(
-                            [f"{prefix}{x}" for x in tags]
-                        )
-                    ))
+                    e = Embed(
+                        title="Available Tags",
+                        description=", ".join([f"``{x}``" for x in tags])
+                    )
+                    e.set_footer(text=f"Use a tag as a command (e.g. {prefix}{list(tags.keys())[0]})")
+                    await ctx.send(embed=e)
                 else:
                     await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
             else:
@@ -110,11 +122,28 @@ class TagsPlugin(AutoModPlugin):
 
 
 
+    @tags.command()
+    async def update(self, ctx, name: str, *, content: str):
+        """tag_update_help"""
+        if len(content) > 1900:
+            return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
+        
+        name = name.lower()
+        if ctx.guild.id in self._tags:
+            if not name in self._tags[ctx.guild.id]:
+                await ctx.send(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
+            else:
+                self.update_tag(ctx.guild, name, content)
+                await ctx.send(self.locale.t(ctx.guild, "tag_updated", _emote="YES"))
+        else:
+            await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+
+
+
     @AutoModPlugin.listener()
     async def on_message(self, msg: discord.Message):
         if msg.guild == None \
             or msg.author.bot \
-            or msg.webhook_id != None \
             or msg.author.id == self.bot.user.id: return
         if not msg.guild.id in self._tags: return
         if not msg.guild.chunked:
@@ -127,19 +156,7 @@ class TagsPlugin(AutoModPlugin):
                     tag = Object(self._tags[msg.guild.id][name])
                     self.update_uses(f"{msg.guild.id}-{name}")
 
-                    resp = Embed(
-                        color=0x202225,
-                        description=tag.content
-                    )
-                    
-                    author = msg.guild.get_member(tag.author)
-                    if author != None:
-                        resp.set_footer(
-                            text="Created by {0.name}#{0.discriminator} ({0.id})".format(author),
-                            icon_url=author.display_avatar
-                        )
-
-                    await msg.channel.send(embed=resp)
+                    await msg.channel.send(f"{tag.content}")
 
 
 def setup(bot): bot.register_plugin(TagsPlugin(bot))
