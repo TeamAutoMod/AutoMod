@@ -225,8 +225,7 @@ class AutomodPlugin(AutoModPlugin):
                 if parsed != None:
                     found = parsed.findall(content)
                     if found:
-                        await self.delete_msg(msg, int(f["warns"]), f"Triggered filter '{name}' with '{', '.join(found)}'")
-            return
+                        return await self.delete_msg(msg, int(f["warns"]), f"Triggered filter '{name}' with '{', '.join(found)}'")
         
         if hasattr(rules, "invites"):
             found = INVITE_RE.findall(content)
