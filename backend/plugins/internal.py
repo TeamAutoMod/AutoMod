@@ -37,7 +37,7 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_message_delete(self, msg: discord.Message):
-        pass
+        if msg.guild == None: return
 
 
 def setup(bot): bot.register_plugin(InternalPlugin(bot))
