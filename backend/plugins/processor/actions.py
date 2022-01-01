@@ -156,4 +156,3 @@ class ActionProcessor(object):
         )
         await self.modlog_processor.execute(msg.guild, "mute", **log_kwargs)
         return None
-

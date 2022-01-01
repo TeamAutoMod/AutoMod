@@ -250,7 +250,7 @@ class AutomodPlugin(AutoModPlugin):
             if found:
                 for link in found:
                     url = urlparse(link)
-                    if url.hostname in config.links.black_listed:
+                    if url.hostname in config.black_listed_links:
                         return await self.delete_msg(msg, rules.links.warns, f"Forbidden link ({url.hostname})")
 
         if hasattr(rules, "files"):
@@ -276,6 +276,15 @@ class AutomodPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_message(self, msg: discord.Message):
+        if msg.guild == None: return
+        if not msg.guild.chunked: await msg.guild.chunk(cache=True)
+        if not self.can_act(msg.guild, msg.guild.me, msg.author): return
+
+        await self.enforce_rules(msg)
+
+
+    @AutoModPlugin.listener()
+    async def on_message_edit(self, _, msg: discord.Message):
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
         if not self.can_act(msg.guild, msg.guild.me, msg.author): return

@@ -124,7 +124,7 @@ class TagsPlugin(AutoModPlugin):
 
     @tags.command()
     async def update(self, ctx, name: str, *, content: str):
-        """tag_update_help"""
+        """tags_update_help"""
         if len(content) > 1900:
             return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
         

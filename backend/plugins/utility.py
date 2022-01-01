@@ -27,7 +27,7 @@ def get_help_embed(plugin, ctx, cmd):
     plugin.bot.help_command.context = ctx
     name = ctx.bot.help_command.get_command_signature(cmd)
     help_message = plugin.locale.t(ctx.guild, f"{cmd.help}")
-    if name[-1] == "": name = name[:-1]
+    if name[-1] == " ": name = name[:-1]
 
     e = Embed(
         title=f"``{name.replace('...', '')}``"
