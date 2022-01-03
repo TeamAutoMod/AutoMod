@@ -1,17 +1,22 @@
 import discord
 from discord.ext import commands
 
+import asyncio
+import datetime
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
+from .processor import LogProcessor
 from ..schemas import GuildConfig
+from ..types import Embed
 
 
 
 class InternalPlugin(AutoModPlugin):
-    """Plugin for all utility commands"""
+    """Plugin for internal/log events"""
     def __init__(self, bot):
         super().__init__(bot)
+        self.log_processor = LogProcessor(bot)
 
 
     @AutoModPlugin.listener()
@@ -38,6 +43,89 @@ class InternalPlugin(AutoModPlugin):
     @AutoModPlugin.listener()
     async def on_message_delete(self, msg: discord.Message):
         if msg.guild == None: return
+
+        await asyncio.sleep(0.3) # wait a bit before checking ignore_for_events
+        if msg.id in self.bot.ignore_for_events:
+            return self.bot.ignore_for_events.remove(msg.id)
+        
+        # I hate this
+        if self.db.configs.get(msg.guild.id, "message_log") == "" \
+        or not isinstance(msg.channel, discord.TextChannel) \
+        or msg.author.id == self.bot.user.id \
+        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "server_log") \
+        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "mod_log") \
+        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "message_log") \
+        or msg.type != discord.MessageType.default:
+            return
+        
+        content = " ".join([x.url for x in msg.attachments]) + msg.content
+        e = Embed(
+            color=0xff5c5c, 
+            timestamp=datetime.datetime.utcnow(),
+            description=content[:2000] # idek the limits tbh
+        )
+        e.set_author(
+            name="{0.name}#{0.discriminator} ({0.id})".format(msg.author),
+            icon_url=msg.author.display_avatar
+        )
+        e.set_footer(
+            text="#{}".format(msg.channel.name)
+        )
+
+        await self.log_processor.execute(msg.guild, "message_deleted", **{
+            "_embed": e
+        })
+
+
+    @AutoModPlugin.listener()
+    async def on_message_edit(self, b: discord.Message, a: discord.Message):
+        if a.guild == None: return
+
+        if self.db.configs.get(a.guild.id, "message_log") == "" \
+        or not isinstance(a.channel, discord.TextChannel) \
+        or a.author.id == self.bot.user.id \
+        or str(a.channel.id) == self.db.configs.get(a.guild.id, "server_log") \
+        or str(a.channel.id) == self.db.configs.get(a.guild.id, "mod_log") \
+        or str(a.channel.id) == self.db.configs.get(a.guild.id, "message_log") \
+        or a.type != discord.MessageType.default:
+            return
+        
+        if b.content != a.content and len(a.content) > 0:
+            e = Embed(
+                color=0xffdc5c, 
+                timestamp=a.created_at
+            )
+            e.set_author(
+                name="{0.name}#{0.discriminator} ({0.id})".format(a.author),
+                icon_url=a.author.display_avatar
+            )
+            e.add_field(
+                name="Before",
+                value=b.content
+            )
+            e.add_field(
+                name="After",
+                value=a.content
+            )
+            e.set_footer(
+                text="#{}".format(a.channel.name)
+            )
+
+            await self.log_processor.execute(a.guild, "message_edited", **{
+                "_embed": e
+            })
+
+
+    @AutoModPlugin.listener()
+    async def on_member_unban(self, guild: discord.Guild, user: discord.User):
+        await asyncio.sleep(0.3) # wait a bit before checking ignore_for_events
+        if user.id in self.bot.ignore_for_events:
+            return self.bot.ignore_for_events.remove(user.id)
+
+        await self.log_processor.execute(guild, "manual_unban", **{
+            "user": user,
+            "user_id": user.id
+        })
 
 
 def setup(bot): bot.register_plugin(InternalPlugin(bot))

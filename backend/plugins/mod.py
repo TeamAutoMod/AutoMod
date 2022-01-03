@@ -56,6 +56,7 @@ class ModerationPlugin(WarnPlugin):
                 except Exception as ex:
                     await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
                 else:
+                    self.bot.ignore_for_events.append(user.id)
                     await ctx.send(self.locale.t(ctx.guild, "softbanned", _emote="YES"))
             await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"]))
 
@@ -71,6 +72,33 @@ class ModerationPlugin(WarnPlugin):
             await self.kick_or_ban("ban", ctx, user, reason, delete_message_days=1)
         else:
             await ctx.send(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
+
+    
+    @commands.command()
+    @commands.has_permissions(ban_members=True)
+    async def unban(self, ctx, user: DiscordUser, *, reason: str = None):
+        """unban_help"""
+        if reason == None: self.locale.t(ctx.guild, "no_reason")
+        try:
+            await ctx.guild.fetch_ban(user)
+        except discord.NotFound:
+            await ctx.send(self.locale.t(ctx.guild, "not_banned", _emote="WARN"))
+        else:
+            try:
+                await ctx.guild.unban(user=user, reason=reason)
+            except Exception as ex:
+                await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+            else:
+                self.bot.ignore_for_events.append(user.id)
+                await self.log_processor.execute(ctx.guild, "unban", **{
+                    "user": user,
+                    "user_id": user.id,
+                    "mod": ctx.author,
+                    "mod_id": ctx.author.id,
+                    "reason": reason
+                })
+
+                await ctx.send(self.locale.t(ctx.guild, "unbanned", _emote="YES"))
 
 
     @commands.command()
@@ -138,7 +166,7 @@ class ModerationPlugin(WarnPlugin):
                     embed=None, 
                     view=None
                 )
-                await self.modlog_processor.execute(ctx.guild, "mute_extended", **{
+                await self.log_processor.execute(ctx.guild, "mute_extended", **{
                     "moderator": ctx.author, 
                     "moderator_id": ctx.author.id,
                     "user": user,
@@ -179,7 +207,7 @@ class ModerationPlugin(WarnPlugin):
                 else:
                     self.db.mutes.insert(Mute(ctx.guild.id, user.id, until))
 
-                    await self.modlog_processor.execute(ctx.guild, "mute", **{
+                    await self.log_processor.execute(ctx.guild, "mute", **{
                         "moderator": ctx.author, 
                         "moderator_id": ctx.author.id,
                         "user": user,
@@ -210,7 +238,7 @@ class ModerationPlugin(WarnPlugin):
             await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", error=exc))
         else:
             self.db.mutes.delete(_id)
-            await self.modlog_processor.execute(ctx.guild, "manual_unmute", **{
+            await self.log_processor.execute(ctx.guild, "manual_unmute", **{
                 "moderator": ctx.author, 
                 "moderator_id": ctx.author.id,
                 "user": user,

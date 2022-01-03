@@ -162,7 +162,7 @@ class UtilityPlugin(AutoModPlugin):
         if user == None: user = ctx.author
 
         e = Embed(
-            title="{0.name}#{0.dicriminator}'s Avatar".format(user)
+            title="{0.name}#{0.discriminator}'s Avatar".format(user)
         )
         e.set_image(
             url=user.display_avatar

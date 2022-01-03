@@ -13,7 +13,7 @@ def GuildConfig(guild, prefix):
 
         "ignored_channels": [],
         "ignored_roles": [],
-        "whitelisted_invites": [],
+        "allowed_invites": [],
         "tags": {},
 
         "punishments": {},

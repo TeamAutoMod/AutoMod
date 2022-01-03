@@ -1,2 +1,2 @@
 from .actions import ActionProcessor
-from .modlog import ModlogProcessor
+from .log import LogProcessor

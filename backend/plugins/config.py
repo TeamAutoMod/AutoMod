@@ -232,7 +232,44 @@ class ConfigPlugin(AutoModPlugin):
     async def allowed_invites(self, ctx):
         """allowed_invites_help"""
         if ctx.invoked_subcommand == None:
-            return
+            allowed = [f"``{x.strip().lower}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+            if len(allowed) < 1:
+                prefix = self.get_prefix(ctx.guild)
+                return await ctx.send(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix=prefix))
+            
+            e = Embed(
+                title="Allowed invites (by server ID)",
+                description=", ".join(allowed)
+            )
+            await ctx.send(embed=e)
+
+
+    @allowed_invites.command()
+    async def add(self, ctx, guild_id: int):
+        """allowed_invites_add_help"""
+        allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+
+        if str(guild_id) in allowed:
+            return await ctx.send(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"))
+        
+        allowed.append(str(guild_id))
+        self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
+
+        await ctx.send(self.locale.t(ctx.guild, "allowed_inv", _emote="YES"))
+
+
+    @allowed_invites.command()
+    async def remove(self, ctx, guild_id: int):
+        """allowed_invites_remove_help"""
+        allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+
+        if not str(guild_id) in allowed:
+            return await ctx.send(self.locale.t(ctx.guild, "not_allowed", _emote="NO"))
+        
+        allowed.remove(str(guild_id))
+        self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
+
+        await ctx.send(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"))
 
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))

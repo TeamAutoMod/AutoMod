@@ -15,6 +15,7 @@
     "clean_help": "Deletes between 1 and 300 messages from a channel",
     "warn_help": "Adds a specific amount of warns to the speicifed user (default amount of warns is 1)",
     "unwarn_help": "Removes a specific amount of warns from the specified user (default amount of warns is 1)",
+    "unban_help": "Unbans the specified user from the server",
 
     "tags_help": "Base command for managing custom tags. When used withoud a subcommand, this shows a list of all tags in this guild",
     "tags_add_help": "Creates a tag with the given name and content",
@@ -34,8 +35,14 @@
     "log_help": "Base command for configuring logging",
     "prefix_help": "Sets a new server prefix for the bot",
     "automod_help": "Base command for configuring the automoderator. You can use off as the argument in all subcommands to disable the respective feature",
-    
+    "allowed_invites_help": "Base command for managing the invite whitelist. WHen used without a subcommand, this shows the currently invite whitelist",
+    "allowed_invites_add_help": "Adds a server to the invite whitelist",
+    "allowed_invites_remove_help": "Removes a server from the invite whitelist",
+
     "log_ban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
+    "log_kick": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
+    "log_unban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
+    "log_manual_unban": "**Reason:** [ Manual ]",
     "log_warn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_unwarn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_mute": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
@@ -65,6 +72,7 @@
     "muted": "{emote} User has been muted",
     "unmuted": "{emote} User has been unmuted",
     "cleaned": "{emote} Deleted **{amount}** message{plural}",
+    "unbanned": "{emote} User has been unbanned",
 
     "name_too_long": "{emote} Tag name is too long (>30 chars)",
     "content_too_long": "{emote} Tg content is too long (>1900 chars)",
@@ -111,5 +119,11 @@
     "set_links": "{emote} Users will now receive {amount} warns when using forbidden links (configure with the ``forbidden_links`` command)",
     "set_invites": "{emote} Users will now receive {amount} warns when sending invite links (configure with the ``allowed_invites`` command)",
     "set_files": "{emote} Users will now receive {amount} warns when sending forbidden file formats",
-    "set_zalgo": "{emote} Users will now receive {amount} warns when sending zalgo characters"
+    "set_zalgo": "{emote} Users will now receive {amount} warns when sending zalgo characters",
+
+    "no_allowed": "{emote} No server invites are currently allowed. Allow invites from a specific server by using ``{prefix}allowed_invites add <server_id>``",
+    "alr_allowed": "{emote} Invites from this server are already allowed",
+    "allowed_inv": "{emote} Successfully whitelisted this server. Users will not be flagged by the automoderator when sending invites from this server",
+    "not_allowed": "{emote} This server isn't currently whitelisted",
+    "unallowed_inv": "{emote} Successfully removed this server from the whitelist"
 }

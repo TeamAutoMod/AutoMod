@@ -21,14 +21,14 @@ LOG_TYPES = {
     },
     "forceban": {
         "channel": "mod_log",
-        "key": "log_forceban",
+        "key": "log_ban",
         "color": 0xff5c5c,
         "emote": "HAMMER",
         "action": "User forcebanned"
     },
     "softban": {
         "channel": "mod_log",
-        "key": "log_softban",
+        "key": "log_ban",
         "color": 0xf79554,
         "emote": "HAMMER",
         "action": "User softbanned"
@@ -84,10 +84,25 @@ LOG_TYPES = {
         "emote": "UNLOCK",
         "action": "User unwarned"
     },
+
+    "message_deleted": {
+        "channel": "message_log",
+        "key": "", # not needed
+        "color": 0xff5c5c,
+        "emote": "BIN",
+        "action": "" # not needed
+    },
+    "message_edited": {
+        "channel": "message_log",
+        "key": "", # not needed
+        "color": 0xffdc5c,
+        "emote": "PEN", 
+        "action": "" # not needed
+    },
 }
 
 
-class ModlogProcessor(object):
+class LogProcessor(object):
     def __init__(self, bot):
         self.bot = bot
         self.db = bot.db

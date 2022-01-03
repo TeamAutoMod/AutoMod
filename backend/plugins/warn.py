@@ -4,7 +4,7 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
-from .processor import ActionProcessor, ModlogProcessor
+from .processor import ActionProcessor, LogProcessor
 
 
 
@@ -13,7 +13,7 @@ class WarnPlugin(AutoModPlugin):
     def __init__(self, bot):
         super().__init__(bot)
         self.action_processor = ActionProcessor(bot)
-        self.modlog_processor = ModlogProcessor(bot)
+        self.log_processor = LogProcessor(bot)
 
 
     def can_act(self, guild, mod, target):
@@ -84,7 +84,7 @@ class WarnPlugin(AutoModPlugin):
                 new = (cur - warns) if (cur - warns) >= 0 else 0
                 self.db.warns.update(_id, "warns", new)
 
-                self.modlog_processor.execute(ctx.guild, "unwarn", **{
+                self.log_processor.execute(ctx.guild, "unwarn", **{
                     "user": user,
                     "user_id": user.id,
                     "mod": ctx.author,

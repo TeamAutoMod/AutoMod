@@ -5,7 +5,7 @@ from collections import OrderedDict
 import datetime
 
 from ...schemas import Warn, Case, Mute
-from .modlog import ModlogProcessor
+from .log import LogProcessor
 
 
 
@@ -18,7 +18,7 @@ class ActionProcessor(object):
             "ban": self.ban,
             "mute": self.mute
         }
-        self.modlog_processor = ModlogProcessor(bot)
+        self.log_processor = LogProcessor(bot)
 
 
     def new_case(self, _type, msg, mod, user, reason):
@@ -97,7 +97,7 @@ class ActionProcessor(object):
                     "new_warns": new_warns
                 }
             )
-            await self.modlog_processor.execute(msg.guild, "warn", **log_kwargs)
+            await self.log_processor.execute(msg.guild, "warn", **log_kwargs)
             return None
 
 
@@ -112,7 +112,7 @@ class ActionProcessor(object):
                     "case": self.new_case("ban", msg, mod, user, reason)
                 }
             )
-            await self.modlog_processor.execute(msg.guild, "ban", **log_kwargs)
+            await self.log_processor.execute(msg.guild, "ban", **log_kwargs)
             return None
 
 
@@ -127,7 +127,7 @@ class ActionProcessor(object):
                     "case": self.new_case("kick", msg, mod, user, reason)
                 }
             )
-            await self.modlog_processor.execute(msg.guild, "ban", **log_kwargs)
+            await self.log_processor.execute(msg.guild, "ban", **log_kwargs)
             return None
 
 
@@ -154,5 +154,5 @@ class ActionProcessor(object):
                 "until": f"<t:{round(until.timestamp())}:D>"
             }
         )
-        await self.modlog_processor.execute(msg.guild, "mute", **log_kwargs)
+        await self.log_processor.execute(msg.guild, "mute", **log_kwargs)
         return None

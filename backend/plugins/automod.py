@@ -199,6 +199,8 @@ class AutomodPlugin(AutoModPlugin):
             await msg.delete()
         except (discord.NotFound, discord.Forbidden):
             pass
+        else:
+            self.bot.ignore_for_events.append(msg.id)
         finally:
             await self.action_processor.execute(
                 msg, 
