@@ -4,6 +4,7 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 from toolbox import S as Object
 from typing import Union
+import itertools
 
 from . import AutoModPlugin
 from ..types import Embed, Duration
@@ -327,5 +328,86 @@ class ConfigPlugin(AutoModPlugin):
 
         await ctx.send(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"))
 
+
+    @commands.group(name="filter", aliases=["filters"])
+    async def _filter(self, ctx):
+        """filter_help"""
+        if ctx.invoked_subcommand == None:
+            prefix = self.get_prefix(ctx.guild)
+            e = Embed(
+                title="How to use filters",
+                description=f"• Adding a filter: ``{prefix}filter add <name> <warns> <words>`` \n• Deleting a filter: ``{prefix}filter remove <name>``"
+            )
+            e.add_field(
+                name="❯ Arguments",
+                value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when using a word within the filter* \n``<words>`` - *Words contained in the filter, seperated by commas*"
+            )
+            e.add_field(
+                name="❯ Wildcards",
+                value="You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered."
+            )
+            e.add_field(
+                name="❯ Example",
+                value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*``"
+            )
+            await ctx.send(embed=e)
+
+
+    @_filter.command(name="add")
+    async def add_filter(self, ctx, name, warns: int, *, words):
+        """filter_add_help"""
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
+        if name in filters: return await ctx.send(self.locale.t(ctx.guild, "filter_exists", _emote="NO"))
+
+        if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        filters[name] = {
+            "warns": warns,
+            "words": words.split(", ")
+        }
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.send(self.locale.t(ctx.guild, "added_filter", _emote="YES"))
+
+    
+    @_filter.command(name="remove")
+    async def remove_filter(self, ctx, name):
+        """filter_remove_help"""
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
+        if not name in filters: return await ctx.send(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
+
+        del filters[name]
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.send(self.locale.t(ctx.guild, "removed_filter", _emote="YES"))
+
+
+    @_filter.command()
+    async def show(self, ctx):
+        """filter_show_help"""
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+        if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
+
+        e = Embed(
+            title="Filters"
+        )
+        for name in dict(itertools.islice(filters.items(), 10)):
+            i = filters[name]
+            e.add_field(
+                name=f"❯ {name} ({i['warns']} {'warn' if int(i['warns']) == 1 else 'warns'})",
+                value=", ".join([f"``{x}``" for x in i["words"]])
+            )
+
+            footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
+            if footer != None: e.set_footer(text=footer)
+
+            await ctx.send(embed=e)
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))

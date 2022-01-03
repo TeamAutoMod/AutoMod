@@ -41,6 +41,10 @@
     "link_blacklist_help": "Base command for managing the link blacklist. When used without a subcommand, this shows the current link blacklist",
     "link_blacklist_add_help": "Adds a domain to the link blacklist",
     "link_blacklist_remove_help": "Removes a domain from the link blacklist",
+    "filter_help": "Base command for managing word filters",
+    "filter_add_help": "Created a filter with the given name, warns and words",
+    "filter_remove_help": "Removes the filter with the specified name",
+    "filter_show_help": "Shows a list of all avtive filters",
 
     "log_ban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
     "log_kick": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
@@ -135,5 +139,12 @@
     "alr_link": "{emote} This url is now blacklisted",
     "allowed_link": "{emote} Blacklisted this link. Users will now be flagged by the automoderator when sending it (given that it's enabled)",
     "not_link": "{emote} This link currently isn't blacklisted",
-    "unallowed_link": "{emote} Removed this link from the blacklist"
+    "unallowed_link": "{emote} Removed this link from the blacklist",
+
+    "filter_name_too_long": "{emote} Name is too long (>30)",
+    "filter_exists": "{emote} A filter with that name already exists",
+    "added_filter": "{emote} Filter has been created",
+    "no_filters": "{emote} This server doesn't have any filters",
+    "no_filter": "{emote} A filter with that name doesn't exist",
+    "removed_filter": "{emote} Filter has been deleted"
 }
