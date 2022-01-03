@@ -410,4 +410,5 @@ class ConfigPlugin(AutoModPlugin):
 
         await ctx.send(embed=e)
 
+
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))
