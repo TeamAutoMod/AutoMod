@@ -128,7 +128,7 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command()
-    async def help(self, ctx, query: str = None):
+    async def help(self, ctx, *, query: str = None):
         """help_help"""
         if query == None:
             prefix = self.get_prefix(ctx.guild)

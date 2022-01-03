@@ -22,3 +22,10 @@ class Embed(discord.Embed):
                     value=field["value"],
                     inline=field.get("inline", False)
                 )
+
+    def blank_field(self, inline=False):
+        return {
+            "name": "⠀",
+            "value": "⠀",
+            "inline": inline
+        }

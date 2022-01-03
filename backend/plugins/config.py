@@ -100,11 +100,12 @@ class ConfigPlugin(AutoModPlugin):
                 ),
                 "inline": True
             },
+            e.blank_field(True),
             {
                 "name": "❯ Automod Rules",
                 "value": "> **• Max Mentions:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {}"\
                 .format(
-                    n if not hasattr(rules, "mentions") else f"{rules.mentions.threshold} mentions",
+                    n if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
                     n if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}",
                     n if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}",
                     n if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}",
@@ -115,11 +116,12 @@ class ConfigPlugin(AutoModPlugin):
             {
                 "name": "❯ Punishments",
                 "value": "\n".join([
-                    f"> **• {x} Warn{'' if int(x) == 1 else 's'} {'' if x == 1 else ''}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
+                    f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in config.punishments.items()
                 ]) if len(config.punishments.items()) > 0 else n,
-                "inline": False
-            }
+                "inline": True
+            },
+            e.blank_field(True)
         ])
         await ctx.send(embed=e)
 
@@ -200,7 +202,15 @@ class ConfigPlugin(AutoModPlugin):
         """automod_help"""
         prefix = self.get_prefix(ctx.guild)
         if rule == None or amount == None:
-            return await ctx.send(self.locale.t(ctx.guild, "automod_setup_help", prefix=prefix))
+            e = Embed(
+                title="Automoderator Configuration",
+                description=self.locale.t(ctx.guild, "automod_description", prefix=prefix)
+            )
+            e.add_field(
+                name="❯ Commands",
+                value=self.locale.t(ctx.guild, "automod_commands", prefix=prefix)
+            )
+            return await ctx.send(embed=e)
         
         rule = rule.lower()
         if not rule in AUTOMOD_RULES:
@@ -232,7 +242,7 @@ class ConfigPlugin(AutoModPlugin):
     async def allowed_invites(self, ctx):
         """allowed_invites_help"""
         if ctx.invoked_subcommand == None:
-            allowed = [f"``{x.strip().lower}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+            allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
             if len(allowed) < 1:
                 prefix = self.get_prefix(ctx.guild)
                 return await ctx.send(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix=prefix))
@@ -244,8 +254,8 @@ class ConfigPlugin(AutoModPlugin):
             await ctx.send(embed=e)
 
 
-    @allowed_invites.command()
-    async def add(self, ctx, guild_id: int):
+    @allowed_invites.command(remove="add")
+    async def add_inv(self, ctx, guild_id: int):
         """allowed_invites_add_help"""
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
 
@@ -258,8 +268,8 @@ class ConfigPlugin(AutoModPlugin):
         await ctx.send(self.locale.t(ctx.guild, "allowed_inv", _emote="YES"))
 
 
-    @allowed_invites.command()
-    async def remove(self, ctx, guild_id: int):
+    @allowed_invites.command(name="remove")
+    async def remove_inv(self, ctx, guild_id: int):
         """allowed_invites_remove_help"""
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
 
@@ -270,6 +280,52 @@ class ConfigPlugin(AutoModPlugin):
         self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
 
         await ctx.send(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"))
+
+
+    @commands.group(aliases=["links"])
+    async def link_blacklist(self, ctx):
+        """link_blacklist_help"""
+        if ctx.invoked_subcommand == None:
+            links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+            if len(links) < 1:
+                prefix = self.get_prefix(ctx.guild)
+                return await ctx.send(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix=prefix))
+            
+            e = Embed(
+                title="Allowed links",
+                description=", ".join(links)
+            )
+            await ctx.send(embed=e)
+
+
+    @link_blacklist.command(name="add")
+    async def add_link(self, ctx, url: str):
+        """link_blacklist_add_help"""
+        url = url.lower()
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+
+        if str(url) in links:
+            return await ctx.send(self.locale.t(ctx.guild, "alr_link", _emote="NO"))
+        
+        links.append(url)
+        self.db.configs.update(ctx.guild.id, "black_listed_links", links)
+
+        await ctx.send(self.locale.t(ctx.guild, "allowed_link", _emote="YES"))
+
+
+    @link_blacklist.command(name="remove")
+    async def remove_link(self, ctx, url: str):
+        """link_blacklist_remove_help"""
+        url = url.lower()
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+
+        if not str(url) in links:
+            return await ctx.send(self.locale.t(ctx.guild, "not_link", _emote="NO"))
+        
+        links.remove(url)
+        self.db.configs.update(ctx.guild.id, "black_listed_links", links)
+
+        await ctx.send(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"))
 
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))

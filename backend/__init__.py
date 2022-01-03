@@ -9,7 +9,7 @@ from .bot import ShardedBotInstance
 VERSION = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip()
 
 
-with open("backend/config.json", "r") as config_file:
+with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
     config = json.load(config_file)
 
 

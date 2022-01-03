@@ -35,9 +35,12 @@
     "log_help": "Base command for configuring logging",
     "prefix_help": "Sets a new server prefix for the bot",
     "automod_help": "Base command for configuring the automoderator. You can use off as the argument in all subcommands to disable the respective feature",
-    "allowed_invites_help": "Base command for managing the invite whitelist. WHen used without a subcommand, this shows the currently invite whitelist",
+    "allowed_invites_help": "Base command for managing the invite whitelist. When used without a subcommand, this shows the current invite whitelist",
     "allowed_invites_add_help": "Adds a server to the invite whitelist",
     "allowed_invites_remove_help": "Removes a server from the invite whitelist",
+    "link_blacklist_help": "Base command for managing the link blacklist. When used without a subcommand, this shows the current link blacklist",
+    "link_blacklist_add_help": "Adds a domain to the link blacklist",
+    "link_blacklist_remove_help": "Removes a domain from the link blacklist",
 
     "log_ban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
     "log_kick": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
@@ -111,7 +114,8 @@
 
     "no_timeout_perms": "{emote} The (un-)mute command now uses the timeout feature. It looks like I don't have the correct permissions to use this feature though, so please make sure to give me either the ``administrator`` permission or, if you're not comfortable with that, simply the ``Timeout Members`` permission",
 
-    "automod_setup_help": "Yes",
+    "automod_description": "• Use ``off`` as the argument in all commands to disable the feature \n• To manage allowed invites, use the ``{prefix}allowed_invites`` command \n• To manage blacklisted links, use the ``{prefix}link_blacklist`` command \n• Actions are only taken on non-mods (People without ban members perms)",
+    "automod_commands": "``{prefix}automod invites <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod links <warns>`` - *Warns a user gets when sending blacklisted links* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod zalgo <warns>`` - *Warns a user gets when sending zalgo characters*",
     "invalid_automod_rule": "{emote} Invalid automod rule. Valid rules are: \n• mentions \n• links \n• invites \n• files  \n• zalgo",
     "automod_off": "{emote} Disabled the {_type} automod rule",
     "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field} amount/threshold or **off** as the second argument. Here's a little help: \n• ``{prefix}automod {rule} {field}`` - Enables this automod rule \n• ``{prefix}automod {rule} off`` - Disables this automod rule",
@@ -123,7 +127,13 @@
 
     "no_allowed": "{emote} No server invites are currently allowed. Allow invites from a specific server by using ``{prefix}allowed_invites add <server_id>``",
     "alr_allowed": "{emote} Invites from this server are already allowed",
-    "allowed_inv": "{emote} Successfully whitelisted this server. Users will not be flagged by the automoderator when sending invites from this server",
+    "allowed_inv": "{emote} Whitelisted this server. Users will not be flagged by the automoderator when sending invites from this server (given that it's enabled)",
     "not_allowed": "{emote} This server isn't currently whitelisted",
-    "unallowed_inv": "{emote} Successfully removed this server from the whitelist"
+    "unallowed_inv": "{emote} Removed this server from the whitelist",
+
+    "no_links": "{emote} No links are currently blacklisted. Blacklist links by using ``{prefix}link_blacklist add <url>``",
+    "alr_link": "{emote} This url is now blacklisted",
+    "allowed_link": "{emote} Blacklisted this link. Users will now be flagged by the automoderator when sending it (given that it's enabled)",
+    "not_link": "{emote} This link currently isn't blacklisted",
+    "unallowed_link": "{emote} Removed this link from the blacklist"
 }

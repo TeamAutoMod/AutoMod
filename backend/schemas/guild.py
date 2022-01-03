@@ -14,6 +14,7 @@ def GuildConfig(guild, prefix):
         "ignored_channels": [],
         "ignored_roles": [],
         "allowed_invites": [],
+        "black_listed_links": [],
         "tags": {},
 
         "punishments": {},

@@ -43,7 +43,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         typing=False
     )
     def __init__(self, *args, **kwargs):
-        with open("backend/config.json", "r") as config_file:
+        with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
         super().__init__(
             command_prefix=prefix_callable, intents=self.intents, 
