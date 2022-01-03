@@ -168,9 +168,11 @@ class AutomodPlugin(AutoModPlugin):
         self.action_processor = ActionProcessor(bot)
 
 
-    def can_act(self, guild, mod, target):
+    async def can_act(self, guild, mod, target):
+        if not guild.chunked: await guild.chunk(cache=True)
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
+        if mod == None or target == None: return False
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
@@ -280,7 +282,7 @@ class AutomodPlugin(AutoModPlugin):
     async def on_message(self, msg: discord.Message):
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
-        if not self.can_act(msg.guild, msg.guild.me, msg.author): return
+        if not await self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
 
@@ -289,7 +291,7 @@ class AutomodPlugin(AutoModPlugin):
     async def on_message_edit(self, _, msg: discord.Message):
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
-        if not self.can_act(msg.guild, msg.guild.me, msg.author): return
+        if not await self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
 

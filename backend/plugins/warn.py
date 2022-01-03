@@ -16,7 +16,8 @@ class WarnPlugin(AutoModPlugin):
         self.log_processor = LogProcessor(bot)
 
 
-    def can_act(self, guild, mod, target):
+    async def can_act(self, guild, mod, target):
+        if not guild.chunked: await guild.chunk(cache=True)
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
         return mod.id != target.id \
@@ -42,7 +43,7 @@ class WarnPlugin(AutoModPlugin):
         if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
         if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
-        if not self.can_act(ctx.guild, ctx.author, user):
+        if not await self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
         exc = await self.action_processor.execute(ctx.message, ctx.author, user, warns, reason)
@@ -70,7 +71,7 @@ class WarnPlugin(AutoModPlugin):
         if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
         if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
-        if not self.can_act(ctx.guild, ctx.author, user):
+        if not await self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
         _id = f"{ctx.guild.id}-{user.id}"

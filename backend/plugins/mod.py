@@ -42,7 +42,7 @@ class ModerationPlugin(WarnPlugin):
         if action != "hackban":
             if ctx.guild.get_member(user.id) == None:
                 return await ctx.send(self.locale.t(ctx.guild, "not_in_server", _emote="NO"))
-        if not self.can_act(ctx.guild, ctx.author, user):
+        if not await self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
         try:
             func = getattr(ctx.guild, ACTIONS[action]["action"])
@@ -147,7 +147,7 @@ class ModerationPlugin(WarnPlugin):
         if reason == None: self.locale.t(ctx.guild, "no_reason")
         if length.unit == None: length.unit = "m"
 
-        if not self.can_act(ctx.guild, ctx.author, user):
+        if not await self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
         if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
