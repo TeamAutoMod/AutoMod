@@ -408,6 +408,6 @@ class ConfigPlugin(AutoModPlugin):
             footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
             if footer != None: e.set_footer(text=footer)
 
-            await ctx.send(embed=e)
+        await ctx.send(embed=e)
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))
