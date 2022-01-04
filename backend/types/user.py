@@ -21,7 +21,7 @@ class DiscordUser(commands.Converter):
             user = await commands.UserConverter().convert(ctx, argument)
         except commands.BadArgument:
             try:
-                user = await ctx.bot.utils.getUser(
+                user = await ctx.bot.fetch_user(
                     await IntegerConverter(min=20000000000000000, max=9223372036854775807).convert(ctx, argument))
             except (ValueError, discord.HTTPException):
                 pass

@@ -150,7 +150,7 @@ class UtilityPlugin(AutoModPlugin):
 
             _help = get_command_help(self, ctx, query)
             if _help == None:
-                return await ctx.send(self.locale.t(ctx.guild, "invalid_command", _emote="<:redTick:751916874522034239>"))
+                return await ctx.send(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
             else:
                 await ctx.send(embed=_help)
 
@@ -176,11 +176,11 @@ class UtilityPlugin(AutoModPlugin):
         """jumbo_help"""
         urls = []
         for e in emotes.split(" ")[:5]:
-            if self.EMOJI_RE.match(e):
-                _, eid = self.EMOJI_RE.findall(e)[0]
+            if EMOJI_RE.match(e):
+                _, eid = EMOJI_RE.findall(e)[0]
                 urls.append("https://cdn.discordapp.com/emojis/{}.png".format(eid))
             else:
-                url = self.CDN.format("-".join(
+                url = CDN.format("-".join(
                     c.encode("unicode_escape").decode("utf-8")[2:].lstrip("0")
                     for c in e
                 ))
@@ -192,7 +192,7 @@ class UtilityPlugin(AutoModPlugin):
             try:
                 r.raise_for_status()
             except requests.HTTPError:
-                return await ctx.send(self.i18next.t(ctx.guild, "http_error", _emote="NO"))
+                return await ctx.send(self.locale.t(ctx.guild, "http_error", _emote="NO"))
 
             img = Image.open(BytesIO(r.content))
             height = img.height if img.height > height else height

@@ -1,5 +1,6 @@
 {
     "help_desc": "To get more information about a command, use ``{prefix}help <command>``",
+    "invalid_command": "{emote} This isn't a valid command",
     "no_reason": "No reason",
     "aborting": "Aborting",
 
@@ -32,7 +33,7 @@
 
     "config_help": "Shows the current server config",
     "punishment_help": "Sets a punishment for a specific amount of warns",
-    "log_help": "Base command for configuring logging",
+    "log_help": "Base command for configuring logging. Either use a channel as the second argument to enable the log option or use **off** to disable it",
     "prefix_help": "Sets a new server prefix for the bot",
     "automod_help": "Base command for configuring the automoderator. You can use off as the argument in all subcommands to disable the respective feature",
     "allowed_invites_help": "Base command for managing the invite whitelist. When used without a subcommand, this shows the current invite whitelist",
