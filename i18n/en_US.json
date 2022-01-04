@@ -53,7 +53,9 @@
     "log_warn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_unwarn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_mute": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
-    "log_manual_unmute": "**Moderator:** {moderator} ({moderator_id})",
+    "log_manual_unmute": "**Moderator:** {mod} ({mod_id})",
+    "log_unmute": "**Moderator:** {mod} ({mod_id}) \n**Reason:** [ Automatic ] Mute has expired",
+    "log_mute_extended": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
 
     "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
     "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",
@@ -80,6 +82,7 @@
     "unmuted": "{emote} User has been unmuted",
     "cleaned": "{emote} Deleted **{amount}** message{plural}",
     "unbanned": "{emote} User has been unbanned",
+    "mute_extended": "{emote} Mute has been extended until {until}",
 
     "name_too_long": "{emote} Tag name is too long (>30 chars)",
     "content_too_long": "{emote} Tg content is too long (>1900 chars)",

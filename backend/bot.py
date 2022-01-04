@@ -136,7 +136,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     "communication_disabled_until": None if mute == False else ios8601_ts
                 }, 
                 headers={
-                    "Authorization": f"Bot {self.bot.config.token}"
+                    "Authorization": f"Bot {self.config.token}"
                 }
             )
             if resp.status_code != 200: exc = resp.text

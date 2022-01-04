@@ -6,6 +6,7 @@ import asyncio
 import logging; log = logging.getLogger()
 
 from .warn import WarnPlugin
+from .processor import LogProcessor, ActionProcessor
 from ..types import DiscordUser, Duration, Embed
 from ..views import ConfirmView
 from ..schemas import Mute
@@ -36,6 +37,36 @@ class ModerationPlugin(WarnPlugin):
     """Plugin for all moderation commands"""
     def __init__(self, bot):
         super().__init__(bot)
+        self.log_processor = LogProcessor(bot)
+        self.action_processor = ActionProcessor(bot)
+        self.bot.loop.create_task(self.handle_unmutes())
+
+
+    async def handle_unmutes(self):
+        while True:
+            await asyncio.sleep(10)
+            if len(list(self.bot.db.mutes.find({}))) > 0:
+                for mute in self.bot.db.mutes.find():
+                    if "until" in mute:
+                        ending = mute["until"]
+                    else:
+                        ending = mute["ending"]
+
+                    if ending < datetime.datetime.utcnow():
+                        guild = self.bot.get_guild(int(mute["id"].split("-")[0]))
+                        if guild != None:
+
+                            t = guild.get_member(int(mute["id"].split("-")[1]))
+                            if t == None:
+                                t = "Unknown#0000"
+
+                            await self.log_processor.execute(guild, "unmute", **{
+                                "user": t,
+                                "user_id": int(mute["id"].split("-")[1]),
+                                "mod": self.bot.user,
+                                "mod_id": self.bot.user.id
+                            })
+                        self.bot.db.mutes.delete(mute["id"])
 
 
     async def kick_or_ban(self, action, ctx, user, reason, **extra_kwargs):
@@ -46,7 +77,7 @@ class ModerationPlugin(WarnPlugin):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
         try:
             func = getattr(ctx.guild, ACTIONS[action]["action"])
-            await func(user=user, reason=reason, **extra_kwargs)
+            await func(user=user, reason=reason)
         except Exception as ex:
             await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
         else:
@@ -58,6 +89,15 @@ class ModerationPlugin(WarnPlugin):
                 else:
                     self.bot.ignore_for_events.append(user.id)
                     await ctx.send(self.locale.t(ctx.guild, "softbanned", _emote="YES"))
+            
+            await self.log_processor.execute(ctx.guild, action, **{
+                "user": user,
+                "user_id": user.id,
+                "mod": ctx.author,
+                "mod_id": ctx.author.id,
+                "reason": reason,
+                "case": self.action_processor.new_case(action, ctx.message, ctx.author, user, reason)
+            })
             await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"]))
 
 
@@ -162,13 +202,13 @@ class ModerationPlugin(WarnPlugin):
                 self.db.mutes.update(_id, "until", until)
 
                 await i.response.edit_message(
-                    content=self.locale.t(ctx.guild, "mute_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>", reason=reason), 
+                    content=self.locale.t(ctx.guild, "mute_extended", _emote="YES", until=f"<t:{round(until.timestamp())}>"), 
                     embed=None, 
                     view=None
                 )
                 await self.log_processor.execute(ctx.guild, "mute_extended", **{
-                    "moderator": ctx.author, 
-                    "moderator_id": ctx.author.id,
+                    "mod": ctx.author, 
+                    "mod_id": ctx.author.id,
                     "user": user,
                     "user_id": user.id,
                     "until": f"<t:{round(until.timestamp())}:D>",
@@ -203,16 +243,17 @@ class ModerationPlugin(WarnPlugin):
                 until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
                 exc = self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
                 if exc != "":
-                    await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", error=exc))
+                    await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
                 else:
                     self.db.mutes.insert(Mute(ctx.guild.id, user.id, until))
 
                     await self.log_processor.execute(ctx.guild, "mute", **{
-                        "moderator": ctx.author, 
-                        "moderator_id": ctx.author.id,
+                        "mod": ctx.author, 
+                        "mod_id": ctx.author.id,
                         "user": user,
                         "user_id": user.id,
                         "until": f"<t:{round(until.timestamp())}:D>",
+                        "case": self.action_processor.new_case("mute", ctx.message, ctx.author, user, reason),
                         "reason": reason
                     }) 
 
@@ -239,8 +280,8 @@ class ModerationPlugin(WarnPlugin):
         else:
             self.db.mutes.delete(_id)
             await self.log_processor.execute(ctx.guild, "manual_unmute", **{
-                "moderator": ctx.author, 
-                "moderator_id": ctx.author.id,
+                "mod": ctx.author, 
+                "mod_id": ctx.author.id,
                 "user": user,
                 "user_id": user.id,
             }) 

@@ -61,7 +61,7 @@ class ActionProcessor(object):
         old_warns = 0
         new_warns = 0
         if not self.warns.exists(warn_id):
-            self.warns.insert(Warn(warn_id))
+            self.warns.insert(Warn(warn_id, warns))
         else:
             old_warns = self.warns.get(warn_id, "warns")
             new_warns = old_warns + warns; self.warns.update(warn_id, "warns", new_warns)
