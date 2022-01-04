@@ -59,10 +59,17 @@ class TagsPlugin(AutoModPlugin):
                         "author": int(e["author"])
                     }
                 }
-                if not _id in self._tags:
-                    self._tags[_id] = data
-                else:
-                    self._tags[_id].update(data)
+            else: # migration bs
+                data = {
+                    e["id"].split("-")[1:]: {
+                        "content": e["reply"],
+                        "author": int(e["author"])
+                    }
+                }
+            if not _id in self._tags:
+                self._tags[_id] = data
+            else:
+                self._tags[_id].update(data)
 
 
     def update_uses(self, _id):
