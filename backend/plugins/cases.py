@@ -40,7 +40,9 @@ class CasesPlugin(AutoModPlugin):
 
     def get_log_for_case(self, ctx, case):
         if not "log_id" in case: return None
-        if case["log_id"] == None: return
+
+        log_id = case["log_id"]
+        if log_id == None: return
 
         if "jump_url" in case:
             instant = case["jump_url"]
@@ -49,7 +51,7 @@ class CasesPlugin(AutoModPlugin):
         log_channel_id = self.db.configs.get(ctx.guild.id, "mod_log")
         if log_channel_id == "": return None
 
-        return "https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
+        return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
 
     @commands.command(aliases=["history"])
