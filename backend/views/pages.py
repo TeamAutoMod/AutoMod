@@ -38,18 +38,21 @@ class MultiPageView(View):
         self.id = ""
 
         self.add_item(CallbackButton(
-            "First Page", self.first_page, "cases:first_page", disabled=page==0
+            "", self.first_page, "cases:first_page", disabled=page==0, emoji="⏪"
         ))
 
         self.add_item(CallbackButton(
-            "Previous Page", self.prev_page, "cases:prev_page", disabled=page==0
+            "", self.prev_page, "cases:prev_page", disabled=page==0, emoji="◀️"
         ))
         self.add_item(CallbackButton(
-            "Next Page", self.next_page, "cases:next_page", disabled=page>=pages-1
+            "", self.delete, "cases:delete", disabled=False, style=discord.ButtonStyle.red, emoji="🗑️"
+        ))
+        self.add_item(CallbackButton(
+            "", self.next_page, "cases:next_page", disabled=page>=pages-1, emoji="▶️"
         ))
 
         self.add_item(CallbackButton(
-            "Last Page", self.last_page, "cases:last_page", disabled=page>=pages-1
+            "", self.last_page, "cases:last_page", disabled=page>=pages-1, emoji="⏩"
         ))
 
 
@@ -69,6 +72,13 @@ class MultiPageView(View):
             embed=embed,
             view=MultiPageView(page=page_count, pages=pages)
         )
+
+
+    @staticmethod
+    async def delete(i: discord.Interaction):
+        await i.message.delete()
+        if i.message.id in bot_obj.case_cmd_cache:
+            del bot_obj.case_cmd_cache[i.message.id]
 
     
     @staticmethod
