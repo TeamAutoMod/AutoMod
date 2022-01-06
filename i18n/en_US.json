@@ -1,5 +1,6 @@
 {
     "help_desc": "To get more information about a command, use ``{prefix}help <command>``",
+    "invalid_command": "{emote} This isn't a valid command",
     "no_reason": "No reason",
     "aborting": "Aborting",
 
@@ -32,7 +33,7 @@
 
     "config_help": "Shows the current server config",
     "punishment_help": "Sets a punishment for a specific amount of warns",
-    "log_help": "Base command for configuring logging",
+    "log_help": "Base command for configuring logging. Either use a channel as the second argument to enable the log option or use **off** to disable it",
     "prefix_help": "Sets a new server prefix for the bot",
     "automod_help": "Base command for configuring the automoderator. You can use off as the argument in all subcommands to disable the respective feature",
     "allowed_invites_help": "Base command for managing the invite whitelist. When used without a subcommand, this shows the current invite whitelist",
@@ -53,7 +54,9 @@
     "log_warn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_unwarn": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_mute": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
-    "log_manual_unmute": "**Moderator:** {moderator} ({moderator_id})",
+    "log_manual_unmute": "**Moderator:** {mod} ({mod_id})",
+    "log_unmute": "**Moderator:** {mod} ({mod_id}) \n**Reason:** [ Automatic ] Mute has expired",
+    "log_mute_extended": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
 
     "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
     "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",
@@ -80,6 +83,7 @@
     "unmuted": "{emote} User has been unmuted",
     "cleaned": "{emote} Deleted **{amount}** message{plural}",
     "unbanned": "{emote} User has been unbanned",
+    "mute_extended": "{emote} Mute has been extended until {until}",
 
     "name_too_long": "{emote} Tag name is too long (>30 chars)",
     "content_too_long": "{emote} Tg content is too long (>1900 chars)",

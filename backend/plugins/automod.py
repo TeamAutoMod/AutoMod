@@ -168,11 +168,11 @@ class AutomodPlugin(AutoModPlugin):
         self.action_processor = ActionProcessor(bot)
 
 
-    async def can_act(self, guild, mod, target):
-        if not guild.chunked: await guild.chunk(cache=True)
+    def can_act(self, guild, mod, target):
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
         if mod == None or target == None: return False
+        if target.guild_permissions.ban_members == True: return
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
@@ -259,11 +259,14 @@ class AutomodPlugin(AutoModPlugin):
 
         if hasattr(rules, "files"):
             if len(msg.attachments) > 0:
-                forbidden = [
-                    k for k, v in {
-                        x: x.url.split(".")[-1] for x in msg.attachments
-                    } if v.lower() not in ALLOWED_FILE_FORMATS
-                ]
+                try:
+                    forbidden = [
+                        x.url.split(".")[-1] for x in msg.attachments \
+                        if not x.url.split(".")[-1].lower() in ALLOWED_FILE_FORMATS
+                    ]
+                except Exception:
+                    print(msg.attachments)
+                    forbidden = []
                 if len(forbidden) > 0:
                     return await self.delete_msg(msg, rules.files.warns, f"Forbidden attachment type ({', '.join(forbidden)})")
 
@@ -274,15 +277,15 @@ class AutomodPlugin(AutoModPlugin):
 
         if hasattr(rules, "mentions"):
             found = len(MENTION_RE.findall(content))
-            if found >= rules.mentions.max:
-                return await self.delete_msg(msg, abs(rules.mentions.max - found), f"Spamming mentions ({found})")
+            if found >= rules.mentions.threshold:
+                return await self.delete_msg(msg, abs(rules.mentions.threshold - found), f"Spamming mentions ({found})")
     
 
     @AutoModPlugin.listener()
     async def on_message(self, msg: discord.Message):
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
-        if not await self.can_act(msg.guild, msg.guild.me, msg.author): return
+        if not self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
 
@@ -291,7 +294,7 @@ class AutomodPlugin(AutoModPlugin):
     async def on_message_edit(self, _, msg: discord.Message):
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
-        if not await self.can_act(msg.guild, msg.guild.me, msg.author): return
+        if not self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
 

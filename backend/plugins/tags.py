@@ -61,7 +61,7 @@ class TagsPlugin(AutoModPlugin):
                 }
             else: # migration bs
                 data = {
-                    e["id"].split("-")[1:]: {
+                    "-".join(e["id"].split("-")[1:]): {
                         "content": e["reply"],
                         "author": int(e["author"])
                     }
