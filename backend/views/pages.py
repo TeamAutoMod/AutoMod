@@ -33,10 +33,9 @@ async def get_cases_from_cache(i: discord.Interaction, diff):
 
 
 class MultiPageView(View):
-    def __init__(self, bot, page, pages):
+    def __init__(self, page, pages):
         super().__init__(timeout=None)
         self.id = ""
-        self.bot = bot
 
         self.add_item(CallbackButton(
             "First Page", self.first_page, "cases:first_page", disabled=page==0
