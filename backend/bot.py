@@ -12,6 +12,7 @@ from .mongo import MongoDB
 from .schemas import GuildConfig
 from .utils import Translator, Emotes
 from .types import Context
+from .views import pages
 
 
 
@@ -51,6 +52,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
             allowed_mentions=discord.AllowedMentions(everyone=False, replied_user=False),
             *args, **kwargs
         )
+        pages.inject_bot_obj(self)
+
         self.ready = False
         self.locked = False
 
@@ -59,6 +62,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         self.command_stats = {}
         self.ignore_for_events = []
+        self.case_cmd_cache = {}
 
         self.db = MongoDB(self)
         self.cache = InternalCache(self)

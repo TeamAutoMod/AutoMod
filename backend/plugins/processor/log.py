@@ -99,6 +99,19 @@ LOG_TYPES = {
         "emote": "PEN", 
         "action": "" # not needed
     },
+
+    "user_joined": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "JOIN"
+    },
+    "user_left": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0xff5c5c,
+        "emote": "LEAVE"
+    },
 }
 
 

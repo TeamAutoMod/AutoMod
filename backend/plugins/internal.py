@@ -117,6 +117,38 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
+    async def on_member_join(self, user: discord.Member):
+        e = Embed(
+            color=0x5cff9d,
+            description=self.locale.t(user.guild, "user_joined", profile=user.mention, created=round(user.created_at.timestamp()))
+        )
+        e.set_footer(
+            text="User joined"
+        )
+        await self.log_processor.execute(user.guild, "user_joined", **{
+            "_embed": e
+        })
+
+
+    @AutoModPlugin.listener()
+    async def on_member_remove(self, user: discord.Member):
+        await asyncio.sleep(0.3)
+        if user.id in self.bot.ignore_for_events:
+            return self.bot.ignore_for_events.remove(user.id)
+        
+        e = Embed(
+            color=0x2f3136,
+            description=self.locale.t(user.guild, "user_left", profile=user.mention, joined=round(user.joined_at.timestamp()))
+        )
+        e.set_footer(
+            text="User left"
+        )
+        await self.log_processor.execute(user.guild, "user_left", **{
+            "_embed": e
+        })
+
+
+    @AutoModPlugin.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
         await asyncio.sleep(0.3) # wait a bit before checking ignore_for_events
         if user.id in self.bot.ignore_for_events:

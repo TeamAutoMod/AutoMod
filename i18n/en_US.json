@@ -47,6 +47,8 @@
     "filter_remove_help": "Removes the filter with the specified name",
     "filter_show_help": "Shows a list of all avtive filters",
 
+    "cases_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
+
     "log_ban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
     "log_kick": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
     "log_unban": "**Moderator:** {mod} ({mod_id}) \n**Reason:** {reason}",
@@ -150,5 +152,11 @@
     "added_filter": "{emote} Filter has been created",
     "no_filters": "{emote} This server doesn't have any filters",
     "no_filter": "{emote} A filter with that name doesn't exist",
-    "removed_filter": "{emote} Filter has been deleted"
+    "removed_filter": "{emote} Filter has been deleted",
+
+    "searching": "{emote} Looking for recent cases, this may take a bit...",
+    "no_cases": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria",
+
+    "user_joined": "**Profile:** {profile} \n**Created:** <t:{created}>",
+    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}>"
 }

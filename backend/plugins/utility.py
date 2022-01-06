@@ -17,7 +17,8 @@ ACTUAL_PLUGIN_NAMES = {
     "UtilityPlugin": "Utility",
     "ModerationPlugin": "Moderation",
     "ConfigPlugin": "Configuration",
-    "TagsPlugin": "Tags"
+    "TagsPlugin": "Tags",
+    "CasesPlugin": "Cases"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
@@ -240,7 +241,7 @@ class UtilityPlugin(AutoModPlugin):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
-            cases = list(filter(lambda x: x["guild"] == str(ctx.guild.id) and x["user_id"] == str(user.id), self.db.inf.find()))
+            cases = list(filter(lambda x: x["guild"] == str(ctx.guild.id) and x["user_id"] == str(user.id), self.db.cases.find()))
 
             e.add_fields([
                 {

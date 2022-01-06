@@ -24,7 +24,7 @@ class ActionProcessor(object):
     def new_case(self, _type, msg, mod, user, reason):
         case = self.bot.db.configs.get(msg.guild.id, "cases") + 1
 
-        self.bot.db.inf.insert(Case(case, _type, msg, mod, user, reason))
+        self.bot.db.cases.insert(Case(case, _type, msg, mod, user, reason))
         self.bot.db.configs.update(msg.guild.id, "cases", case)
 
         case_ids = self.bot.db.configs.get(msg.guild.id, "case_ids")
