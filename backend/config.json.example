@@ -18,7 +18,9 @@
     ],
     "cache_options": [
         "configs",
-        "mutes"
+        "mutes",
+        "warns",
+        "cases"
     ],
     "langs": [
         "en_US"
@@ -30,7 +32,9 @@
         "internal",
         "mod",
         "tags",
-        "config"
+        "config",
+        "automod",
+        "cases"
     ],
     
     "bot_admins": [],

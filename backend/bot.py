@@ -127,16 +127,16 @@ class ShardedBotInstance(commands.AutoShardedBot):
         return super().get_cog(name)
 
 
-    def handle_timeout(self, mute, guild, user, ios8601_ts):
+    def handle_timeout(self, mute, guild, user, iso8601_ts):
         exc = ""
         try:
             resp = requests.patch(
                 f"https://discord.com/api/v9/guilds/{guild.id}/members/{user.id}",
                 json={
-                    "communication_disabled_until": None if mute == False else ios8601_ts
+                    "communication_disabled_until": None if mute == False else iso8601_ts
                 }, 
                 headers={
-                    "Authorization": f"Bot {self.bot.config.token}"
+                    "Authorization": f"Bot {self.config.token}"
                 }
             )
             if resp.status_code != 200: exc = resp.text
