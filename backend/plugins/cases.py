@@ -60,9 +60,7 @@ class CasesPlugin(AutoModPlugin):
         """cases_help"""
         if user == None: user = ctx.guild
 
-        msg = await ctx.send(embed=Embed(
-            description=self.locale.t(ctx.guild, "searching", _emote="SEARCH")
-        ))
+        msg = await ctx.send(self.locale.t(ctx.guild, "searching", _emote="SEARCH"))
 
         # what do search by (guild, mod, user)?
         opt = None
@@ -94,9 +92,7 @@ class CasesPlugin(AutoModPlugin):
             key=lambda e: int(e["id"].split("-")[-1]),
             reverse=True
         )
-        if len(found) < 1: return await msg.edit(embed=Embed(
-            description=self.locale.t(ctx.guild, "no_cases", _emote="NO")
-        ))
+        if len(found) < 1: return await msg.edit(self.locale.t(ctx.guild, "no_cases", _emote="NO"))
 
         out = []
         counts = {
