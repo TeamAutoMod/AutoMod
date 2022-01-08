@@ -5,7 +5,7 @@
 
     "token": "",
     "sentry_dsn": "",
-    "discords_token": "",
+    "top_gg_token": "",
     "support_invite": "https://discord.gg/S9BEBux",
 
     "mongo_host": "",
