@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import asyncio
 import datetime
+import topgg
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
@@ -17,6 +18,13 @@ class InternalPlugin(AutoModPlugin):
     def __init__(self, bot):
         super().__init__(bot)
         self.log_processor = LogProcessor(bot)
+        if bot.config.top_gg_token != "":
+            self.topgg = topgg.DBLClient(
+                bot,
+                bot.config.top_gg_token,
+                autopost=True,
+                post_shard_count=True
+            )
 
 
     @AutoModPlugin.listener()
@@ -123,6 +131,9 @@ class InternalPlugin(AutoModPlugin):
             color=0x5cff9d,
             description=self.locale.t(user.guild, "user_joined", profile=user.mention, created=round(user.created_at.timestamp()))
         )
+        e.set_thumbnail(
+            url=user.display_avatar
+        )
         e.set_footer(
             text="User joined"
         )
@@ -140,6 +151,9 @@ class InternalPlugin(AutoModPlugin):
         e = Embed(
             color=0x2f3136,
             description=self.locale.t(user.guild, "user_left", profile=user.mention, joined=round(user.joined_at.timestamp()))
+        )
+        e.set_thumbnail(
+            url=user.display_avatar
         )
         e.set_footer(
             text="User left"
@@ -159,6 +173,11 @@ class InternalPlugin(AutoModPlugin):
             "user": user,
             "user_id": user.id
         })
+
+
+    @AutoModPlugin.listener()
+    async def on_autopost_success(self):
+        log.info(f"Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
 
 
 def setup(bot): bot.register_plugin(InternalPlugin(bot))

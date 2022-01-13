@@ -85,11 +85,12 @@ class WarnPlugin(AutoModPlugin):
                 new = (cur - warns) if (cur - warns) >= 0 else 0
                 self.db.warns.update(_id, "warns", new)
 
-                self.log_processor.execute(ctx.guild, "unwarn", **{
+                await self.log_processor.execute(ctx.guild, "unwarn", **{
                     "user": user,
                     "user_id": user.id,
                     "mod": ctx.author,
                     "mod_id": ctx.author.id,
+                    "reason": reason,
                     "old_warns": cur,
                     "new_warns": new
                 })
