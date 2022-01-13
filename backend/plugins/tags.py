@@ -77,19 +77,19 @@ class TagsPlugin(AutoModPlugin):
         self.db.tags.update(_id, "uses", cur+1)
 
 
-    @commands.group()
-    async def tags(self, ctx):
-        """tags_help"""
+    @commands.group(name="commands", aliases=["tags"])
+    async def custom_commands(self, ctx):
+        """commands_help"""
         if ctx.invoked_subcommand is None:
             if ctx.guild.id in self._tags:
                 tags = self._tags[ctx.guild.id]
                 prefix = self.get_prefix(ctx.guild)
                 if len(tags) > 0:
                     e = Embed(
-                        title="Available Tags",
+                        title="Custom Commands",
                         description=", ".join([f"``{x}``" for x in tags])
                     )
-                    e.set_footer(text=f"Use a tag as a command (e.g. {prefix}{list(tags.keys())[0]})")
+                    e.set_footer(text=f"Use these as commands (e.g. {prefix}{list(tags.keys())[0]})")
                     await ctx.send(embed=e)
                 else:
                     await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
@@ -97,9 +97,9 @@ class TagsPlugin(AutoModPlugin):
                 await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
     
-    @tags.command(aliases=["create", "new"])
+    @custom_commands.command(aliases=["create", "new"])
     async def add(self, ctx, name: str, *, content: str):
-        """tags_add_help"""
+        """commands_add_help"""
         if len(name) > 30:
             return await ctx.send(self.locale.t(ctx.guild, "name_too_long", _emote="NO"))
         if len(content) > 1900:
@@ -114,9 +114,9 @@ class TagsPlugin(AutoModPlugin):
         await ctx.send(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name, prefix=self.get_prefix(ctx.guild)))
 
 
-    @tags.command(aliases=["delete", "del"])
+    @custom_commands.command(aliases=["delete", "del"])
     async def remove(self, ctx, name: str):
-        """tags_remove_help"""
+        """commands_remove_help"""
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
@@ -129,9 +129,9 @@ class TagsPlugin(AutoModPlugin):
 
 
 
-    @tags.command()
+    @custom_commands.command()
     async def update(self, ctx, name: str, *, content: str):
-        """tags_update_help"""
+        """commands_update_help"""
         if len(content) > 1900:
             return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
         

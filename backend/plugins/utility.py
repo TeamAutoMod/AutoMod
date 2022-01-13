@@ -17,7 +17,7 @@ ACTUAL_PLUGIN_NAMES = {
     "UtilityPlugin": "Utility",
     "ModerationPlugin": "Moderation",
     "ConfigPlugin": "Configuration",
-    "TagsPlugin": "Tags",
+    "TagsPlugin": "Custom Commands",
     "CasesPlugin": "Cases"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
@@ -118,7 +118,7 @@ class UtilityPlugin(AutoModPlugin):
             },
             {
                 "name": "❯ Usage",
-                "value": "> **• Commands:** {} \n> **• Tags:** {}"\
+                "value": "> **• Commands:** {} \n> **• Custom Commands:** {}"\
                 .format(
                     self.bot.used_commands,
                     self.bot.used_tags
