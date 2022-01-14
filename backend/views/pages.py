@@ -1,7 +1,7 @@
 import discord
 from discord.ui import View
 
-from .buttons import CallbackButton
+from .buttons import CallbackBtn
 
 
 
@@ -37,21 +37,21 @@ class MultiPageView(View):
         super().__init__(timeout=None)
         self.id = ""
 
-        self.add_item(CallbackButton(
+        self.add_item(CallbackBtn(
             "", self.first_page, "cases:first_page", disabled=page==0, emoji="⏪"
         ))
 
-        self.add_item(CallbackButton(
+        self.add_item(CallbackBtn(
             "", self.prev_page, "cases:prev_page", disabled=page==0, emoji="◀️"
         ))
-        self.add_item(CallbackButton(
+        self.add_item(CallbackBtn(
             "", self.delete, "cases:delete", disabled=False, style=discord.ButtonStyle.red, emoji="🗑️"
         ))
-        self.add_item(CallbackButton(
+        self.add_item(CallbackBtn(
             "", self.next_page, "cases:next_page", disabled=page>=pages-1, emoji="▶️"
         ))
 
-        self.add_item(CallbackButton(
+        self.add_item(CallbackBtn(
             "", self.last_page, "cases:last_page", disabled=page>=pages-1, emoji="⏩"
         ))
 

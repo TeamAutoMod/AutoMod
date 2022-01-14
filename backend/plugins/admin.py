@@ -9,6 +9,7 @@ import psutil
 
 from . import AutoModPlugin
 from ..types import Embed
+from ..views import DeleteView
 
 
 
@@ -43,6 +44,7 @@ class AdminPlugin(AutoModPlugin):
     @commands.command()
     async def eval(self, ctx, *, cmd: str):
         """eval_help"""
+        view = DeleteView()
         try:
             t1 = time.perf_counter()
             fn_name = "_eval_expr"
@@ -73,12 +75,10 @@ class AdminPlugin(AutoModPlugin):
             result = (await eval(f"{fn_name}()", env))
             t2 = time.perf_counter()
 
-            await ctx.message.add_reaction(self.bot.emotes.get("YES"))
-            await ctx.send("*Executed in {}ms* \n```py\n{}\n```".format(round((t2 - t1) * 1000, 6), result))
+            await ctx.send("*Executed in {}ms* \n```py\n{}\n```".format(round((t2 - t1) * 1000, 6), result), view=view)
         except Exception:
             ex = traceback.format_exc()
-            await ctx.message.add_reaction(self.bot.emotes.get("NO"))
-            await ctx.send("```py\n{}\n```".format(ex))
+            await ctx.send("```py\n{}\n```".format(ex), view=view)
 
 
 

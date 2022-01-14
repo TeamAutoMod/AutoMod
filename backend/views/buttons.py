@@ -27,10 +27,21 @@ class LinkBtn(Button):
         super().__init__(*args, style=discord.ButtonStyle.link, url=_url, label=_label, **kwargs)
 
 
-class CallbackButton(Button):
+class CallbackBtn(Button):
     def __init__(self, label, callback, cid=None, disabled=False, emoji=None, style=discord.ButtonStyle.blurple):
         super().__init__(style=style, label=label, custom_id=cid, disabled=disabled, emoji=emoji)
         self._callback = callback
 
     async def callback(self, interaction: discord.Interaction):
         await self._callback(interaction)
+
+
+class DeleteBtn(Button):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, label="", style=discord.ButtonStyle.red, emoji="🗑️", **kwargs)
+
+    async def callback(self, interaction: discord.Interaction):
+        try:
+            await interaction.message.delete()
+        except discord.NotFound:
+            pass

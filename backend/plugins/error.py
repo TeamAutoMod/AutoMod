@@ -35,7 +35,10 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "missing_bot_perms", _emote="LOCK", perms=perms))
         
         elif isinstance(error, commands.CheckFailure):
-            await ctx.send(self.locale.t(ctx.guild, "check_fail", _emote="LOCK"))
+            if len(ctx.commands.checks) < 1:
+                await ctx.send(self.locale.t(ctx.guild, "check_fail", _emote="LOCK"))
+            else:
+                ctx.commands.checks[0](ctx) # this raises a 'commands.MissingPermissions'
         
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after)))
