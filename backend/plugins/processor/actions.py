@@ -68,7 +68,7 @@ class ActionProcessor(object):
             new_warns = old_warns + warns; self.warns.update(warn_id, "warns", new_warns)
 
         rules = OrderedDict(sorted({int(x): y for x, y in self.bot.db.configs.get(msg.guild.id, "punishments").items() if int(x) <= new_warns}.items()))
-        if len(rules) < 100 and len(rules) > 0:
+        if len(rules) <  100 and len(rules) > 0:
             action = list(rules.values())[-1]
             _from = list(rules.keys())[-2] if len(list(rules.keys())) > 1 else 0
             _to = list(rules.keys())[-1]

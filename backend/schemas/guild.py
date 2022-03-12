@@ -1,10 +1,7 @@
-
-
-
 def GuildConfig(guild, prefix):
     return {
         "id": f"{guild.id}", 
-        "prefix": "{}".format(prefix if prefix != "" or prefix != None else "!"), 
+        "prefix": "{}".format(prefix if prefix != "" or prefix != None else "+"), 
         "mute_role": "",
 
         "mod_log": "", 
@@ -33,4 +30,4 @@ def GuildConfig(guild, prefix):
 
         "lang": "en_US",
         "guild_name": f"{guild.name}",
-    }
+}
