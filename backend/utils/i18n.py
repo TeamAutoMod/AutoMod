@@ -29,8 +29,11 @@ class Translator(object):
         try:
             string = self._langs[lang][key]
         except KeyError:
-            channel = self.bot.get_channel(881355013702713345)
-            asyncio.run_coroutine_threadsafe(channel.send(f"{key} not found"), loop=self.bot.loop)
+            channel = self.bot.get_channel(self.bot.config.error_channel)
+            asyncio.run_coroutine_threadsafe(
+                channel.send(f"{key} not found"), 
+                loop=self.bot.loop
+            )
 
             string = self._langs["en_US"][key]
         finally:

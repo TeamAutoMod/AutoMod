@@ -154,4 +154,4 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             super().run(self.config.token, reconnect=True)
         finally:
-            for h in log.handlers[:]: h.close(); log.removeHandler(h)
+            pass

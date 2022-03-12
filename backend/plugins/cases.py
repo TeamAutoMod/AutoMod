@@ -1,8 +1,8 @@
-from itertools import count
 import discord
 from discord.ext import commands
 
 import datetime
+from typing import Union
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
@@ -17,7 +17,7 @@ class CasesPlugin(AutoModPlugin):
         super().__init__(bot)
 
 
-    def case_embed(self, opt, user):
+    def case_embed(self, opt, user, last_24_hours, last_7_days, total):
         e = Embed(
             title="Recent Infractions",
             description=""
@@ -31,6 +31,24 @@ class CasesPlugin(AutoModPlugin):
             e.set_thumbnail(
                 url=user.display_avatar
             )
+        
+        e.add_fields([
+            {
+                "name": "Last 24 hours",
+                "value": f"{last_24_hours} infraction{'' if last_24_hours == 1 else 's'}",
+                "inline": True
+            },
+            {
+                "name": "Last 7 days",
+                "value": f"{last_7_days} infraction{'' if last_24_hours == 1 else 's'}",
+                "inline": True
+            },
+            {
+                "name": "Total",
+                "value": f"{total} infraction{'' if total == 1 else 's'}",
+                "inline": True
+            }
+        ])
         return e
 
 
@@ -56,13 +74,13 @@ class CasesPlugin(AutoModPlugin):
 
     @commands.command(aliases=["history"])
     @commands.has_guild_permissions(kick_members=True)
-    async def cases(self, ctx, user: DiscordUser = None):
+    async def cases(self, ctx, user: Union[DiscordUser, discord.Member, discord.Guild] = None):
         """cases_help"""
         if user == None: user = ctx.guild
 
         msg = await ctx.send(self.locale.t(ctx.guild, "searching", _emote="SEARCH"))
 
-        # what do search by (guild, mod, user)?
+        # what to search by (guild, mod, user)?
         opt = None
         if isinstance(user, discord.Guild):
             opt = "guild"
@@ -133,7 +151,25 @@ class CasesPlugin(AutoModPlugin):
                 )
             )
 
-        embed = self.case_embed(opt, user)
+        now = datetime.datetime.utcnow()
+        last_24_hours = len(
+            [
+                x for x in found if (now - datetime.timedelta(hours=24)) <= x["timestamp"] <= (now + datetime.timedelta(hours=24)) == True
+            ]
+        )
+        last_7_days = len(
+            [
+                x for x in found if (now - datetime.timedelta(days=7)) <= x["timestamp"] <= (now + datetime.timedelta(days=7)) == True
+            ]
+        )
+
+        embed = self.case_embed(
+            opt, 
+            user, 
+            last_24_hours, 
+            last_7_days, 
+            len(found)
+        )
 
         pages = []
         lines = 0
@@ -143,7 +179,13 @@ class CasesPlugin(AutoModPlugin):
         for i, inp in enumerate(out):
             if lines >= max_lines:
                 self.update_case_embed(embed, inp); pages.append(embed)
-                embed = self.case_embed(opt, user); lines = 0
+                embed = self.case_embed(
+                    opt, 
+                    user, 
+                    last_24_hours, 
+                    last_7_days, 
+                    len(found)
+                ); lines = 0
             else:
                 lines += 1
                 if len(out) <= (i+1):
@@ -155,8 +197,6 @@ class CasesPlugin(AutoModPlugin):
         for k, v in counts.items():
             text.append(f"{v} {k if v == 1 else f'{k}s'}")
         text = ", ".join(text[:3]) + f" & {text[-1]}"
-
-        for em in pages: em.set_footer(text=text)
 
         if len(pages) > 1:
             self.bot.case_cmd_cache.update({

@@ -1,10 +1,7 @@
-
-
-
 def GuildConfig(guild, prefix):
     return {
         "id": f"{guild.id}", 
-        "prefix": "{}".format(prefix if prefix != "" or prefix != None else "!"), 
+        "prefix": "{}".format(prefix if prefix != "" or prefix != None else "+"), 
         "mute_role": "",
 
         "mod_log": "", 
@@ -25,7 +22,12 @@ def GuildConfig(guild, prefix):
         "case_ids": {},
 
         "pre_reasons": {},
+        "lvl_sys": {
+            "enabled": False,
+            "notif_mode": "channel",
+            "users": []
+        },
 
         "lang": "en_US",
         "guild_name": f"{guild.name}",
-    }
+}
