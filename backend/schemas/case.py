@@ -1,8 +1,7 @@
-import datetime
 
 
 
-def Case(case, _type, msg, mod, user, reason):
+def Case(case, _type, msg, mod, user, reason, ts):
     return {
         "id": f"{msg.guild.id}-{case}",
         "case": f"{case}",
@@ -11,7 +10,7 @@ def Case(case, _type, msg, mod, user, reason):
         "user_id": f"{user.id}",
         "mod": f"{mod.name}#{mod.discriminator}",
         "mod_id": f"{mod.id}",
-        "timestamp": datetime.datetime.utcnow(),
+        "timestamp": ts,
         "type": f"{_type}",
         "reason": f"{reason}",
         "user_av": f"{user.display_avatar}",
