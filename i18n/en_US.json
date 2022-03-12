@@ -73,6 +73,7 @@
     "cant_act": "{emote} You're not allowed to do this",
     "alr_banned": "{emote} User is already banned",
     "not_banned": "{emote} This user isn't banned",
+    "not_muted": "{emote} This user isn't muted",
     "fail": "{emote} Looks like an error occured ||{exc}||",
 
     "banned": "{emote} User has been banned",
@@ -158,5 +159,12 @@
     "no_cases": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria",
 
     "user_joined": "**Profile:** {profile} \n**Created:** <t:{created}>",
-    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}>"
+    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}>",
+    "warn_help": "Adds the given amount of warns to the specified user. Default is one warn",
+    "unwarn_help": "Removes the given amount of warns from the specified user. Default is one warn",
+    "http_error": "{emote} There was an error while trying to fetch a bigger version of the emoji, please try again later",
+    "invalid_length_unit": "Valid length units are **d**, **h**, **m**, **s**, **days**, **hours**, **minutes**, **seconds**. The maximum length is 1 year",
+    "advanced_invalid_length_unit": "Valid length units are **d**, **h**, **m**, **s**, **days**, **hours**, **minutes**, **seconds**. The maximum length is 1 year",
+    "no_warns": "{emote} This user doesn't have any warns",
+    "alr_cleaned": "{emote} Looks like these messages have already been deleted"
 }

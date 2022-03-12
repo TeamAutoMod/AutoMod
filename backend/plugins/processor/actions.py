@@ -61,13 +61,13 @@ class ActionProcessor(object):
         old_warns = 0
         new_warns = 0
         if not self.warns.exists(warn_id):
-            self.warns.insert(Warn(warn_id, warns))
+            self.warns.insert(Warn(warn_id, warns)); new_warns = warns
         else:
             old_warns = self.warns.get(warn_id, "warns")
             new_warns = old_warns + warns; self.warns.update(warn_id, "warns", new_warns)
 
         rules = OrderedDict(sorted({int(x): y for x, y in self.bot.db.configs.get(msg.guild.id, "punishments").items() if int(x) <= new_warns}.items()))
-        if len(rules) > 100:
+        if len(rules) <  100 and len(rules) > 0:
             action = list(rules.values())[-1]
             _from = list(rules.keys())[-2] if len(list(rules.keys())) > 1 else 0
             _to = list(rules.keys())[-1]
@@ -80,12 +80,12 @@ class ActionProcessor(object):
             )
 
             if len(action.split(" ")) != 1:
-                action = "mute"
                 log_kwargs.update(
                     {
                         "length": int(action.split(" ")[1])
                     }
                 )
+                action = "mute"
 
             func = self.executors[action]
             return await func(msg, mod, user, reason, **log_kwargs)
@@ -101,7 +101,8 @@ class ActionProcessor(object):
             return None
 
 
-    async def ban(self, msg, mod, user, reason, **log_kwargs):
+    async def ban(self, msg, _mod, _user, _reason, **log_kwargs):
+        mod, user, reason = _mod, _user, _reason
         try:
             await msg.guild.ban(user=user)
         except Exception as ex:
@@ -116,7 +117,8 @@ class ActionProcessor(object):
             return None
 
 
-    async def kick(self, msg, mod, user, reason, **log_kwargs):
+    async def kick(self, msg, _mod, _user, _reason, **log_kwargs):
+        mod, user, reason = _mod, _user, _reason
         try:
             await msg.guild.kick(user=user)
         except Exception as ex:
@@ -131,19 +133,20 @@ class ActionProcessor(object):
             return None
 
 
-    async def mute(self, msg, mod, user, reason, **log_kwargs):
+    async def mute(self, msg, _mod, _user, _reason, **log_kwargs):
+        mod, user, reason = _mod, _user, _reason
         user = msg.guild.get_member(user.id);
         if user == None: return "User not found"
 
         if (msg.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
             if msg.guild.me.guild_permissions.administrator == False: 
                 return "Missing permissions. Make sure I have the ``Timeout members`` permission"
-        
+
         length = log_kwargs["length"]
         until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=length))
 
         if self.bot.db.mutes.exists(f"{msg.guild.id}-{user.id}"): return
-        self.bot.db.mutes.insert(Mute(msg.guild.id, msg.id, until))
+        self.bot.db.mutes.insert(Mute(msg.guild.id, user.id, until))
 
         self.bot.handle_timeout(True, msg.guild, user, until.isoformat())
 

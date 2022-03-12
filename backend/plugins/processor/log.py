@@ -84,6 +84,13 @@ LOG_TYPES = {
         "emote": "UNLOCK",
         "action": "User unwarned"
     },
+    "manual_unmute": {
+        "channel": "mod_log",
+        "key": "log_manual_unmute",
+        "color": 0x5cff9d,
+        "emote": "UNMUTE",
+        "action": "User manually unmuted"
+    },
 
     "message_deleted": {
         "channel": "message_log",

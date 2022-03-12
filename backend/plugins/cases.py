@@ -103,7 +103,7 @@ class CasesPlugin(AutoModPlugin):
         }
 
         for case in found:
-            if case["type"] in counts:
+            if case["type"].lower() in counts:
                 counts.update({
                     case["type"].lower(): (counts[case["type"].lower()] + 1)
                 })

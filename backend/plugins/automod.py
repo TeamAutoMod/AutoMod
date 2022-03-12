@@ -176,7 +176,8 @@ class AutomodPlugin(AutoModPlugin):
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
-            and mod.top_role > target.top_role
+            and target.guild_permissions.ban_members == False \
+            and target.guild_permissions.kick_members == False
 
 
     def parse_filter(self, words):
