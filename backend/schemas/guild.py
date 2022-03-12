@@ -25,6 +25,11 @@ def GuildConfig(guild, prefix):
         "case_ids": {},
 
         "pre_reasons": {},
+        "lvl_sys": {
+            "enabled": False,
+            "notif_mode": "channel",
+            "users": []
+        },
 
         "lang": "en_US",
         "guild_name": f"{guild.name}",

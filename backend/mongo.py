@@ -16,7 +16,7 @@ class MongoCollection(Collection):
         else:
             return super().get(_id, key)
 
-    
+
     def get_from_db(self, _id, key):
         return super().get(_id, key)
 
@@ -49,6 +49,7 @@ class MongoDB(Database):
             "tags": "tags",
             "cases": "cases",
             "warns": "warns",
-            "mutes": "mutes"
+            "mutes": "mutes",
+            "level": "level"
         }.items():
             setattr(self, obj_name, MongoCollection(bot, self, db_name))

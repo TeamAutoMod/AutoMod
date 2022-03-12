@@ -26,7 +26,9 @@ class ErrorPlugin(AutoModPlugin):
         if isinstance(error, commands.CommandNotFound):
             return
         
-        if isinstance(error, commands.MissingPermissions):
+        if isinstance(error, commands.NotOwner):
+            await ctx.send(f"{self.bot.emotes.get('NO')} You can't use this command")
+        elif isinstance(error, commands.MissingPermissions):
             perms = " | ".join([f"``{x}``" for x in error.missing_permissions])
             await ctx.send(self.locale.t(ctx.guild, "missing_user_perms", _emote="LOCK", perms=perms))
         
@@ -35,10 +37,10 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "missing_bot_perms", _emote="LOCK", perms=perms))
         
         elif isinstance(error, commands.CheckFailure):
-            if len(ctx.commands.checks) < 1:
+            if len(ctx.command.checks) < 1:
                 await ctx.send(self.locale.t(ctx.guild, "check_fail", _emote="LOCK"))
             else:
-                ctx.commands.checks[0](ctx) # this raises a 'commands.MissingPermissions'
+                await ctx.command.checks[0](ctx) # this raises a 'commands.MissingPermissions'
         
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after)))

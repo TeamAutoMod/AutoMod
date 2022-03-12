@@ -147,6 +147,7 @@ class InternalPlugin(AutoModPlugin):
         await asyncio.sleep(0.3)
         if user.id in self.bot.ignore_for_events:
             return self.bot.ignore_for_events.remove(user.id)
+        if user.id == self.bot.user.id: return
         
         e = Embed(
             color=0x2f3136,

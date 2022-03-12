@@ -34,9 +34,11 @@
         "tags",
         "config",
         "automod",
-        "cases"
+        "cases",
+        "level"
     ],
     
     "bot_admins": [],
-    "blocked_guilds": []
+    "blocked_guilds": [],
+    "error_channel": 123456789
 }

@@ -1,4 +1,5 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 import json
@@ -41,7 +42,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
         emojis=True,
         messages=True,
         reactions=True,
-        typing=False
+        typing=False,
+        message_content=True
     )
     def __init__(self, *args, **kwargs):
         with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
@@ -68,6 +70,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.cache = InternalCache(self)
         self.emotes = Emotes(self)
         self.locale = Translator(self)
+        self.command_tree = app_commands.CommandTree(self)
 
         self.load_plugins()
         self.run()

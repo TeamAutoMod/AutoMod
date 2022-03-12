@@ -234,7 +234,7 @@ class UtilityPlugin(AutoModPlugin):
             .format(
                 user.id,
                 user.mention, 
-                round(member.created_at.timestamp())
+                round(user.created_at.timestamp())
             )
         )
         if member is not None:

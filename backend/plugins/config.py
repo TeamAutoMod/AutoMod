@@ -222,7 +222,7 @@ class ConfigPlugin(AutoModPlugin):
 
         if isinstance(amount, str):
             if amount.lower() == "off":
-                self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current if k != rule})
+                self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
                 return await ctx.send(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
             else:
                 return await ctx.send(self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field=data.i18n_type))

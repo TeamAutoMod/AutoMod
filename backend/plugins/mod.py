@@ -98,7 +98,7 @@ class ModerationPlugin(WarnPlugin):
                 "reason": reason,
                 "case": self.action_processor.new_case(action, ctx.message, ctx.author, user, reason)
             })
-            await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"]))
+            await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES"))
 
 
     @commands.command()
@@ -276,7 +276,7 @@ class ModerationPlugin(WarnPlugin):
 
         exc = self.bot.handle_timeout(False, ctx.guild, user, None)
         if exc != "":
-            await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", error=exc))
+            await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
         else:
             self.db.mutes.delete(_id)
             await self.log_processor.execute(ctx.guild, "manual_unmute", **{

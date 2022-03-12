@@ -14,8 +14,6 @@
     "mute_help": "Mutes (timeouts) the a user for the specified time or extends their mute",
     "unmute_help": "Unmutes a muted user (removes their timeout)",
     "clean_help": "Deletes between 1 and 300 messages from a channel",
-    "warn_help": "Adds a specific amount of warns to the speicifed user (default amount of warns is 1)",
-    "unwarn_help": "Removes a specific amount of warns from the specified user (default amount of warns is 1)",
     "unban_help": "Unbans the specified user from the server",
 
     "commands_help": "Base command for managing custom commands. When used without a subcommand, this shows a list of all custom commands in this guild",
@@ -73,6 +71,7 @@
     "cant_act": "{emote} You're not allowed to do this",
     "alr_banned": "{emote} User is already banned",
     "not_banned": "{emote} This user isn't banned",
+    "not_muted": "{emote} This user isn't muted",
     "fail": "{emote} Looks like an error occured ||{exc}||",
 
     "banned": "{emote} User has been banned",
@@ -158,5 +157,18 @@
     "no_cases": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria",
 
     "user_joined": "**Profile:** {profile} \n**Created:** <t:{created}>",
-    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}>"
+    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}>",
+    "warn_help": "Adds the given amount of warns to the specified user. Default is one warn",
+    "unwarn_help": "Removes the given amount of warns from the specified user. Default is one warn",
+    "http_error": "{emote} There was an error while trying to fetch a bigger version of the emoji, please try again later",
+    "invalid_length_unit": "Valid length units are **d**, **h**, **m**, **s**, **days**, **hours**, **minutes**, **seconds**. The maximum length is 1 year",
+    "advanced_invalid_length_unit": "Valid length units are **d**, **h**, **m**, **s**, **days**, **hours**, **minutes**, **seconds**. The maximum length is 1 year",
+    "no_warns": "{emote} This user doesn't have any warns",
+    "alr_cleaned": "{emote} Looks like these messages have already been deleted",
+
+    "lvl_up_channel": "{emote} {mention}, congratulations on reaching **Level {lvl}**!",
+    "lvl_up_dm": "{emote} {mention}, congratulations on reaching **Level {lvl}** in {guild}!",
+    "not_ranked": "{emote} User is not ranked yet",
+    "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using ``{prefix}lvl_sys``",
+    "no_one_ranked": "{emote} No users are currently ranked"
 }

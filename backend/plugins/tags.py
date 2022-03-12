@@ -73,6 +73,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     def update_uses(self, _id):
+        self.bot.used_tags += 1
         cur = self.db.tags.get(_id, "uses")
         self.db.tags.update(_id, "uses", cur+1)
 
