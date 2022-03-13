@@ -44,8 +44,8 @@ class InternalPlugin(AutoModPlugin):
     async def on_guild_remove(self, guild: discord.Guild):
         if guild == None: return
         log.info(f"Removed from guild: {guild.name} ({guild.id})")
-
         if self.db.configs.exists(guild.id):
+            self.db.cases.multi_delete({"guild": f"{guild.id}"})
             self.db.configs.delete(guild.id)
 
 
