@@ -44,8 +44,9 @@ class MongoCollection(Collection):
     def multi_delete(self, _filter: dict):
         super().delete_many(_filter)
         if self.cached:
-            for k, v in (getattr(self.bot.cache, self.collection_name)).data.items():
-                if v[list(_filter.keys())[0]] == list(_filter.values())[0]:
+            data = (getattr(self.bot.cache, self.collection_name)).data
+            for k in (getattr(self.bot.cache, self.collection_name)).data.copy():
+                if data[k][list(_filter.keys())[0]] == list(_filter.values())[0]:
                     (getattr(self.bot.cache, self.collection_name)).delete(k)
 
 

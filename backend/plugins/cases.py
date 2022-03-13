@@ -72,7 +72,7 @@ class CasesPlugin(AutoModPlugin):
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
 
-    @commands.command(aliases=["history"])
+    @commands.command(aliases=["history", "infractions"])
     @commands.has_guild_permissions(kick_members=True)
     async def cases(self, ctx, user: Union[DiscordUser, discord.Member, discord.Guild] = None):
         """cases_help"""
