@@ -44,6 +44,7 @@
     "filter_add_help": "Created a filter with the given name, warns and words",
     "filter_remove_help": "Removes the filter with the specified name",
     "filter_show_help": "Shows a list of all avtive filters",
+    "disable_help": "Disables one or more commands and its subcommands for non-mods. To re-enable a command, use it again as the argument. If you want to disable/enable more commands, sperate them by a space",
 
     "cases_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
 
@@ -170,5 +171,8 @@
     "lvl_up_dm": "{emote} {mention}, congratulations on reaching **Level {lvl}** in {guild}!",
     "not_ranked": "{emote} User is not ranked yet",
     "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using ``{prefix}lvl_sys``",
-    "no_one_ranked": "{emote} No users are currently ranked"
+    "no_one_ranked": "{emote} No users are currently ranked",
+
+    "no_disabled_commands": "{emote} Currently all commands are enabled",
+    "no_changes": "{emote} This wouldn't change the current command config"
 }

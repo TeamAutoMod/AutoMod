@@ -93,12 +93,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
         ctx = await self.get_context(msg, cls=Context)
         if ctx.valid and ctx.command is not None:
             self.used_commands += 1
-            if not ctx.command.qualified_name in self.command_stats:
-                self.command_stats.update({
-                    ctx.command.qualified_name: 1
-                })
-            else:
-                self.command_stats[ctx.command.qualified_name] += 1
+            disabled = self.db.configs.get(msg.guild.id, "disabled_commands")
+            if ctx.command.name.lower() in disabled:
+                if ctx.author.guild_permissions.manage_messages == False:
+                    return
+            
             if self.ready:
                 if not msg.guild.chunked:
                     await msg.guild.chunk(cache=True)
