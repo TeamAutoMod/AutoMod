@@ -39,7 +39,15 @@ class MongoCollection(Collection):
     def delete(self, _id):
         super().delete(_id)
         if self.cached: (getattr(self.bot.cache, self.collection_name)).delete(_id)
-            
+
+
+    def multi_delete(self, _filter: dict):
+        super().delete_many(_filter)
+        if self.cached:
+            for k, v in (getattr(self.bot.cache, self.collection_name)).data.items():
+                if v[list(_filter.keys())[0]] == list(_filter.values())[0]:
+                    (getattr(self.bot.cache, self.collection_name)).delete(k)
+
 
 class MongoDB(Database):
     def __init__(self, bot):

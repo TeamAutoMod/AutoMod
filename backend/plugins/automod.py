@@ -266,7 +266,6 @@ class AutomodPlugin(AutoModPlugin):
                         if not x.url.split(".")[-1].lower() in ALLOWED_FILE_FORMATS
                     ]
                 except Exception:
-                    print(msg.attachments)
                     forbidden = []
                 if len(forbidden) > 0:
                     return await self.delete_msg(msg, rules.files.warns, f"Forbidden attachment type ({', '.join(forbidden)})")

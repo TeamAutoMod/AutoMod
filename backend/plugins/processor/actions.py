@@ -73,9 +73,10 @@ class ActionProcessor(object):
             action = list(rules.values())[-1]
             _from = list(rules.keys())[-2] if len(list(rules.keys())) > 1 else 0
             _to = list(rules.keys())[-1]
+            reason = f"[ Automatic {_to} ] {reason}"
             log_kwargs.update(
                 {
-                    "reason": f"[ Automatic {_to} ] {reason}",
+                    "reason": reason,
                     "old_warns": _from,
                     "new_warns": _to
                 }

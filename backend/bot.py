@@ -43,6 +43,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
         reactions=True,
         typing=False
     )
+    if hasattr(intents, "message_content"):
+        intents.message_content = True
     def __init__(self, *args, **kwargs):
         with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))

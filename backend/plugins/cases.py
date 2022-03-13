@@ -135,7 +135,18 @@ class CasesPlugin(AutoModPlugin):
             if isinstance(timestamp, str):
                 if not timestamp.startswith("<t"):
                     dt = datetime.datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
+                    case["timestamp"] = dt
                     timestamp = f"<t:{round(dt.timestamp())}>"
+                else:
+                    case["timestamp"] = datetime.datetime.fromtimestamp(
+                        int(
+                            case["timestamp"].replace(
+                                "<t:", ""
+                            ).replace(
+                                ">", ""
+                            )
+                        )
+                    )
             else:
                 timestamp = f"<t:{round(timestamp.timestamp())}>"
 
@@ -154,12 +165,12 @@ class CasesPlugin(AutoModPlugin):
         now = datetime.datetime.utcnow()
         last_24_hours = len(
             [
-                x for x in found if (now - datetime.timedelta(hours=24)) <= x["timestamp"] <= (now + datetime.timedelta(hours=24)) == True
+                x for x in found if ((now - datetime.timedelta(hours=24)) <= x["timestamp"] <= (now + datetime.timedelta(hours=24))) == True
             ]
         )
         last_7_days = len(
             [
-                x for x in found if (now - datetime.timedelta(days=7)) <= x["timestamp"] <= (now + datetime.timedelta(days=7)) == True
+                x for x in found if ((now - datetime.timedelta(days=7)) <= x["timestamp"] <= (now + datetime.timedelta(days=7))) == True
             ]
         )
 
