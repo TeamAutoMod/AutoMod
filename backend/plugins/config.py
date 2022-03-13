@@ -255,7 +255,7 @@ class ConfigPlugin(AutoModPlugin):
             await ctx.send(embed=e)
 
 
-    @allowed_invites.command(remove="add")
+    @allowed_invites.command(name="add")
     async def add_inv(self, ctx, guild_id: int):
         """allowed_invites_add_help"""
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
@@ -409,6 +409,67 @@ class ConfigPlugin(AutoModPlugin):
             if footer != None: e.set_footer(text=footer)
 
         await ctx.send(embed=e)
+
+
+    @commands.command(aliases=["restrict"])
+    async def disable(self, ctx, *, commands: str = None):
+        """disable_help"""
+        _disabled = self.db.configs.get(ctx.guild.id, "disabled_commands")
+
+        if commands == None:
+            if len(_disabled) < 1:
+                return await ctx.send(self.locale.t(ctx.guild, "no_disabled_commands", _emote="NO"))
+            else:
+                e = Embed(
+                    title="Disabled commands (mod-only)",
+                    description=", ".join([f"``{x}``" for x in _disabled])
+                )
+                return await ctx.send(embed=e)
+
+        commands = commands.split(" ")
+        enabled = []
+        disabled = []
+        failed = []
+        for cmd in commands:
+            cmd = cmd.lower()
+            if cmd in self.bot.all_commands:
+                if not cmd in _disabled:
+                    if len((self.bot.get_command(cmd)).checks) < 1:
+                        _disabled.append(cmd); disabled.append(cmd)
+                    else:
+                        failed.append(cmd)
+                else:
+                    enabled.append(cmd)
+                    _disabled.remove(cmd)
+            else:
+                failed.append(cmd)
+        
+        if (len(enabled) + len(disabled)) < 1: 
+            return await ctx.send(self.locale.t(ctx.guild, "no_changes", _emote="NO"))
+        
+        self.db.configs.update(ctx.guild.id, "disabled_commands", disabled)
+        e = Embed(
+            title="Command config changes"
+        )
+        if len(disabled) > 0:
+            e.add_field(
+                name="❯ Disabled the following commands", 
+                value=", ".join([f"``{x}``" for x in disabled])
+            )
+        if len(enabled) > 0:
+            e.add_field(
+                name="❯ Re-enabled the following commands",
+                value=", ".join([f"``{x}``" for x in enabled]),
+            )
+        if len(failed) > 0:
+            e.add_field(
+                name="❯ Following commands are unknown or mod-commands",
+                value=", ".join([f"``{x}``" for x in failed]),
+            )
+        
+        await ctx.send(embed=e)
+        
+                
 
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))

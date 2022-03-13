@@ -27,6 +27,7 @@ def GuildConfig(guild, prefix):
             "notif_mode": "channel",
             "users": []
         },
+        "disabled_commands": [],
 
         "lang": "en_US",
         "guild_name": f"{guild.name}",
