@@ -4,7 +4,7 @@ import discord
 
 class Embed(discord.Embed):
     #0x5764f0
-    def __init__(self, color=0x3498db, **kwargs):
+    def __init__(self, color=0x5764f1, **kwargs):
         super().__init__(color=color, **kwargs)
     
 
