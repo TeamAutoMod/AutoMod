@@ -58,6 +58,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         self.ready = False
         self.locked = False
+        self.avatar_as_bytes = None
 
         self.used_commands = 0
         self.used_tags = 0
@@ -65,6 +66,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.command_stats = {}
         self.ignore_for_events = []
         self.case_cmd_cache = {}
+        self.webhook_cache = {}
 
         self.db = MongoDB(self)
         self.cache = InternalCache(self)
@@ -84,6 +86,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 if not self.db.configs.exists(g.id):
                     self.db.configs.insert(GuildConfig(g, self.config.default_prefix))
             
+            self.avatar_as_bytes = await self.guilds[0].me.avatar.read()
             self.ready = True
 
     

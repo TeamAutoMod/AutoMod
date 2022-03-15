@@ -4,6 +4,7 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 from toolbox import S as Object
 from typing import Union
+import asyncio
 import itertools
 
 from . import AutoModPlugin
@@ -58,10 +59,90 @@ class ConfigPlugin(AutoModPlugin):
     """Plugin for all configuration commands"""
     def __init__(self, bot):
         super().__init__(bot)
+        self.webhook_queue = []
+        self.bot.loop.create_task(self.create_webhooks())
 
 
     def cog_check(self, ctx):
         return ctx.author.guild_permissions.manage_guild
+
+
+    async def create_webhooks(self):
+        while True:
+            await asyncio.sleep(1)
+            if len(self.webhook_queue) > 0:
+                print("hey")
+                for w in self.webhook_queue:
+                    self.webhook_queue.remove(w)
+                    await self.create_log_webhook(
+                        w["ctx"],
+                        w["option"],
+                        w["channel"]
+                    )
+
+
+    async def create_log_webhook(self, ctx, option, channel):
+        wid = self.bot.db.configs.get(ctx.guild.id, f"{option}_webhook")
+        if wid != "":
+            try:
+                ow = await self.bot.fetch_webhook(int(wid))
+            except Exception:
+                pass
+            else:
+                await ow.delete()
+            
+        if ctx.guild.id in self.bot.webhook_cache:
+            if self.bot.webhook_cache[ctx.guild.id][option] != None:
+                try:
+                    await (self.bot.webhook_cache[ctx.guild.id][option]).delete()
+                except Exception:
+                    pass
+        
+        try:
+            w = await channel.create_webhook(
+                name="AutoMod",
+                avatar=self.bot.avatar_as_bytes
+            )
+        except Exception:
+            return
+        else:
+            self.bot.db.configs.update(ctx.guild.id, f"{option}_webhook", f"{w.id}")
+            if not ctx.guild.id in self.bot.webhook_cache:
+                self.bot.webhook_cache.update({
+                    ctx.guild.id: {
+                        "mod_log": w,
+                        "server_log": None,
+                        "message_log": None
+                    }
+                })
+            else:
+                if self.bot.webhook_cache[ctx.guild.id][option] == None:
+                    self.bot.webhook_cache[ctx.guild.id][option] = w
+                else:
+                    if self.bot.webhook_cache[ctx.guild.id][option] != w.id:
+                        self.bot.webhook_cache[ctx.guild.id][option] = w
+
+
+    async def delete_webhook(self, ctx, option):
+        if ctx.guild.id in self.bot.webhook_cache:
+            if self.bot.webhook_cache[ctx.guild.id][option] != None:
+                try:
+                    await (self.bot.webhook_cache[ctx.guild.id][option]).delete()
+                except Exception:
+                    pass
+                else:
+                    return
+                finally:
+                    self.bot.webhook_cache[ctx.guild.id][option] = None
+
+        wid = self.bot.db.configs.get(ctx.guild.id, f"{option}_webhook")
+        if wid != "":
+            try:
+                ow = await self.bot.fetch_webhook(int(wid))
+            except Exception:
+                pass
+            else:
+                await ow.delete()
 
 
     @commands.command()
@@ -178,13 +259,25 @@ class ConfigPlugin(AutoModPlugin):
         data = Object(LOG_OPTIONS[option])
         if isinstance(channel, str):
             if channel.lower() == "off":
-                self.db.configs.update(ctx.guild.id, data.db_field, ""); 
+                self.db.configs.update(ctx.guild.id, data.db_field, "")
+                await self.delete_webhook(
+                    ctx,
+                    data.db_field
+                )
+
                 return await ctx.send(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type))
             else:
                 prefix = self.get_prefix(ctx.guild)
                 return await ctx.send(self.locale.t(ctx.guild, "invalid_log_channel", _emote="NO", prefix=prefix, option=option))
+
         else:
             self.db.configs.update(ctx.guild.id, data.db_field, f"{channel.id}")
+            self.webhook_queue.append({
+                "ctx": ctx,
+                "option": data.db_field,
+                "channel": channel
+            })
+
             await ctx.send(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention))
 
 

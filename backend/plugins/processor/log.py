@@ -128,6 +128,50 @@ class LogProcessor(object):
         self.db = bot.db
 
 
+    async def fetch_webhook(self, wid):
+        try:
+            w = await self.bot.fetch_webhook(wid)
+        except Exception:
+            return None
+        else:
+            return w
+
+
+    async def get_webhook(self, bot, guild, wid, channel_type):
+        if not guild.id in bot.webhook_cache:
+            w = await self.fetch_webhook(wid)
+            if w == None: 
+                return None
+            else:
+                bot.webhook_cache.update({
+                    guild.id: {
+                        "mod_log": w,
+                        "server_log": None,
+                        "message_log": None
+                    }
+                })
+                return w
+        else:
+            if bot.webhook_cache[guild.id][channel_type] == None:
+                w = await self.fetch_webhook(wid)
+                if w == None: 
+                    return None
+                else:
+                    bot.webhook_cache[guild.id][channel_type] = w
+                    return w
+            else:
+                if bot.webhook_cache[guild.id][channel_type] != wid:
+                    w = await self.fetch_webhook(wid)
+                    if w == None: 
+                        return None
+                    else:
+                        bot.webhook_cache[guild.id][channel_type] = w
+                        return w
+                else:
+                    return w
+
+
+
     async def execute(self, guild, log_type, **log_kwargs):
         config = Object(LOG_TYPES[log_type])
 
@@ -151,9 +195,26 @@ class LogProcessor(object):
             )
         else:
             log_embed = log_kwargs.get("_embed")
-    
+
+
         try:
-            log_message = await log_channel.send(content=log_kwargs.get("content", None), embed=log_embed)
+            wid = self.bot.db.configs.get(guild.id, f"{config.channel}_webhook")
+            if wid != "":
+                webhook = await self.get_webhook(
+                    self.bot,
+                    guild,
+                    int(wid),
+                    config.channel
+                )
+                if webhook == None:
+                    log_message = await log_channel.send(content=log_kwargs.get("content", None), embed=log_embed)
+                else:
+                    try:
+                        log_message = await webhook.send(content=log_kwargs.get("content", None), embed=log_embed, wait=True)
+                    except Exception:
+                        log_message = await log_channel.send(content=log_kwargs.get("content", None), embed=log_embed)
+            else:
+                log_message = await log_channel.send(content=log_kwargs.get("content", None), embed=log_embed)
         except Exception:
             pass
         else:
