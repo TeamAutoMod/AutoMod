@@ -145,7 +145,7 @@ class LogProcessor(object):
                 self.bot.emotes.get(config.emote),
                 f"#{log_kwargs.get('case')} " if "case" in log_kwargs else "",
                 config.action,
-                log_kwargs.get("user"),
+                f"<@{log_kwargs.get('user_id')}>",
                 log_kwargs.get("user_id"),
                 self.bot.locale.t(guild, config.key, _emote=config.emote, **log_kwargs)
             )

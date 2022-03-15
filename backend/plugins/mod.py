@@ -63,10 +63,31 @@ class ModerationPlugin(WarnPlugin):
                             await self.log_processor.execute(guild, "unmute", **{
                                 "user": t,
                                 "user_id": int(mute["id"].split("-")[1]),
-                                "mod": self.bot.user,
+                                "mod": guild.get_member(self.bot.user.id),
                                 "mod_id": self.bot.user.id
                             })
                         self.bot.db.mutes.delete(mute["id"])
+
+    
+    async def clean_messages(self, ctx, amount, check, before=None, after=None):
+        try:
+            d = await ctx.channel.purge(
+                limit=amount,
+                check=check,
+                before=before,
+                after=after
+            )
+        except discord.Forbidden:
+            raise
+        except discord.NotFound:
+            await asyncio.sleep(1); return self.locale.t(ctx.guild, "alr_cleaned", _emote="NO"), {}
+        else:
+            try:
+                await ctx.message.delete()
+            except discord.NotFound:
+                pass
+            finally:
+               return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {"delete_after": 5}
 
 
     async def kick_or_ban(self, action, ctx, user, reason, **extra_kwargs):
@@ -211,7 +232,7 @@ class ModerationPlugin(WarnPlugin):
                     "mod_id": ctx.author.id,
                     "user": user,
                     "user_id": user.id,
-                    "until": f"<t:{round(until.timestamp())}:D>",
+                    "until": f"<t:{round(until.timestamp())}>",
                     "reason": reason
                 })
                 self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
@@ -252,7 +273,7 @@ class ModerationPlugin(WarnPlugin):
                         "mod_id": ctx.author.id,
                         "user": user,
                         "user_id": user.id,
-                        "until": f"<t:{round(until.timestamp())}:D>",
+                        "until": f"<t:{round(until.timestamp())}>",
                         "case": self.action_processor.new_case("mute", ctx.message, ctx.author, user, reason),
                         "reason": reason
                     }) 
@@ -289,31 +310,48 @@ class ModerationPlugin(WarnPlugin):
             await ctx.send(self.locale.t(ctx.guild, "unmuted", _emote="YES"))
 
 
-    @commands.command(aliases=["clear", "purge"])
+    @commands.group(aliases=["clear", "purge"])
     @commands.has_permissions(manage_messages=True)
-    async def clean(self, ctx, amount: int = 10):
+    async def clean(self, ctx):
         """clean_help"""
+        if ctx.invoked_subcommand == None:
+            cmd = self.bot.get_command("help")
+            await cmd.__call__(
+                ctx,
+                query="clean"
+            )
+
+
+    @clean.command()
+    @commands.has_permissions(manage_messages=True)
+    async def all(self, ctx, amount: int = 10):
+        """clean_all_help"""
         if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
         if amount > 300: return await ctx.send(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
 
-        try:
-            d = await ctx.channel.purge(
-                limit=amount,
-                check=lambda m: True,
-                before=None,
-                after=None
-            )
-        except discord.Forbidden:
-            raise
-        except discord.NotFound:
-            await asyncio.sleep(1); await ctx.send(self.locale.t(ctx.guild, "alr_cleaned", _emote="NO"))
-        else:
-            try:
-                await ctx.message.delete()
-            except discord.NotFound:
-                pass
-            finally:
-                await ctx.send(self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), delete_after=5)
+        msg, kwargs = await self.clean_messages(
+            ctx,
+            amount,
+            lambda m: True
+        )
+        await ctx.send(msg, **kwargs)
+
+
+    @clean.command()
+    @commands.has_permissions(manage_messages=True)
+    async def user(self, ctx, user: discord.Member, amount: int = 10):
+        """clean_user_help"""
+        if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
+        if amount > 300: return await ctx.send(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
+
+        msg, kwargs = await self.clean_messages(
+            ctx,
+            amount,
+            lambda m: m.author.id == user.id
+        )
+        await ctx.send(msg, **kwargs)
+
+
 
 
 def setup(bot): bot.register_plugin(ModerationPlugin(bot))
