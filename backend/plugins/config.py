@@ -71,7 +71,6 @@ class ConfigPlugin(AutoModPlugin):
         while True:
             await asyncio.sleep(1)
             if len(self.webhook_queue) > 0:
-                print("hey")
                 for w in self.webhook_queue:
                     self.webhook_queue.remove(w)
                     await self.create_log_webhook(
