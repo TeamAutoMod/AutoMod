@@ -48,7 +48,8 @@
     "filter_show_help": "Shows a list of all avtive filters",
     "disable_help": "Disables one or more commands and its subcommands for non-mods. To re-enable a command, use it again as the argument. If you want to disable/enable more commands, sperate them by a space",
 
-    "cases_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
+    "infractions_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
+    "case_help": "Shows information about a specific case",
 
     "log_ban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
     "log_kick": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
@@ -176,5 +177,7 @@
     "no_one_ranked": "{emote} No users are currently ranked",
 
     "no_disabled_commands": "{emote} Currently all commands are enabled",
-    "no_changes": "{emote} This wouldn't change the current command config"
+    "no_changes": "{emote} This wouldn't change the current command config",
+
+    "case_not_found": "{emote} That case doesn't exist"
 }
