@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import datetime
 from typing import Union
+from toolbox import S as Object
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
@@ -72,10 +73,10 @@ class CasesPlugin(AutoModPlugin):
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
 
-    @commands.command(aliases=["history", "infractions"])
-    @commands.has_guild_permissions(kick_members=True)
-    async def cases(self, ctx, user: Union[DiscordUser, discord.Member, discord.Guild] = None):
-        """cases_help"""
+    @commands.command(aliases=["history", "cases"])
+    @commands.has_guild_permissions(manage_messages=True)
+    async def infractions(self, ctx, user: Union[DiscordUser, discord.Member, discord.Guild] = None):
+        """infractions_help"""
         if user == None: user = ctx.guild
 
         msg = await ctx.send(self.locale.t(ctx.guild, "searching", _emote="SEARCH"))
@@ -220,6 +221,47 @@ class CasesPlugin(AutoModPlugin):
             await msg.edit(content=None, embed=pages[0], view=view)
         else:
             await msg.edit(content=None, embed=pages[0])
+
+
+    @commands.command()
+    @commands.has_guild_permissions(manage_messages=True)
+    async def case(self, ctx, case: str):
+        """case_help"""
+        case = case.replace("#", "")
+        
+        raw = self.db.cases.get_doc(f"{ctx.guild.id}-{case}")
+        if raw == None: return await ctx.send(self.locale.t(ctx.guild, "case_not_found", _emote="NO"))
+
+        data = Object(raw)
+        log_msg_url = self.get_log_for_case(ctx, raw)
+
+        e = Embed(
+            title=f"{data.type.upper()} #{case}"
+        )
+        if log_msg_url != None:
+            e.description = f"[View log message]({log_msg_url})"
+        e.set_thumbnail(
+            url=data.user_av
+        )
+        e.add_fields([
+            {
+                "name": "❯ User",
+                "value": f"<@{data.user_id}> ({data.user_id})"
+            },
+            {
+                "name": "❯ Moderator",
+                "value": f"<@{data.mod_id}> ({data.mod_id})"
+            },
+            {
+                "name": "❯ Timestamp",
+                "value": f"<t:{round(data.timestamp.timestamp())}>"
+            },
+            {
+                "name": "❯ Reason",
+                "value": f"{data.reason}"
+            },
+        ])
+        await ctx.send(embed=e)
 
 
 def setup(bot): bot.register_plugin(CasesPlugin(bot))
