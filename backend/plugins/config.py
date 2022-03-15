@@ -71,7 +71,6 @@ class ConfigPlugin(AutoModPlugin):
         while True:
             await asyncio.sleep(1)
             if len(self.webhook_queue) > 0:
-                print("hey")
                 for w in self.webhook_queue:
                     self.webhook_queue.remove(w)
                     await self.create_log_webhook(
@@ -110,9 +109,12 @@ class ConfigPlugin(AutoModPlugin):
             if not ctx.guild.id in self.bot.webhook_cache:
                 self.bot.webhook_cache.update({
                     ctx.guild.id: {
-                        "mod_log": w,
-                        "server_log": None,
-                        "message_log": None
+                        **{
+                            k: None for k in ["mod_log", "server_log", "message_log"] if k != option
+                        }, 
+                        **{
+                            option: w
+                        }
                     }
                 })
             else:
