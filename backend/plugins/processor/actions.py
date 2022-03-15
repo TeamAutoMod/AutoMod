@@ -44,7 +44,7 @@ class ActionProcessor(object):
 
     async def execute(self, msg, mod, user, warns, reason):
         log_kwargs = {
-            "mod": f"{mod.name}#{mod.discriminator}",
+            "mod": mod,
             "mod_id": mod.id,
             "user": f"{user.name}#{user.discriminator}",
             "user_id": user.id,
@@ -156,7 +156,7 @@ class ActionProcessor(object):
         log_kwargs.update(
             {
                 "case": self.new_case("mute", msg, mod, user, reason),
-                "until": f"<t:{round(until.timestamp())}:D>"
+                "until": f"<t:{round(until.timestamp())}>"
             }
         )
         await self.log_processor.execute(msg.guild, "mute", **log_kwargs)
