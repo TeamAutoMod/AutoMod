@@ -8,6 +8,10 @@ def GuildConfig(guild, prefix):
         "message_log": "",
         "server_log": "",
 
+        "mod_log_webhook": "",
+        "message_log_webhook": "",
+        "server_log_webhook": "",
+
         "ignored_channels": [],
         "ignored_roles": [],
         "allowed_invites": [],
