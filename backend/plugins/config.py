@@ -109,9 +109,12 @@ class ConfigPlugin(AutoModPlugin):
             if not ctx.guild.id in self.bot.webhook_cache:
                 self.bot.webhook_cache.update({
                     ctx.guild.id: {
-                        "mod_log": w,
-                        "server_log": None,
-                        "message_log": None
+                        **{
+                            k: None for k in ["mod_log", "server_log", "message_log"] if k != option
+                        }, 
+                        **{
+                            option: w
+                        }
                     }
                 })
             else:

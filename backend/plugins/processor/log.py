@@ -145,9 +145,12 @@ class LogProcessor(object):
             else:
                 bot.webhook_cache.update({
                     guild.id: {
-                        "mod_log": w,
-                        "server_log": None,
-                        "message_log": None
+                        **{
+                            k: None for k in ["mod_log", "server_log", "message_log"] if k != channel_type
+                        }, 
+                        **{
+                            channel_type: w
+                        }
                     }
                 })
                 return w
