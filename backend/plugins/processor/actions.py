@@ -1,10 +1,10 @@
 import discord
-from discord.ext import tasks
 
 from collections import OrderedDict
 import datetime
 
 from ...schemas import Warn, Case, Mute
+from ...types import Embed
 from .log import LogProcessor
 
 
@@ -43,6 +43,28 @@ class ActionProcessor(object):
         return case
 
 
+    async def dm_user(self, msg, _type, _user, _mod, _reason, **opt):
+        try:
+            e = Embed(
+                color=self.color[_type],
+                title=f"{msg.guild.name}",
+                description=self.bot.locale.t(msg.guild, f"{_type}_dm", **opt)
+            )
+            e.add_fields([
+                {
+                    "name": "❯ Moderator",
+                    "value": f"{_mod.name}#{_mod.discriminator}"
+                },
+                {
+                    "name": "❯ Reason",
+                    "value": f"{_reason}"
+                }
+            ])
+            await _user.send(embed=e)
+        except discord.Forbidden:
+            pass
+
+
     async def execute(self, msg, mod, user, warns, reason):
         log_kwargs = {
             "mod": mod,
@@ -68,12 +90,19 @@ class ActionProcessor(object):
             old_warns = self.warns.get(warn_id, "warns")
             new_warns = old_warns + warns; self.warns.update(warn_id, "warns", new_warns)
 
-        rules = OrderedDict(sorted({int(x): y for x, y in self.bot.db.configs.get(msg.guild.id, "punishments").items() if int(x) <= new_warns}.items()))
+        rules = OrderedDict(
+            sorted(
+                {
+                    int(x): y for x, y in self.bot.db.configs.get(msg.guild.id, "punishments").items() if int(x) <= new_warns
+                }.items()
+            )
+        )
         if len(rules) <  100 and len(rules) > 0:
             action = list(rules.values())[-1]
             _from = list(rules.keys())[-2] if len(list(rules.keys())) > 1 else 0
             _to = list(rules.keys())[-1]
             reason = f"[ Automatic {_to} ] {reason}"
+
             log_kwargs.update(
                 {
                     "reason": reason,
@@ -100,6 +129,16 @@ class ActionProcessor(object):
                     "new_warns": new_warns
                 }
             )
+            # await self.dm_user(
+            #     msg,
+            #     "warn",
+            #     user,
+            #     mod,
+            #     reason,
+            #     **{
+            #         "warns": (log_kwargs["new_warns"] - log_kwargs["old_warns"])
+            #     }
+            # )
             await self.log_processor.execute(msg.guild, "warn", **log_kwargs)
             return None
 

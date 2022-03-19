@@ -19,5 +19,14 @@
     "ALARM": "🚨",
     "SEARCH": "🔎",
 
-    "PARTY": "🎉"
+    "PARTY": "🎉",
+
+    "CREATE": "✅",
+    "DELETE": "❌",
+    "UPDATE": "✏️",
+
+    "GEAR": "⚙️",
+    "FOLDER": "📂",
+    "SHIELD": "🛡️",
+    "FLAG": "🚩"
 }

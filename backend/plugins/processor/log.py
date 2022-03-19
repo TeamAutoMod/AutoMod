@@ -108,7 +108,7 @@ LOG_TYPES = {
     },
 
     "user_joined": {
-        "channel": "server_log",
+        "channel": "join_log",
         "key": "", # not needed
         "color": 0x5cff9d,
         "emote": "JOIN"
@@ -117,6 +117,57 @@ LOG_TYPES = {
         "channel": "server_log",
         "key": "", # not needed
         "color": 0xff5c5c,
+        "emote": "LEAVE"
+    },
+
+    "role_created": {
+        "channel": "join_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "LEAVE"
+    },
+    "role_deleted": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "LEAVE"
+    },
+    "role_updated": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "LEAVE"
+    },
+
+    "channel_created": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "LEAVE"
+    },
+    "channel_deleted": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "LEAVE"
+    },
+    "channel_updated": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "LEAVE"
+    },
+
+    "emoji_created": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
+        "emote": "LEAVE"
+    },
+    "emoji_deleted": {
+        "channel": "server_log",
+        "key": "", # not needed
+        "color": 0x5cff9d,
         "emote": "LEAVE"
     },
 }
@@ -146,7 +197,7 @@ class LogProcessor(object):
                 bot.webhook_cache.update({
                     guild.id: {
                         **{
-                            k: None for k in ["mod_log", "server_log", "message_log"] if k != channel_type
+                            k: None for k in ["mod_log", "server_log", "message_log", "join_log"] if k != channel_type
                         }, 
                         **{
                             channel_type: w

@@ -13,6 +13,7 @@ from .schemas import GuildConfig
 from .utils import Translator, Emotes
 from .types import Context
 from .views import pages
+from .plugins.processor import DMProcessor
 
 
 
@@ -72,6 +73,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.cache = InternalCache(self)
         self.emotes = Emotes(self)
         self.locale = Translator(self)
+        self.dm_processor = DMProcessor(self)
 
         self.load_plugins()
         self.run()
@@ -99,7 +101,14 @@ class ShardedBotInstance(commands.AutoShardedBot):
             disabled = self.db.configs.get(msg.guild.id, "disabled_commands")
             if ctx.command.name.lower() in disabled:
                 if ctx.author.guild_permissions.manage_messages == False:
-                    return
+                    try:
+                        await msg.add_reaction(
+                            self.emotes.get("LOCK")
+                        )
+                    except Exception:
+                        pass
+                    finally:
+                        return
             
             if self.ready:
                 if not msg.guild.chunked:
