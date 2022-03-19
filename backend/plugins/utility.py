@@ -89,8 +89,7 @@ class UtilityPlugin(AutoModPlugin):
         # Shard
         shard = self.bot.get_shard(ctx.guild.shard_id)
         
-        await msg.edit(content="{} Pong! \n• **Rest:** {}ms \n• **Client:** {}ms \n• **Shard:** {}ms \n• **Database:** {}ms".format(
-            "🛰",
+        await msg.edit(content="• **Rest:** {}ms \n• **Client:** {}ms \n• **Shard:** {}ms \n• **Database:** {}ms".format(
             round((msg_t2 - msg_t1) * 1000),
             round(self.bot.latency * 1000),
             round(shard.latency * 1000),

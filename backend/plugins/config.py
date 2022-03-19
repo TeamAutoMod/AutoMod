@@ -24,7 +24,11 @@ LOG_OPTIONS = {
     "messages": {
         "db_field": "message_log",
         "i18n_type": "message logs"
-    }
+    },
+    "joins": {
+        "db_field": "join_log",
+        "i18n_type": "join logs"
+    },
 }
 AUTOMOD_RULES = {
     "mentions": {
@@ -110,7 +114,7 @@ class ConfigPlugin(AutoModPlugin):
                 self.bot.webhook_cache.update({
                     ctx.guild.id: {
                         **{
-                            k: None for k in ["mod_log", "server_log", "message_log"] if k != option
+                            k: None for k in ["mod_log", "server_log", "message_log", "join_log"] if k != option
                         }, 
                         **{
                             option: w
@@ -166,21 +170,23 @@ class ConfigPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ General",
-                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {}"\
+                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Disabled Commands:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
-                    len(config.filters)
+                    len(config.filters),
+                    len(config.disabled_commands)
                 ),
                 "inline": True
             },
             {
                 "name": "❯ Logging",
-                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}"\
+                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}\n> **• Join Log:** {}"\
                 .format(
                     n if config.mod_log == "" else f"<#{config.mod_log}>",
                     n if config.message_log == "" else f"<#{config.message_log}>",
-                    n if config.server_log == "" else f"<#{config.server_log}>"
+                    n if config.server_log == "" else f"<#{config.server_log}>",
+                    n if config.join_log == "" else f"<#{config.join_log}>",
                 ),
                 "inline": True
             },
@@ -563,8 +569,6 @@ class ConfigPlugin(AutoModPlugin):
             )
         
         await ctx.send(embed=e)
-        
-                
-
+            
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))
