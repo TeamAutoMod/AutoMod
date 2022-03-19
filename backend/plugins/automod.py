@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
+from .processor import ActionProcessor
 
 
 

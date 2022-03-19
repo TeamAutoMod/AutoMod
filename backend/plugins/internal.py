@@ -378,7 +378,7 @@ class InternalPlugin(AutoModPlugin):
                 a.name,
                 b.name
             )
-        if b.permissions != a.permissions:
+        if b.overwrites != a.overwrites:
             new = "Permissions"
             if len(change) < 1:
                 change += new
