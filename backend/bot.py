@@ -13,7 +13,6 @@ from .schemas import GuildConfig
 from .utils import Translator, Emotes
 from .types import Context
 from .views import pages
-from .plugins.processor import DMProcessor
 
 
 
@@ -73,7 +72,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.cache = InternalCache(self)
         self.emotes = Emotes(self)
         self.locale = Translator(self)
-        self.dm_processor = DMProcessor(self)
 
         self.load_plugins()
         self.run()
