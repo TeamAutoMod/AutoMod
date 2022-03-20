@@ -131,6 +131,14 @@ LOG_TYPES = {
     },
     "emoji_deleted": {
         "channel": "server_log",
+    },
+
+    "automod_rule_triggered": {
+        "channel": "mod_log",
+        "key": "log_automod",
+        "color": 0xffdc5c,
+        "emote": "SHIELD",
+        "action": "Automod rule triggered"
     }
 }
 

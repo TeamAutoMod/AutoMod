@@ -12,6 +12,9 @@ from ..views import ConfirmView
 from ..schemas import Mute
 
 
+commands.has_permissions()
+
+
 
 ACTIONS = {
     "ban": {
@@ -123,7 +126,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.command()
-    @commands.has_permissions(ban_members=True)
+    @WarnPlugin.can("ban_members")
     async def ban(self, ctx, user: DiscordUser, *, reason: str = None):
         """ban_help"""
         if reason == None: self.locale.t(ctx.guild, "no_reason")
@@ -136,7 +139,7 @@ class ModerationPlugin(WarnPlugin):
 
     
     @commands.command()
-    @commands.has_permissions(ban_members=True)
+    @WarnPlugin.can("ban_members")
     async def unban(self, ctx, user: DiscordUser, *, reason: str = None):
         """unban_help"""
         if reason == None: self.locale.t(ctx.guild, "no_reason")
@@ -163,7 +166,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.command()
-    @commands.has_permissions(ban_members=True)
+    @WarnPlugin.can("ban_members")
     async def softban(self, ctx, user: DiscordUser, *, reason: str = None):
         """softban_help"""
         if reason == None: self.locale.t(ctx.guild, "no_reason")
@@ -176,7 +179,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.command(aliases=["forceban"])
-    @commands.has_permissions(ban_members=True)
+    @WarnPlugin.can("ban_members")
     async def hackban(self, ctx, user: DiscordUser, *, reason: str = None):
         """hackban_help"""
         if reason == None: self.locale.t(ctx.guild, "no_reason")
@@ -189,7 +192,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.command()
-    @commands.has_permissions(kick_members=True)
+    @WarnPlugin.can("kick_members")
     async def kick(self, ctx, user: DiscordUser, *, reason: str = None):
         """kick_help"""
         if reason == None: self.locale.t(ctx.guild, "no_reason")
@@ -202,7 +205,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.command(aliases=["timeout"])
-    @commands.has_permissions(kick_members=True)
+    @WarnPlugin.can("moderate_members")
     async def mute(self, ctx, user: discord.Member, length: Duration, *, reason: str = None):
         """mute_help"""
         if reason == None: self.locale.t(ctx.guild, "no_reason")
@@ -210,10 +213,6 @@ class ModerationPlugin(WarnPlugin):
 
         if not await self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
-
-        if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
-            if ctx.guild.me.guild_permissions.administrator == False: 
-                return await ctx.send(self.locale.t(ctx.guild, "no_timeout_perms", _emote="NO"))
 
         _id = f"{ctx.guild.id}-{user.id}"
         if self.db.mutes.exists(_id):
@@ -284,7 +283,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.command()
-    @commands.has_permissions(kick_members=True)
+    @WarnPlugin.can("kick_members")
     async def unmute(self, ctx, user: discord.Member):
         """unmute_help"""
         _id = f"{ctx.guild.id}-{user.id}"
@@ -311,7 +310,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.group(aliases=["clear", "purge"])
-    @commands.has_permissions(manage_messages=True)
+    @WarnPlugin.can("manage_messages")
     async def clean(self, ctx):
         """clean_help"""
         if ctx.invoked_subcommand == None:
@@ -323,7 +322,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @clean.command()
-    @commands.has_permissions(manage_messages=True)
+    @WarnPlugin.can("manage_messages")
     async def all(self, ctx, amount: int = 10):
         """clean_all_help"""
         if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
@@ -338,7 +337,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @clean.command()
-    @commands.has_permissions(manage_messages=True)
+    @WarnPlugin.can("manage_messages")
     async def user(self, ctx, user: discord.Member, amount: int = 10):
         """clean_user_help"""
         if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))

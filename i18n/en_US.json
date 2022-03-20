@@ -46,6 +46,7 @@
     "filter_add_help": "Created a filter with the given name, warns and words",
     "filter_remove_help": "Removes the filter with the specified name",
     "filter_show_help": "Shows a list of all avtive filters",
+    "mod_role_help": "Sets a mod role which can bypass mod command checks, meaning users with this role can for example ban without having ban permissions. To remove the mod role, use the command again with **off** as the role argument",
     "disable_help": "Disables one or more commands and its subcommands for non-mods. To re-enable a command, use it again as the argument. If you want to disable/enable more commands, sperate them by a space",
 
     "infractions_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
@@ -61,6 +62,7 @@
     "log_manual_unmute": "**Moderator:** {mod.mention} ({mod_id})",
     "log_unmute": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** [ Automatic ] Mute has expired",
     "log_mute_extended": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
+    "log_automod": "**Moderator:** {mod.mention} ({mod_id}) \n**Rule:** {rule} \n**Match:** {found}",
 
     "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
     "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",
@@ -101,6 +103,10 @@
 
     "min_warns": "{emote} Too few warns (<1)",
     "max_warns": "{emote} Too many warns (>100)",
+    "min_warns_esp": "{emote} Too few warns (<0)",
+
+    "min_mentions": "{emote} Too little mention amount (<8)",
+    "max_mentions": "{emote} Too big mention amount (>100)",
 
     "role_too_high": "{emote} Mute role is above my highest role. Please put it below my highest role, so I can add it to users",
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
@@ -122,6 +128,10 @@
     "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **off** as the second argument. Here's a little help: \n• ``{prefix}log {option} #channel`` - Sets the log channel \n• ``{prefix}log {option} off`` - Disables this log option",
     "log_on": "{emote} Enabled {_type} and will send them to {channel}",
 
+    "mod_role_off": "{emote} Removed the mod role",
+    "invalid_mod_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument. Here's a little help: \n• ``{prefix}mod_role @role`` - Sets the mod role \n• ``{prefix}mod_role off`` - Removes the mod role",
+    "mod_role_on": "{emote} Set {role} as the mod role",
+
     "prefix_too_long": "{emote} Prefix is too long (>20)",
     "prefix_updated": "{emote} Updated prefix to **{prefix}**",
 
@@ -132,11 +142,16 @@
     "invalid_automod_rule": "{emote} Invalid automod rule. Valid rules are: \n• mentions \n• links \n• invites \n• files  \n• zalgo",
     "automod_off": "{emote} Disabled the {_type} automod rule",
     "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field} amount/threshold or **off** as the second argument. Here's a little help: \n• ``{prefix}automod {rule} {field}`` - Enables this automod rule \n• ``{prefix}automod {rule} off`` - Disables this automod rule",
-    "set_mentions": "{emote} Users will now be warned when using more than {amount} mentions",
-    "set_links": "{emote} Users will now receive {amount} warns when using forbidden links (configure with the ``link_blacklist`` command)",
-    "set_invites": "{emote} Users will now receive {amount} warns when sending invite links (configure with the ``allowed_invites`` command)",
-    "set_files": "{emote} Users will now receive {amount} warns when sending forbidden file formats",
-    "set_zalgo": "{emote} Users will now receive {amount} warns when sending zalgo characters",
+    "set_mentions": "{emote} Users will now be warned when using more than {amount} mention{plural}",
+    "set_links": "{emote} Users will now receive {amount} warn{plural} when using forbidden links (configure with the ``link_blacklist`` command)",
+    "set_invites": "{emote} Users will now receive {amount} warn{plural} when sending invite links (configure with the ``allowed_invites`` command)",
+    "set_files": "{emote} Users will now receive {amount} warn{plural} when sending forbidden file formats",
+    "set_zalgo": "{emote} Users will now receive {amount} warn{plural} when sending zalgo characters",
+
+    "set_links_zero": "{emote} Messages will now just be deleted when containing forbidden links (configure with the ``link_blacklist`` command)",
+    "set_invites_zero": "{emote} Messages will now just be deleted when containing invite links (configure with the ``allowed_invites`` command)",
+    "set_files_zero": "{emote} Messages will now just be deleted when containing forbidden file formats",
+    "set_zalgo_zero": "{emote} Messages will now just be deleted when containing zalgo characters",
 
     "no_allowed": "{emote} No server invites are currently allowed. Allow invites from a specific server by using ``{prefix}allowed_invites add <server_id>``",
     "alr_allowed": "{emote} Invites from this server are already allowed",

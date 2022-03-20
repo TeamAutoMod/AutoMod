@@ -212,7 +212,7 @@ class UtilityPlugin(AutoModPlugin):
 
     
     @commands.command(aliases=["info", "userinfo", "user"])
-    @commands.has_permissions(manage_messages=True)
+    @AutoModPlugin.can("manage_messages")
     async def whois(self, ctx, user: DiscordUser = None):
         """whois_help"""
         if user == None:
@@ -267,7 +267,7 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command(aliases=["guild", "serverinfo"])
     @commands.guild_only()
-    @commands.has_permissions(manage_messages=True)
+    @AutoModPlugin.can("manage_messages")
     async def server(self, ctx):
         """server_help"""
         g = ctx.guild

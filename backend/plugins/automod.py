@@ -4,7 +4,9 @@ from discord.ext import commands
 import re
 from toolbox import S as Object
 from urllib.parse import urlparse
-import logging; log = logging.getLogger()
+import logging
+
+from backend.plugins.processor.log import LogProcessor; log = logging.getLogger()
 
 from . import AutoModPlugin
 from .processor import ActionProcessor
@@ -161,11 +163,28 @@ ZALGO = [
 ZALGO_RE = re.compile(u'|'.join(ZALGO))
 
 
+LOG_DATA = {
+    "invites": {
+        "rule": "Anti-Invites"
+    },
+    "links": {
+        "rule": "Anti-Links"
+    },
+    "files": {
+        "rule": "Anti-Files"
+    },
+    "zalgo": {
+        "rule": "Anti-Zalgo"
+    }
+}
+
+
 class AutomodPlugin(AutoModPlugin):
     """Plugin for enforcing automoderator rules"""
     def __init__(self, bot):
         super().__init__(bot)
         self.action_processor = ActionProcessor(bot)
+        self.log_processor = LogProcessor(bot)
 
 
     def can_act(self, guild, mod, target):
@@ -197,7 +216,7 @@ class AutomodPlugin(AutoModPlugin):
             return None
 
 
-    async def delete_msg(self, msg, warns, reason):
+    async def delete_msg(self, rule, found, msg, warns, reason):
         try:
             await msg.delete()
         except (discord.NotFound, discord.Forbidden):
@@ -205,13 +224,28 @@ class AutomodPlugin(AutoModPlugin):
         else:
             self.bot.ignore_for_events.append(msg.id)
         finally:
-            await self.action_processor.execute(
-                msg, 
-                msg.guild.me,
-                msg.author,
-                warns, 
-                reason
-            )
+            if warns > 0:
+                await self.action_processor.execute(
+                    msg, 
+                    msg.guild.me,
+                    msg.author,
+                    warns, 
+                    reason
+                )
+            else:
+                data = Object(LOG_DATA[rule])
+                await self.log_processor.execute(
+                    msg.guild,
+                    "automod_rule_triggered",
+                    **{
+                        "rule": data.rule,
+                        "found": found,
+                        "user_id": msg.author.id,
+                        "user": msg.author,
+                        "mod_id": msg.guild.me.id,
+                        "mod": msg.guild.me
+                    }
+                )
 
 
     async def enforce_rules(self, msg):
@@ -230,7 +264,13 @@ class AutomodPlugin(AutoModPlugin):
                 if parsed != None:
                     found = parsed.findall(content)
                     if found:
-                        return await self.delete_msg(msg, int(f["warns"]), f"Triggered filter '{name}' with '{', '.join(found)}'")
+                        return await self.delete_msg(
+                            "filter",
+                            ", ".join(found),
+                            msg, 
+                            int(f["warns"]), 
+                            f"Triggered filter '{name}' with '{', '.join(found)}'"
+                        )
         
         if hasattr(rules, "invites"):
             found = INVITE_RE.findall(content)
@@ -239,16 +279,34 @@ class AutomodPlugin(AutoModPlugin):
                     try:
                         invite: discord.Invite = await self.bot.fetch_invite(inv)
                     except discord.NotFound:
-                        return await self.delete_msg(msg, rules.invites.warns, f"Advertising ({inv})")
+                        return await self.delete_msg(
+                            "invites",
+                            inv,
+                            msg, 
+                            rules.invites.warns, 
+                            f"Advertising ({inv})"
+                        )
                     if invite.guild == None:
-                        return await self.delete_msg(msg, rules.invites.warns, f"Advertising ({inv})")
+                        return await self.delete_msg(
+                            "invites",
+                            inv,
+                            msg, 
+                            rules.invites.warns, 
+                            f"Advertising ({inv})"
+                        )
                     else:
                         if invite.guild == None \
                             or (
                                 not invite.guild.id in config.allowed_invites \
                                 and invite.guild.id != msg.guild.id
                             ):
-                                return await self.delete_msg(msg, rules.invites.warns, f"Advertising ({inv})")
+                                return await self.delete_msg(
+                                    "invites",
+                                    inv,
+                                    msg, 
+                                    rules.invites.warns, 
+                                    f"Advertising ({inv})"
+                                )
         
         if hasattr(rules, "links"):
             found = LINK_RE.findall(content)
@@ -256,7 +314,13 @@ class AutomodPlugin(AutoModPlugin):
                 for link in found:
                     url = urlparse(link)
                     if url.hostname in config.black_listed_links:
-                        return await self.delete_msg(msg, rules.links.warns, f"Forbidden link ({url.hostname})")
+                        return await self.delete_msg(
+                            "links", 
+                            url.hostname,
+                            msg, 
+                            rules.links.warns, 
+                            f"Forbidden link ({url.hostname})"
+                        )
 
         if hasattr(rules, "files"):
             if len(msg.attachments) > 0:
@@ -268,17 +332,35 @@ class AutomodPlugin(AutoModPlugin):
                 except Exception:
                     forbidden = []
                 if len(forbidden) > 0:
-                    return await self.delete_msg(msg, rules.files.warns, f"Forbidden attachment type ({', '.join(forbidden)})")
+                    return await self.delete_msg(
+                        "files", 
+                        ", ".join(forbidden), 
+                        msg, 
+                        rules.files.warns, 
+                        f"Forbidden attachment type ({', '.join(forbidden)})"
+                    )
 
         if hasattr(rules, "zalgo"):
             found = ZALGO_RE.search(content)
             if found:
-                return await self.delete_msg(msg, rules.zalgo.warns, "Zalgo found")
+                return await self.delete_msg(
+                    "zalgo", 
+                    found, 
+                    msg, 
+                    rules.zalgo.warns, 
+                    "Zalgo found"
+                )
 
         if hasattr(rules, "mentions"):
             found = len(MENTION_RE.findall(content))
             if found >= rules.mentions.threshold:
-                return await self.delete_msg(msg, abs(rules.mentions.threshold - found), f"Spamming mentions ({found})")
+                return await self.delete_msg(
+                    "mentions", 
+                    found, 
+                    msg, 
+                    abs(rules.mentions.threshold - found), 
+                    f"Spamming mentions ({found})"
+                )
     
 
     @AutoModPlugin.listener()

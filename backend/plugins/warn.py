@@ -26,7 +26,7 @@ class WarnPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @commands.has_permissions(kick_members=True)
+    @AutoModPlugin.can("kick_members")
     async def warn(self, ctx, user: discord.Member, warns = None, *, reason: str = None):
         """warn_help"""
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
@@ -54,7 +54,7 @@ class WarnPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["pardon"])
-    @commands.has_permissions(kick_members=True)
+    @AutoModPlugin.can("kick_members")
     async def unwarn(self, ctx, user: discord.Member, warns = None, *, reason: str = None):
         """unwarn_help"""
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")

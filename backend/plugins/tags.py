@@ -79,6 +79,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     @commands.group(name="commands", aliases=["tags"])
+    @AutoModPlugin.can("manage_messages")
     async def custom_commands(self, ctx):
         """commands_help"""
         if ctx.invoked_subcommand is None:
@@ -99,6 +100,7 @@ class TagsPlugin(AutoModPlugin):
 
     
     @custom_commands.command(aliases=["create", "new"])
+    @AutoModPlugin.can("manage_messages")
     async def add(self, ctx, name: str, *, content: str):
         """commands_add_help"""
         if len(name) > 30:
@@ -116,6 +118,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     @custom_commands.command(aliases=["delete", "del"])
+    @AutoModPlugin.can("manage_messages")
     async def remove(self, ctx, name: str):
         """commands_remove_help"""
         name = name.lower()
@@ -131,6 +134,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     @custom_commands.command()
+    @AutoModPlugin.can("manage_messages")
     async def update(self, ctx, name: str, *, content: str):
         """commands_update_help"""
         if len(content) > 1900:

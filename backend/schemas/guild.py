@@ -3,6 +3,7 @@ def GuildConfig(guild, prefix):
         "id": f"{guild.id}", 
         "prefix": "{}".format(prefix if prefix != "" or prefix != None else "+"), 
         "mute_role": "",
+        "mod_role": "",
 
         "mod_log": "", 
         "message_log": "",

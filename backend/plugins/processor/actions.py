@@ -25,7 +25,6 @@ class ActionProcessor(object):
         case = self.bot.db.configs.get(msg.guild.id, "cases") + 1
 
         now = datetime.datetime.utcnow()
-        print(now)
         self.bot.db.cases.insert(Case(case, _type, msg, mod, user, reason, now))
         self.bot.db.configs.update(msg.guild.id, "cases", case)
 

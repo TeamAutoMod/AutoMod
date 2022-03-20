@@ -67,10 +67,6 @@ class ConfigPlugin(AutoModPlugin):
         self.bot.loop.create_task(self.create_webhooks())
 
 
-    def cog_check(self, ctx):
-        return ctx.author.guild_permissions.manage_guild
-
-
     async def create_webhooks(self):
         while True:
             await asyncio.sleep(1)
@@ -152,7 +148,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @commands.has_permissions(ban_members=True)
+    @AutoModPlugin.can("manage_guild")
     async def config(self, ctx):
         """config_help"""
         config = Object(self.db.configs.get_doc(ctx.guild.id))
@@ -170,12 +166,12 @@ class ConfigPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ General",
-                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Disabled Commands:** {}"\
+                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Mod Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
                     len(config.filters),
-                    len(config.disabled_commands)
+                    n if config.mod_role == "" else f"<@&{config.mod_role}>"
                 ),
                 "inline": True
             },
@@ -196,10 +192,10 @@ class ConfigPlugin(AutoModPlugin):
                 "value": "> **• Max Mentions:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {}"\
                 .format(
                     n if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
-                    n if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}",
-                    n if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}",
-                    n if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}",
-                    n if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}",
+                    n if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
+                    n if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
+                    n if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
+                    n if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
                 ),
                 "inline": True
             },
@@ -217,6 +213,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command()
+    @AutoModPlugin.can("manage_guild")
     async def punishment(self, ctx, warns: int, action: str, time: Duration = None):
         """punishment_help"""
         action = action.lower()
@@ -258,6 +255,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command(name="log")
+    @AutoModPlugin.can("manage_guild")
     async def _log(self, ctx, option: str, channel: Union[discord.TextChannel, str]):
         """log_help"""
         option = option.lower()
@@ -290,6 +288,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command()
+    @AutoModPlugin.can("manage_guild")
     async def prefix(self, ctx, prefix: str):
         """prefix_help"""
         if len(prefix) > 20: 
@@ -300,6 +299,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command()
+    @AutoModPlugin.can("manage_guild")
     async def automod(self, ctx, rule = None, amount: Union[int, str] = None):
         """automod_help"""
         prefix = self.get_prefix(ctx.guild)
@@ -328,8 +328,12 @@ class ConfigPlugin(AutoModPlugin):
             else:
                 return await ctx.send(self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field=data.i18n_type))
         else:
-            if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-            if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+            if rule == "mentions":
+                if amount < 8: return await ctx.send(self.locale.t(ctx.guild, "min_mentions", _emote="NO"))
+                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_mentions", _emote="NO"))
+            else:
+                if amount < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
             current.update({
                 rule: {
@@ -337,10 +341,18 @@ class ConfigPlugin(AutoModPlugin):
                 }
             })
             self.db.configs.update(ctx.guild.id, "automod", current)
-            await ctx.send(self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount))
+
+            text = ""
+            if rule != "mentions" and amount == 0:
+                text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
+            else:
+                text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
+
+            await ctx.send(text)
 
 
     @commands.group()
+    @AutoModPlugin.can("manage_guild")
     async def allowed_invites(self, ctx):
         """allowed_invites_help"""
         if ctx.invoked_subcommand == None:
@@ -357,6 +369,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @allowed_invites.command(name="add")
+    @AutoModPlugin.can("manage_guild")
     async def add_inv(self, ctx, guild_id: int):
         """allowed_invites_add_help"""
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
@@ -371,6 +384,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @allowed_invites.command(name="remove")
+    @AutoModPlugin.can("manage_guild")
     async def remove_inv(self, ctx, guild_id: int):
         """allowed_invites_remove_help"""
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
@@ -385,6 +399,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.group(aliases=["links"])
+    @AutoModPlugin.can("manage_guild")
     async def link_blacklist(self, ctx):
         """link_blacklist_help"""
         if ctx.invoked_subcommand == None:
@@ -401,6 +416,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @link_blacklist.command(name="add")
+    @AutoModPlugin.can("manage_guild")
     async def add_link(self, ctx, url: str):
         """link_blacklist_add_help"""
         url = url.lower()
@@ -416,6 +432,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @link_blacklist.command(name="remove")
+    @AutoModPlugin.can("manage_guild")
     async def remove_link(self, ctx, url: str):
         """link_blacklist_remove_help"""
         url = url.lower()
@@ -431,6 +448,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.group(name="filter", aliases=["filters"])
+    @AutoModPlugin.can("manage_guild")
     async def _filter(self, ctx):
         """filter_help"""
         if ctx.invoked_subcommand == None:
@@ -455,6 +473,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @_filter.command(name="add")
+    @AutoModPlugin.can("manage_guild")
     async def add_filter(self, ctx, name, warns: int, *, words):
         """filter_add_help"""
         name = name.lower()
@@ -476,6 +495,7 @@ class ConfigPlugin(AutoModPlugin):
 
     
     @_filter.command(name="remove")
+    @AutoModPlugin.can("manage_guild")
     async def remove_filter(self, ctx, name):
         """filter_remove_help"""
         name = name.lower()
@@ -491,6 +511,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @_filter.command()
+    @AutoModPlugin.can("ban_members")
     async def show(self, ctx):
         """filter_show_help"""
         filters = self.db.configs.get(ctx.guild.id, "filters")
@@ -513,6 +534,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["restrict"])
+    @AutoModPlugin.can("manage_guild")
     async def disable(self, ctx, *, commands: str = None):
         """disable_help"""
         _disabled = self.db.configs.get(ctx.guild.id, "disabled_commands")
@@ -569,6 +591,23 @@ class ConfigPlugin(AutoModPlugin):
             )
         
         await ctx.send(embed=e)
+
+
+    @commands.command()
+    @AutoModPlugin.can("manage_guild")
+    async def mod_role(self, ctx, role: Union[discord.Role, str]):
+        """mod_role_help"""
+        if isinstance(role, str):
+            if role.lower() == "off":
+                self.db.configs.update(ctx.guild.id, "mod_role", "")
+                return await ctx.send(self.locale.t(ctx.guild, "mod_role_off", _emote="YES"))
+            else:
+                prefix = self.get_prefix(ctx.guild)
+                return await ctx.send(self.locale.t(ctx.guild, "invalid_mod_role", _emote="NO", prefix=prefix))
+
+        else:
+            self.db.configs.update(ctx.guild.id, "mod_role", f"{role.id}")
+            await ctx.send(self.locale.t(ctx.guild, "mod_role_on", _emote="YES", role=role.name))
             
 
 def setup(bot): bot.register_plugin(ConfigPlugin(bot))
