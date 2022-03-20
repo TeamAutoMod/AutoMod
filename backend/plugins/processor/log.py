@@ -94,82 +94,44 @@ LOG_TYPES = {
 
     "message_deleted": {
         "channel": "message_log",
-        "key": "", # not needed
-        "color": 0xff5c5c,
-        "emote": "BIN",
-        "action": "" # not needed
     },
     "message_edited": {
         "channel": "message_log",
-        "key": "", # not needed
-        "color": 0xffdc5c,
-        "emote": "PEN", 
-        "action": "" # not needed
     },
 
     "user_joined": {
         "channel": "join_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "JOIN"
     },
     "user_left": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0xff5c5c,
-        "emote": "LEAVE"
     },
 
     "role_created": {
         "channel": "join_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
     },
     "role_deleted": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
     },
     "role_updated": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
     },
 
     "channel_created": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
     },
     "channel_deleted": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
     },
     "channel_updated": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
     },
 
     "emoji_created": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
     },
     "emoji_deleted": {
         "channel": "server_log",
-        "key": "", # not needed
-        "color": 0x5cff9d,
-        "emote": "LEAVE"
-    },
+    }
 }
 
 

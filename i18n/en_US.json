@@ -133,7 +133,7 @@
     "automod_off": "{emote} Disabled the {_type} automod rule",
     "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field} amount/threshold or **off** as the second argument. Here's a little help: \n• ``{prefix}automod {rule} {field}`` - Enables this automod rule \n• ``{prefix}automod {rule} off`` - Disables this automod rule",
     "set_mentions": "{emote} Users will now be warned when using more than {amount} mentions",
-    "set_links": "{emote} Users will now receive {amount} warns when using forbidden links (configure with the ``forbidden_links`` command)",
+    "set_links": "{emote} Users will now receive {amount} warns when using forbidden links (configure with the ``link_blacklist`` command)",
     "set_invites": "{emote} Users will now receive {amount} warns when sending invite links (configure with the ``allowed_invites`` command)",
     "set_files": "{emote} Users will now receive {amount} warns when sending forbidden file formats",
     "set_zalgo": "{emote} Users will now receive {amount} warns when sending zalgo characters",
