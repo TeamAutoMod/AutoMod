@@ -375,8 +375,8 @@ class InternalPlugin(AutoModPlugin):
         change = ""
         if b.name != a.name:
             change += "Name (``{}`` → ``{}``)".format(
-                a.name,
-                b.name
+                b.name,
+                a.name
             )
         if b.overwrites != a.overwrites:
             new = "Permissions"
@@ -390,7 +390,7 @@ class InternalPlugin(AutoModPlugin):
         embed = await self.server_log_embed(
             "channel_updated",
             a.guild,
-            b,
+            a,
             lambda x: x.target.id == a.id,
             change=change
         )
