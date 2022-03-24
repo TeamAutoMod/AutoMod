@@ -10,8 +10,8 @@ class Emotes(object):
             self.emotes = json.load(f)
             if bot.config.dev:
                 self.emotes.update({
-                    "YES": "<:yes:880522968969658448>", #👌
-                    "NO": "<:no:880522968952872990>" #❌
+                    "YES": "✅",
+                    "NO": "❌"
                 })
 
 
