@@ -86,7 +86,12 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 if not self.db.configs.exists(g.id):
                     self.db.configs.insert(GuildConfig(g, self.config.default_prefix))
             
-            self.avatar_as_bytes = await self.guilds[0].me.avatar.read()
+            m = self.guilds[0].me
+            if m != None:
+                if m.avatar != None:
+                    self.avatar_as_bytes = await m.avatar.read()
+                else:
+                    self.avatar_as_bytes = None
             self.ready = True
 
     
