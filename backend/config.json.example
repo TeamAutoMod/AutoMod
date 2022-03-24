@@ -34,8 +34,7 @@
         "tags",
         "config",
         "automod",
-        "cases",
-        "level"
+        "cases"
     ],
     
     "bot_admins": [],
