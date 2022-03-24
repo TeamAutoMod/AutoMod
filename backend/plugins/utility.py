@@ -25,7 +25,7 @@ CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
 
 
 def get_help_embed(plugin, ctx, cmd):
-    name = cmd.signature
+    name = f"{plugin.get_prefix(ctx.guild)}{cmd.qualified_name} {cmd.signature}"
     help_message = plugin.locale.t(ctx.guild, f"{cmd.help}")
     if name[-1] == " ": name = name[:-1]
 
