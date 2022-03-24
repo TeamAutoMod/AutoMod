@@ -445,4 +445,4 @@ class InternalPlugin(AutoModPlugin):
         log.info(f"Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
 
 
-def setup(bot): bot.register_plugin(InternalPlugin(bot))
+async def setup(bot): await bot.register_plugin(InternalPlugin(bot))

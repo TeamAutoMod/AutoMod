@@ -171,4 +171,4 @@ class TagsPlugin(AutoModPlugin):
                     await msg.channel.send(f"{tag.content}")
 
 
-def setup(bot): bot.register_plugin(TagsPlugin(bot))
+async def setup(bot): await bot.register_plugin(TagsPlugin(bot))

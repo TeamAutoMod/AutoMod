@@ -73,7 +73,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.emotes = Emotes(self)
         self.locale = Translator(self)
 
-        self.load_plugins()
         self.run()
 
 
@@ -82,6 +81,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             if self.activity == None: await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=self.config.custom_status))
 
         if not self.ready:
+            await self.load_plugins()
             for g in self.guilds:
                 if not self.db.configs.exists(g.id):
                     self.db.configs.insert(GuildConfig(g, self.config.default_prefix))
@@ -115,23 +115,24 @@ class ShardedBotInstance(commands.AutoShardedBot):
             await self.invoke(ctx)
             
     
-    def load_plugins(self):
+    async def load_plugins(self):
         try:
             self.remove_command("help")
         except Exception:
             pass
         finally:
-            for p in self.config.plugins: self.load_plugin(p)
+            for p in self.config.plugins: 
+                await self.load_plugin(p)
             self.plugins = self.cogs
 
 
-    def register_plugin(self, plugin):
-        super().add_cog(plugin)
+    async def register_plugin(self, plugin):
+        await super().add_cog(plugin)
 
 
-    def load_plugin(self, plugin):
+    async def load_plugin(self, plugin):
         try:
-            super().load_extension(f"backend.plugins.{plugin}")
+            await super().load_extension(f"backend.plugins.{plugin}")
         except Exception:
             log.error(f"Failed to load {plugin} - {traceback.format_exc()}")
         else:

@@ -381,4 +381,4 @@ class AutomodPlugin(AutoModPlugin):
         await self.enforce_rules(msg)
 
 
-def setup(bot): bot.register_plugin(AutomodPlugin(bot))
+async def setup(bot): await bot.register_plugin(AutomodPlugin(bot))

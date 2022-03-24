@@ -353,4 +353,4 @@ class ModerationPlugin(WarnPlugin):
 
 
 
-def setup(bot): bot.register_plugin(ModerationPlugin(bot))
+async def setup(bot): await bot.register_plugin(ModerationPlugin(bot))

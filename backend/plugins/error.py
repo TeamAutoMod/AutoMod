@@ -74,4 +74,4 @@ class ErrorPlugin(AutoModPlugin):
             log.error(f"Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
 
-def setup(bot): bot.register_plugin(ErrorPlugin(bot))
+async def setup(bot): await bot.register_plugin(ErrorPlugin(bot))

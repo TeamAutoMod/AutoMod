@@ -264,4 +264,4 @@ class CasesPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-def setup(bot): bot.register_plugin(CasesPlugin(bot))
+async def setup(bot): await bot.register_plugin(CasesPlugin(bot))

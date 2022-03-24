@@ -317,4 +317,4 @@ class UtilityPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-def setup(bot): bot.register_plugin(UtilityPlugin(bot))
+async def setup(bot): await bot.register_plugin(UtilityPlugin(bot))

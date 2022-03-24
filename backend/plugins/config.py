@@ -610,4 +610,4 @@ class ConfigPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "mod_role_on", _emote="YES", role=role.name))
             
 
-def setup(bot): bot.register_plugin(ConfigPlugin(bot))
+async def setup(bot): await bot.register_plugin(ConfigPlugin(bot))

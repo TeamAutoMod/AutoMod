@@ -215,4 +215,4 @@ class LevelPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-def setup(bot): bot.register_plugin(LevelPlugin(bot))
+async def setup(bot): await bot.register_plugin(LevelPlugin(bot))
