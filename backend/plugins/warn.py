@@ -82,7 +82,7 @@ class WarnPlugin(AutoModPlugin):
             if cur < 1: 
                 await ctx.send(self.locale.t(ctx.guild, "no_warns", _emote="NO"))
             else:
-                new = (cur - warns) if (cur - warns) >= 0 else 0
+                new = max(0, cur - warns)
                 self.db.warns.update(_id, "warns", new)
 
                 await self.log_processor.execute(ctx.guild, "unwarn", **{

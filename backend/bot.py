@@ -13,6 +13,7 @@ from .schemas import GuildConfig
 from .utils import Translator, Emotes
 from .types import Context
 from .views import pages
+from .observer import Observer
 
 
 
@@ -68,6 +69,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.case_cmd_cache = {}
         self.webhook_cache = {}
 
+        self.observer = Observer(self)
         self.db = MongoDB(self)
         self.cache = InternalCache(self)
         self.emotes = Emotes(self)
@@ -82,6 +84,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         if not self.ready:
             await self.load_plugins()
+            await self.observer.start()
             for g in self.guilds:
                 if not self.db.configs.exists(g.id):
                     self.db.configs.insert(GuildConfig(g, self.config.default_prefix))
@@ -142,6 +145,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
             log.error(f"Failed to load {plugin} - {traceback.format_exc()}")
         else:
             log.info(f"Successfully loaded {plugin}")
+
+    
+    async def reload_plugin(self, plugin):
+        await super().unload_extension(f"backend.plugins.{plugin}")
+        await super().load_extension(f"backend.plugins.{plugin}")
 
 
     def get_plugin(self, name):

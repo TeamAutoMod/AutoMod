@@ -1,5 +1,6 @@
 {
     "dev": true,
+    "watch": true,
     "default_prefix": "+",
     "custom_status": "+help",
 

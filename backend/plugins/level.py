@@ -100,6 +100,8 @@ class LevelPlugin(AutoModPlugin):
         for_nxt_lvl = 3 * ((data.lvl - 1) ** 2) + 30
         new_xp = (data.xp + xp)
 
+        print(for_nxt_lvl, new_xp)
+
         if new_xp >= for_nxt_lvl:
             self.update_user_data(
                 msg.guild,
@@ -143,7 +145,7 @@ class LevelPlugin(AutoModPlugin):
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
         if config.enabled == False: 
-            return await ctx.send(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.bot.get_prefix(ctx.guild)))
+            return await ctx.send(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)))
 
         if not self.exists(
             config, 
@@ -182,7 +184,7 @@ class LevelPlugin(AutoModPlugin):
         """leaderboard_help"""
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
         if config.enabled == False: 
-            return await ctx.send(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.bot.get_prefix(ctx.guild)))
+            return await ctx.send(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)))
         if len(config.users) < 1: 
             return await ctx.send(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"))
 

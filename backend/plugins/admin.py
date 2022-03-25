@@ -40,6 +40,7 @@ class AdminPlugin(AutoModPlugin):
             text = "- {}: DISCONNECTED ~ {} guilds".format(shard.id, guilds)
         return text
 
+
     @commands.command()
     @commands.is_owner()
     async def eval(self, ctx, *, cmd: str):

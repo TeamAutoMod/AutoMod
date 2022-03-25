@@ -12,9 +12,6 @@ from ..views import ConfirmView
 from ..schemas import Mute
 
 
-commands.has_permissions()
-
-
 
 ACTIONS = {
     "ban": {

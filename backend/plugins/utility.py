@@ -44,7 +44,11 @@ def get_help_embed(plugin, ctx, cmd):
                 actual_subcommands[k] = v
 
         if len(actual_subcommands.keys()) > 0:
-            e.add_field(name="❯ Subcommands", value=", ".join([f"``{x}``" for x in actual_subcommands.keys()]), inline=True)
+            e.add_field(
+                name="❯ Subcommands", 
+                value=", ".join([f"``{x}``" for x in actual_subcommands.keys()]), 
+                inline=True
+            )
 
     return e
 
@@ -136,7 +140,7 @@ class UtilityPlugin(AutoModPlugin):
                 title="Command List",
                 description=self.locale.t(ctx.guild, "help_desc", prefix=prefix)
             )
-            for p in [self.bot.get_plugin(x) for x in self.bot.plugins if x in ACTUAL_PLUGIN_NAMES]:
+            for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
                 cmds = p.get_commands()
                 e.add_field(
                     name=f"❯ {ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
