@@ -100,8 +100,6 @@ class LevelPlugin(AutoModPlugin):
         for_nxt_lvl = 3 * ((data.lvl - 1) ** 2) + 30
         new_xp = (data.xp + xp)
 
-        print(for_nxt_lvl, new_xp)
-
         if new_xp >= for_nxt_lvl:
             self.update_user_data(
                 msg.guild,

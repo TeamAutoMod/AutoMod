@@ -10,6 +10,7 @@ from io import BytesIO
 from . import AutoModPlugin
 from ..types import Embed, DiscordUser
 from ..views import AboutView
+from .. import VERSION
 
 
 
@@ -103,12 +104,47 @@ class UtilityPlugin(AutoModPlugin):
     @commands.command()
     async def about(self, ctx):
         """about_help"""
+        # e = Embed(
+        #     title="AutoMod",
+        #     description=self.locale.t(ctx.guild, "about_description")
+        # )
+        # e.set_thumbnail(url=ctx.guild.me.display_avatar)
+        # e.add_fields([
+        #     {
+        #         "name": "❯ Stats",
+        #         "value": "> **• Guilds:** {} \n> **• Users:** {} \n> **• Shards:** {}"\
+        #         .format(
+        #             len(self.bot.guilds),
+        #             len(self.bot.users),
+        #             len(self.bot.shards)
+        #         )
+        #     },
+        #     {
+        #         "name": "❯ Usage",
+        #         "value": "> **• Commands:** {} \n> **• Custom Commands:** {}"\
+        #         .format(
+        #             self.bot.used_commands,
+        #             self.bot.used_tags
+        #         )
+        #     }
+        # ])
+
         e = Embed(
             title="AutoMod",
             description=self.locale.t(ctx.guild, "about_description")
         )
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
+            {
+                "name": "❯ Status",
+                "value": "> **• Uptime:** {} \n> **• Last reload:** {} \n> **• Version:** {} \n> **• Latency:** {}ms"\
+                .format(
+                    self.bot.get_uptime(),
+                    f"<t:{round(self.bot.last_reload)}>",
+                    VERSION,
+                    round(self.bot.latency * 1000)
+                )
+            },
             {
                 "name": "❯ Stats",
                 "value": "> **• Guilds:** {} \n> **• Users:** {} \n> **• Shards:** {}"\

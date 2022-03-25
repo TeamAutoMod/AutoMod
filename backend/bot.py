@@ -4,6 +4,7 @@ from discord.ext import commands
 import json
 import traceback
 import requests
+import datetime
 from toolbox import S as Object
 import logging; log = logging.getLogger()
 
@@ -60,6 +61,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.ready = False
         self.locked = False
         self.avatar_as_bytes = None
+        self.uptime = datetime.datetime.utcnow()
+        self.last_reload = datetime.datetime.utcnow().timestamp()
 
         self.used_commands = 0
         self.used_tags = 0
@@ -148,8 +151,17 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     
     async def reload_plugin(self, plugin):
-        await super().unload_extension(f"backend.plugins.{plugin}")
-        await super().load_extension(f"backend.plugins.{plugin}")
+        if f"{plugin.capitalize()}Plugin" not in self.plugins:
+            try: await super().load_extension(f"backend.plugins.{plugin}")
+            except Exception: raise
+
+        else:
+            try: await super().unload_extension(f"backend.plugins.{plugin}")
+            except Exception: raise
+
+            else:
+                try: await super().load_extension(f"backend.plugins.{plugin}")
+                except Exception: raise
 
 
     def get_plugin(self, name):
@@ -173,6 +185,17 @@ class ShardedBotInstance(commands.AutoShardedBot):
             log.warn(f"Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}"); exc = ex
         finally:
             return exc
+
+
+    def get_uptime(self):
+        raw = datetime.datetime.utcnow() - self.uptime
+
+        hours, remainder = divmod(int(raw.total_seconds()), 3600)
+        days, hours = divmod(hours, 24)
+        minutes, seconds = divmod(remainder, 60)
+
+        return "{}d, {}h, {}m & {}s".format(days, hours, minutes, seconds)
+
 
 
     def run(self):

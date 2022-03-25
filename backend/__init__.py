@@ -6,7 +6,8 @@ from .bot import ShardedBotInstance
 
 
 
-VERSION = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip()
+_V = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip()
+VERSION = str(_V).replace("b'", "")[:7]
 
 
 with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:

@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import os
 import logging; log = logging.getLogger(__name__)
 
@@ -48,6 +49,7 @@ class Observer(object):
                         else:
                             log.info(f"Hot reload completed for {plugin}")
                         finally:
+                            self.bot.last_reload = datetime.datetime.utcnow().timestamp()
                             self.stamp_cache[plugin]["content"] = content
     
 
