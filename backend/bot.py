@@ -72,7 +72,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.case_cmd_cache = {}
         self.webhook_cache = {}
 
-        self.observer = Observer(self)
+        if self.config.watch == True:
+            self.observer = Observer(self)
         self.db = MongoDB(self)
         self.cache = InternalCache(self)
         self.emotes = Emotes(self)
@@ -87,7 +88,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         if not self.ready:
             await self.load_plugins()
-            await self.observer.start()
+            if self.config.watch == True:
+                await self.observer.start()
             for g in self.guilds:
                 if not self.db.configs.exists(g.id):
                     self.db.configs.insert(GuildConfig(g, self.config.default_prefix))
