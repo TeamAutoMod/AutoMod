@@ -5,5 +5,6 @@ import logging; log = logging.getLogger(__name__)
 from backend import ShardedBotInstance
 
 
+
 if __name__ == "__main__":
     ShardedBotInstance()
