@@ -99,7 +99,7 @@ class ConfigPlugin(AutoModPlugin):
         
         try:
             w = await channel.create_webhook(
-                name="AutoMod",
+                name=ctx.bot.user.name,
                 avatar=self.bot.avatar_as_bytes
             )
         except Exception:

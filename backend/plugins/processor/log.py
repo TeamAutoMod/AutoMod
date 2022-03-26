@@ -81,7 +81,7 @@ LOG_TYPES = {
         "channel": "mod_log",
         "key": "log_unwarn",
         "color": 0x5cff9d,
-        "emote": "UNLOCK",
+        "emote": "ANGEL",
         "action": "User unwarned"
     },
     "manual_unmute": {

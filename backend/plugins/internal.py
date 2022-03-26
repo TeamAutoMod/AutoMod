@@ -187,10 +187,11 @@ class InternalPlugin(AutoModPlugin):
             return
         
         content = " ".join([x.url for x in msg.attachments]) + msg.content
+        if len(content) == "": return
         e = Embed(
             color=0xff5c5c, 
             timestamp=datetime.datetime.utcnow(),
-            description=content[:2000] # idek the limits tbh
+            description=content[:2000] # idk the limits tbh
         )
         e.set_author(
             name="{0.name}#{0.discriminator} ({0.id})".format(msg.author),

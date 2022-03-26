@@ -72,9 +72,18 @@ class CasesPlugin(AutoModPlugin):
 
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
+    
+    async def is_banned(self, ctx, user):
+        try:
+            await ctx.guild.fetch_ban(user)
+        except discord.NotFound:
+            return False
+        else:
+            return True
+
 
     @commands.command(aliases=["history", "cases"])
-    @commands.has_guild_permissions(manage_messages=True)
+    @AutoModPlugin.can("manage_messages")
     async def infractions(self, ctx, user: Union[DiscordUser, discord.Member, discord.Guild] = None):
         """infractions_help"""
         if user == None: user = ctx.guild
@@ -137,7 +146,7 @@ class CasesPlugin(AutoModPlugin):
                 if not timestamp.startswith("<t"):
                     dt = datetime.datetime.strptime(timestamp, "%d/%m/%Y %H:%M")
                     case["timestamp"] = dt
-                    timestamp = f"<t:{round(dt.timestamp())}>"
+                    timestamp = f"<t:{round(dt.timestamp())}:d>"
                 else:
                     case["timestamp"] = datetime.datetime.fromtimestamp(
                         int(
@@ -149,7 +158,7 @@ class CasesPlugin(AutoModPlugin):
                         )
                     )
             else:
-                timestamp = f"<t:{round(timestamp.timestamp())}>"
+                timestamp = f"<t:{round(timestamp.timestamp())}:d>"
 
             log_url = self.get_log_for_case(ctx, case)
 
@@ -224,7 +233,7 @@ class CasesPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @commands.has_guild_permissions(manage_messages=True)
+    @AutoModPlugin.can("manage_messages")
     async def case(self, ctx, case: str):
         """case_help"""
         case = case.replace("#", "")
@@ -261,6 +270,53 @@ class CasesPlugin(AutoModPlugin):
                 "value": f"{data.reason}"
             },
         ])
+        await ctx.send(embed=e)
+
+
+    @commands.command(aliases=["fetch"])
+    @AutoModPlugin.can("manage_messages")
+    async def check(self, ctx, user: DiscordUser):
+        """check_help"""
+        e = Embed(
+            title="Info for {0.name}#{0.discriminator}".format(
+                user
+            )
+        )
+        if isinstance(user, discord.Member):
+            url = user.display_avatar
+        elif isinstance(user, discord.User):
+            a = user.avatar
+            if a != None:
+                url = a.url
+            else:
+                url = user.default_avatar_url
+        e.set_thumbnail(
+            url=url
+        )
+
+        Y = self.bot.emotes.get("YES")
+        N = self.bot.emotes.get("NO")
+        mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
+        warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
+        e.add_fields([
+            {
+                "name": "❯ Status",
+                "value": "> **• Banned:** {} \n> **• Muted:** {} \n> **•Muted until:** {}"\
+                .format(
+                    Y if await self.is_banned(ctx, user) else N,
+                    Y if mute_data != None else N,
+                    f"<t:{round(mute_data['timestamp'])}>" if mute_data != None else "N/A"
+                )
+            },
+            {
+                "name": "❯ Stats",
+                "value": "> **• Warns:** {}"\
+                .format(
+                    0 if warns == None else warns
+                )
+            }
+        ])
+
         await ctx.send(embed=e)
 
 
