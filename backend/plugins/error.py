@@ -49,7 +49,7 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "forbidden", _emote="NO", exc=error))
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            param = list(ctx.command.params.values())[len(ctx.args) + len(ctx.kwargs) - len(ctx.command.params)]
+            param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs) - 1, len(ctx.command.params)) - 1]
             usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
             await ctx.send(self.locale.t(ctx.guild, "missing_arg", _emote="NO", param=param._name, usage=usage, info=info))
