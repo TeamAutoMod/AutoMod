@@ -49,19 +49,18 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "forbidden", _emote="NO", exc=error))
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
-            self.bot.help_command.context = ctx; usage = self.bot.help_command.get_command_signature(ctx.command)
+            param = list(ctx.command.params.values())[len(ctx.args) + len(ctx.kwargs) - len(ctx.command.params)]
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
             await ctx.send(self.locale.t(ctx.guild, "missing_arg", _emote="NO", param=param._name, usage=usage, info=info))
         
         elif isinstance(error, PostParseError):
-            self.bot.help_command.context = ctx; usage = self.bot.help_command.get_command_signature(ctx.command)
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
             await ctx.send(self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=error.type, error=error.error, usage=usage, info=info))
 
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.BadUnionArgument):
-            self.bot.help_command.context = ctx
-            usage = self.bot.help_command.get_command_signature(ctx.command)
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
             try:
                 param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
