@@ -282,17 +282,10 @@ class CasesPlugin(AutoModPlugin):
                 user
             )
         )
-        if isinstance(user, discord.Member):
-            url = user.display_avatar
-        elif isinstance(user, discord.User):
-            a = user.avatar
-            if a != None:
-                url = a.url
-            else:
-                url = user.default_avatar_url
-        e.set_thumbnail(
-            url=url
-        )
+        if hasattr(user, "display_avatar"):
+            e.set_thumbnail(
+                url=user.display_avatar
+            )
 
         Y = self.bot.emotes.get("YES")
         N = self.bot.emotes.get("NO")
