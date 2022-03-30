@@ -1,5 +1,7 @@
 import discord
 
+import asyncio
+
 from ...types import Embed
 
 
@@ -10,27 +12,40 @@ class DMProcessor(object):
         self.colors = {
             "kick": 0xf79554,
             "ban": 0xff5c5c,
-            "mute": 0xffdc5c
+            "mute": 0xffdc5c,
+            "warn": 0xffdc5c,
+            "automod_rule_triggered": 0xffdc5c
         }
+        self.queue = []
+        self.bot.loop.create_task(self.dm_users())
+
+
+    async def dm_users(self):
+        while True:
+            await asyncio.sleep(0.3)
+            if len(self.queue) > 0:
+                for kw in self.queue:
+                    self.queue.remove(kw)
+                    await self.actual_execute(**kw)
 
     
-    async def execute(self, msg, _type, _user, _mod, _reason, **opt):
+    def execute(self, msg, _type, _user, **opt):
+        self.queue.append(
+            {
+                "msg": msg,
+                "_type": _type,
+                "_user": _user,
+                **opt
+            }
+        )
+
+    
+    async def actual_execute(self, msg, _type, _user, **opt):
         try:
             e = Embed(
-                color=self.color[_type],
-                title=f"{msg.guild.name}",
-                description=self.bot.locale.t(msg.guild, f"{_type}_dm", **opt)
+                color=self.colors[_type],
+                description=self.bot.locale.t(msg.guild, f"dm_{_type}", **opt)
             )
-            e.add_fields([
-                {
-                    "name": "❯ Moderator",
-                    "value": f"{_mod.name}#{_mod.discriminator}"
-                },
-                {
-                    "name": "❯ Reason",
-                    "value": f"{_reason}"
-                }
-            ])
             await _user.send(embed=e)
         except discord.Forbidden:
             pass

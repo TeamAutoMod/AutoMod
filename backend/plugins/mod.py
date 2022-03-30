@@ -6,7 +6,7 @@ import asyncio
 import logging; log = logging.getLogger()
 
 from .warn import WarnPlugin
-from .processor import LogProcessor, ActionProcessor
+from .processor import LogProcessor, ActionProcessor, DMProcessor
 from ..types import DiscordUser, Duration, Embed
 from ..views import ConfirmView
 from ..schemas import Mute
@@ -39,6 +39,7 @@ class ModerationPlugin(WarnPlugin):
         super().__init__(bot)
         self.log_processor = LogProcessor(bot)
         self.action_processor = ActionProcessor(bot)
+        self.dm_processor = DMProcessor(bot)
         self.bot.loop.create_task(self.handle_unmutes())
 
 
@@ -102,6 +103,16 @@ class ModerationPlugin(WarnPlugin):
         except Exception as ex:
             await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
         else:
+            self.dm_processor.execute(
+                ctx.message,
+                "ban",
+                user,
+                **{
+                    "guild_name": ctx.guild.name,
+                    "reason": reason,
+                    "_emote": "HAMMER"
+                }
+            )
             if action == "softban":
                 try:
                     await ctx.guild.unban(user=user)
@@ -223,6 +234,19 @@ class ModerationPlugin(WarnPlugin):
                     embed=None, 
                     view=None
                 )
+
+                self.dm_processor.execute(
+                    ctx.message,
+                    "mute",
+                    user,
+                    **{
+                        "guild_name": ctx.guild.name,
+                        "until": f"<t:{round(until.timestamp())}>",
+                        "reason": reason,
+                        "_emote": "MUTE"
+                    }
+                )
+
                 await self.log_processor.execute(ctx.guild, "mute_extended", **{
                     "mod": ctx.author, 
                     "mod_id": ctx.author.id,
@@ -263,6 +287,18 @@ class ModerationPlugin(WarnPlugin):
                     await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
                 else:
                     self.db.mutes.insert(Mute(ctx.guild.id, user.id, until))
+
+                    self.dm_processor.execute(
+                        ctx.message,
+                        "mute",
+                        user,
+                        **{
+                            "guild_name": ctx.guild.name,
+                            "until": f"<t:{round(until.timestamp())}>",
+                            "reason": reason,
+                            "_emote": "MUTE"
+                        }
+                    )
 
                     await self.log_processor.execute(ctx.guild, "mute", **{
                         "mod": ctx.author, 

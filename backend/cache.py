@@ -1,11 +1,28 @@
 
 
 
+class CacheMapping(dict):
+    def __init__(self, size=1000):
+        self.size = size
+
+
+    def __setitem__(self, k, v):
+        if len(self.__dict__) >= self.size:
+            self.__dict__.pop(next(iter(self.__dict__)))
+        self.__dict__[k] = v
+
+
+    def update(self, *args, **kwargs):
+        self.__dict__.update(*args, **kwargs)
+        if len(self.__dict__) >= self.size:
+            self.__dict__.pop(next(iter(self.__dict__)))
+
+    
 class InternalCacheType(object):
     def __init__(self, _type, bot):
         self.bot = bot
         self._type = _type
-        self.data = {}
+        self.data = CacheMapping()
         for i in (getattr(self.bot.db, self._type)).find({}):
             if not str(i["id"]) in self.data:
                 self.data[str(i["id"])] = i

@@ -4,8 +4,8 @@ from collections import OrderedDict
 import datetime
 
 from ...schemas import Warn, Case, Mute
-from ...types import Embed
 from .log import LogProcessor
+from .dm import DMProcessor
 
 
 
@@ -19,6 +19,7 @@ class ActionProcessor(object):
             "mute": self.mute
         }
         self.log_processor = LogProcessor(bot)
+        self.dm_processor = DMProcessor(bot)
 
 
     def new_case(self, _type, msg, mod, user, reason):
@@ -42,35 +43,20 @@ class ActionProcessor(object):
         return case
 
 
-    async def dm_user(self, msg, _type, _user, _mod, _reason, **opt):
-        try:
-            e = Embed(
-                color=self.color[_type],
-                title=f"{msg.guild.name}",
-                description=self.bot.locale.t(msg.guild, f"{_type}_dm", **opt)
-            )
-            e.add_fields([
-                {
-                    "name": "❯ Moderator",
-                    "value": f"{_mod.name}#{_mod.discriminator}"
-                },
-                {
-                    "name": "❯ Reason",
-                    "value": f"{_reason}"
-                }
-            ])
-            await _user.send(embed=e)
-        except discord.Forbidden:
-            pass
-
-
     async def execute(self, msg, mod, user, warns, reason):
+        if "(" in reason:
+            raw_reason = reason.split("(")[0]
+        elif "Triggered filter" in reason:
+            raw_reason = "Used one or more filtered words"
+        else:
+            raw_reason = reason
         log_kwargs = {
             "mod": mod,
             "mod_id": mod.id,
             "user": f"{user.name}#{user.discriminator}",
             "user_id": user.id,
-            "reason": reason
+            "reason": reason,
+            "raw_reason": raw_reason
         }
         warn_id = f"{msg.guild.id}-{user.id}"
 
@@ -121,6 +107,17 @@ class ActionProcessor(object):
             func = self.executors[action]
             return await func(msg, mod, user, reason, **log_kwargs)
         else:
+            self.dm_processor.execute(
+                msg,
+                "warn",
+                user,
+                **{
+                    "guild_name": msg.guild.name,
+                    "reason": raw_reason,
+                    "_emote": "ALARM"
+                }
+            )
+
             log_kwargs.update(
                 {
                     "case": self.new_case("warn", msg, mod, user, reason),
@@ -128,16 +125,6 @@ class ActionProcessor(object):
                     "new_warns": new_warns
                 }
             )
-            # await self.dm_user(
-            #     msg,
-            #     "warn",
-            #     user,
-            #     mod,
-            #     reason,
-            #     **{
-            #         "warns": (log_kwargs["new_warns"] - log_kwargs["old_warns"])
-            #     }
-            # )
             await self.log_processor.execute(msg.guild, "warn", **log_kwargs)
             return None
 
@@ -149,6 +136,17 @@ class ActionProcessor(object):
         except Exception as ex:
             return ex
         else:
+            self.dm_processor.execute(
+                msg,
+                "ban",
+                user,
+                **{
+                    "guild_name": msg.guild.name,
+                    "reason": log_kwargs.get("raw_reason"),
+                    "_emote": "HAMMER"
+                }
+            )
+
             log_kwargs.update(
                 {
                     "case": self.new_case("ban", msg, mod, user, reason)
@@ -165,6 +163,17 @@ class ActionProcessor(object):
         except Exception as ex:
             return ex
         else:
+            self.dm_processor.execute(
+                msg,
+                "kick",
+                user,
+                **{
+                    "guild_name": msg.guild.name,
+                    "reason": log_kwargs.get("raw_reason"),
+                    "_emote": "SHOE"
+                }
+            )
+
             log_kwargs.update(
                 {
                     "case": self.new_case("kick", msg, mod, user, reason)
@@ -190,6 +199,18 @@ class ActionProcessor(object):
         self.bot.db.mutes.insert(Mute(msg.guild.id, user.id, until))
 
         self.bot.handle_timeout(True, msg.guild, user, until.isoformat())
+
+        self.dm_processor.execute(
+            msg,
+            "mute",
+            user,
+            **{
+                "guild_name": msg.guild.name,
+                "until": f"<t:{round(until.timestamp())}>",
+                "reason": log_kwargs.get("raw_reason"),
+                "_emote": "MUTE"
+            }
+        )
 
         log_kwargs.pop("length")
         log_kwargs.update(

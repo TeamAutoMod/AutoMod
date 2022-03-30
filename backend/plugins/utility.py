@@ -4,13 +4,13 @@ from discord.ext import commands
 import time
 import re
 import requests
+import subprocess
 from PIL import Image
 from io import BytesIO
 
 from . import AutoModPlugin
 from ..types import Embed, DiscordUser
 from ..views import AboutView
-from .. import VERSION
 
 
 
@@ -71,6 +71,17 @@ def get_command_help(plugin, ctx, query):
         return None
 
 
+def get_version():
+    try:
+        _V = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip()
+    except Exception:
+        VERSION = "1.0.0"
+    else:
+        VERSION = str(_V).replace("b'", "")[:7]
+    finally:
+        return VERSION
+
+
 class UtilityPlugin(AutoModPlugin):
     """Plugin for all utility commands"""
     def __init__(self, bot):
@@ -116,7 +127,7 @@ class UtilityPlugin(AutoModPlugin):
                 .format(
                     self.bot.get_uptime(),
                     f"<t:{round(self.bot.last_reload)}>",
-                    VERSION,
+                    get_version(),
                     round(self.bot.latency * 1000)
                 )
             },

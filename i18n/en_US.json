@@ -195,5 +195,11 @@
     "no_disabled_commands": "{emote} Currently all commands are enabled",
     "no_changes": "{emote} This wouldn't change the current command config",
 
-    "case_not_found": "{emote} That case doesn't exist"
+    "case_not_found": "{emote} That case doesn't exist",
+
+    "dm_automod_rule_triggered": "{emote} Your message in **{guild_name}** has been deleted because you broke the following rule:\n```\n{rule}\n```",
+    "dm_kick": "{emote} You have been kicked from **{guild_name}** for:\n```\n{reason}\n```",
+    "dm_ban": "{emote} You have been banned from **{guild_name}** for:\n```\n{reason}\n```",
+    "dm_warn": "{emote} You have been warned in **{guild_name}** for:\n```\n{reason}\n```",
+    "dm_mute": "{emote} You have been muted in **{guild_name}** until {until} for:\n```\n{reason}\n```"
 }

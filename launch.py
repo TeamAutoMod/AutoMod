@@ -1,5 +1,6 @@
 import discord.http; discord.http.Route.BASE = "https://discordapp.com/api/v9"
 
+import sys
 import logging; log = logging.getLogger(__name__)
 
 from backend import ShardedBotInstance

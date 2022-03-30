@@ -298,7 +298,7 @@ class CasesPlugin(AutoModPlugin):
                 .format(
                     Y if await self.is_banned(ctx, user) else N,
                     Y if mute_data != None else N,
-                    f"<t:{round(mute_data['timestamp'])}>" if mute_data != None else "N/A"
+                    f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
                 )
             },
             {

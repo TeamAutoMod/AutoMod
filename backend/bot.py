@@ -12,7 +12,7 @@ from .cache import InternalCache
 from .mongo import MongoDB
 from .schemas import GuildConfig
 from .utils import Translator, Emotes
-from .types import Context
+from .types import Context, embed
 from .views import pages
 from .observer import Observer
 
@@ -56,7 +56,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             allowed_mentions=discord.AllowedMentions(everyone=False, replied_user=False),
             *args, **kwargs
         )
-        pages.inject_bot_obj(self)
+        for f in [pages, embed]: f.inject_bot_obj(self)
 
         self.ready = False
         self.locked = False

@@ -4,12 +4,10 @@ from discord.ext import commands
 import re
 from toolbox import S as Object
 from urllib.parse import urlparse
-import logging
-
-from backend.plugins.processor.log import LogProcessor; log = logging.getLogger()
+import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
-from .processor import ActionProcessor
+from .processor import ActionProcessor, LogProcessor, DMProcessor
 
 
 
@@ -185,18 +183,24 @@ class AutomodPlugin(AutoModPlugin):
         super().__init__(bot)
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
+        self.dm_processor = DMProcessor(bot)
 
 
     def can_act(self, guild, mod, target):
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
         if mod == None or target == None: return False
-        if target.guild_permissions.ban_members == True: return
+
+        rid = self.bot.db.configs.get(guild.id, "mod_role")
+        if rid != "":
+            r = guild.get_role(int(rid))
+            if r != None:
+                if r in target.roles:
+                    return True
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
-            and target.guild_permissions.ban_members == False \
-            and target.guild_permissions.kick_members == False
+            and (target.guild_permissions.kick_members == False or target.guild_permissions.kick_members == False)
 
 
     def parse_filter(self, words):
@@ -234,6 +238,17 @@ class AutomodPlugin(AutoModPlugin):
                 )
             else:
                 data = Object(LOG_DATA[rule])
+
+                self.dm_processor.execute(
+                    msg,
+                    "automod_rule_triggered",
+                    msg.author,
+                    **{
+                        "guild_name": msg.guild.name,
+                        "rule": data.rule,
+                        "_emote": "SHIELD"
+                    }
+                )
                 await self.log_processor.execute(
                     msg.guild,
                     "automod_rule_triggered",

@@ -158,7 +158,10 @@ class ConfigPlugin(AutoModPlugin):
 
         mute_perm = n
         if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
-            if ctx.guild.me.guild_permissions.administrator == True: mute_perm = y
+            if ctx.guild.me.guild_permissions.administrator == True: 
+                mute_perm = y
+        else:
+            mute_perm = y
 
         e = Embed(
             title=f"Config for {ctx.guild.name}",

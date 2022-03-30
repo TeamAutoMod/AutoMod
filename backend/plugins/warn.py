@@ -20,9 +20,18 @@ class WarnPlugin(AutoModPlugin):
         if not guild.chunked: await guild.chunk(cache=True)
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
+
+        rid = self.bot.db.configs.get(guild.id, "mod_role")
+        if rid != "":
+            r = guild.get_role(int(rid))
+            if r != None:
+                if r in target.roles:
+                    return True
+
         return mod.id != target.id \
+            and mod.top_role > target.top_role \
             and target.id != guild.owner.id \
-            and mod.top_role > target.top_role
+            and (target.guild_permissions.kick_members == False or target.guild_permissions.kick_members == False)
 
 
     @commands.command()
