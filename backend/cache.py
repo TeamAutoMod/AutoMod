@@ -8,6 +8,8 @@ class CacheMapping(dict):
 
 
     def __setitem__(self, k, v):
+        if not hasattr(self, "size"):
+            self.size = 1000
         if len(self.__dict__) >= self.size:
             self.__dict__.pop(next(iter(self.__dict__)))
         self.__dict__[k] = v
@@ -15,6 +17,8 @@ class CacheMapping(dict):
 
     def update(self, *args, **kwargs):
         self.__dict__.update(*args, **kwargs)
+        if not hasattr(self, "size"):
+            self.size = 1000
         if len(self.__dict__) >= self.size:
             self.__dict__.pop(next(iter(self.__dict__)))
 
