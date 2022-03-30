@@ -3,6 +3,7 @@
 
 class CacheMapping(dict):
     def __init__(self, size=1000):
+        super().__init__()
         self.size = size
 
 
