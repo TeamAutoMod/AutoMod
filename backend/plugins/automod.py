@@ -173,6 +173,9 @@ LOG_DATA = {
     },
     "zalgo": {
         "rule": "Anti-Zalgo"
+    },
+    "regex": {
+        "rule": "Regex-Filter"
     }
 }
 
@@ -220,7 +223,16 @@ class AutomodPlugin(AutoModPlugin):
             return None
 
 
-    async def delete_msg(self, rule, found, msg, warns, reason):
+    def parse_regex(self, regex):
+        try:
+            parsed = re.compile(regex)
+        except Exception:
+            return None
+        else:
+            return parsed
+
+
+    async def delete_msg(self, rule, found, msg, warns, reason, pattern_or_filter=None, pattern=None):
         try:
             await msg.delete()
         except (discord.NotFound, discord.Forbidden):
@@ -249,18 +261,32 @@ class AutomodPlugin(AutoModPlugin):
                         "_emote": "SHIELD"
                     }
                 )
-                await self.log_processor.execute(
-                    msg.guild,
-                    "automod_rule_triggered",
-                    **{
-                        "rule": data.rule,
-                        "found": found,
-                        "user_id": msg.author.id,
-                        "user": msg.author,
-                        "mod_id": msg.guild.me.id,
-                        "mod": msg.guild.me
-                    }
-                )
+                if rule not in ["filter", "regex"]:
+                    await self.log_processor.execute(
+                        msg.guild,
+                        "automod_rule_triggered",
+                        **{
+                            "rule": data.rule,
+                            "found": found,
+                            "user_id": msg.author.id,
+                            "user": msg.author,
+                            "mod_id": msg.guild.me.id,
+                            "mod": msg.guild.me
+                        }
+                    )
+                else:
+                    await self.log_processor.execute(
+                        msg.guild,
+                        f"{rule}_triggered",
+                        **{
+                            "pattern": f"{pattern_or_filter} (``{pattern}``)",
+                            "found": found,
+                            "user_id": msg.author.id,
+                            "user": msg.author,
+                            "mod_id": msg.guild.me.id,
+                            "mod": msg.guild.me
+                        }
+                    )
 
 
     async def enforce_rules(self, msg):
@@ -269,6 +295,7 @@ class AutomodPlugin(AutoModPlugin):
         config = Object(self.db.configs.get_doc(msg.guild.id))
         rules = config.automod
         filters = config.filters
+        regexes = config.regexes
 
         if len(rules) < 1: return
 
@@ -285,6 +312,22 @@ class AutomodPlugin(AutoModPlugin):
                             msg, 
                             int(f["warns"]), 
                             f"Triggered filter '{name}' with '{', '.join(found)}'"
+                        )
+        
+        if len(regexes) > 0:
+            for name, data in regexes.items():
+                parsed = self.parse_regex(data["regex"])
+                if parsed != None:
+                    found = parsed.findall(content)
+                    if found:
+                        return await self.delete_msg(
+                            "regex",
+                            ", ".join(found),
+                            msg, 
+                            int(data["warns"]), 
+                            f"Triggered regex '{name}' with '{', '.join(found)}'",
+                            name,
+                            data["regex"]
                         )
         
         if hasattr(rules, "invites"):

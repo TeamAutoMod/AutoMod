@@ -20,12 +20,20 @@ class DiscordUser(commands.Converter):
         try:
             user = await commands.UserConverter().convert(ctx, argument)
         except commands.BadArgument:
-            try:
-                user = await ctx.bot.fetch_user(
-                    await IntegerConverter(min=20000000000000000, max=9223372036854775807).convert(ctx, argument))
-            except (ValueError, discord.HTTPException):
-                pass
+            if int(argument) in ctx.bot.fetched_user_cache:
+                user = ctx.bot.fetched_user_cache[int(argument)]
+            else:
+                try:
+                    user = await ctx.bot.fetch_user(
+                        await IntegerConverter(min=20000000000000000, max=9223372036854775807).convert(ctx, argument))
+                except (ValueError, discord.HTTPException):
+                    pass
 
         if user is None or (self.id_only and str(user.id) != argument):
             raise commands.BadArgument("user_not_found")
+
+        if not user.id in ctx.bot.fetched_user_cache:
+            ctx.bot.fetched_user_cache.update({
+                user.id: user
+            })
         return user

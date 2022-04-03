@@ -24,6 +24,7 @@ def GuildConfig(guild, prefix):
         "punishments": {},
         "automod": {},
         "filters": {},
+        "regexes": {},
 
         "cases": 0,
         "case_ids": {},

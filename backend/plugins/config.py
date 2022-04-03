@@ -6,6 +6,7 @@ from toolbox import S as Object
 from typing import Union
 import asyncio
 import itertools
+import re
 
 from . import AutoModPlugin
 from ..types import Embed, Duration
@@ -145,6 +146,18 @@ class ConfigPlugin(AutoModPlugin):
                 pass
             else:
                 await ow.delete()
+
+
+    def validate_regex(self, regex):
+        valid: bool
+        try:
+            re.compile(regex)
+        except re.error:
+            valid = False
+        else:
+            valid = True
+        finally:
+            return valid
 
 
     @commands.command()
@@ -534,6 +547,64 @@ class ConfigPlugin(AutoModPlugin):
             if footer != None: e.set_footer(text=footer)
 
         await ctx.send(embed=e)
+
+
+    @commands.group(aliases=["rgx"])
+    @AutoModPlugin.can("manage_messages")
+    async def regex(self, ctx):
+        """regex_help"""
+        if ctx.invoked_subcommand == None:
+            regexes = self.db.configs.get(ctx.guild.id, "regexes")
+            if len(regexes) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_regexes", _emote="NO"))
+
+            e = Embed(
+                title="Regexes"
+            )
+            for name, data in regexes.items():
+                e.add_field(
+                    name=f"❯ {name} " + f"({data['warns']} warn{'' if data['warns'] == 1 else 's'})" if data["warns"] > 0 else "(delete message)",
+                    value=f"```\n{data['regex']}\n```"
+                )
+            
+            await ctx.send(embed=e)
+
+
+    @regex.command(name="add")
+    @AutoModPlugin.can("manage_messages")
+    async def add_regex(self, ctx, name, regex, warns: int):
+        """regex_add_help"""
+        regexes = self.db.configs.get(ctx.guild.id, "regexes")
+        name = name.lower()
+
+        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
+        if name in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_exists", _emote="NO"))
+
+        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        if self.validate_regex(regex) == False: return await ctx.send(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
+
+        regexes[name] = {
+            "warns": warns,
+            "regex": regex
+        }
+        self.db.configs.update(ctx.guild.id, "regexes", regexes)
+
+        await ctx.send(self.locale.t(ctx.guild, "added_regex", _emote="YES"))
+
+
+    @regex.command(name="remove", aliases=["delete", "del"])
+    async def remove_regex(self, ctx, name):
+        """regex_remove_help"""
+        regexes = self.db.configs.get(ctx.guild.id, "regexes")
+        name = name.lower()
+
+        if name not in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+
+        del regexes[name]
+        self.db.configs.update(ctx.guild.id, "regexes", regexes)
+
+        await ctx.send(self.locale.t(ctx.guild, "removed_regex", _emote="YES"))
 
 
     @commands.command(aliases=["restrict"])

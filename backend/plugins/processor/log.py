@@ -136,9 +136,16 @@ LOG_TYPES = {
     "automod_rule_triggered": {
         "channel": "mod_log",
         "key": "log_automod",
-        "color": 0xffdc5c,
+        "color": 0xff7514,
         "emote": "SHIELD",
         "action": "Automod rule triggered"
+    },
+    "regex_triggered": {
+        "channel": "mod_log",
+        "key": "log_regex",
+        "color": 0xff7514,
+        "emote": "SHIELD",
+        "action": "Regex filter triggered"
     }
 }
 

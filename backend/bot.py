@@ -71,6 +71,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.ignore_for_events = []
         self.case_cmd_cache = {}
         self.webhook_cache = {}
+        self.fetched_user_cache = {}
 
         if self.config.watch == True:
             self.observer = Observer(self)

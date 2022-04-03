@@ -2,9 +2,9 @@
 
 
 class CacheMapping(dict):
-    def __init__(self, size=1000):
+    def __init__(self):
         super().__init__()
-        self.size = size
+        self.size = 1000
 
 
     def __setitem__(self, k, v):
