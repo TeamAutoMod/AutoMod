@@ -64,7 +64,7 @@
     "log_unwarn": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_mute": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
     "log_manual_unmute": "**Moderator:** {mod.mention} ({mod_id})",
-    "log_unmute": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** [ Automatic ] Mute has expired",
+    "log_unmute": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** [ Auto ] Mute has expired",
     "log_mute_extended": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
     "log_automod": "**Moderator:** {mod.mention} ({mod_id}) \n**Rule:** {rule} \n**Match:** {found}",
     "log_regex": "**Moderator:** {mod.mention} ({mod_id}) \n**Pattern:** {pattern} \n**Match:** {found}",

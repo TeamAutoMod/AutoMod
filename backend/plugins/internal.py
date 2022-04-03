@@ -187,7 +187,7 @@ class InternalPlugin(AutoModPlugin):
             return
         
         content = " ".join([x.url for x in msg.attachments]) + msg.content
-        if len(content) == "": return
+        if content == "": return
         e = Embed(
             color=0xff5c5c, 
             timestamp=datetime.datetime.utcnow(),

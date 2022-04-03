@@ -2,12 +2,15 @@ import discord
 from discord.ext import commands
 
 import re
+import itertools
+from typing import Union
 from toolbox import S as Object
 from urllib.parse import urlparse
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
 from .processor import ActionProcessor, LogProcessor, DMProcessor
+from ..types import Embed
 
 
 
@@ -176,6 +179,35 @@ LOG_DATA = {
     },
     "regex": {
         "rule": "Regex-Filter"
+    }
+}
+
+
+AUTOMOD_RULES = {
+    "mentions": {
+        "int_field_name": "threshold",
+        "i18n_key": "set_mentions",
+        "i18n_type": "maximum mentions"
+    },
+    "links": {
+        "int_field_name": "warns",
+        "i18n_key": "set_links",
+        "i18n_type": "link filtering"
+    },
+    "invites": {
+        "int_field_name": "warns",
+        "i18n_key": "set_invites",
+        "i18n_type": "invite filtering"
+    },
+    "files": {
+        "int_field_name": "warns",
+        "i18n_key": "set_files",
+        "i18n_type": "bad file detection"
+    },
+    "zalgo": {
+        "int_field_name": "warns",
+        "i18n_key": "set_zalgo",
+        "i18n_type": "zalgo filtering"
     }
 }
 
@@ -436,6 +468,299 @@ class AutomodPlugin(AutoModPlugin):
         if not self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
+
+
+    @commands.command()
+    @AutoModPlugin.can("manage_guild")
+    async def automod(self, ctx, rule = None, amount: Union[int, str] = None):
+        """automod_help"""
+        prefix = self.get_prefix(ctx.guild)
+        if rule == None or amount == None:
+            e = Embed(
+                title="Automoderator Configuration",
+                description=self.locale.t(ctx.guild, "automod_description", prefix=prefix)
+            )
+            e.add_field(
+                name="❯ Commands",
+                value=self.locale.t(ctx.guild, "automod_commands", prefix=prefix)
+            )
+            return await ctx.send(embed=e)
+        
+        rule = rule.lower()
+        if not rule in AUTOMOD_RULES:
+            return await ctx.send(self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO"))
+        
+        current = self.db.configs.get(ctx.guild.id, "automod")
+        data = Object(AUTOMOD_RULES[rule])
+
+        if isinstance(amount, str):
+            if amount.lower() == "off":
+                self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
+                return await ctx.send(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
+            else:
+                return await ctx.send(self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field=data.i18n_type))
+        else:
+            if rule == "mentions":
+                if amount < 8: return await ctx.send(self.locale.t(ctx.guild, "min_mentions", _emote="NO"))
+                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_mentions", _emote="NO"))
+            else:
+                if amount < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+            current.update({
+                rule: {
+                    data.int_field_name: int(amount)
+                }
+            })
+            self.db.configs.update(ctx.guild.id, "automod", current)
+
+            text = ""
+            if rule != "mentions" and amount == 0:
+                text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
+            else:
+                text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
+
+            await ctx.send(text)
+
+
+    @commands.group()
+    @AutoModPlugin.can("manage_guild")
+    async def allowed_invites(self, ctx):
+        """allowed_invites_help"""
+        if ctx.invoked_subcommand == None:
+            allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+            if len(allowed) < 1:
+                prefix = self.get_prefix(ctx.guild)
+                return await ctx.send(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix=prefix))
+            
+            e = Embed(
+                title="Allowed invites (by server ID)",
+                description=", ".join(allowed)
+            )
+            await ctx.send(embed=e)
+
+
+    @allowed_invites.command(name="add")
+    @AutoModPlugin.can("manage_guild")
+    async def add_inv(self, ctx, guild_id: int):
+        """allowed_invites_add_help"""
+        allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+
+        if str(guild_id) in allowed:
+            return await ctx.send(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"))
+        
+        allowed.append(str(guild_id))
+        self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
+
+        await ctx.send(self.locale.t(ctx.guild, "allowed_inv", _emote="YES"))
+
+
+    @allowed_invites.command(name="remove")
+    @AutoModPlugin.can("manage_guild")
+    async def remove_inv(self, ctx, guild_id: int):
+        """allowed_invites_remove_help"""
+        allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+
+        if not str(guild_id) in allowed:
+            return await ctx.send(self.locale.t(ctx.guild, "not_allowed", _emote="NO"))
+        
+        allowed.remove(str(guild_id))
+        self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
+
+        await ctx.send(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"))
+
+
+    @commands.group(aliases=["links"])
+    @AutoModPlugin.can("manage_guild")
+    async def link_blacklist(self, ctx):
+        """link_blacklist_help"""
+        if ctx.invoked_subcommand == None:
+            links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+            if len(links) < 1:
+                prefix = self.get_prefix(ctx.guild)
+                return await ctx.send(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix=prefix))
+            
+            e = Embed(
+                title="Allowed links",
+                description=", ".join(links)
+            )
+            await ctx.send(embed=e)
+
+
+    @link_blacklist.command(name="add")
+    @AutoModPlugin.can("manage_guild")
+    async def add_link(self, ctx, url: str):
+        """link_blacklist_add_help"""
+        url = url.lower()
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+
+        if str(url) in links:
+            return await ctx.send(self.locale.t(ctx.guild, "alr_link", _emote="NO"))
+        
+        links.append(url)
+        self.db.configs.update(ctx.guild.id, "black_listed_links", links)
+
+        await ctx.send(self.locale.t(ctx.guild, "allowed_link", _emote="YES"))
+
+
+    @link_blacklist.command(name="remove")
+    @AutoModPlugin.can("manage_guild")
+    async def remove_link(self, ctx, url: str):
+        """link_blacklist_remove_help"""
+        url = url.lower()
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+
+        if not str(url) in links:
+            return await ctx.send(self.locale.t(ctx.guild, "not_link", _emote="NO"))
+        
+        links.remove(url)
+        self.db.configs.update(ctx.guild.id, "black_listed_links", links)
+
+        await ctx.send(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"))
+
+
+    @commands.group(name="filter", aliases=["filters"])
+    @AutoModPlugin.can("manage_guild")
+    async def _filter(self, ctx):
+        """filter_help"""
+        if ctx.invoked_subcommand == None:
+            prefix = self.get_prefix(ctx.guild)
+            e = Embed(
+                title="How to use filters",
+                description=f"• Adding a filter: ``{prefix}filter add <name> <warns> <words>`` \n• Deleting a filter: ``{prefix}filter remove <name>``"
+            )
+            e.add_field(
+                name="❯ Arguments",
+                value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when using a word within the filter* \n``<words>`` - *Words contained in the filter, seperated by commas*"
+            )
+            e.add_field(
+                name="❯ Wildcards",
+                value="You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered."
+            )
+            e.add_field(
+                name="❯ Example",
+                value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*``"
+            )
+            await ctx.send(embed=e)
+
+
+    @_filter.command(name="add")
+    @AutoModPlugin.can("manage_guild")
+    async def add_filter(self, ctx, name, warns: int, *, words):
+        """filter_add_help"""
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
+        if name in filters: return await ctx.send(self.locale.t(ctx.guild, "filter_exists", _emote="NO"))
+
+        if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        filters[name] = {
+            "warns": warns,
+            "words": words.split(", ")
+        }
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.send(self.locale.t(ctx.guild, "added_filter", _emote="YES"))
+
+    
+    @_filter.command(name="remove")
+    @AutoModPlugin.can("manage_guild")
+    async def remove_filter(self, ctx, name):
+        """filter_remove_help"""
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
+        if not name in filters: return await ctx.send(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
+
+        del filters[name]
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.send(self.locale.t(ctx.guild, "removed_filter", _emote="YES"))
+
+
+    @_filter.command()
+    @AutoModPlugin.can("ban_members")
+    async def show(self, ctx):
+        """filter_show_help"""
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+        if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
+
+        e = Embed(
+            title="Filters"
+        )
+        for name in dict(itertools.islice(filters.items(), 10)):
+            i = filters[name]
+            e.add_field(
+                name=f"❯ {name} ({i['warns']} {'warn' if int(i['warns']) == 1 else 'warns'})",
+                value=", ".join([f"``{x}``" for x in i["words"]])
+            )
+
+            footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
+            if footer != None: e.set_footer(text=footer)
+
+        await ctx.send(embed=e)
+
+
+    @commands.group(aliases=["rgx"])
+    @AutoModPlugin.can("manage_messages")
+    async def regex(self, ctx):
+        """regex_help"""
+        if ctx.invoked_subcommand == None:
+            regexes = self.db.configs.get(ctx.guild.id, "regexes")
+            if len(regexes) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_regexes", _emote="NO"))
+
+            e = Embed(
+                title="Regexes"
+            )
+            for name, data in regexes.items():
+                e.add_field(
+                    name=f"❯ {name} " + f"({data['warns']} warn{'' if data['warns'] == 1 else 's'})" if data["warns"] > 0 else "(delete message)",
+                    value=f"```\n{data['regex']}\n```"
+                )
+            
+            await ctx.send(embed=e)
+
+
+    @regex.command(name="add")
+    @AutoModPlugin.can("manage_messages")
+    async def add_regex(self, ctx, name, regex, warns: int):
+        """regex_add_help"""
+        regexes = self.db.configs.get(ctx.guild.id, "regexes")
+        name = name.lower()
+
+        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
+        if name in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_exists", _emote="NO"))
+
+        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        if self.validate_regex(regex) == False: return await ctx.send(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
+
+        regexes[name] = {
+            "warns": warns,
+            "regex": regex
+        }
+        self.db.configs.update(ctx.guild.id, "regexes", regexes)
+
+        await ctx.send(self.locale.t(ctx.guild, "added_regex", _emote="YES"))
+
+
+    @regex.command(name="remove", aliases=["delete", "del"])
+    async def remove_regex(self, ctx, name):
+        """regex_remove_help"""
+        regexes = self.db.configs.get(ctx.guild.id, "regexes")
+        name = name.lower()
+
+        if name not in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+
+        del regexes[name]
+        self.db.configs.update(ctx.guild.id, "regexes", regexes)
+
+        await ctx.send(self.locale.t(ctx.guild, "removed_regex", _emote="YES"))
 
 
 async def setup(bot): await bot.register_plugin(AutomodPlugin(bot))

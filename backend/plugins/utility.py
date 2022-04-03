@@ -18,6 +18,7 @@ ACTUAL_PLUGIN_NAMES = {
     "UtilityPlugin": "Utility",
     "ModerationPlugin": "Moderation",
     "ConfigPlugin": "Configuration",
+    "AutomodPlugin": "Automoderator",
     "TagsPlugin": "Custom Commands",
     "CasesPlugin": "Cases"
 }

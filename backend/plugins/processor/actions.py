@@ -63,7 +63,7 @@ class ActionProcessor(object):
         if mod.id == self.bot.user.id: 
             log_kwargs.update(
                 {
-                    "reason": f"[ Automatic ] {reason}"
+                    "reason": f"[ Auto ] {reason}"
                 }
             )
 
@@ -86,7 +86,7 @@ class ActionProcessor(object):
             action = list(rules.values())[-1]
             _from = list(rules.keys())[-2] if len(list(rules.keys())) > 1 else 0
             _to = list(rules.keys())[-1]
-            reason = f"[ Automatic {_to} ] {reason}"
+            reason = f"[ Auto {_to} ] {reason}"
 
             log_kwargs.update(
                 {

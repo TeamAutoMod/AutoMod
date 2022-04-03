@@ -1,9 +1,6 @@
 import discord
 from discord.ext import commands
 
-import importlib
-import sys
-
 
 
 class AutoModPlugin(commands.Cog):
