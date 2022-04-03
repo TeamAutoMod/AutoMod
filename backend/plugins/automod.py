@@ -232,7 +232,7 @@ class AutomodPlugin(AutoModPlugin):
             return parsed
 
 
-    async def delete_msg(self, rule, found, msg, warns, reason, pattern_or_filter=None, pattern=None):
+    async def delete_msg(self, rule, found, msg, warns, reason, pattern_or_filter=None):
         try:
             await msg.delete()
         except (discord.NotFound, discord.Forbidden):
@@ -279,7 +279,7 @@ class AutomodPlugin(AutoModPlugin):
                         msg.guild,
                         f"{rule}_triggered",
                         **{
-                            "pattern": f"{pattern_or_filter} (``{pattern}``)",
+                            "pattern": f"{pattern_or_filter}",
                             "found": found,
                             "user_id": msg.author.id,
                             "user": msg.author,
@@ -326,8 +326,7 @@ class AutomodPlugin(AutoModPlugin):
                             msg, 
                             int(data["warns"]), 
                             f"Triggered regex '{name}' with '{', '.join(found)}'",
-                            name,
-                            data["regex"]
+                            name
                         )
         
         if hasattr(rules, "invites"):
