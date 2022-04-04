@@ -10,11 +10,16 @@ def inject_bot_obj(bot):
 class Embed(discord.Embed):
     #0x5764f1
     def __init__(self, color=None, **kwargs):
+        if color != None:
+            self.imu = False
+        else:
+            self.imu = True
         super().__init__(color=color, **kwargs)
 
 
     def _add_color(self):
-        self.color = int(bot_obj.config.embed_color, 16)
+        if self.imu == True:
+            self.color = int(bot_obj.config.embed_color, 16)
 
     
     def set_thumbnail(self, url):

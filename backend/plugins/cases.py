@@ -213,11 +213,6 @@ class CasesPlugin(AutoModPlugin):
                     self.update_case_embed(embed, inp); pages.append(embed)
                 else:
                     self.update_case_embed(embed, inp)
-        
-        text = []
-        for k, v in counts.items():
-            text.append(f"{v} {k if v == 1 else f'{k}s'}")
-        text = ", ".join(text[:3]) + f" & {text[-1]}"
 
         if len(pages) > 1:
             self.bot.case_cmd_cache.update({
