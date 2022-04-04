@@ -46,11 +46,7 @@ class Observer(object):
 
                     if content != data["content"]:
                         try:
-                            if f == "mod": 
-                                _f = "moderation"
-                            else:
-                                _f = f
-                            await self.bot.reload_plugin(_f)
+                            await self.bot.reload_plugin(f)
                         except Exception as ex:
                             log.warn(f"Failed to hot reload {f} - {ex}")
                         else:

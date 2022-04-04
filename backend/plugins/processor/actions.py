@@ -136,6 +136,7 @@ class ActionProcessor(object):
         except Exception as ex:
             return ex
         else:
+            self.bot.ignore_for_events.append(user.id)
             self.dm_processor.execute(
                 msg,
                 "ban",
@@ -163,6 +164,7 @@ class ActionProcessor(object):
         except Exception as ex:
             return ex
         else:
+            self.bot.ignore_for_events.append(user.id)
             self.dm_processor.execute(
                 msg,
                 "kick",

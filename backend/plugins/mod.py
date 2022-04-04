@@ -71,7 +71,7 @@ class ModerationPlugin(WarnPlugin):
                             })
                         self.bot.db.mutes.delete(mute["id"])
     
-
+    # soon
     async def decay_warns(self):
         while True:
             await asyncio.sleep(0.5)
@@ -122,6 +122,7 @@ class ModerationPlugin(WarnPlugin):
         except Exception as ex:
             await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
         else:
+            self.bot.ignore_for_events.append(user.id)
             self.dm_processor.execute(
                 ctx.message,
                 "ban",

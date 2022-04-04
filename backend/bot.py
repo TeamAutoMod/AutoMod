@@ -154,7 +154,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     
     async def reload_plugin(self, plugin):
-        if f"{plugin.capitalize()}Plugin" not in self.plugins:
+        if plugin == "mod":
+            in_plugins_name = "ModerationPlugin"
+        else:
+            in_plugins_name = f"{plugin.capitalize()}Plugin"
+        if in_plugins_name not in self.plugins:
             try: await super().load_extension(f"backend.plugins.{plugin}")
             except Exception: raise
 

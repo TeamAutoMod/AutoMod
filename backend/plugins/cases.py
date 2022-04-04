@@ -73,13 +73,13 @@ class CasesPlugin(AutoModPlugin):
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
     
-    async def is_banned(self, ctx, user):
+    async def ban_data(self, ctx, user):
         try:
-            await ctx.guild.fetch_ban(user)
+            data = await ctx.guild.fetch_ban(user)
         except discord.NotFound:
-            return False
+            return None
         else:
-            return True
+            return data
 
 
     @commands.command(aliases=["history", "cases"])
@@ -285,13 +285,15 @@ class CasesPlugin(AutoModPlugin):
         Y = self.bot.emotes.get("YES")
         N = self.bot.emotes.get("NO")
         mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
+        ban_data = await self.ban_data(ctx, user)
         warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
         e.add_fields([
             {
                 "name": "❯ Status",
-                "value": "> **• Banned:** {} \n> **• Muted:** {} \n> **•Muted until:** {}"\
+                "value": "> **• Banned:** {} \n> **• Reason:** {} \n> **• Muted:** {} \n> **• Muted until:** {}"\
                 .format(
-                    Y if await self.is_banned(ctx, user) else N,
+                    Y if ban_data != None else N,
+                    ban_data.reason if ban_data != None else "N/A",
                     Y if mute_data != None else N,
                     f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
                 )
