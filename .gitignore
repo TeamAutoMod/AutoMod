@@ -130,4 +130,4 @@ dmypy.json
 /node_modules
 
 /backend/config.json
-./dashboard
+/dashboard

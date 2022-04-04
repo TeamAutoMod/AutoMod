@@ -47,5 +47,5 @@ class DMProcessor(object):
                 description=self.bot.locale.t(msg.guild, f"dm_{_type}", **opt)
             )
             await _user.send(embed=e)
-        except discord.Forbidden:
+        except Exception:
             pass
