@@ -26,7 +26,7 @@ class WarnPlugin(AutoModPlugin):
             r = guild.get_role(int(rid))
             if r != None:
                 if r in target.roles:
-                    return True
+                    return False
 
         return mod.id != target.id \
             and mod.top_role > target.top_role \

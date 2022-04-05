@@ -231,7 +231,7 @@ class AutomodPlugin(AutoModPlugin):
             r = guild.get_role(int(rid))
             if r != None:
                 if r in target.roles:
-                    return True
+                    return False
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
