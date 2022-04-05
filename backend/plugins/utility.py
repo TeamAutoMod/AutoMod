@@ -28,7 +28,8 @@ CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
 
 def get_help_embed(plugin, ctx, cmd):
     name = f"{plugin.get_prefix(ctx.guild)}{cmd.qualified_name} {cmd.signature}"
-    help_message = plugin.locale.t(ctx.guild, f"{cmd.help}")
+    i18n_key = cmd.help.split("\nexamples:")[0]
+    help_message = plugin.locale.t(ctx.guild, f"{i18n_key}")
     if name[-1] == " ": name = name[:-1]
 
     e = Embed(
@@ -48,9 +49,18 @@ def get_help_embed(plugin, ctx, cmd):
         if len(actual_subcommands.keys()) > 0:
             e.add_field(
                 name="❯ Subcommands", 
-                value=", ".join([f"``{x}``" for x in actual_subcommands.keys()]), 
-                inline=True
+                value=", ".join([f"``{x}``" for x in actual_subcommands.keys()])
             )
+    
+    prefix = plugin.get_prefix(ctx.guild)
+    e.add_field(
+        name="❯ Examples",
+        value="\n".join(
+            [
+                f"{prefix}{exmp}" for exmp in cmd.help.split("\nexamples:")[1].split("\n-")[1:]
+            ]
+        )
+    )
 
     return e
 
@@ -91,7 +101,11 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command()
     async def ping(self, ctx):
-        """ping_help"""
+        """
+        ping_help
+        examples:
+        -ping
+        """
         # REST API
         msg_t1 = time.perf_counter()
         msg = await ctx.send("Pinging...")
@@ -115,7 +129,11 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command()
     async def about(self, ctx):
-        """about_help"""
+        """
+        about_help
+        examples:
+        -about
+        """
         e = Embed(
             title="AutoMod",
             description=self.locale.t(ctx.guild, "about_description")
@@ -155,7 +173,13 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command()
     async def help(self, ctx, *, query: str = None):
-        """help_help"""
+        """
+        help_help
+        examples:
+        -help
+        -help ban
+        -help commands add
+        """
         if query == None:
             prefix = self.get_prefix(ctx.guild)
 
@@ -184,7 +208,13 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command(aliases=["av"])
     async def avatar(self, ctx, user: discord.Member = None):
-        """avatar_help"""
+        """
+        avatar_help
+        examples:
+        -avatar
+        -avatar @paul#0009
+        -avatar 543056846601191508
+        """
         if user == None: user = ctx.author
 
         e = Embed(
@@ -199,7 +229,12 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command()
     async def jumbo(self, ctx, *, emotes: str):
-        """jumbo_help"""
+        """
+        jumbo_help
+        examples:
+        -jumbo :LULW:
+        -jumbo :LULW: 🔥
+        """
         urls = []
         for e in emotes.split(" ")[:5]:
             if EMOJI_RE.match(e):
@@ -240,7 +275,13 @@ class UtilityPlugin(AutoModPlugin):
     @commands.command(aliases=["info", "userinfo", "user"])
     @AutoModPlugin.can("manage_messages")
     async def whois(self, ctx, user: DiscordUser = None):
-        """whois_help"""
+        """
+        whois_help
+        examples:
+        -whois
+        -whois @paul#0009
+        -whois 543056846601191508
+        """
         if user == None:
             if ctx.message.reference == None:
                 user = member = ctx.author
@@ -295,7 +336,11 @@ class UtilityPlugin(AutoModPlugin):
     @commands.guild_only()
     @AutoModPlugin.can("manage_messages")
     async def server(self, ctx):
-        """server_help"""
+        """
+        server_help
+        examples:
+        -server
+        """
         g = ctx.guild
 
         e = Embed()

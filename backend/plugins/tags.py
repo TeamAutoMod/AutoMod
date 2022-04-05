@@ -81,7 +81,14 @@ class TagsPlugin(AutoModPlugin):
     @commands.group(name="commands", aliases=["tags"])
     @AutoModPlugin.can("manage_messages")
     async def custom_commands(self, ctx):
-        """commands_help"""
+        """
+        commands_help
+        examples:
+        -commands
+        -commands add test_cmd This is a test command
+        -commands remove test_cmd
+        -commands update test_cmd This is the new content
+        """
         if ctx.invoked_subcommand is None:
             if ctx.guild.id in self._tags:
                 tags = self._tags[ctx.guild.id]
@@ -102,7 +109,11 @@ class TagsPlugin(AutoModPlugin):
     @custom_commands.command(aliases=["create", "new"])
     @AutoModPlugin.can("manage_messages")
     async def add(self, ctx, name: str, *, content: str):
-        """commands_add_help"""
+        """
+        commands_add_help
+        examples:
+        -commands add test_cmd This is a test command
+        """
         if len(name) > 30:
             return await ctx.send(self.locale.t(ctx.guild, "name_too_long", _emote="NO"))
         if len(content) > 1900:
@@ -120,7 +131,11 @@ class TagsPlugin(AutoModPlugin):
     @custom_commands.command(aliases=["delete", "del"])
     @AutoModPlugin.can("manage_messages")
     async def remove(self, ctx, name: str):
-        """commands_remove_help"""
+        """
+        commands_remove_help
+        examples:
+        -commands remove test_command
+        """
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
@@ -136,7 +151,11 @@ class TagsPlugin(AutoModPlugin):
     @custom_commands.command()
     @AutoModPlugin.can("manage_messages")
     async def update(self, ctx, name: str, *, content: str):
-        """commands_update_help"""
+        """
+        commands_update_help
+        examples:
+        -commands update test_cmd This is the new content
+        """
         if len(content) > 1900:
             return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
         

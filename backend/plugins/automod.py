@@ -473,7 +473,14 @@ class AutomodPlugin(AutoModPlugin):
     @commands.command()
     @AutoModPlugin.can("manage_guild")
     async def automod(self, ctx, rule = None, amount: Union[int, str] = None):
-        """automod_help"""
+        """
+        automod_help
+        examples:
+        -automod invites 1
+        -automod mentions 10
+        -automod files 0
+        -automod links off
+        """
         prefix = self.get_prefix(ctx.guild)
         if rule == None or amount == None:
             e = Embed(
@@ -526,7 +533,13 @@ class AutomodPlugin(AutoModPlugin):
     @commands.group()
     @AutoModPlugin.can("manage_guild")
     async def allowed_invites(self, ctx):
-        """allowed_invites_help"""
+        """
+        allowed_invites_help
+        examples:
+        -allowed_invites
+        -allowed_invites add 701507539589660793
+        -allowed_invites remove 701507539589660793
+        """
         if ctx.invoked_subcommand == None:
             allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
             if len(allowed) < 1:
@@ -543,7 +556,11 @@ class AutomodPlugin(AutoModPlugin):
     @allowed_invites.command(name="add")
     @AutoModPlugin.can("manage_guild")
     async def add_inv(self, ctx, guild_id: int):
-        """allowed_invites_add_help"""
+        """
+        allowed_invites_add_help
+        examples:
+        -allowed_invites add 701507539589660793
+        """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
 
         if str(guild_id) in allowed:
@@ -558,7 +575,11 @@ class AutomodPlugin(AutoModPlugin):
     @allowed_invites.command(name="remove")
     @AutoModPlugin.can("manage_guild")
     async def remove_inv(self, ctx, guild_id: int):
-        """allowed_invites_remove_help"""
+        """
+        allowed_invites_remove_help
+        examples:
+        -allowed_invites remove 701507539589660793
+        """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
 
         if not str(guild_id) in allowed:
@@ -573,7 +594,13 @@ class AutomodPlugin(AutoModPlugin):
     @commands.group(aliases=["links"])
     @AutoModPlugin.can("manage_guild")
     async def link_blacklist(self, ctx):
-        """link_blacklist_help"""
+        """
+        link_blacklist_help
+        examples:
+        -link_blacklist
+        -link_blacklist add google.com
+        -link_blacklist remove google.com
+        """
         if ctx.invoked_subcommand == None:
             links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
             if len(links) < 1:
@@ -590,7 +617,11 @@ class AutomodPlugin(AutoModPlugin):
     @link_blacklist.command(name="add")
     @AutoModPlugin.can("manage_guild")
     async def add_link(self, ctx, url: str):
-        """link_blacklist_add_help"""
+        """
+        link_blacklist_add_help
+        examples:
+        -link_blacklist add google.com
+        """
         url = url.lower()
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
 
@@ -606,7 +637,11 @@ class AutomodPlugin(AutoModPlugin):
     @link_blacklist.command(name="remove")
     @AutoModPlugin.can("manage_guild")
     async def remove_link(self, ctx, url: str):
-        """link_blacklist_remove_help"""
+        """
+        link_blacklist_remove_help
+        examples:
+        -link_blacklist remove google.com
+        """
         url = url.lower()
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
 
@@ -622,7 +657,13 @@ class AutomodPlugin(AutoModPlugin):
     @commands.group(name="filter", aliases=["filters"])
     @AutoModPlugin.can("manage_guild")
     async def _filter(self, ctx):
-        """filter_help"""
+        """
+        filter_help
+        examples:
+        -filter add test_filter 1 banana, apples, grape fruit
+        -filter remove test_filter
+        -filter show
+        """
         if ctx.invoked_subcommand == None:
             prefix = self.get_prefix(ctx.guild)
             e = Embed(
@@ -647,7 +688,11 @@ class AutomodPlugin(AutoModPlugin):
     @_filter.command(name="add")
     @AutoModPlugin.can("manage_guild")
     async def add_filter(self, ctx, name, warns: int, *, words):
-        """filter_add_help"""
+        """
+        filter_add_help
+        examples:
+        -filter add test_filter 1 banana, apples, grape fruit
+        """
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
 
@@ -669,7 +714,11 @@ class AutomodPlugin(AutoModPlugin):
     @_filter.command(name="remove")
     @AutoModPlugin.can("manage_guild")
     async def remove_filter(self, ctx, name):
-        """filter_remove_help"""
+        """
+        filter_remove_help
+        examples:
+        -filter remove test_filter
+        """
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
 
@@ -685,7 +734,11 @@ class AutomodPlugin(AutoModPlugin):
     @_filter.command()
     @AutoModPlugin.can("ban_members")
     async def show(self, ctx):
-        """filter_show_help"""
+        """
+        filter_show_help
+        examples:
+        -filter show
+        """
         filters = self.db.configs.get(ctx.guild.id, "filters")
         if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
 
@@ -708,7 +761,13 @@ class AutomodPlugin(AutoModPlugin):
     @commands.group(aliases=["rgx"])
     @AutoModPlugin.can("manage_messages")
     async def regex(self, ctx):
-        """regex_help"""
+        """
+        regex_help
+        examples:
+        -regex
+        -regex add test_regex \b(banana)\b 1
+        -regex remove test_regex
+        """
         if ctx.invoked_subcommand == None:
             regexes = self.db.configs.get(ctx.guild.id, "regexes")
             if len(regexes) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_regexes", _emote="NO"))
@@ -728,7 +787,11 @@ class AutomodPlugin(AutoModPlugin):
     @regex.command(name="add")
     @AutoModPlugin.can("manage_messages")
     async def add_regex(self, ctx, name, regex, warns: int):
-        """regex_add_help"""
+        """
+        regex_add_help
+        examples:
+        -regex add test_regex \b(banana)\b 1
+        """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
 
@@ -751,7 +814,11 @@ class AutomodPlugin(AutoModPlugin):
 
     @regex.command(name="remove", aliases=["delete", "del"])
     async def remove_regex(self, ctx, name):
-        """regex_remove_help"""
+        """
+        regex_remove_help
+        examples:
+        -regex remove test_regex
+        """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
 

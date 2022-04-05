@@ -132,7 +132,11 @@ class ConfigPlugin(AutoModPlugin):
     @commands.command()
     @AutoModPlugin.can("manage_guild")
     async def config(self, ctx):
-        """config_help"""
+        """
+        config_help
+        examples:
+        -config
+        """
         config = Object(self.db.configs.get_doc(ctx.guild.id))
         rules = config.automod
         y = self.bot.emotes.get("YES")
@@ -200,7 +204,14 @@ class ConfigPlugin(AutoModPlugin):
     @commands.command()
     @AutoModPlugin.can("manage_guild")
     async def punishment(self, ctx, warns: int, action: str, time: Duration = None):
-        """punishment_help"""
+        """
+        punishment_help
+        examples:
+        -punishment 3 kick
+        -punishment 4 ban
+        -punishment 2 mute 10m
+        -punishment 5 none
+        """
         action = action.lower()
         if not action in ["kick", "ban", "mute", "none"]: return await ctx.send(self.locale.t(ctx.guild, "invalid_action", _emote="NO"))
 
@@ -242,7 +253,13 @@ class ConfigPlugin(AutoModPlugin):
     @commands.command(name="log")
     @AutoModPlugin.can("manage_guild")
     async def _log(self, ctx, option: str, channel: Union[discord.TextChannel, str]):
-        """log_help"""
+        """
+        log_help
+        examples:
+        -log mod #mod-log
+        -log joins 960832535867306044
+        -log server off
+        """
         option = option.lower()
         if not option in LOG_OPTIONS: 
             return await ctx.send(self.locale.t(ctx.guild, "invalid_log_option", _emote="NO"))
@@ -275,7 +292,11 @@ class ConfigPlugin(AutoModPlugin):
     @commands.command()
     @AutoModPlugin.can("manage_guild")
     async def prefix(self, ctx, prefix: str):
-        """prefix_help"""
+        """
+        prefix_help
+        examples:
+        -prefix !
+        """
         if len(prefix) > 20: 
             return await ctx.send(self.locale.t(ctx.guild, "prefix_too_long", _emote="NO"))
 
@@ -286,7 +307,12 @@ class ConfigPlugin(AutoModPlugin):
     @commands.command(aliases=["restrict"])
     @AutoModPlugin.can("manage_guild")
     async def disable(self, ctx, *, commands: str = None):
-        """disable_help"""
+        """
+        disable_help
+        examples:
+        -disable ping
+        -disable ping help about
+        """
         _disabled = self.db.configs.get(ctx.guild.id, "disabled_commands")
 
         if commands == None:
@@ -346,7 +372,13 @@ class ConfigPlugin(AutoModPlugin):
     @commands.command()
     @AutoModPlugin.can("manage_guild")
     async def mod_role(self, ctx, role: Union[discord.Role, str]):
-        """mod_role_help"""
+        """
+        mod_role_help
+        examples:
+        -mod_role Moderators
+        -mod_role @Moderators
+        -mod_role 793880854367043614
+        """
         if isinstance(role, str):
             if role.lower() == "off":
                 self.db.configs.update(ctx.guild.id, "mod_role", "")

@@ -85,7 +85,13 @@ class CasesPlugin(AutoModPlugin):
     @commands.command(aliases=["history", "cases"])
     @AutoModPlugin.can("manage_messages")
     async def infractions(self, ctx, user: Union[DiscordUser, discord.Member, discord.Guild] = None):
-        """infractions_help"""
+        """
+        infractions_help
+        examples:
+        -infractions
+        -infractions @paul#0009
+        -infractions 543056846601191508
+        """
         if user == None: user = ctx.guild
 
         msg = await ctx.send(self.locale.t(ctx.guild, "searching", _emote="SEARCH"))
@@ -230,7 +236,12 @@ class CasesPlugin(AutoModPlugin):
     @commands.command()
     @AutoModPlugin.can("manage_messages")
     async def case(self, ctx, case: str):
-        """case_help"""
+        """
+        case_help
+        examples:
+        -case 1234
+        -case #1234
+        """
         case = case.replace("#", "")
         
         raw = self.db.cases.get_doc(f"{ctx.guild.id}-{case}")
@@ -271,7 +282,12 @@ class CasesPlugin(AutoModPlugin):
     @commands.command(aliases=["fetch"])
     @AutoModPlugin.can("manage_messages")
     async def check(self, ctx, user: DiscordUser):
-        """check_help"""
+        """
+        check_help
+        examples:
+        -check @paul#0009
+        -check 543056846601191508
+        """
         e = Embed(
             title="Info for {0.name}#{0.discriminator}".format(
                 user

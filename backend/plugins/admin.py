@@ -44,7 +44,11 @@ class AdminPlugin(AutoModPlugin):
     @commands.command()
     @commands.is_owner()
     async def eval(self, ctx, *, cmd: str):
-        """eval_help"""
+        """
+        eval_help
+        examples:
+        -eval 1+1
+        """
         view = DeleteView()
         try:
             t1 = time.perf_counter()
@@ -85,7 +89,11 @@ class AdminPlugin(AutoModPlugin):
     @commands.is_owner()
     @commands.command()
     async def debug(self, ctx):
-        """debug_help"""
+        """
+        debug_help
+        examples:
+        -debug
+        """
         e = Embed()
         e.add_field(
             name="❯ AutoMod Statistics",

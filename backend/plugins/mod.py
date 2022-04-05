@@ -156,7 +156,12 @@ class ModerationPlugin(WarnPlugin):
     @commands.command()
     @WarnPlugin.can("ban_members")
     async def ban(self, ctx, user: DiscordUser, *, reason: str = None):
-        """ban_help"""
+        """
+        ban_help
+        examples:
+        -ban @paul#0009 test
+        -ban 543056846601191508
+        """
         if reason == None: self.locale.t(ctx.guild, "no_reason")
         try:
             await ctx.guild.fetch_ban(user)
@@ -169,7 +174,11 @@ class ModerationPlugin(WarnPlugin):
     @commands.command()
     @WarnPlugin.can("ban_members")
     async def unban(self, ctx, user: DiscordUser, *, reason: str = None):
-        """unban_help"""
+        """
+        unban_help
+        examples:
+        -unban 543056846601191508
+        """
         if reason == None: self.locale.t(ctx.guild, "no_reason")
         try:
             await ctx.guild.fetch_ban(user)
@@ -196,7 +205,12 @@ class ModerationPlugin(WarnPlugin):
     @commands.command()
     @WarnPlugin.can("ban_members")
     async def softban(self, ctx, user: DiscordUser, *, reason: str = None):
-        """softban_help"""
+        """
+        softban_help
+         examples:
+        -softban @paul#0009 test
+        -softban 543056846601191508
+        """
         if reason == None: self.locale.t(ctx.guild, "no_reason")
         try:
             await ctx.guild.fetch_ban(user)
@@ -209,7 +223,12 @@ class ModerationPlugin(WarnPlugin):
     @commands.command(aliases=["forceban"])
     @WarnPlugin.can("ban_members")
     async def hackban(self, ctx, user: DiscordUser, *, reason: str = None):
-        """hackban_help"""
+        """
+        hackban_help
+        examples:
+        -hackban @paul#0009 test
+        -hackban 543056846601191508
+        """
         if reason == None: self.locale.t(ctx.guild, "no_reason")
         try:
             await ctx.guild.fetch_ban(user)
@@ -222,7 +241,12 @@ class ModerationPlugin(WarnPlugin):
     @commands.command()
     @WarnPlugin.can("kick_members")
     async def kick(self, ctx, user: DiscordUser, *, reason: str = None):
-        """kick_help"""
+        """
+        kick_help
+        examples:
+        -kick @paul#0009 test
+        -kick 543056846601191508
+        """
         if reason == None: self.locale.t(ctx.guild, "no_reason")
         try:
             await ctx.guild.fetch_ban(user)
@@ -235,7 +259,12 @@ class ModerationPlugin(WarnPlugin):
     @commands.command(aliases=["timeout"])
     @WarnPlugin.can("moderate_members")
     async def mute(self, ctx, user: discord.Member, length: Duration, *, reason: str = None):
-        """mute_help"""
+        """
+        mute_help
+        examples:
+        -mute @paul#0009 10m test
+        -mute 543056846601191508 1h
+        """
         if reason == None: self.locale.t(ctx.guild, "no_reason")
         if length.unit == None: length.unit = "m"
 
@@ -338,7 +367,12 @@ class ModerationPlugin(WarnPlugin):
     @commands.command()
     @WarnPlugin.can("kick_members")
     async def unmute(self, ctx, user: discord.Member):
-        """unmute_help"""
+        """
+        unmute_help
+        examples:
+        -unmute @paul#0009
+        -unmute 543056846601191508
+        """
         _id = f"{ctx.guild.id}-{user.id}"
         if not self.db.mutes.exists(_id):
             return await ctx.send(self.locale.t(ctx.guild, "not_muted", _emote="NO"))
@@ -365,7 +399,13 @@ class ModerationPlugin(WarnPlugin):
     @commands.group(aliases=["clear", "purge"])
     @WarnPlugin.can("manage_messages")
     async def clean(self, ctx):
-        """clean_help"""
+        """
+        clean_help
+        examples:
+        -clean all 25
+        -clean user @paul#0009 25
+        -clean user 543056846601191508
+        """
         if ctx.invoked_subcommand == None:
             cmd = self.bot.get_command("help")
             await cmd.__call__(
@@ -377,7 +417,11 @@ class ModerationPlugin(WarnPlugin):
     @clean.command()
     @WarnPlugin.can("manage_messages")
     async def all(self, ctx, amount: int = 10):
-        """clean_all_help"""
+        """
+        clean_all_help
+        examples:
+        -clean all 25
+        """
         if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
         if amount > 300: return await ctx.send(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
 
@@ -392,7 +436,12 @@ class ModerationPlugin(WarnPlugin):
     @clean.command()
     @WarnPlugin.can("manage_messages")
     async def user(self, ctx, user: discord.Member, amount: int = 10):
-        """clean_user_help"""
+        """
+        clean_user_help
+        examples:
+        -clean user @paul#0009 25
+        -clean user 543056846601191508
+        """
         if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
         if amount > 300: return await ctx.send(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
 
