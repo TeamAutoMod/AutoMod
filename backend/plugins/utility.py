@@ -52,15 +52,17 @@ def get_help_embed(plugin, ctx, cmd):
                 value=", ".join([f"``{x}``" for x in actual_subcommands.keys()])
             )
     
-    prefix = plugin.get_prefix(ctx.guild)
-    e.add_field(
-        name="❯ Examples",
-        value="\n".join(
-            [
-                f"{prefix}{exmp}" for exmp in cmd.help.split("\nexamples:")[1].split("\n-")[1:]
-            ]
+    examples = cmd.help.split("\nexamples:")[1].split("\n-")[1:]
+    if len(examples) > 0:
+        prefix = plugin.get_prefix(ctx.guild)
+        e.add_field(
+            name="❯ Examples",
+            value="\n".join(
+                [
+                    f"{prefix}{exmp}" for exmp in examples
+                ]
+            )
         )
-    )
 
     return e
 
