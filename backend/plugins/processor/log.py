@@ -103,11 +103,11 @@ LOG_TYPES = {
         "channel": "join_log",
     },
     "user_left": {
-        "channel": "server_log",
+        "channel": "join_log",
     },
 
     "role_created": {
-        "channel": "join_log",
+        "channel": "server_log",
     },
     "role_deleted": {
         "channel": "server_log",

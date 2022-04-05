@@ -24,4 +24,9 @@ sentry_sdk.init(
 )
 
 
-logging.basicConfig(level=logging.INFO, format="[{levelname:<7}] - {message}", style="{")
+logging.basicConfig(
+    level=logging.INFO, 
+    format="[{asctime}] {levelname:<7}: {message}",
+    datefmt="%H:%M:%S",
+    style="{"
+)

@@ -10,6 +10,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   position: absolute;
+  opacity: 1;
 }
 
 a {
@@ -19,8 +20,8 @@ a {
 
 * {
   margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
-    background-color: #6679be;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  background-color: #1b1b1b;
 }

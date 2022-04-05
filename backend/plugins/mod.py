@@ -404,6 +404,4 @@ class ModerationPlugin(WarnPlugin):
         await ctx.send(msg, **kwargs)
 
 
-
-
 async def setup(bot): await bot.register_plugin(ModerationPlugin(bot))

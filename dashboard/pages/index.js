@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import Logo from '../public/icon.png';
 
 export default function Home() {
   return (
@@ -47,7 +48,7 @@ export default function Home() {
         </div>
 
         <div className={styles.logo}>
-            <img src="https://automod.xyz/img/icon.png" alt="AutoMod Icon" />
+            <Image src={Logo} alt="AutoMod Icon" width={300} height={300}/>
         </div>
     </div>
   )
