@@ -285,9 +285,9 @@ class ModerationPlugin(WarnPlugin):
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
-            return await ctx.send(self.locale.t(ctx.guild, "not_banned", _emote="NO"))
-        else:
             await self.kick_or_ban("hackban", ctx, user, reason, delete_message_days=1)
+        else:
+            await ctx.send(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
 
 
     @commands.command()

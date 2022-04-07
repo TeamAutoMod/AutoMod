@@ -19,6 +19,8 @@ class DiscordUser(commands.Converter):
             argument = match.group(1)
         try:
             user = await commands.UserConverter().convert(ctx, argument)
+        except ValueError:
+            raise commands.BadArgument("user_not_found")
         except commands.BadArgument:
             if int(argument) in ctx.bot.fetched_user_cache:
                 user = ctx.bot.fetched_user_cache[int(argument)]
