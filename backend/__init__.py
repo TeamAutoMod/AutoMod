@@ -24,6 +24,7 @@ sentry_sdk.init(
 )
 
 
+logging.getLogger("discord").propagate = False
 logging.basicConfig(
     level=logging.INFO, 
     format="[{asctime}] {levelname:<7}: {message}",

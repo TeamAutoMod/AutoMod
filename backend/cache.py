@@ -1,36 +1,22 @@
+import logging; log = logging.getLogger(__name__)
 
-
-
-class CacheMapping(dict):
-    def __init__(self):
-        super().__init__()
-        self.size = 1000
-
-
-    def __setitem__(self, k, v):
-        if not hasattr(self, "size"):
-            self.size = 1000
-        if len(self.__dict__) >= self.size:
-            self.__dict__.pop(next(iter(self.__dict__)))
-        self.__dict__[k] = v
-
-
-    def update(self, *args, **kwargs):
-        self.__dict__.update(*args, **kwargs)
-        if not hasattr(self, "size"):
-            self.size = 1000
-        if len(self.__dict__) >= self.size:
-            self.__dict__.pop(next(iter(self.__dict__)))
 
     
 class InternalCacheType(object):
     def __init__(self, _type, bot):
         self.bot = bot
         self._type = _type
-        self.data = CacheMapping()
+        self.data = {}
         for i in (getattr(self.bot.db, self._type)).find({}):
             if not str(i["id"]) in self.data:
                 self.data[str(i["id"])] = i
+        log.info(
+            "📁 Cached {}/{} documents from {}".format(
+                len(self.data),
+                len(list((getattr(self.bot.db, self._type)).find({}))),
+                self._type
+            )
+        )
 
 
     def get(self, _id, key):

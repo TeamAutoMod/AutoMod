@@ -17,6 +17,7 @@
     "clean_all_help": "Deletes between 1 and 300 messages from a channel",
     "clean_user_help": "Deletes between 1 and 300 messages from a specific user",
     "unban_help": "Unbans the specified user from the server",
+    "slowmode_help": "Sets a slowmode in the current channel up to 14 days. Use 0 as the time argument to remove the slowmode or use no time argument to show a list of all bot-set slowmodes",
 
     "commands_help": "Base command for managing custom commands. When used without a subcommand, this shows a list of all custom commands in this guild",
     "commands_add_help": "Creates a custom command with the given name and content",
@@ -213,5 +214,10 @@
     "invalid_regex": "{emote} This isn't a valid regex pattern",
     "added_regex": "{emote} Regex has been created",
     "regex_doesnt_exist": "{emote} A regex with that name doesn't exist",
-    "removed_regex": "{emote} Regex has been removed"
+    "removed_regex": "{emote} Regex has been removed",
+
+    "set_slowmode": "{emote} Set slowmode ({mode})",
+    "max_slowmode": "{emote} The max slowmode time is 14 days",
+    "removed_slowmode": "{emote} Removed slowmode",
+    "no_slowmodes": "{emote} This server doesn't have any bot-set slowmodes"
 }

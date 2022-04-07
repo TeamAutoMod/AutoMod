@@ -120,15 +120,6 @@ class ConfigPlugin(AutoModPlugin):
                 await ow.delete()
 
 
-    def validate_regex(self, regex):
-        try:
-            re.compile(regex)
-        except re.error:
-            return False
-        else:
-            return True
-
-
     @commands.command()
     @AutoModPlugin.can("manage_guild")
     async def config(self, ctx):

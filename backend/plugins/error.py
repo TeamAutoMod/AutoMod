@@ -70,7 +70,7 @@ class ErrorPlugin(AutoModPlugin):
                 await ctx.send(self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=param._name, error=error, usage=usage, info=info))
 
         else:
-            log.error(f"Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
+            log.error(f"❌ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
 
 async def setup(bot): await bot.register_plugin(ErrorPlugin(bot))

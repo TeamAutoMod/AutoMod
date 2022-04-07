@@ -48,14 +48,14 @@ class Observer(object):
                         try:
                             await self.bot.reload_plugin(f)
                         except Exception as ex:
-                            log.warn(f"Failed to hot reload {f} - {ex}")
+                            log.warn(f"⚠️ Failed to hot reload {f} - {ex}")
                         else:
-                            log.info(f"Hot reload completed for {f}")
+                            log.info(f"🔄 Hot reload completed for {f}")
                         finally:
                             self.bot.last_reload = datetime.datetime.utcnow().timestamp()
                             self.stamp_cache[f]["content"] = content
 
 
     async def start(self):
-        log.info("Observer is starting")
+        log.info("👀 Observer is starting")
         self.bot.loop.create_task(self.watch())

@@ -1,4 +1,5 @@
 from toolbox import Database, Collection
+import logging; log = logging.getLogger(__name__)
 
 
 
@@ -15,6 +16,12 @@ class MongoCollection(Collection):
             return (getattr(self.bot.cache, self.collection_name)).get(_id, key)
         else:
             return super().get(_id, key)
+
+    def get_doc(self, _id):
+        if self.cached:
+            return (getattr(self.bot.cache, self.collection_name)).get_all(_id)
+        else:
+            return super().get_doc(_id)
 
 
     def get_from_db(self, _id, key):
@@ -59,6 +66,8 @@ class MongoDB(Database):
             "cases": "cases",
             "warns": "warns",
             "mutes": "mutes",
-            "level": "level"
+            "level": "level",
+            "slowmodes": "slowmodes"
         }.items():
             setattr(self, obj_name, MongoCollection(bot, self, db_name))
+        log.info("⚙️ Database initialized")

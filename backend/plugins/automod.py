@@ -264,6 +264,15 @@ class AutomodPlugin(AutoModPlugin):
             return parsed
 
 
+    def validate_regex(self, regex):
+        try:
+            re.compile(regex)
+        except re.error:
+            return False
+        else:
+            return True
+
+
     async def delete_msg(self, rule, found, msg, warns, reason, pattern_or_filter=None):
         try:
             await msg.delete()

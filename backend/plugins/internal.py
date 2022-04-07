@@ -147,12 +147,12 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_guild_join(self, guild: discord.Guild):
-        log.info(f"Joined guild: {guild.name} ({guild.id})")
+        log.info(f"📥 Joined guild: {guild.name} ({guild.id})")
 
         try:
             await guild.chunk(cache=True)
         except Exception as ex:
-            log.warn(f"Failed to chunk members for guild {guild.id} upon joining - {ex}")
+            log.warn(f"⚠️ Failed to chunk members for guild {guild.id} upon joining - {ex}")
         finally:
             if not self.db.configs.exists(guild.id):
                 self.db.configs.insert(GuildConfig(guild, self.config.default_prefix))
@@ -161,7 +161,7 @@ class InternalPlugin(AutoModPlugin):
     @AutoModPlugin.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         if guild == None: return
-        log.info(f"Removed from guild: {guild.name} ({guild.id})")
+        log.info(f"📤 Removed from guild: {guild.name} ({guild.id})")
         if self.db.configs.exists(guild.id):
             self.db.cases.multi_delete({"guild": f"{guild.id}"})
             self.db.configs.delete(guild.id)
@@ -443,7 +443,7 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_autopost_success(self):
-        log.info(f"Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
+        log.info(f"📬 Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
 
 
 async def setup(bot): await bot.register_plugin(InternalPlugin(bot))
