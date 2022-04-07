@@ -41,7 +41,6 @@ class ModerationPlugin(WarnPlugin):
         self.action_processor = ActionProcessor(bot)
         self.dm_processor = DMProcessor(bot)
         self.warn_cache = {x["id"]: x for x in self.db.warns.find({})}
-
         self.bot.loop.create_task(self.handle_unmutes())
 
 
@@ -74,7 +73,7 @@ class ModerationPlugin(WarnPlugin):
     # soon
     async def decay_warns(self):
         while True:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(10)
             if len(self.warn_cache) > 0:
                 guilds = set([x.split("-")[0] for x in self.warn_cache.keys()])
                 for g in guilds:
@@ -82,11 +81,12 @@ class ModerationPlugin(WarnPlugin):
                     if guild != None:
                         for w, data in {x: y for x, y in self.warn_cache if int(x.split("-")[0] == int(g))}:
                             if datetime.datetime.utcnow() > data["decay_after"]:
-                                decay_after = self.db.configs.get(int(g), "decay_after")
-                                self.warn_cache[w]["decay_after"] = (
-                                    datetime.datetime.utcnow() + 
-                                    datetime.timedelta(seconds=int(decay_after))
-                                )
+                                decay = self.db.configs.get(int(g), "decay")
+                                self.warn_cache[w].update({
+                                    "decay_after": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(decay["every"])),
+                                    "warns": min(0, self.warn_cache[w]["warns"] - decay["amount"])
+                                })
+
 
 
     async def clean_messages(self, ctx, amount, check, before=None, after=None):

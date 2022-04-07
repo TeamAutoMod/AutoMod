@@ -163,6 +163,7 @@ class CasesPlugin(AutoModPlugin):
                             )
                         )
                     )
+                    timestamp = f"<t:{round(case['timestamp'])}:d>"
             else:
                 timestamp = f"<t:{round(timestamp.timestamp())}:d>"
 
