@@ -507,6 +507,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @commands.command()
+    @AutoModPlugin.can("manage_channels")
     async def slowmode(self, ctx, time: Duration = None):
         """
         slowmode_help
