@@ -25,6 +25,9 @@ class ActionProcessor(object):
     def new_case(self, _type, msg, mod, user, reason):
         case = self.bot.db.configs.get(msg.guild.id, "cases") + 1
 
+        if self.db.cases.exists(f"{msg.guild.id}-{case}"):
+            self.db.cases.delete(f"{msg.guild.id}-{case}") # we need to overwrite old cases
+        
         now = datetime.datetime.utcnow()
         self.bot.db.cases.insert(Case(case, _type, msg, mod, user, reason, now))
         self.bot.db.configs.update(msg.guild.id, "cases", case)
