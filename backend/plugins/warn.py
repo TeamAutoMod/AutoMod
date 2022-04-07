@@ -19,7 +19,6 @@ class WarnPlugin(AutoModPlugin):
     def can_act(self, guild, mod, target):
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
-        if mod == None or target == None: return
 
         rid = self.bot.db.configs.get(guild.id, "mod_role")
         if rid != "":
