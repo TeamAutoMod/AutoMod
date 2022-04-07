@@ -369,6 +369,7 @@ class ConfigPlugin(AutoModPlugin):
         -mod_role Moderators
         -mod_role @Moderators
         -mod_role 793880854367043614
+        -mod_role off
         """
         if isinstance(role, str):
             if role.lower() == "off":
