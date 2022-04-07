@@ -19,7 +19,7 @@ LOG_TYPES = {
         "emote": "SHOE",
         "action": "User kicked"
     },
-    "forceban": {
+    "hackban": {
         "channel": "mod_log",
         "key": "log_ban",
         "color": 0xff5c5c,
