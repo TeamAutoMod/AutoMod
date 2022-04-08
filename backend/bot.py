@@ -156,6 +156,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
     async def reload_plugin(self, plugin):
         if plugin == "mod":
             in_plugins_name = "ModerationPlugin"
+        elif plugin == "rr":
+            in_plugins_name = "ReactionRolesPlugin"
         else:
             in_plugins_name = f"{plugin.capitalize()}Plugin"
         if in_plugins_name not in self.plugins:

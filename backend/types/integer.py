@@ -3,11 +3,11 @@ from discord.ext import commands
 
 
 class IntegerConverter(commands.Converter):
-    def __init__(self, min=None, max=None) -> None:
+    def __init__(self, min=None, max=None):
         self.min = min
         self.max = max
 
-    async def convert(self, ctx, argument) -> int:
+    async def convert(self, ctx, argument):
         try:
             argument = int(argument)
         except ValueError:

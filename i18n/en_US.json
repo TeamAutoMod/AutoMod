@@ -57,6 +57,8 @@
     "case_help": "Shows information about a specific case",
     "check_help": "Checks the status of a specific user",
 
+    "reaction_roles_help": "Base command for managing reaction roles. Wehen used without a subcommand this shows a list of all active reaction roles",
+
     "log_ban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
     "log_kick": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
     "log_unban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
@@ -219,5 +221,16 @@
     "set_slowmode": "{emote} Set slowmode ({mode})",
     "max_slowmode": "{emote} The max slowmode time is 14 days",
     "removed_slowmode": "{emote} Removed slowmode",
-    "no_slowmodes": "{emote} This server doesn't have any bot-set slowmodes"
+    "no_slowmodes": "{emote} This server doesn't have any bot-set slowmodes",
+
+    "no_rr": "{emote} This server doesn't have any reaction roles",
+    "max_rr": "{emote} The max nnumber of reaction roles per message is 10",
+    "max_rr_reactions": "{emote} The max number of reactions allowed per message is 10",
+    "rr_role_too_high": "{emote} Make sure that the role you want to hand out is below my highest role",
+    "rr_emoji_alr_bound": "{emote} This emoji is already bound to a different role on that message",
+    "rr_role_alr_bound": "{emote} This role is already bound to a different emoji on that message",
+    "set_rr": "{emote} Added the reaction role pair",
+    "not_rr_msg": "{emote} This message doesn't have any reaction role pairs",
+    "no_rr_role": "{emote} This role isn't bound to any emotes on that message",
+    "removed_rr": "{emote} Removed the reaction role pair"
 }

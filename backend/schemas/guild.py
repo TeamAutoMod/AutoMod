@@ -25,6 +25,8 @@ def GuildConfig(guild, prefix):
         "automod": {},
         "filters": {},
         "regexes": {},
+        
+        "reaction_roles": {},
 
         "cases": 0,
         "case_ids": {},

@@ -70,4 +70,4 @@ class MongoDB(Database):
             "slowmodes": "slowmodes"
         }.items():
             setattr(self, obj_name, MongoCollection(bot, self, db_name))
-        log.info("⚙️ Database initialized")
+        log.info("⚙️  Database initialized")

@@ -5,29 +5,41 @@ import time
 import re
 import requests
 import subprocess
+import datetime
 from PIL import Image
 from io import BytesIO
+from toolbox import S as Object
 
 from . import AutoModPlugin
-from ..types import Embed, DiscordUser
+from ..types import Embed, DiscordUser, Duration
 from ..views import AboutView
+from ..schemas import Slowmode
 
 
 
 ACTUAL_PLUGIN_NAMES = {
-    "UtilityPlugin": "Utility",
-    "ModerationPlugin": "Moderation",
-    "ConfigPlugin": "Configuration",
-    "AutomodPlugin": "Automoderator",
-    "TagsPlugin": "Custom Commands",
-    "CasesPlugin": "Cases"
+    "ConfigPlugin": "⚙️ Configuration",
+    "AutomodPlugin": "🛡️ Automoderator",
+    "ModerationPlugin": "🔨 Moderation",
+    "UtilityPlugin": "🔧 Utility",
+    "CasesPlugin": "🔒 Cases",
+    "TagsPlugin": "📝 Custom Commands",
+    "ReactionRolesPlugin": "📌 Reaction Roles"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
 
+MAX_NATIVE_SLOWMODE = 21600 # 6 hours
+MAX_BOT_SLOWMODE = 1209600 # 14 days
+
 
 def get_help_embed(plugin, ctx, cmd):
-    name = f"{plugin.get_prefix(ctx.guild)}{cmd.qualified_name} {cmd.signature}"
+    if len(cmd.aliases) > 0:
+        cmd_name = f"{cmd.qualified_name}{'|'.join(cmd.aliases) if len(cmd.aliases) > 1 else f'|{cmd.aliases[0]}'}"
+    else:
+        cmd_name = cmd.qualified_name
+    
+    name = f"{plugin.get_prefix(ctx.guild)}{cmd_name} {cmd.signature}"
     i18n_key = cmd.help.split("\nexamples:")[0]
     help_message = plugin.locale.t(ctx.guild, f"{i18n_key}")
     if name[-1] == " ": name = name[:-1]
@@ -99,6 +111,50 @@ class UtilityPlugin(AutoModPlugin):
     """Plugin for all utility commands"""
     def __init__(self, bot):
         super().__init__(bot)
+
+
+    @AutoModPlugin.listener()
+    async def on_message(self, msg: discord.Message):
+        if msg.guild == None: return
+        if not msg.guild.chunked: await msg.guild.chunk(cache=True)
+        if not self.can_act(
+            msg.guild, 
+            msg.guild.me, 
+            msg.author
+        ): return
+        if not hasattr(msg.channel, "slowmode_delay"): return
+
+        _id = f"{msg.guild.id}-{msg.channel.id}"
+        if not self.db.slowmodes.exists(_id): 
+            return
+        else:
+            data = Object(self.db.slowmodes.get_doc(_id))
+            needs_update = False
+            if f"{msg.author.id}" not in data.users:
+                data.users.update({
+                    f"{msg.author.id}": {
+                        "next_allowed_chat": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(data.time))
+                    }
+                })
+                needs_update = True
+            else:
+                if data.users[f"{msg.author.id}"]["next_allowed_chat"] > datetime.datetime.utcnow():
+                    try:
+                        await msg.delete()
+                    except Exception:
+                        pass
+                    else:
+                        self.bot.ignore_for_events.append(msg.id)
+                    finally:
+                        data.users.update({
+                            f"{msg.author.id}": {
+                                "next_allowed_chat": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(data.time))
+                            }
+                        })
+                        needs_update = True
+
+            if needs_update == True:
+                self.db.slowmodes.update(_id, "users", data.users)
 
 
     @commands.command()
@@ -192,7 +248,7 @@ class UtilityPlugin(AutoModPlugin):
             for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
                 cmds = p.get_commands()
                 e.add_field(
-                    name=f"❯ {ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
+                    name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
                     value=", ".join([f"``{x}``" for x in cmds])
                 )
             
@@ -388,6 +444,94 @@ class UtilityPlugin(AutoModPlugin):
             }
         ])
         await ctx.send(embed=e)
+
+
+    @commands.command()
+    @AutoModPlugin.can("manage_channels")
+    async def slowmode(self, ctx, time: Duration = None):
+        """
+        slowmode_help
+        examples:
+        -slowmode 20m
+        -slowmode 1d
+        -slowmode 0
+        -slowmode
+        """
+        if time == None:
+            slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
+            if len(slowmodes) < 1:
+                return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
+            else:
+                e = Embed(
+                    title="Bot-set slowmodes"
+                )
+                for s in slowmodes:
+                    channel = ctx.guild.get_channel(int(s["id"].split("-")[1]))
+                    if channel != None:
+                        e.add_field(
+                            name=f"❯ #{channel.name}",
+                            value="> **• Time:** {} \n> **• Mode:** {} \n> **• Moderator:** {}"\
+                                .format(
+                                    s["pretty"],
+                                    s["mode"],
+                                    f"<@{s['mod']}>"
+                                )
+                        )
+                if len(e._fields) < 1:
+                    return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
+                else:
+                    return await ctx.send(embed=e)
+        else:
+            if time.unit == None: time.unit = "m"
+            _id = f"{ctx.guild.id}-{ctx.channel.id}"
+            
+            seconds = time.to_seconds(ctx)
+            if seconds > 0:
+                if seconds <= MAX_NATIVE_SLOWMODE:
+                    if self.db.slowmodes.exists(_id):
+                        self.db.slowmodes.delete(_id)
+                    try:
+                        await ctx.channel.edit(
+                            slowmode_delay=seconds
+                        )
+                    except Exception as ex:
+                        return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                    else:
+                        self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.author, seconds, f"{time}", "native"))
+                        return await ctx.send(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="native slowmode"))
+                else:
+                    if seconds <= MAX_BOT_SLOWMODE:
+                        try:
+                            await ctx.channel.edit(
+                                slowmode_delay=MAX_NATIVE_SLOWMODE
+                            )
+                        except Exception as ex:
+                            return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                        else:
+                            if self.db.slowmodes.exists(_id):
+                                self.db.slowmodes.multi_update(_id, {
+                                    "time": seconds,
+                                    "pretty": f"{time}"
+                                })
+                            else:
+                                self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.author, seconds, f"{time}", "bot-maintained"))
+                            
+                            return await ctx.send(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="bot-maintained slowmode"))
+                    else:
+                        return await ctx.send(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"))
+            else:
+                if ctx.channel.slowmode_delay > 0:
+                    try:
+                        await ctx.channel.edit(
+                            slowmode_delay=0
+                        )
+                    except Exception as ex:
+                        return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+
+                if self.db.slowmodes.exists(_id):
+                    self.db.slowmodes.delete(_id)
+                
+                return await ctx.send(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
 
 
 async def setup(bot): await bot.register_plugin(UtilityPlugin(bot))

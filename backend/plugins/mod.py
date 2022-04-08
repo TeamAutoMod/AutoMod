@@ -3,17 +3,14 @@ from discord.ext import commands
 
 import datetime
 import asyncio
-import logging
+import logging; log = logging.getLogger()
 import datetime
-from toolbox import S as Object
-
-from backend.plugins import AutoModPlugin; log = logging.getLogger()
 
 from .warn import WarnPlugin
 from .processor import LogProcessor, ActionProcessor, DMProcessor
 from ..types import DiscordUser, Duration, Embed
 from ..views import ConfirmView
-from ..schemas import Mute, Slowmode
+from ..schemas import Mute
 
 
 
@@ -35,10 +32,6 @@ ACTIONS = {
         "log": "kicked"
     },
 }
-
-
-MAX_NATIVE_SLOWMODE = 21600 # 6 hours
-MAX_BOT_SLOWMODE = 1209600 # 14 days
 
 
 class ModerationPlugin(WarnPlugin):
@@ -159,50 +152,6 @@ class ModerationPlugin(WarnPlugin):
                 "case": self.action_processor.new_case(action, ctx.message, ctx.author, user, reason)
             })
             await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES"))
-
-
-    @AutoModPlugin.listener()
-    async def on_message(self, msg: discord.Message):
-        if msg.guild == None: return
-        if not msg.guild.chunked: await msg.guild.chunk(cache=True)
-        if not self.can_act(
-            msg.guild, 
-            msg.guild.me, 
-            msg.author
-        ): return
-        if not hasattr(msg.channel, "slowmode_delay"): return
-
-        _id = f"{msg.guild.id}-{msg.channel.id}"
-        if not self.db.slowmodes.exists(_id): 
-            return
-        else:
-            data = Object(self.db.slowmodes.get_doc(_id))
-            needs_update = False
-            if f"{msg.author.id}" not in data.users:
-                data.users.update({
-                    f"{msg.author.id}": {
-                        "next_allowed_chat": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(data.time))
-                    }
-                })
-                needs_update = True
-            else:
-                if data.users[f"{msg.author.id}"]["next_allowed_chat"] > datetime.datetime.utcnow():
-                    try:
-                        await msg.delete()
-                    except Exception:
-                        pass
-                    else:
-                        self.bot.ignore_for_events.append(msg.id)
-                    finally:
-                        data.users.update({
-                            f"{msg.author.id}": {
-                                "next_allowed_chat": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(data.time))
-                            }
-                        })
-                        needs_update = True
-
-            if needs_update == True:
-                self.db.slowmodes.update(_id, "users", data.users)
 
 
     @commands.command()
@@ -504,94 +453,6 @@ class ModerationPlugin(WarnPlugin):
             lambda m: m.author.id == user.id
         )
         await ctx.send(msg, **kwargs)
-
-
-    @commands.command()
-    @AutoModPlugin.can("manage_channels")
-    async def slowmode(self, ctx, time: Duration = None):
-        """
-        slowmode_help
-        examples:
-        -slowmode 20m
-        -slowmode 1d
-        -slowmode 0
-        -slowmode
-        """
-        if time == None:
-            slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
-            if len(slowmodes) < 1:
-                return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
-            else:
-                e = Embed(
-                    title="Bot-set slowmodes"
-                )
-                for s in slowmodes:
-                    channel = ctx.guild.get_channel(int(s["id"].split("-")[1]))
-                    if channel != None:
-                        e.add_field(
-                            name=f"❯ #{channel.name}",
-                            value="> **• Time:** {} \n> **• Mode:** {} \n> **• Moderator:** {}"\
-                                .format(
-                                    s["pretty"],
-                                    s["mode"],
-                                    f"<@{s['mod']}>"
-                                )
-                        )
-                if len(e._fields) < 1:
-                    return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
-                else:
-                    return await ctx.send(embed=e)
-        else:
-            if time.unit == None: time.unit = "m"
-            _id = f"{ctx.guild.id}-{ctx.channel.id}"
-            
-            seconds = time.to_seconds(ctx)
-            if seconds > 0:
-                if seconds <= MAX_NATIVE_SLOWMODE:
-                    if self.db.slowmodes.exists(_id):
-                        self.db.slowmodes.delete(_id)
-                    try:
-                        await ctx.channel.edit(
-                            slowmode_delay=seconds
-                        )
-                    except Exception as ex:
-                        return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
-                    else:
-                        self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.author, seconds, f"{time}", "native"))
-                        return await ctx.send(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="native slowmode"))
-                else:
-                    if seconds <= MAX_BOT_SLOWMODE:
-                        try:
-                            await ctx.channel.edit(
-                                slowmode_delay=MAX_NATIVE_SLOWMODE
-                            )
-                        except Exception as ex:
-                            return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
-                        else:
-                            if self.db.slowmodes.exists(_id):
-                                self.db.slowmodes.multi_update(_id, {
-                                    "time": seconds,
-                                    "pretty": f"{time}"
-                                })
-                            else:
-                                self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.author, seconds, f"{time}", "bot-maintained"))
-                            
-                            return await ctx.send(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="bot-maintained slowmode"))
-                    else:
-                        return await ctx.send(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"))
-            else:
-                if ctx.channel.slowmode_delay > 0:
-                    try:
-                        await ctx.channel.edit(
-                            slowmode_delay=0
-                        )
-                    except Exception as ex:
-                        return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
-
-                if self.db.slowmodes.exists(_id):
-                    self.db.slowmodes.delete(_id)
-                
-                return await ctx.send(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
 
 
 async def setup(bot): await bot.register_plugin(ModerationPlugin(bot))
