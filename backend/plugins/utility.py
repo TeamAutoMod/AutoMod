@@ -113,6 +113,26 @@ class UtilityPlugin(AutoModPlugin):
         super().__init__(bot)
 
 
+    def can_act(self, guild, mod, target):
+        mod = guild.get_member(mod.id)
+        target = guild.get_member(target.id)
+
+        if mod != None and target != None:
+            rid = self.bot.db.configs.get(guild.id, "mod_role")
+            if rid != "":
+                r = guild.get_role(int(rid))
+                if r != None:
+                    if r in target.roles:
+                        return False
+
+            return mod.id != target.id \
+                and mod.top_role > target.top_role \
+                and target.id != guild.owner.id \
+                and (target.guild_permissions.kick_members == False or target.guild_permissions.kick_members == False)
+        else:
+            return True
+
+
     @AutoModPlugin.listener()
     async def on_message(self, msg: discord.Message):
         if msg.guild == None: return

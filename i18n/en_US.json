@@ -58,6 +58,8 @@
     "check_help": "Checks the status of a specific user",
 
     "reaction_roles_help": "Base command for managing reaction roles. Wehen used without a subcommand this shows a list of all active reaction roles",
+    "reaction_roles_add_help": "Adds a new emote-role pair to the given message",
+    "reaction_roles_remove_help": "Removes an emote-role pair from the given message",
 
     "log_ban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
     "log_kick": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
