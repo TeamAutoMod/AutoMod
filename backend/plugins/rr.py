@@ -46,6 +46,16 @@ class ReactionRolesPlugin(AutoModPlugin):
                         pass
 
 
+    @AutoModPlugin.listener()
+    async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent):
+        if payload.guild_id == None: return
+        rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
+        if not f"{payload.message_id}" in rrs: return
+
+        del rrs[f"{payload.message_id}"]
+        self.db.configs.update(payload.guild_id, "reaction_roles", rrs)
+
+
     @commands.group(aliases=["rr"])
     @AutoModPlugin.can("manage_roles")
     async def reaction_roles(self, ctx):
