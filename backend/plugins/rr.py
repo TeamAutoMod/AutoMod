@@ -92,12 +92,13 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @reaction_roles.command()
     @AutoModPlugin.can("manage_roles")
-    async def add(self, ctx, message: discord.Message, emote: Emote, role: discord.Role):
+    async def add(self, ctx, message_id: discord.Message, emote: Emote, role: discord.Role):
         """
         reaction_roles_add_help
         examples:
         -reaction_roles add 543056846601191508 🟢 @GreenRole
         """
+        message = message_id
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if f"{message.id}" in rrs:
             data = rrs[f"{message.id}"]
@@ -139,12 +140,13 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @reaction_roles.command()
     @AutoModPlugin.can("manage_roles")
-    async def remove(self, ctx, message: discord.Message, role: discord.Role):
+    async def remove(self, ctx, message_id: discord.Message, role: discord.Role):
         """
         reaction_roles_remove_help
         examples:
         -reaction_roles remove 543056846601191508 @Greenrole
         """
+        message = message_id
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if len(rrs) < 1:
             return await ctx.send(self.locale.t(ctx.guild, "no_rr", _emote="NO"))
