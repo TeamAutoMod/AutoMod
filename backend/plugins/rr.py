@@ -16,7 +16,7 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
-        if f"{payload.user.id}" == f"{self.bot.user.id}": return
+        if f"{payload.user_id}" == f"{self.bot.user.id}": return
         if payload.member.bot == True: return
 
         rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
@@ -49,7 +49,7 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
-        if f"{payload.user.id}" == f"{self.bot.user.id}": return
+        if f"{payload.user_id}" == f"{self.bot.user.id}": return
 
         rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
         if not f"{payload.message_id}" in rrs: return
