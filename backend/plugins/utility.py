@@ -24,7 +24,7 @@ ACTUAL_PLUGIN_NAMES = {
     "UtilityPlugin": "🔧 Utility",
     "CasesPlugin": "🔒 Cases",
     "TagsPlugin": "📝 Custom Commands",
-    "ReactionRolesPlugin": "📌 Reaction Roles"
+    "ReactionRolesPlugin": "🎭 Reaction Roles"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"

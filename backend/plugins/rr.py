@@ -22,7 +22,12 @@ class ReactionRolesPlugin(AutoModPlugin):
         data = rrs[f"{payload.message_id}"]
         if len(data["pairs"]) < 1: return
 
-        role_id = [list(x.values())[1] for x in data["pairs"] if list(x.values())[0] == f"{payload.emoji.id}"]
+        if payload.emoji.id == None:
+            possible_name = payload.emoji.name
+        else:
+            possible_name = f"<:{payload.emoji.name}:{payload.emoji.id}>"
+
+        role_id = [list(x.values())[1] for x in data["pairs"] if list(x.values())[0] == possible_name]
         if len(role_id) < 1: 
             return
         else:
