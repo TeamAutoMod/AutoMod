@@ -16,6 +16,9 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+        if f"{payload.user.id}" == f"{self.bot.user.id}": return
+        if payload.member.bot == True: return
+
         rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
         if not f"{payload.message_id}" in rrs: return
 
@@ -35,16 +38,45 @@ class ReactionRolesPlugin(AutoModPlugin):
             role = guild.get_role(int(role_id[0]))
 
             if role != None:
-                if role in payload.member.roles:
+                if role not in payload.member.roles:
                     try:
-                        await payload.member.remove_roles(
+                        await payload.member.add_roles(
                             role
                         )
                     except Exception:
                         pass
-                else:
+
+
+    @AutoModPlugin.listener()
+    async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
+        if f"{payload.user.id}" == f"{self.bot.user.id}": return
+
+        rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
+        if not f"{payload.message_id}" in rrs: return
+
+        data = rrs[f"{payload.message_id}"]
+        if len(data["pairs"]) < 1: return
+
+        if payload.emoji.id == None:
+            possible_name = payload.emoji.name
+        else:
+            possible_name = f"<:{payload.emoji.name}:{payload.emoji.id}>"
+
+        role_id = [list(x.values())[1] for x in data["pairs"] if list(x.values())[0] == possible_name]
+        if len(role_id) < 1: 
+            return
+        else:
+            guild = self.bot.get_guild(payload.guild_id)
+            if guild.chunked: await guild.chunk(cache=True)
+
+            role = guild.get_role(int(role_id[0]))
+            member = guild.get_member(payload.user_id)
+            if member.bot == True: return
+
+            if role != None:
+                if role in member.roles:
                     try:
-                        await payload.member.add_roles(
+                        await member.remove_roles(
                             role
                         )
                     except Exception:
