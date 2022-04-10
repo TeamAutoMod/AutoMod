@@ -12,7 +12,7 @@ from toolbox import S as Object
 
 from . import AutoModPlugin
 from ..types import Embed, DiscordUser, Duration
-from ..views import AboutView
+from ..views import AboutView, HelpView
 from ..schemas import Slowmode
 
 
@@ -272,7 +272,7 @@ class UtilityPlugin(AutoModPlugin):
                     value=", ".join([f"``{x}``" for x in cmds])
                 )
             
-            await ctx.send(embed=e)
+            await ctx.send(embed=e, view=HelpView(self.bot, show_invite=True))
         else:
             query = "".join(query.splitlines())
 
@@ -280,8 +280,7 @@ class UtilityPlugin(AutoModPlugin):
             if _help == None:
                 return await ctx.send(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
             else:
-                await ctx.send(embed=_help)
-
+                await ctx.send(embed=_help, view=HelpView(self.bot))
 
 
     @commands.command(aliases=["av"])
