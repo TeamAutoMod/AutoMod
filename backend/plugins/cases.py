@@ -182,12 +182,16 @@ class CasesPlugin(AutoModPlugin):
         now = datetime.datetime.utcnow()
         last_24_hours = len(
             [
-                x for x in found if ((now - datetime.timedelta(hours=24)) <= x["timestamp"] <= (now + datetime.timedelta(hours=24))) == True
+                x for x in found if (
+                    (now - datetime.timedelta(hours=24)) <= x["timestamp"] <= (now + datetime.timedelta(hours=24))
+                ) == True
             ]
         )
         last_7_days = len(
             [
-                x for x in found if ((now - datetime.timedelta(days=7)) <= x["timestamp"] <= (now + datetime.timedelta(days=7))) == True
+                x for x in found if (
+                    (now - datetime.timedelta(days=7)) <= x["timestamp"] <= (now + datetime.timedelta(days=7))
+                ) == True
             ]
         )
 

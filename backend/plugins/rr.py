@@ -120,7 +120,7 @@ class ReactionRolesPlugin(AutoModPlugin):
                             "\n" if channel != None else ""
                         ) +
                         "\n".join(
-                            [f"**•** {await ctx.guild.fetch_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
+                            [f"> **•** {await ctx.guild.fetch_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
                         )
                     )
 
@@ -174,6 +174,7 @@ class ReactionRolesPlugin(AutoModPlugin):
                         self.db.configs.update(ctx.guild.id, "reaction_roles", rrs)
 
                         await ctx.send(self.locale.t(ctx.guild, "set_rr", _emote="YES"))
+
 
     @reaction_roles.command()
     @AutoModPlugin.can("manage_roles")

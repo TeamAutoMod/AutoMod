@@ -273,6 +273,19 @@ class AutomodPlugin(AutoModPlugin):
             return True
 
 
+    def safe_parse_url(self, url):
+        url = url.lower()
+        if not (
+            url.startswith("https://") or
+            url.startswith("http://")
+        ):
+            for x in ["www", "www5"]:
+                url = url.replace(x, "")
+        else:
+            url = urlparse(url).hostname
+        return url
+
+
     async def delete_msg(self, rule, found, msg, warns, reason, pattern_or_filter=None):
         try:
             await msg.delete()
@@ -419,6 +432,15 @@ class AutomodPlugin(AutoModPlugin):
                             rules.links.warns, 
                             f"Forbidden link ({url.hostname})"
                         )
+                    else:
+                        if not url.hostname in config.white_listed_links:
+                            return await self.delete_msg(
+                                "links", 
+                                url.hostname,
+                                msg, 
+                                rules.links.warns, 
+                                f"Forbidden link ({url.hostname})"
+                            )
 
         if hasattr(rules, "files"):
             if len(msg.attachments) > 0:
@@ -617,7 +639,7 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix=prefix))
             
             e = Embed(
-                title="Allowed links",
+                title="Blacklisted links",
                 description=", ".join(links)
             )
             await ctx.send(embed=e)
@@ -631,7 +653,7 @@ class AutomodPlugin(AutoModPlugin):
         examples:
         -link_blacklist add google.com
         """
-        url = url.lower()
+        url = self.safe_parse_url(url)
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
 
         if str(url) in links:
@@ -651,7 +673,7 @@ class AutomodPlugin(AutoModPlugin):
         examples:
         -link_blacklist remove google.com
         """
-        url = url.lower()
+        url = self.safe_parse_url(url)
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
 
         if not str(url) in links:
@@ -661,6 +683,69 @@ class AutomodPlugin(AutoModPlugin):
         self.db.configs.update(ctx.guild.id, "black_listed_links", links)
 
         await ctx.send(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"))
+
+
+    @commands.group()
+    @AutoModPlugin.can("manage_guild")
+    async def link_whitelist(self, ctx):
+        """
+        link_whitelist_help
+        examples:
+        -link_whitelist
+        -link_whitelist add google.com
+        -link_whitelist remove google.com
+        """
+        if ctx.invoked_subcommand == None:
+            links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
+            if len(links) < 1:
+                prefix = self.get_prefix(ctx.guild)
+                return await ctx.send(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix=prefix))
+            
+            e = Embed(
+                title="Allowed links",
+                description=", ".join(links)
+            )
+            await ctx.send(embed=e)
+
+
+    @link_whitelist.command(name="add")
+    @AutoModPlugin.can("manage_guild")
+    async def add_link2(self, ctx, url: str):
+        """
+        link_whitelist_add_help
+        examples:
+        -link_whitelist add google.com
+        """
+        url = self.safe_parse_url(url)
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
+
+        if str(url) in links:
+            return await ctx.send(self.locale.t(ctx.guild, "alr_link2", _emote="NO"))
+        
+        links.append(url)
+        self.db.configs.update(ctx.guild.id, "white_listed_links", links)
+
+        await ctx.send(self.locale.t(ctx.guild, "allowed_link2", _emote="YES"))
+
+
+    @link_whitelist.command(name="remove")
+    @AutoModPlugin.can("manage_guild")
+    async def remove_link_2(self, ctx, url: str):
+        """
+        link_whitelist_remove_help
+        examples:
+        -link_whitelist remove google.com
+        """
+        url = self.safe_parse_url(url)
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
+
+        if not str(url) in links:
+            return await ctx.send(self.locale.t(ctx.guild, "not_link2", _emote="NO"))
+        
+        links.remove(url)
+        self.db.configs.update(ctx.guild.id, "white_listed_links", links)
+
+        await ctx.send(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"))
 
 
     @commands.group(name="filter", aliases=["filters"])

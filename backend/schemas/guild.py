@@ -19,6 +19,7 @@ def GuildConfig(guild, prefix):
         "ignored_roles": [],
         "allowed_invites": [],
         "black_listed_links": [],
+        "white_listed_links": [],
         "tags": {},
 
         "punishments": {},

@@ -107,6 +107,32 @@ def get_version():
         return VERSION
 
 
+def get_mod_stats(_all, _type):
+    now = datetime.datetime.utcnow()
+
+    if _type != "total":
+        raw = [x["timestamp"] for x in _all if _type in x["type"].lower()]
+    else:
+        raw = [x["timestamp"] for x in _all]
+
+    last_24_hours = len(
+        [
+            x for x in raw if (
+                (now - datetime.timedelta(hours=24)) <= x <= (now + datetime.timedelta(hours=24))
+            ) == True
+        ]
+    )
+    last_7_days = len(
+        [
+            x for x in raw if (
+                (now - datetime.timedelta(days=7)) <= x <= (now + datetime.timedelta(days=7))
+            ) == True
+        ]
+    )
+
+    return len(raw), last_24_hours, last_7_days
+
+
 class UtilityPlugin(AutoModPlugin):
     """Plugin for all utility commands"""
     def __init__(self, bot):
@@ -551,6 +577,84 @@ class UtilityPlugin(AutoModPlugin):
                     self.db.slowmodes.delete(_id)
                 
                 return await ctx.send(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
+
+
+    @commands.command()
+    @AutoModPlugin.can("manage_messages")
+    async def modstats(self, ctx, user: discord.Member = None):
+        """
+        modstats_help
+        examples:
+        -modstats @paul#0009
+        -modstats 543056846601191508
+        -modstats
+        """
+        if user == None: user = ctx.author
+        
+        _all = [x for x in self.db.cases.find({}) if x["guild"] == f"{ctx.guild.id}" and x["mod_id"] == f"{user.id}"]
+
+        r = {}
+        for x in ["ban", "kick", "mute", "warn", "total"]:
+            t, _24, _7 = get_mod_stats(_all, x)
+            r.update({
+                x: {
+                    "t": t,
+                    "24": _24,
+                    "7": _7
+                }
+            })
+
+        if len(_all) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_modstats", _emote="NO"))
+
+        e = Embed(
+            title="Modstats for {0.name}#{0.discriminator}".format(
+                user
+            )
+        )
+        e.set_thumbnail(
+            url=user.display_avatar
+        )
+
+        e.add_fields([
+            {
+                "name": "❯ Last 24 hours⠀⠀⠀⠀",
+                "value": "> **• Bans:** {} \n> **• Kicks:** {} \n> **• Mutes:** {} \n> **• Warns:** {} \n> **• Total:** {}"\
+                .format(
+                    r["ban"]["24"],
+                    r["kick"]["24"],
+                    r["mute"]["24"],
+                    r["warn"]["24"],
+                    r["total"]["24"]
+                ),
+                "inline": True
+            },
+            {
+                "name": "❯ Last 7 days⠀⠀⠀⠀",
+                "value": "> **• Bans:** {} \n> **• Kicks:** {} \n> **• Mutes:** {} \n> **• Warns:** {} \n> **• Total:** {}"\
+                .format(
+                    r["ban"]["7"],
+                    r["kick"]["7"],
+                    r["mute"]["7"],
+                    r["warn"]["7"],
+                    r["total"]["7"]
+                ),
+                "inline": True
+            },
+            {
+                "name": "❯ Total",
+                "value": "> **• Bans:** {} \n> **• Kicks:** {} \n> **• Mutes:** {} \n> **• Warns:** {} \n> **• Total:** {}"\
+                .format(
+                    r["ban"]["t"],
+                    r["kick"]["t"],
+                    r["mute"]["t"],
+                    r["warn"]["t"],
+                    r["total"]["t"]
+                ),
+                "inline": True
+            }
+        ])
+
+        await ctx.send(embed=e)
 
 
 async def setup(bot): await bot.register_plugin(UtilityPlugin(bot))
