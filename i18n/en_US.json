@@ -47,7 +47,7 @@
     "link_whitelist_add_help": "Adds a domain to the link whitelist",
     "link_whitelist_remove_help": "Removes a domain from the link whitelist",
     "filter_help": "Base command for managing word filters",
-    "filter_add_help": "Created a filter with the given name, warns and words",
+    "filter_add_help": "Created a filter with the given name, warns and words. Use 0 for the warn argument if you just want the flagged message to be deleted",
     "filter_remove_help": "Removes the filter with the specified name",
     "filter_show_help": "Shows a list of all avtive filters",
     "mod_role_help": "Sets a mod role which can bypass mod command checks, meaning users with this role can for example ban without having ban permissions. To remove the mod role, use the command again with **off** as the role argument",
@@ -76,6 +76,7 @@
     "log_mute_extended": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
     "log_automod": "**Moderator:** {mod.mention} ({mod_id}) \n**Rule:** {rule} \n**Match:** {found}",
     "log_regex": "**Moderator:** {mod.mention} ({mod_id}) \n**Pattern:** {pattern} \n**Match:** {found}",
+    "log_filter": "**Moderator:** {mod.mention} ({mod_id}) \n**Filter:** {pattern} \n**Match:** {found}",
 
     "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
     "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",

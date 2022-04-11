@@ -179,6 +179,9 @@ LOG_DATA = {
     },
     "regex": {
         "rule": "Regex-Filter"
+    },
+    "filter": {
+        "rule": "Word-Filter"
     }
 }
 
@@ -365,7 +368,8 @@ class AutomodPlugin(AutoModPlugin):
                             ", ".join(found),
                             msg, 
                             int(f["warns"]), 
-                            f"Triggered filter '{name}' with '{', '.join(found)}'"
+                            f"Triggered filter '{name}' with '{', '.join(found)}'",
+                            name
                         )
         
         if len(regexes) > 0:
@@ -766,7 +770,7 @@ class AutomodPlugin(AutoModPlugin):
             )
             e.add_field(
                 name="❯ Arguments",
-                value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when using a word within the filter* \n``<words>`` - *Words contained in the filter, seperated by commas*"
+                value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when flagged. Use 0 if you want the message to be deleted* \n``<words>`` - *Words contained in the filter, seperated by commas*"
             )
             e.add_field(
                 name="❯ Wildcards",
@@ -793,7 +797,7 @@ class AutomodPlugin(AutoModPlugin):
         if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
         if name in filters: return await ctx.send(self.locale.t(ctx.guild, "filter_exists", _emote="NO"))
 
-        if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
         if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
         filters[name] = {
@@ -842,7 +846,7 @@ class AutomodPlugin(AutoModPlugin):
         for name in dict(itertools.islice(filters.items(), 10)):
             i = filters[name]
             e.add_field(
-                name=f"❯ {name} ({i['warns']} {'warn' if int(i['warns']) == 1 else 'warns'})",
+                name=f"❯ {name} ({str(i['warns']) + ' warn' if i['warns'] == 1 else str(i['warns']) + ' warns' if i['warns'] > 0 else 'delete message'})",
                 value=", ".join([f"``{x}``" for x in i["words"]])
             )
 
@@ -871,7 +875,7 @@ class AutomodPlugin(AutoModPlugin):
             )
             for name, data in regexes.items():
                 e.add_field(
-                    name=f"❯ {name} " + f"({data['warns']} warn{'' if data['warns'] == 1 else 's'})" if data["warns"] > 0 else "(delete message)",
+                    name=f"❯ {name} ({str(data['warns']) + ' warn' if data['warns'] == 1 else str(data['warns']) + ' warns' if data['warns'] > 0 else 'delete message'})",
                     value=f"```\n{data['regex']}\n```"
                 )
             

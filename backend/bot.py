@@ -206,7 +206,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
         return "{}d, {}h, {}m & {}s".format(days, hours, minutes, seconds)
 
 
-
     def run(self):
         try:
             super().run(self.config.token, reconnect=True)

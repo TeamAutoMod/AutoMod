@@ -146,6 +146,13 @@ LOG_TYPES = {
         "color": 0xff7514,
         "emote": "SHIELD",
         "action": "Regex filter triggered"
+    },
+    "filter_triggered": {
+        "channel": "mod_log",
+        "key": "log_filter",
+        "color": 0xff7514,
+        "emote": "SHIELD",
+        "action": "Word filter triggered"
     }
 }
 
