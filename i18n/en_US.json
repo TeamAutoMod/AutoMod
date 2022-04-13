@@ -31,6 +31,7 @@
     "jumbo_help": "Shows a bigger version of one or more emotes",
     "whois_help": "Shows some information about a specific user",
     "server_help": "Shows some information about this server",
+    "modstats_help": "Shows stats about actions from the specified moderator",
 
     "config_help": "Shows the current server config",
     "punishment_help": "Sets a punishment for a specific amount of warns",
