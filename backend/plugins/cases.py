@@ -129,19 +129,8 @@ class CasesPlugin(AutoModPlugin):
         if len(found) < 1: return await msg.edit(self.locale.t(ctx.guild, "no_cases", _emote="NO"))
 
         out = []
-        counts = {
-            "warn": 0,
-            "mute": 0,
-            "kick": 0,
-            "ban": 0
-        }
 
         for case in found:
-            if case["type"].lower() in counts:
-                counts.update({
-                    case["type"].lower(): (counts[case["type"].lower()] + 1)
-                })
-            
             case_nr = case["id"].split("-")[-1]
 
             reason = case["reason"]; 

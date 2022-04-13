@@ -1,10 +1,12 @@
 import discord
 from discord.ext import commands
 
+import datetime
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin
 from .processor import ActionProcessor, LogProcessor
+from ..schemas import Case
 
 
 
@@ -119,6 +121,7 @@ class WarnPlugin(AutoModPlugin):
                     "mod_id": ctx.author.id,
                     "reason": reason,
                     "old_warns": cur,
-                    "new_warns": new
+                    "new_warns": new,
+                    "case": self.action_processor.new_case("unwarn", ctx.message, ctx.author, user, reason)
                 })
                 await ctx.send(self.locale.t(ctx.guild, "unwarned", _emote="YES"))

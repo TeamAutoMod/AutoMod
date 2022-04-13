@@ -139,6 +139,22 @@ class UtilityPlugin(AutoModPlugin):
         super().__init__(bot)
 
 
+    def get_log_for_case(self, ctx, case):
+        if not "log_id" in case: return None
+
+        log_id = case["log_id"]
+        if log_id == None: return
+
+        if "jump_url" in case:
+            instant = case["jump_url"]
+            if instant != "": instant
+        
+        log_channel_id = self.db.configs.get(ctx.guild.id, "mod_log")
+        if log_channel_id == "": return None
+
+        return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
+
+
     def can_act(self, guild, mod, target):
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
@@ -409,8 +425,25 @@ class UtilityPlugin(AutoModPlugin):
         if member is not None:
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
-            warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
-            cases = list(filter(lambda x: x["guild"] == str(ctx.guild.id) and x["user_id"] == str(user.id), self.db.cases.find()))
+            cases = list(
+                reversed(
+                    list(
+                        filter(
+                            lambda x: x["guild"] == str(ctx.guild.id) and x["user_id"] == str(user.id), self.db.cases.find()
+                        )
+                    )
+                )
+            )
+            last_3 = []
+            if len(cases) < 1:
+                last_3.append("None")
+            else:
+                for c in cases[:max(min(3, len(cases)), 0)]:
+                    log_url = self.get_log_for_case(ctx, c)
+                    if log_url == None:
+                        last_3.append(f"{c['type'].capitalize()} (#{c['case']})")
+                    else:
+                        last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")
 
             e.add_fields([
                 {
@@ -424,10 +457,10 @@ class UtilityPlugin(AutoModPlugin):
                 },
                 {
                     "name": "❯ Infractions",
-                    "value": "> **• Warns:** {} \n> **• Cases:** {}"\
+                    "value": "> **• Total Cases:** {} \n> **• Last 3 Cases:** {}"\
                     .format(
-                        warns if warns != None else "0",
-                        len(cases)
+                        len(cases),
+                        ", ".join(last_3)
                     )
                 }
 
@@ -439,7 +472,7 @@ class UtilityPlugin(AutoModPlugin):
     @commands.guild_only()
     @AutoModPlugin.can("manage_messages")
     async def server(self, ctx):
-        """
+        """ 
         server_help
         examples:
         -server

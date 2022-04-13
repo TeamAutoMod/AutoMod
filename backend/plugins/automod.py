@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import re
 import itertools
+import datetime
 from typing import Union
 from toolbox import S as Object
 from urllib.parse import urlparse
@@ -11,6 +12,7 @@ import logging; log = logging.getLogger()
 from . import AutoModPlugin
 from .processor import ActionProcessor, LogProcessor, DMProcessor
 from ..types import Embed
+from ..schemas import Case
 
 
 
@@ -328,7 +330,8 @@ class AutomodPlugin(AutoModPlugin):
                             "user_id": msg.author.id,
                             "user": msg.author,
                             "mod_id": msg.guild.me.id,
-                            "mod": msg.guild.me
+                            "mod": msg.guild.me,
+                            "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, reason)
                         }
                     )
                 else:
@@ -341,7 +344,8 @@ class AutomodPlugin(AutoModPlugin):
                             "user_id": msg.author.id,
                             "user": msg.author,
                             "mod_id": msg.guild.me.id,
-                            "mod": msg.guild.me
+                            "mod": msg.guild.me,
+                            "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, reason)
                         }
                     )
 

@@ -131,3 +131,4 @@ dmypy.json
 
 /backend/config.json
 /dashboard
+/backend/api
