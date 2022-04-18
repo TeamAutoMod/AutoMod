@@ -2,13 +2,14 @@ import asyncio
 import datetime
 import os
 import inspect
+from typing import Callable
 from toolbox import to_json
 import logging; log = logging.getLogger(__name__)
 
 
 
 class Observer(object):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         self.stamp_cache = {}
         for p in self.bot.config.plugins:
@@ -16,13 +17,13 @@ class Observer(object):
             self.add_stamp_cache(p, path)
         
         for ext, f in {
-            "config": "backend/config.json",
+            "bot_config": "backend/config.json",
             "locale": "i18n/en_US.json"
         }.items():
             self.add_stamp_cache(ext, f)
 
 
-    def add_stamp_cache(self, name, path):
+    def add_stamp_cache(self, name: str, path: str) -> None:
         with open(
             path, 
             "r", 
@@ -38,7 +39,7 @@ class Observer(object):
         })
 
 
-    async def hot_reload(self, file, content, func, *func_args):
+    async def hot_reload(self, file: str, content: str, func: Callable, *func_args) -> None:
         try:
             if inspect.iscoroutinefunction(func):
                 await func(*func_args)
@@ -53,7 +54,7 @@ class Observer(object):
             self.stamp_cache[file]["content"] = content
 
     
-    async def watch(self):
+    async def watch(self) -> None:
         while True:
             await asyncio.sleep(0.3)
             for f, data in self.stamp_cache.items():
@@ -76,6 +77,7 @@ class Observer(object):
                                 f
                             )
                         else:
+                            if f == "bot_config": f = "config"
                             await self.hot_reload(
                                 f,
                                 content,
@@ -84,6 +86,6 @@ class Observer(object):
                             )
 
 
-    async def start(self):
+    async def start(self) -> None:
         log.info("👀 Observer is starting")
         self.bot.loop.create_task(self.watch())

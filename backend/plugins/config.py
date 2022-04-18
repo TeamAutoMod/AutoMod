@@ -141,7 +141,7 @@ class ConfigPlugin(AutoModPlugin):
             mute_perm = y
 
         e = Embed(
-            title=f"Config for {ctx.guild.name}",
+            title=f"Server config for {ctx.guild.name}",
         )
         e.add_fields([
             {

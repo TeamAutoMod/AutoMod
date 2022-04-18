@@ -415,11 +415,12 @@ class UtilityPlugin(AutoModPlugin):
         )
         e.add_field(
             name="❯ User Information",
-            value="> **• ID:** {} \n> **• Profile:** {} \n> **• Created at:** <t:{}>"\
+            value="> **• ID:** {} \n> **• Profile:** {} \n> **• Created at:** <t:{}> \n> **• Banner:** {}"\
             .format(
                 user.id,
                 user.mention, 
-                round(user.created_at.timestamp())
+                round(user.created_at.timestamp()),
+                f"[Here]({user.banner.url})" if user.banner != None else "None"
             )
         )
         if member is not None:
@@ -465,7 +466,7 @@ class UtilityPlugin(AutoModPlugin):
                 }
 
             ])
-            await ctx.send(embed=e)
+        await ctx.send(embed=e)
 
 
     @commands.command(aliases=["guild", "serverinfo"])

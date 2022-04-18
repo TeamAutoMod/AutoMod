@@ -1,20 +1,26 @@
-from os import stat
 import discord
-from discord.ext import commands
+from discord.ext import commands as _commands
 
 
 
-class AutoModPlugin(commands.Cog):
+class AutoModPlugin(_commands.Cog):
+    #commands: list
     def __init__(self, bot):
         self.bot = bot
         self.db = bot.db
         self.config = bot.config
         self.locale = bot.locale
+        #self.register_commands()
+    
+
+    def register_commands(self):
+        for cmd in self.commands:
+            self.bot.add_command(cmd)
 
 
     def get_prefix(self, guild):
         p = self.db.configs.get(guild.id, "prefix")
-        return p if p != None else "+"
+        return p if p != None else self.bot.config.default_prefix
 
 
     @staticmethod
@@ -31,10 +37,18 @@ class AutoModPlugin(commands.Cog):
                         if r != None:
                             if r in ctx.author.roles:
                                 return True
-                    raise commands.MissingPermissions([perm])
+                    raise _commands.MissingPermissions([perm])
                 else:
-                    raise commands.MissingPermissions([perm])
+                    raise _commands.MissingPermissions([perm])
             else:
                 return True
         
-        return commands.check(predicate)
+        return _commands.check(predicate)
+
+
+    def before_load(self, *args, **kwargs):
+        super().cog_load(*args, **kwargs)
+
+    
+    def after_load(self, *args, **kwargs):
+        super().cog_unload(*args, **kwargs)

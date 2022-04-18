@@ -36,6 +36,30 @@ def prefix_callable(bot, msg):
 
 
 class ShardedBotInstance(commands.AutoShardedBot):
+    __slots__ = [
+        "config"
+
+        "ready",
+        "locked",
+        "avatar_as_bytes",
+        "uptime",
+        "last_reload",
+
+        "used_commands",
+        "used_tags",
+
+        "command_stats",
+        "ignore_for_events",
+        "case_cmd_cache",
+        "webhook_cache",
+        "fetched_user_cache",
+
+        "db",
+        "cache",
+        "emotes",
+        "locale"
+    ]
+    
     intents = discord.Intents(
         guilds=True,
         members=True,
