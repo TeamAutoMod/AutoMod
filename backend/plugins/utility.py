@@ -168,10 +168,7 @@ class UtilityPlugin(AutoModPlugin):
         if mod != None and target != None:
             rid = self.bot.db.configs.get(guild.id, "mod_role")
             if rid != "":
-                r = guild.get_role(int(rid))
-                if r != None:
-                    if r in target.roles:
-                        return False
+                if int(rid) in [x.id for x in target.roles]: return False
 
             return mod.id != target.id \
                 and mod.top_role > target.top_role \

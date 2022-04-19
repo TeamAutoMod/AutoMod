@@ -164,6 +164,13 @@ LOG_TYPES = {
         "channel": "server_log",
     },
 
+    "sticker_created": {
+        "channel": "server_log",
+    },
+    "sticker_deleted": {
+        "channel": "server_log",
+    },
+
     "member_updated": {
         "channel": "member_log",
     },

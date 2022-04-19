@@ -91,6 +91,20 @@ SERVER_LOG_EVENTS = {
         "text": "Emoji deleted"
     },
 
+    "sticker_created": {
+        "emote": "CREATE",
+        "color": 0x5cff9d,
+        "audit_log_action": AuditLogAction.sticker_create,
+        "text": "Sticker created",
+        "extra_text": "**Showcase:** {showcase}"
+    },
+    "sticker_deleted": {
+        "emote": "DELETE",
+        "color": 0xff5c5c,
+        "audit_log_action": AuditLogAction.sticker_delete,
+        "text": "Sticker deleted"
+    },
+
     "member_updated": {
         "emote": "UPDATE",
         "color": 0xffdc5c,
@@ -154,6 +168,9 @@ class InternalPlugin(AutoModPlugin):
 
     async def server_log_embed(self, action, guild, obj, check_for_audit, **text_kwargs):
         data = Object(SERVER_LOG_EVENTS[action])
+        e = Embed(
+            color=data.color
+        )
         if check_for_audit != False:
             mod = await self.find_in_audit_log(
                 guild,
@@ -161,30 +178,29 @@ class InternalPlugin(AutoModPlugin):
                 check_for_audit
             )
 
-            e = Embed(
-                color=data.color,
-                description="{} **{}:** {} ({}) \n\n**Moderator:** {}\n{}".format(
-                    self.bot.emotes.get(data.emote),
-                    data.text,
-                    obj.name if not (isinstance(obj, discord.Member) or isinstance(obj, discord.User)) else obj.mention,
-                    obj.id,
-                    f"{mod.mention} ({mod.id})" if mod != None else "Unknown",
-                    str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
-                )
+            e.description="{} **{}:** {} ({}) \n\n**Moderator:** {}\n{}".format(
+                self.bot.emotes.get(data.emote),
+                data.text,
+                obj.name if not (isinstance(obj, discord.Member) or isinstance(obj, discord.User)) else obj.mention,
+                obj.id,
+                f"{mod.mention} ({mod.id})" if mod != None else "Unknown",
+                str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
             )
         else:
-            e = Embed(
-                color=data.color,
-                description="{} **{}:** {} ({}) \n\n{}".format(
-                    self.bot.emotes.get(data.emote),
-                    data.text,
-                    obj.name if not (isinstance(obj, discord.Member) or isinstance(obj, discord.User)) else obj.mention,
-                    obj.id,
-                    str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
-                )
+            e.description="{} **{}:** {} ({}) \n\n{}".format(
+                self.bot.emotes.get(data.emote),
+                data.text,
+                obj.name if not (isinstance(obj, discord.Member) or isinstance(obj, discord.User)) else obj.mention,
+                obj.id,
+                str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
             )
 
         return e
+
+
+    def get_ignored_roles_channels(self, guild):
+        roles, channels = self.db.configs.get(guild.id, "ignored_roles_log"), self.db.configs.get(guild.id, "ignored_channels_log")
+        return roles, channels
 
 
     @AutoModPlugin.listener()
@@ -227,6 +243,10 @@ class InternalPlugin(AutoModPlugin):
         or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "join_log") \
         or msg.type != discord.MessageType.default:
             return
+
+        roles, channels = self.get_ignored_roles_channels(msg.guild)
+        if msg.channel.id in channels: return
+        if any(x in [i.id for i in msg.author.roles] for x in roles): return
         
         content = " ".join([x.url for x in msg.attachments]) + msg.content
         if content == "": return
@@ -260,6 +280,10 @@ class InternalPlugin(AutoModPlugin):
         or str(a.channel.id) == self.db.configs.get(a.guild.id, "message_log") \
         or a.type != discord.MessageType.default:
             return
+
+        roles, channels = self.get_ignored_roles_channels(a.guild)
+        if a.channel.id in channels: return
+        if any(x in [i.id for i in a.author.roles] for x in roles): return
         
         if b.content != a.content and len(a.content) > 0:
             e = Embed(
@@ -472,6 +496,34 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
+    async def on_guild_stickers_update(self, _, b: List[discord.GuildSticker], a: List[discord.GuildSticker]):
+        if len(b) > len(a):
+            action = "sticker_deleted"
+            sticker = [x for x in b if x not in a][0]
+            extra_text = {}
+        elif len(b) < len(a):
+            action = "sticker_created"
+            sticker = [x for x in a if x not in b][0]
+            extra_text = {"showcase": f"[Here]({sticker.url})"}
+        else:
+            return
+
+        if sticker.guild == None: return
+
+        embed = await self.server_log_embed(
+            action,
+            sticker.guild,
+            sticker,
+            lambda x: x.target.id == sticker.id,
+            **extra_text
+        )
+
+        await self.log_processor.execute(sticker.guild, action, **{
+            "_embed": embed
+        })
+
+
+    @AutoModPlugin.listener()
     async def on_thread_create(self, thread: discord.Thread):
         embed = await self.server_log_embed(
             "thread_created",
@@ -531,6 +583,9 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_member_update(self, b: discord.Member, a: discord.Member):
+        roles, _ = self.get_ignored_roles_channels(a.guild)
+        if any(x in [i.id for i in a.roles] for x in roles): return
+
         change = ""
         check_audit = False
         if b.nick != a.nick:
@@ -580,7 +635,11 @@ class InternalPlugin(AutoModPlugin):
         if len(change) < 1: return
 
         for guild in self.bot.guilds:
-            if guild.get_member(a.id) != None:
+            m = guild.get_member(a.id)
+            if m != None:
+                roles, _ = self.get_ignored_roles_channels(m.guild)
+                if any(x in [i.id for i in m.roles] for x in roles): return
+
                 embed = await self.server_log_embed(
                     "member_updated",
                     guild,

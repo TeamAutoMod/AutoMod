@@ -47,7 +47,7 @@ class Embed(discord.Embed):
     def blank_field(self, inline=False):
         self._add_color()
         return {
-            "name": "⠀", # This is a U+2800 char
-            "value": "⠀", # This is a U+2800 char
+            "name": "⠀⠀", # This is a U+2800 char
+            "value": "⠀⠀", # This is a U+2800 char
             "inline": inline
         }

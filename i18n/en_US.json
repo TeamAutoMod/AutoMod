@@ -61,6 +61,12 @@
     "regex_add_help": "Adds a new regex filter with the given name, regex pattern and warns a user gets when having a message flagged. Set the warns to 0 if you just want the matching messages to be deleted",
     "regex_remove_help": "Removes the regex with the given name",
     "antispam_help": "Enables the antispam filter with a threshold of the given messages per seconds and the given amount of warns as action when triggered. Use **off** as the only argument to disable this feature. When used without arguments, this hows the current antispam config",
+    "ignore_automod_help": "Base command for managing ignored roles and channels by the automoderator. When used without a subcommand, this shows all current ignored roles & channels",
+    "ignore_automod_add_help": "Adds the given roles & channels as ignored ones",
+    "ignore_automod_remove_help": "Removes the given roles & channels as ignored ones",
+    "ignore_log_help": "Base command for managing ignored roles and channels for certain logging events. When used without a subcommand, this shows all current ignored roles & channels",
+    "ignore_log_add_help": "Adds the given roles & channels as ignored ones",
+    "ignore_log_remove_help": "Removes the given roles & channels as ignored ones",
 
     "infractions_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
     "case_help": "Shows information about a specific case",
@@ -266,5 +272,8 @@
     "min_rate": "{emote} Message rate has to be at least 6",
     "max_rate": "{emote} Message rate can only be up to 21",
     "min_per": "{emote} Per seconds amount has to be at least 5",
-    "max_per": "{emote} Per seconds amount can only be up to 20"
+    "max_per": "{emote} Per seconds amount can only be up to 20",
+
+    "no_ignored_am": "{emote} No extra roles or channels are currently being ignored by the automoderator",
+    "no_ignored_log": "{emote} No extra roles or channels are currently being ignored for logging events"
 }

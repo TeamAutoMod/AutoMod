@@ -123,6 +123,11 @@ class ConfigPlugin(AutoModPlugin):
                 await ow.delete()
 
 
+    def get_ignored_roles_channels(self, guild):
+        roles, channels = self.db.configs.get(guild.id, "ignored_roles_log"), self.db.configs.get(guild.id, "ignored_channels_log")
+        return roles, channels
+
+
     @commands.command()
     @AutoModPlugin.can("manage_guild")
     async def config(self, ctx):
@@ -191,6 +196,28 @@ class ConfigPlugin(AutoModPlugin):
                     f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in config.punishments.items()
                 ]) if len(config.punishments.items()) > 0 else n,
+                "inline": True
+            },
+            e.blank_field(True),
+            {
+                "name": "❯ Ignored Roles (automod)",
+                "value": n if len(config.ignored_roles_automod) < 1 else ", ".join([f"<@&{x}>" for x in config.ignored_roles_automod]),
+                "inline": True
+            },
+            {
+                "name": "❯ Ignored Channels (automod)",
+                "value": n if len(config.ignored_channels_automod) < 1 else ", ".join([f"<#{x}>" for x in config.ignored_channels_automod]),
+                "inline": True
+            },
+            e.blank_field(True),
+            {
+                "name": "❯ Ignored Roles (logging)",
+                "value": n if len(config.ignored_roles_log) < 1 else ", ".join([f"<@&{x}>" for x in config.ignored_roles_automod]),
+                "inline": True
+            },
+            {
+                "name": "❯ Ignored Channels (logging)",
+                "value": n if len(config.ignored_channels_log) < 1 else ", ".join([f"<#{x}>" for x in config.ignored_channels_log]),
                 "inline": True
             },
             e.blank_field(True)
@@ -388,6 +415,191 @@ class ConfigPlugin(AutoModPlugin):
         else:
             self.db.configs.update(ctx.guild.id, "mod_role", f"{role.id}")
             await ctx.send(self.locale.t(ctx.guild, "mod_role_on", _emote="YES", role=role.name))
+
+
+    @commands.group()
+    @AutoModPlugin.can("manage_guild")
+    async def ignore_log(self, ctx):
+        """
+        ignore_log_help
+        examples:
+        -ignore_log add @test  #test
+        -ignore_log remove @test
+        -ignore_log
+        """
+        if ctx.invoked_subcommand == None:
+            roles, channels = self.get_ignored_roles_channels(ctx.guild)
+
+            if (len(roles) + len(channels)) < 1:
+                return await ctx.send(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"))
+            else:
+                e = Embed(
+                    title="Ignored roles & channels for logging"
+                )
+                e.add_fields([
+                    {
+                        "name": "❯ Roles",
+                        "value": ", ".join([f"<@&{x}>" for x in roles]) if len(roles) > 0 else "None"
+                    },
+                    {
+                        "name": "❯ Channels",
+                        "value": ", ".join([f"<#{x}>" for x in channels]) if len(channels) > 0 else "None"
+                    }
+                ])
+
+                await ctx.send(embed=e)
+
+
+    @ignore_log.command()
+    @AutoModPlugin.can("manage_guild")
+    async def add(self, ctx, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel]]):
+        """
+        ignore_log_add_help
+        examples:
+        -ignore_log add @test  #test
+        """
+        if len(roles_or_channels) < 1: raise commands.BadArgument("At least one role or channel required")
+
+        roles, channels = self.get_ignored_roles_channels(ctx.guild)
+
+        added, ignored = [], []
+        for e in roles_or_channels:
+            if isinstance(e, discord.Role):
+                if not e.id in roles:
+                    roles.append(e.id); added.append(e)
+                else:
+                    ignored.append(e)
+            elif isinstance(e, discord.TextChannel):
+                if not e.id in channels:
+                    channels.append(e.id); added.append(e)
+                else:
+                    ignored.append(e)
+        
+        self.db.configs.multi_update(ctx.guild.id, {
+            "ignored_roles_log": roles,
+            "ignored_channels_log": channels
+        })
+
+        e = Embed(
+            title="Updated the following roles & channels"
+        )
+        e.add_fields([
+            {
+                "name": "❯ Added roles",
+                "value": ", ".join(
+                    [
+                        x.mention for x in added if isinstance(x, discord.Role)
+                    ]
+                ) if len(
+                    [
+                        _ for _ in added if isinstance(_, discord.Role)
+                    ]
+                ) > 0 else "None"
+            },
+            {
+                "name": "❯ Added Channels",
+                "value": ", ".join(
+                    [
+                        x.mention for x in added if isinstance(x, discord.TextChannel)
+                    ]
+                ) if len(
+                    [
+                        _ for _ in added if isinstance(_, discord.TextChannel)
+                    ]
+                ) > 0 else "None"
+            },
+            {
+                "name": "❯ Ignored",
+                "value": ", ".join(
+                    [
+                        x.mention for x in ignored
+                    ]
+                ) if len(
+                    [
+                        _ for _ in ignored
+                    ]
+                ) > 0 else "None"
+            },
+        ])
+
+        await ctx.send(embed=e)
+
+
+    @ignore_log.command()
+    @AutoModPlugin.can("manage_guild")
+    async def remove(self, ctx, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel]]):
+        """
+        ignore_log_remove_help
+        examples:
+        -ignore_log remove @test  #test
+        """
+        if len(roles_or_channels) < 1: raise commands.BadArgument("At least one role or channel required")
+
+        roles, channels = self.get_ignored_roles_channels(ctx.guild)
+
+        removed, ignored = [], []
+        for e in roles_or_channels:
+            if isinstance(e, discord.Role):
+                if e.id in roles:
+                    roles.remove(e.id); removed.append(e)
+                else:
+                    ignored.append(e)
+            elif isinstance(e, discord.TextChannel):
+                if e.id in channels:
+                    channels.remove(e.id); removed.append(e)
+                else:
+                    ignored.append(e)
+            else:
+                ignored.append(e)
+        
+        self.db.configs.multi_update(ctx.guild.id, {
+            "ignored_roles_log": roles,
+            "ignored_channels_log": channels
+        })
+
+        e = Embed(
+            title="Updated the following roles & channels"
+        )
+        e.add_fields([
+            {
+                "name": "❯ Removed roles",
+                "value": ", ".join(
+                    [
+                        x.mention for x in removed if isinstance(x, discord.Role)
+                    ]
+                ) if len(
+                    [
+                        _ for _ in removed if isinstance(_, discord.Role)
+                    ]
+                ) > 0 else "None"
+            },
+            {
+                "name": "❯ Removed Channels",
+                "value": ", ".join(
+                    [
+                        x.mention for x in removed if isinstance(x, discord.TextChannel)
+                    ]
+                ) if len(
+                    [
+                        _ for _ in removed if isinstance(_, discord.TextChannel)
+                    ]
+                ) > 0 else "None"
+            },
+            {
+                "name": "❯ Ignored",
+                "value": ", ".join(
+                    [
+                        x.mention for x in ignored
+                    ]
+                ) if len(
+                    [
+                        _ for _ in ignored
+                    ]
+                ) > 0 else "None"
+            },
+        ])
+
+        await ctx.send(embed=e)
 
 
 async def setup(bot): await bot.register_plugin(ConfigPlugin(bot))

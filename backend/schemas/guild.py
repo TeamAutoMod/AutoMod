@@ -17,8 +17,11 @@ def GuildConfig(guild, prefix):
         "join_log_webhook": "",
         "member_log_webhook": "",
 
-        "ignored_channels": [],
-        "ignored_roles": [],
+        "ignored_channels_automod": [],
+        "ignored_roles_automod": [],
+        "ignored_channels_log": [],
+        "ignored_roles_log": [],
+
         "allowed_invites": [],
         "black_listed_links": [],
         "white_listed_links": [],
