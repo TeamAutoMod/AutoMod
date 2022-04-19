@@ -1237,6 +1237,4 @@ class AutomodPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-
-
 async def setup(bot): await bot.register_plugin(AutomodPlugin(bot))

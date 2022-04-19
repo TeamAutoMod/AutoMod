@@ -50,17 +50,17 @@ class ErrorPlugin(AutoModPlugin):
 
         elif isinstance(error, commands.MissingRequiredArgument):
             param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs) - 1, len(ctx.command.params)) - 1]
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature}"
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
             await ctx.send(self.locale.t(ctx.guild, "missing_arg", _emote="NO", param=param._name, usage=usage, info=info))
         
         elif isinstance(error, PostParseError):
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature}"
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
             await ctx.send(self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=error.type, error=error.error, usage=usage, info=info))
 
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.BadUnionArgument):
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature}"
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
             try:
                 param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
