@@ -57,6 +57,26 @@ SERVER_LOG_EVENTS = {
         "extra_text": "**Change:** {change}"
     },
 
+    "thread_created": {
+        "emote": "CREATE",
+        "color": 0x5cff9d,
+        "audit_log_action": AuditLogAction.thread_create,
+        "text": "Thread created"
+    },
+    "thread_deleted": {
+        "emote": "DELETE",
+        "color": 0xff5c5c,
+        "audit_log_action": AuditLogAction.thread_delete,
+        "text": "Thread deleted"
+    },
+    "thread_updated": {
+        "emote": "UPDATE",
+        "color": 0xffdc5c,
+        "audit_log_action": AuditLogAction.thread_update,
+        "text": "Thread updated",
+        "extra_text": "**Change:** {change}"
+    },
+
     "emoji_created": {
         "emote": "CREATE",
         "color": 0x5cff9d,
@@ -70,7 +90,17 @@ SERVER_LOG_EVENTS = {
         "audit_log_action": AuditLogAction.emoji_delete,
         "text": "Emoji deleted"
     },
+
+    "member_updated": {
+        "emote": "UPDATE",
+        "color": 0xffdc5c,
+        "audit_log_action": AuditLogAction.member_role_update,
+        "text": "Member updated",
+        "extra_text": "**Change:** {change}"
+    },
 }
+
+
 class InternalPlugin(AutoModPlugin):
     """Plugin for internal/log events"""
     def __init__(self, bot):
@@ -124,23 +154,35 @@ class InternalPlugin(AutoModPlugin):
 
     async def server_log_embed(self, action, guild, obj, check_for_audit, **text_kwargs):
         data = Object(SERVER_LOG_EVENTS[action])
-        mod = await self.find_in_audit_log(
-            guild,
-            data.audit_log_action,
-            check_for_audit
-        )
-
-        e = Embed(
-            color=data.color,
-            description="{} **{}:** {} ({}) \n\n**Moderator:** {}\n{}".format(
-                self.bot.emotes.get(data.emote),
-                data.text,
-                obj.name,
-                obj.id,
-                f"{mod.mention} ({mod.id})" if mod != None else "Unknown",
-                str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
+        if check_for_audit != False:
+            mod = await self.find_in_audit_log(
+                guild,
+                data.audit_log_action,
+                check_for_audit
             )
-        )
+
+            e = Embed(
+                color=data.color,
+                description="{} **{}:** {} ({}) \n\n**Moderator:** {}\n{}".format(
+                    self.bot.emotes.get(data.emote),
+                    data.text,
+                    obj.name if not (isinstance(obj, discord.Member) or isinstance(obj, discord.User)) else obj.mention,
+                    obj.id,
+                    f"{mod.mention} ({mod.id})" if mod != None else "Unknown",
+                    str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
+                )
+            )
+        else:
+            e = Embed(
+                color=data.color,
+                description="{} **{}:** {} ({}) \n\n{}".format(
+                    self.bot.emotes.get(data.emote),
+                    data.text,
+                    obj.name if not (isinstance(obj, discord.Member) or isinstance(obj, discord.User)) else obj.mention,
+                    obj.id,
+                    str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
+                )
+            )
 
         return e
 
@@ -427,6 +469,129 @@ class InternalPlugin(AutoModPlugin):
         await self.log_processor.execute(emoji.guild, action, **{
             "_embed": embed
         })
+
+
+    @AutoModPlugin.listener()
+    async def on_thread_create(self, thread: discord.Thread):
+        embed = await self.server_log_embed(
+            "thread_created",
+            thread.guild,
+            thread,
+            lambda x: x.target.id == thread.id
+        )
+
+        await self.log_processor.execute(thread.guild, "thread_created", **{
+            "_embed": embed
+        })
+
+    
+    @AutoModPlugin.listener()
+    async def on_thread_delete(self, thread: discord.Thread):
+        embed = await self.server_log_embed(
+            "thread_deleted",
+            thread.guild,
+            thread,
+            lambda x: x.target.id == thread.id
+        )
+
+        await self.log_processor.execute(thread.guild, "thread_deleted", **{
+            "_embed": embed
+        })
+
+
+    @AutoModPlugin.listener()
+    async def on_thread_update(self, b: discord.Thread, a: discord.Thread):
+        change = ""
+        if b.name != a.name:
+            change += "Name (``{}`` → ``{}``)".format(
+                b.name,
+                a.name
+            )
+        if b.archived != a.archived:
+            new = "Archived" if a.archived == True else "Unarchived"
+            if len(change) < 1:
+                change += new
+            else:
+                change += f" & {new}"
+        
+        if len(change) < 1: return
+
+        embed = await self.server_log_embed(
+            "thread_updated",
+            a.guild,
+            a,
+            lambda x: x.target.id == a.id,
+            change=change
+        )
+
+        await self.log_processor.execute(a.guild, "thread_updated", **{
+            "_embed": embed
+        })
+
+
+    @AutoModPlugin.listener()
+    async def on_member_update(self, b: discord.Member, a: discord.Member):
+        change = ""
+        check_audit = False
+        if b.nick != a.nick:
+            change += "Nickname (``{}`` → ``{}``)".format(
+                b.nick,
+                a.nick
+            )
+        if b.roles != a.roles:
+            check_audit = True
+            added_roles = [x.mention for x in a.roles if x not in b.roles]
+            removed_roles = [x.mention for x in b.roles if x not in a.roles]
+
+            if len(added_roles) > 0:
+                new = f"Added role ({', '.join(added_roles)})"
+            elif len(removed_roles) > 0:
+                new = f"Removed role ({', '.join(removed_roles)})"
+            
+            if len(change) < 1:
+                change += new
+            else:
+                change += f" & {new}"
+        
+        if len(change) < 1: return
+
+        embed = await self.server_log_embed(
+            "member_updated",
+            a.guild,
+            a,
+            False if check_audit == False else lambda x: x.target.id == a.id,
+            change=change
+        )
+
+        await self.log_processor.execute(a.guild, "member_updated", **{
+            "_embed": embed
+        })
+
+
+    @AutoModPlugin.listener()
+    async def on_user_update(self, b: discord.User, a: discord.User):
+        change = ""
+        if b.name != a.name or b.discriminator != a.discriminator:
+            change += "Username (``{}`` → ``{}``)".format(
+                f"{b.name}#{b.discriminator}",
+                f"{a.name}#{a.discriminator}"
+            )
+        
+        if len(change) < 1: return
+
+        for guild in self.bot.guilds:
+            if guild.get_member(a.id) != None:
+                embed = await self.server_log_embed(
+                    "member_updated",
+                    guild,
+                    a,
+                    False,
+                    change=change
+                )
+
+                await self.log_processor.execute(guild, "member_updated", **{
+                    "_embed": embed
+                })
 
 
     @AutoModPlugin.listener()

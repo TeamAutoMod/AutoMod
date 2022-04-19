@@ -5,7 +5,6 @@ import logging; log = logging.getLogger()
 from toolbox import S as Object
 from typing import Union
 import asyncio
-import re
 
 from . import AutoModPlugin
 from ..types import Embed, Duration
@@ -28,6 +27,10 @@ LOG_OPTIONS = {
     "joins": {
         "db_field": "join_log",
         "i18n_type": "join logs"
+    },
+    "members": {
+        "db_field": "member_log",
+        "i18n_type": "member logs"
     },
 }
 
@@ -146,36 +149,39 @@ class ConfigPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ General",
-                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Mod Role:** {}"\
+                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Regexes:** {} \n> **• Mod Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
                     len(config.filters),
+                    len(config.regexes),
                     n if config.mod_role == "" else f"<@&{config.mod_role}>"
                 ),
                 "inline": True
             },
             {
                 "name": "❯ Logging",
-                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}\n> **• Join Log:** {}"\
+                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}\n> **• Join Log:** {} \n> **• Member Log:** {}"\
                 .format(
                     n if config.mod_log == "" else f"<#{config.mod_log}>",
                     n if config.message_log == "" else f"<#{config.message_log}>",
                     n if config.server_log == "" else f"<#{config.server_log}>",
                     n if config.join_log == "" else f"<#{config.join_log}>",
+                    n if config.member_log == "" else f"<#{config.member_log}>",
                 ),
                 "inline": True
             },
             e.blank_field(True),
             {
                 "name": "❯ Automod Rules",
-                "value": "> **• Max Mentions:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {}"\
+                "value": "> **• Max Mentions:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {} \n> **• Spam:** {}"\
                 .format(
                     n if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
                     n if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
                     n if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
                     n if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
                     n if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
+                    n if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} warn{'' if config.antispam.warns == 1 else 's'})"
                 ),
                 "inline": True
             },
@@ -382,6 +388,6 @@ class ConfigPlugin(AutoModPlugin):
         else:
             self.db.configs.update(ctx.guild.id, "mod_role", f"{role.id}")
             await ctx.send(self.locale.t(ctx.guild, "mod_role_on", _emote="YES", role=role.name))
-            
+
 
 async def setup(bot): await bot.register_plugin(ConfigPlugin(bot))

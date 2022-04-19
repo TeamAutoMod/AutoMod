@@ -33,6 +33,20 @@ LOG_TYPES = {
         "emote": "HAMMER",
         "action": "User softbanned"
     },
+    "tempban": {
+        "channel": "mod_log",
+        "key": "log_tempban",
+        "color": 0xff5c5c,
+        "emote": "HAMMER",
+        "action": "User tempbanned"
+    },
+    "tempban_extended": {
+        "channel": "mod_log",
+        "key": "log_tempban_extended",
+        "color": 0xff5c5c,
+        "emote": "HAMMER",
+        "action": "Tempban extended"
+    },
     "unban": {
         "channel": "mod_log",
         "key": "log_unban",
@@ -68,6 +82,13 @@ LOG_TYPES = {
         "color": 0x5cff9d,
         "emote": "UNMUTE",
         "action": "User unmuted"
+    },
+    "tempunban": {
+        "channel": "mod_log",
+        "key": "log_tempunban",
+        "color": 0x5cff9d,
+        "emote": "UNLOCK",
+        "action": "User unbanned"
     },
 
     "warn": {
@@ -126,11 +147,25 @@ LOG_TYPES = {
         "channel": "server_log",
     },
 
+    "thread_created": {
+        "channel": "server_log",
+    },
+    "thread_deleted": {
+        "channel": "server_log",
+    },
+    "thread_updated": {
+        "channel": "server_log",
+    },
+
     "emoji_created": {
         "channel": "server_log",
     },
     "emoji_deleted": {
         "channel": "server_log",
+    },
+
+    "member_updated": {
+        "channel": "member_log",
     },
 
     "automod_rule_triggered": {

@@ -72,7 +72,8 @@ class MongoDB(Database):
             "warns": "warns",
             "mutes": "mutes",
             "level": "level",
-            "slowmodes": "slowmodes"
+            "slowmodes": "slowmodes",
+            "tbans": "tbans"
         }.items():
             setattr(self, obj_name, MongoCollection(bot, self, db_name))
         log.info("⚙️  Database initialized")

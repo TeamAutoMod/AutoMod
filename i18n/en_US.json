@@ -11,6 +11,7 @@
 
     "ban_help": "Bans the specified user from the server",
     "softban_help": "Softbans the specified user from the server (ban & unban)",
+    "tempban_help": "Temporarily bans the specified user from the server",
     "hackban_help": "Bans the specified user from the server (even if they're currently not in the server)",
     "kick_help": "Kicks the specified user from the server",
     "mute_help": "Mutes (timeouts) the a user for the specified time or extends their mute",
@@ -59,6 +60,7 @@
     "regex_help": "Base command for managing regex filters",
     "regex_add_help": "Adds a new regex filter with the given name, regex pattern and warns a user gets when having a message flagged. Set the warns to 0 if you just want the matching messages to be deleted",
     "regex_remove_help": "Removes the regex with the given name",
+    "antispam_help": "Enables the antispam filter with a threshold of the given messages per seconds and the given amount of warns as action when triggered. Use **off** as the only argument to disable this feature. When used without arguments, this hows the current antispam config",
 
     "infractions_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
     "case_help": "Shows information about a specific case",
@@ -71,13 +73,17 @@
     "log_ban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
     "log_kick": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
     "log_unban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason}",
+    "log_tempban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
     "log_manual_unban": "**Reason:** [ Manual ]",
+    "log_manual_ban": "**Reason:** [ Manual ]",
     "log_warn": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_unwarn": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Difference:** {old_warns} → {new_warns}",
     "log_mute": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
     "log_manual_unmute": "**Moderator:** {mod.mention} ({mod_id})",
     "log_unmute": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** [ Auto ] Mute has expired",
+    "log_tempunban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** [ Auto ] Tempban has expired",
     "log_mute_extended": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
+    "log_tempban_extended": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
     "log_automod": "**Moderator:** {mod.mention} ({mod_id}) \n**Rule:** {rule} \n**Match:** {found}",
     "log_regex": "**Moderator:** {mod.mention} ({mod_id}) \n**Pattern:** {pattern} \n**Match:** {found}",
     "log_filter": "**Moderator:** {mod.mention} ({mod_id}) \n**Filter:** {pattern} \n**Match:** {found}",
@@ -105,10 +111,12 @@
     "warned": "{emote} User has been warned",
     "unwarned": "{emote} User has been unwarned",
     "muted": "{emote} User has been muted",
+    "tempbanned": "{emote} User has been tempbanned",
     "unmuted": "{emote} User has been unmuted",
     "cleaned": "{emote} Deleted **{amount}** message{plural}",
     "unbanned": "{emote} User has been unbanned",
     "mute_extended": "{emote} Mute has been extended until {until}",
+    "tempban_extended": "{emote} Tempban has been extended until {until}",
 
     "name_too_long": "{emote} The command name is too long (>30 chars)",
     "content_too_long": "{emote} The command content is too long (>1900 chars)",
@@ -128,6 +136,7 @@
 
     "role_too_high": "{emote} Mute role is above my highest role. Please put it below my highest role, so I can add it to users",
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
+    "already_tempbanned_description": "User is already tempbanned. Do you want to extend their tempban?",
 
     "amount_too_small": "{emote} Too few messages (<1)",
     "amount_too_big": "{emote} Too many messages (>300)",
@@ -141,7 +150,7 @@
     "set_mute": "{emote} Users will now be muted for {length} {unit} when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
     "time_needed": "{emote} The mute option needs an additional time, for example **10m** which would mean 10 minutes.",
 
-    "invalid_log_option": "{emote} Invalid log option. Valid options are: \n• mod \n• server \n• messages \n• joins",
+    "invalid_log_option": "{emote} Invalid log option. Valid options are: \n• mod \n• server \n• messages \n• joins \n• members",
     "log_off": "{emote} Disabled {_type}",
     "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **off** as the second argument. Here's a little help: \n• ``{prefix}log {option} #channel`` - Sets the log channel \n• ``{prefix}log {option} off`` - Disables this log option",
     "log_on": "{emote} Enabled {_type} and will send them to {channel}",
@@ -225,6 +234,7 @@
     "dm_ban": "{emote} You have been banned from **{guild_name}** for:\n```\n{reason}\n```",
     "dm_warn": "{emote} You have been warned in **{guild_name}** for:\n```\n{reason}\n```",
     "dm_mute": "{emote} You have been muted in **{guild_name}** until {until} for:\n```\n{reason}\n```",
+    "dm_tempban": "{emote} You have been muted in **{guild_name}** until {until} for:\n```\n{reason}\n```",
 
     "no_regexes": "{emote} This server doesn't have any regexes",
     "regex_name_too_long": "{emote} Regex name is too long",
@@ -248,5 +258,13 @@
     "set_rr": "{emote} Added the reaction role pair",
     "not_rr_msg": "{emote} This message doesn't have any reaction role pairs",
     "no_rr_role": "{emote} This role isn't bound to any emotes on that message",
-    "removed_rr": "{emote} Removed the reaction role pair"
+    "removed_rr": "{emote} Removed the reaction role pair",
+
+    "disabled_antispam": "{emote} Disabled antispam filter",
+    "antispam_info": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid message rate and second threshold or **off** as arguments (or none if you want to display the current antispam config). Here's a little help: \n• ``{prefix}antispam`` - Shows the current antispam config \n• ``{prefix}antispam 12 10 3`` - Enables the antispam with 12 messages allowed every 10 seconds and 3 warns as action when triggered\n• ``{prefix}antispam off`` - Disables the antispam filter",
+    "enabled_antispam": "{emote} Enabled the antispam filter with a threshold of **{rate}** messages allowed every **{per}** seconds and {warns} warns when triggered",
+    "min_rate": "{emote} Message rate has to be at least 6",
+    "max_rate": "{emote} Message rate can only be up to 21",
+    "min_per": "{emote} Per seconds amount has to be at least 5",
+    "max_per": "{emote} Per seconds amount can only be up to 20"
 }

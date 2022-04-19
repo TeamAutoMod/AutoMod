@@ -68,7 +68,7 @@ class Duration(commands.Converter):
     async def convert(self, ctx, argument):
         match = re.compile(r"^(\d+)").match(argument)
         if match is None:
-            raise BadArgument("NaN")
+            raise BadArgument("Duration is not a number")
         group = match.group(1)
         holder = DurationHolder(int(group))
         if len(argument) > len(group):

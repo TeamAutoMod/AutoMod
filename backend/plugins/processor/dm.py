@@ -12,6 +12,7 @@ class DMProcessor(object):
         self.colors = {
             "kick": 0xf79554,
             "ban": 0xff5c5c,
+            "tempban": 0xff5c5c,
             "mute": 0xffdc5c,
             "warn": 0xffdc5c,
             "automod_rule_triggered": 0xff7514

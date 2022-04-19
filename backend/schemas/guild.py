@@ -9,11 +9,13 @@ def GuildConfig(guild, prefix):
         "message_log": "",
         "server_log": "",
         "join_log": "",
+        "member_log": "",
 
         "mod_log_webhook": "",
         "message_log_webhook": "",
         "server_log_webhook": "",
         "join_log_webhook": "",
+        "member_log_webhook": "",
 
         "ignored_channels": [],
         "ignored_roles": [],
@@ -26,6 +28,12 @@ def GuildConfig(guild, prefix):
         "automod": {},
         "filters": {},
         "regexes": {},
+        "antispam": {
+            "enabled": False,
+            "rate": 0,
+            "per": 0,
+            "warns": 0,
+        },
         
         "reaction_roles": {},
 
