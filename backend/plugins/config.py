@@ -195,29 +195,29 @@ class ConfigPlugin(AutoModPlugin):
                 "value": "\n".join([
                     f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in config.punishments.items()
-                ]) if len(config.punishments.items()) > 0 else n,
+                ]) if len(config.punishments.items()) > 0 else f"> {n}",
                 "inline": True
             },
             e.blank_field(True),
             {
                 "name": "❯ Ignored Roles (automod)",
-                "value": n if len(config.ignored_roles_automod) < 1 else ", ".join([f"<@&{x}>" for x in config.ignored_roles_automod]),
+                "value": f"> {n}" if len(config.ignored_roles_automod) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             {
                 "name": "❯ Ignored Channels (automod)",
-                "value": n if len(config.ignored_channels_automod) < 1 else ", ".join([f"<#{x}>" for x in config.ignored_channels_automod]),
+                "value": f"> {n}" if len(config.ignored_channels_automod) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             e.blank_field(True),
             {
                 "name": "❯ Ignored Roles (logging)",
-                "value": n if len(config.ignored_roles_log) < 1 else ", ".join([f"<@&{x}>" for x in config.ignored_roles_automod]),
+                "value": f"> {n}" if len(config.ignored_roles_log) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
                 "name": "❯ Ignored Channels (logging)",
-                "value": n if len(config.ignored_channels_log) < 1 else ", ".join([f"<#{x}>" for x in config.ignored_channels_log]),
+                "value": f"> {n}" if len(config.ignored_channels_log) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
             e.blank_field(True)
