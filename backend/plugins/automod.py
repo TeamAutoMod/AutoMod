@@ -3,7 +3,7 @@ from discord.ext import commands
 
 import re
 import itertools
-import datetime
+from collections import defaultdict
 from typing import Union
 from toolbox import S as Object
 from urllib.parse import urlparse
@@ -12,7 +12,6 @@ import logging; log = logging.getLogger()
 from . import AutoModPlugin
 from .processor import ActionProcessor, LogProcessor, DMProcessor
 from ..types import Embed
-from ..schemas import Case
 
 
 
@@ -217,6 +216,45 @@ AUTOMOD_RULES = {
 }
 
 
+
+class ContentSpam(commands.CooldownMapping):
+    def _bucket_key(self, msg):
+        return (
+            msg.channel.id, 
+            msg.content
+        )
+
+
+class Spam(object):
+    def __init__(self):
+        self.from_content = ContentSpam.from_cooldown(
+            15,
+            17.0,
+            commands.BucketType.member
+        )
+        self.from_user = commands.CooldownMapping.from_cooldown(
+            10,
+            12.0,
+            commands.BucketType.user
+        )
+
+    
+    def is_spamming(self, msg):
+        if msg.guild == None: return
+
+        now = msg.created_at.timestamp()
+
+        users = self.from_user.get_bucket(msg)
+        if users.update_rate_limit(now):
+            return True
+
+        contents = self.from_content.get_bucket(msg)
+        if contents.update_rate_limit(now):
+            return True
+
+        return False
+
+
 class AutomodPlugin(AutoModPlugin):
     """Plugin for enforcing automoderator rules"""
     def __init__(self, bot):
@@ -224,6 +262,7 @@ class AutomodPlugin(AutoModPlugin):
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
         self.dm_processor = DMProcessor(bot)
+        self.spam = defaultdict(Spam)
 
 
     def can_act(self, guild, mod, target):

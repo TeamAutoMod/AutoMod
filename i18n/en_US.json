@@ -3,9 +3,11 @@
     "invalid_command": "{emote} This isn't a valid command",
     "no_reason": "No reason",
     "aborting": "Aborting",
+    "updated_i18n": "{emote} Updated the ``{key}`` key",
 
     "eval_help": "Evaluates a block of code",
     "debug_help": "Shows useful developer information",
+    "update_i18n_help": "Update a specific key in the en_US file",
 
     "ban_help": "Bans the specified user from the server",
     "softban_help": "Softbans the specified user from the server (ban & unban)",
@@ -32,6 +34,7 @@
     "whois_help": "Shows some information about a specific user",
     "server_help": "Shows some information about this server",
     "modstats_help": "Shows stats about actions from the specified moderator",
+    "charinfo_help": "Shows info about the given characters",
 
     "config_help": "Shows the current server config",
     "punishment_help": "Sets a punishment for a specific amount of warns",

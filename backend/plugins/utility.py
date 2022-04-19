@@ -1,3 +1,4 @@
+import unicodedata
 import discord
 from discord.ext import commands
 
@@ -35,7 +36,7 @@ MAX_BOT_SLOWMODE = 1209600 # 14 days
 
 def get_help_embed(plugin, ctx, cmd):
     if len(cmd.aliases) > 0:
-        cmd_name = f"{cmd.qualified_name}{'|'.join(cmd.aliases) if len(cmd.aliases) > 1 else f'|{cmd.aliases[0]}'}"
+        cmd_name = f"{cmd.qualified_name}{'|{}'.format('|'.join(cmd.aliases)) if len(cmd.aliases) > 1 else f'|{cmd.aliases[0]}'}"
     else:
         cmd_name = cmd.qualified_name
     
@@ -107,30 +108,10 @@ def get_version():
         return VERSION
 
 
-def get_mod_stats(_all, _type):
-    now = datetime.datetime.utcnow()
-
-    if _type != "total":
-        raw = [x["timestamp"] for x in _all if _type in x["type"].lower()]
-    else:
-        raw = [x["timestamp"] for x in _all]
-
-    last_24_hours = len(
-        [
-            x for x in raw if (
-                (now - datetime.timedelta(hours=24)) <= x <= (now + datetime.timedelta(hours=24))
-            ) == True
-        ]
-    )
-    last_7_days = len(
-        [
-            x for x in raw if (
-                (now - datetime.timedelta(days=7)) <= x <= (now + datetime.timedelta(days=7))
-            ) == True
-        ]
-    )
-
-    return len(raw), last_24_hours, last_7_days
+def to_string(char):
+    dig = f"{ord(char):x}"
+    name = unicodedata.name(char, "Name not found")
+    return f"\\U{dig:>08} | {name} | {char}"
 
 
 class UtilityPlugin(AutoModPlugin):
@@ -153,6 +134,31 @@ class UtilityPlugin(AutoModPlugin):
         if log_channel_id == "": return None
 
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
+
+
+    def server_status_for(self, user):
+        perms: discord.Permissions = user.guild_permissions
+        if (
+            perms.administrator == True \
+            or perms.manage_guild == True
+        ):
+            return "Administrator"
+        elif (
+            perms.manage_channels == True \
+            or perms.manage_messages == True \
+            or perms.ban_members == True \
+            or perms.kick_members == True \
+            or perms.moderate_members == True
+        ):
+            return "Moderator"
+        else:
+            rid = self.db.configs.get(user.guild.id, "mod_role")
+            if rid != "":
+                r = user.guild.get_role(int(rid))
+                if r != None:
+                    if r in user.roles:
+                        return "Moderator"
+            return "User"
 
 
     def can_act(self, guild, mod, target):
@@ -435,37 +441,36 @@ class UtilityPlugin(AutoModPlugin):
                     )
                 )
             )
-            last_3 = []
-            if len(cases) < 1:
-                last_3.append("None")
-            else:
-                for c in cases[:max(min(3, len(cases)), 0)]:
-                    log_url = self.get_log_for_case(ctx, c)
-                    if log_url == None:
-                        last_3.append(f"{c['type'].capitalize()} (#{c['case']})")
-                    else:
-                        last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")
+            e.add_field(
+                name="❯ Server Information",
+                value="> **• Nickname:** {} \n> **• Joined at:** <t:{}> \n> **• Roles:** {} \n> **• Status:** {}"\
+                .format(
+                    member.nick,
+                    round(member.joined_at.timestamp()),
+                    len(roles),
+                    self.server_status_for(member)
+                )
+            )
 
-            e.add_fields([
-                {
-                    "name": "❯ Server Information",
-                    "value": "> **• Nickname:** {} \n> **• Joined at:** <t:{}> \n> **• Roles:** {}"\
-                    .format(
-                        member.nick,
-                        round(member.joined_at.timestamp()),
-                        len(roles)
-                    )
-                },
-                {
-                    "name": "❯ Infractions",
-                    "value": "> **• Total Cases:** {} \n> **• Last 3 Cases:** {}"\
-                    .format(
-                        len(cases),
-                        ", ".join(last_3)
-                    )
-                }
+        last_3 = []
+        if len(cases) < 1:
+            last_3.append("None")
+        else:
+            for c in cases[:max(min(3, len(cases)), 0)]:
+                log_url = self.get_log_for_case(ctx, c)
+                if log_url == None:
+                    last_3.append(f"{c['type'].capitalize()} (#{c['case']})")
+                else:
+                    last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")     
+        e.add_field(
+            name="❯ Infractions",
+            value="> **• Total Cases:** {} \n> **• Last 3 Cases:** {}"\
+            .format(
+                len(cases),
+                ", ".join(last_3)
+            )
+        )
 
-            ])
         await ctx.send(embed=e)
 
 
@@ -613,82 +618,17 @@ class UtilityPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
 
 
-    @commands.command()
-    @AutoModPlugin.can("manage_messages")
-    async def modstats(self, ctx, user: discord.Member = None):
+    @commands.command(aliases=["char", "symbol"])
+    async def charinfo(self, ctx, *, chars: str):
         """
-        modstats_help
+        charinfo_help
         examples:
-        -modstats @paul#0009
-        -modstats 543056846601191508
-        -modstats
+        -charinfo A
+        -charinfo Test
+        -charinfo <= x
         """
-        if user == None: user = ctx.author
-        
-        _all = [x for x in self.db.cases.find({}) if x["guild"] == f"{ctx.guild.id}" and x["mod_id"] == f"{user.id}"]
-
-        r = {}
-        for x in ["ban", "kick", "mute", "warn", "total"]:
-            t, _24, _7 = get_mod_stats(_all, x)
-            r.update({
-                x: {
-                    "t": t,
-                    "24": _24,
-                    "7": _7
-                }
-            })
-
-        if len(_all) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_modstats", _emote="NO"))
-
-        e = Embed(
-            title="Modstats for {0.name}#{0.discriminator}".format(
-                user
-            )
-        )
-        e.set_thumbnail(
-            url=user.display_avatar
-        )
-
-        e.add_fields([
-            {
-                "name": "❯ Last 24 hours⠀⠀⠀⠀",
-                "value": "> **• Bans:** {} \n> **• Kicks:** {} \n> **• Mutes:** {} \n> **• Warns:** {} \n> **• Total:** {}"\
-                .format(
-                    r["ban"]["24"],
-                    r["kick"]["24"],
-                    r["mute"]["24"],
-                    r["warn"]["24"],
-                    r["total"]["24"]
-                ),
-                "inline": True
-            },
-            {
-                "name": "❯ Last 7 days⠀⠀⠀⠀",
-                "value": "> **• Bans:** {} \n> **• Kicks:** {} \n> **• Mutes:** {} \n> **• Warns:** {} \n> **• Total:** {}"\
-                .format(
-                    r["ban"]["7"],
-                    r["kick"]["7"],
-                    r["mute"]["7"],
-                    r["warn"]["7"],
-                    r["total"]["7"]
-                ),
-                "inline": True
-            },
-            {
-                "name": "❯ Total",
-                "value": "> **• Bans:** {} \n> **• Kicks:** {} \n> **• Mutes:** {} \n> **• Warns:** {} \n> **• Total:** {}"\
-                .format(
-                    r["ban"]["t"],
-                    r["kick"]["t"],
-                    r["mute"]["t"],
-                    r["warn"]["t"],
-                    r["total"]["t"]
-                ),
-                "inline": True
-            }
-        ])
-
-        await ctx.send(embed=e)
+        msg = "```\n{}\n```".format("\n".join(map(to_string, chars)))
+        await ctx.send(msg[:2000])
 
 
 async def setup(bot): await bot.register_plugin(UtilityPlugin(bot))
