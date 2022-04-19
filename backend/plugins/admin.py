@@ -6,6 +6,7 @@ import time
 import traceback
 import ast
 import psutil
+import json
 
 from . import AutoModPlugin
 from ..types import Embed
@@ -117,6 +118,24 @@ class AdminPlugin(AutoModPlugin):
         )
 
         await ctx.send(embed=e)
+
+
+    @commands.command(aliases=["i18n", "locale"])
+    @commands.is_owner()
+    async def update_i18n(self, ctx, key: str, *, text: str) -> None:
+        """update_i18n_help"""
+        with open("../../i18n/en_US.json", "r", encoding="utf8", errors="ignore") as f:
+            content = json.load(f)
+            content.update({
+                key: text
+            })
+
+        with open("../../i18n/en_US.json", 'w') as file:
+            json.dump(content, file, indent=4)
+
+        self.bot.locale.__init__(self.bot)
+
+        await ctx.send(self.locale.t(ctx.guild, "updated_i18n", _emote="YES", key=key))
 
 
 async def setup(bot): await bot.register_plugin(AdminPlugin(bot))

@@ -124,7 +124,7 @@
     "set_mute": "{emote} Users will now be muted for {length} {unit} when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
     "time_needed": "{emote} The mute option needs an additional time, for example **10m** which would mean 10 minutes.",
 
-    "invalid_log_option": "{emote} Invalid log option. Valid options are: \n• mod \n• server \n• messages \n• joins",
+    "invalid_log_option": "{emote} Invalid log option. Valid options are: \n• mod \n• server \n• messages \n• joins \n• members",
     "log_off": "{emote} Disabled {_type}",
     "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **off** as the second argument. Here's a little help: \n• ``{prefix}log {option} #channel`` - Sets the log channel \n• ``{prefix}log {option} off`` - Disables this log option",
     "log_on": "{emote} Enabled {_type} and will send them to {channel}",

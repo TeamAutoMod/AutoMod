@@ -5,3 +5,4 @@ from .case import Case
 from .mute import Mute
 from .level import UserLevel
 from .slowmode import Slowmode
+from .tempban import Tempban

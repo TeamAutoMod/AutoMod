@@ -3,7 +3,6 @@ from discord.ext import commands
 
 import re
 import itertools
-import datetime
 from typing import Union
 from toolbox import S as Object
 from urllib.parse import urlparse
@@ -12,7 +11,6 @@ import logging; log = logging.getLogger()
 from . import AutoModPlugin
 from .processor import ActionProcessor, LogProcessor, DMProcessor
 from ..types import Embed
-from ..schemas import Case
 
 
 
@@ -184,6 +182,9 @@ LOG_DATA = {
     },
     "filter": {
         "rule": "Word-Filter"
+    },
+    "antispam": {
+        "rule": "Anti-Spam"
     }
 }
 
@@ -224,6 +225,7 @@ class AutomodPlugin(AutoModPlugin):
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
         self.dm_processor = DMProcessor(bot)
+        self.spam_cache = {}
 
 
     def can_act(self, guild, mod, target):
@@ -357,8 +359,31 @@ class AutomodPlugin(AutoModPlugin):
         rules = config.automod
         filters = config.filters
         regexes = config.regexes
+        antispam = config.antispam
 
-        if len(rules) < 1: return
+        if antispam.enabled == True:
+            if not msg.guild.id in self.spam_cache:
+                self.spam_cache.update({
+                    msg.guild.id: commands.CooldownMapping.from_cooldown(
+                        antispam.rate,
+                        float(antispam.per),
+                        commands.BucketType.user
+                    )
+                })
+            
+            mapping = self.spam_cache[msg.guild.id]
+            now = msg.created_at.timestamp()
+
+            users = mapping.get_bucket(msg)
+            if users.update_rate_limit(now):
+                return await self.delete_msg(
+                    "antispam",
+                    f"{users.rate}/{round(users.per, 0)}",
+                    msg, 
+                    antispam.warns, 
+                    f"Spam detected"
+                )
+
 
         if len(filters) > 0:
             for name in filters:
@@ -391,6 +416,8 @@ class AutomodPlugin(AutoModPlugin):
                             name
                         )
         
+        if len(rules) < 1: return
+
         if hasattr(rules, "invites"):
             found = INVITE_RE.findall(content)
             if found:
@@ -930,6 +957,89 @@ class AutomodPlugin(AutoModPlugin):
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
         await ctx.send(self.locale.t(ctx.guild, "removed_regex", _emote="YES"))
+
+
+    @commands.command(aliases=["spam"])
+    @AutoModPlugin.can("manage_guild")
+    async def antispam(self, ctx, rate: Union[str, int] = None, per: int = None, warns: int = None):
+        """
+        antispam_help
+        examples:
+        -antispam
+        -antispam 12 10 3
+        -antispam off
+        """
+        config = self.db.configs.get(ctx.guild.id, "antispam")
+        if rate == None and per == None and warns == None:
+            e = Embed(
+                title="Antispam Config"
+            )
+            e.add_fields([
+                {
+                    "name": "❯ Status",
+                    "value": "Enabled" if config["enabled"] == True else "Disabled",
+                    "inline": False
+                },
+                {
+                    "name": "❯ Threshold",
+                    "value": f"**{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "N/A",
+                    "inline": True
+                },
+                {
+                    "name": "❯ Action",
+                    "value": f"**{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "N/A",
+                    "inline": True
+                }
+            ])
+
+            await ctx.send(embed=e)
+        elif per == None and warns == None:
+            if isinstance(rate, str):
+                if rate.lower() == "off":
+                    config.update({
+                        "enabled": False
+                    })
+                    self.db.configs.update(ctx.guild.id, "antispam", config)
+                    await ctx.send(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"))
+                else:
+                    await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+            else:
+                await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+        elif warns == None:
+            await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+        else:
+            try:
+                rate = int(rate)
+                per = int(per)
+            except ValueError:
+                return await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+            else:
+                if rate < 6: return await ctx.send(self.locale.t(ctx.guild, "min_rate", _emote="NO"))
+                if rate > 21: return await ctx.send(self.locale.t(ctx.guild, "max_rate", _emote="NO"))
+
+                if per < 5: return await ctx.send(self.locale.t(ctx.guild, "min_per", _emote="NO"))
+                if per > 20: return await ctx.send(self.locale.t(ctx.guild, "max_per", _emote="NO"))
+
+                if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+                if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+
+                config.update({
+                    "enabled": True,
+                    "rate": rate,
+                    "per": per,
+                    "warns": warns
+                })
+
+                am_plugin = self.bot.get_plugin("AutomodPlugin")
+                am_plugin.spam_cache.update({
+                    ctx.guild.id: commands.CooldownMapping.from_cooldown(
+                        rate,
+                        float(per),
+                        commands.BucketType.user
+                    )
+                })
+                self.db.configs.update(ctx.guild.id, "antispam", config)
+                await ctx.send(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per))
 
 
 async def setup(bot): await bot.register_plugin(AutomodPlugin(bot))

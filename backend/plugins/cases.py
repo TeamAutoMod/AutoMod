@@ -245,7 +245,7 @@ class CasesPlugin(AutoModPlugin):
         log_msg_url = self.get_log_for_case(ctx, raw)
 
         e = Embed(
-            title=f"{data.type.upper()} #{case}"
+            title=f"{data.type.upper()} | #{case}"
         )
         if log_msg_url != None:
             e.description = f"[View log message]({log_msg_url})"
