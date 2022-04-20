@@ -42,6 +42,7 @@ class ModerationPlugin(WarnPlugin):
         self.action_processor = ActionProcessor(bot)
         self.dm_processor = DMProcessor(bot)
         self.bot.loop.create_task(self.handle_unmutes())
+        self.bot.loop.create_task(self.handle_unbans())
 
 
     async def handle_unmutes(self):
@@ -75,27 +76,34 @@ class ModerationPlugin(WarnPlugin):
         while True:
             await asyncio.sleep(10)
             if len(list(self.db.tbans.find({}))) > 0:
-                for mute in self.db.tbans.find():
-                    if "until" in mute:
-                        ending = mute["until"]
+                for ban in self.db.tbans.find():
+                    if "until" in ban:
+                        ending = ban["until"]
                     else:
-                        ending = mute["ending"]
+                        ending = ban["ending"]
 
                     if ending < datetime.datetime.utcnow():
-                        guild = self.bot.get_guild(int(mute["id"].split("-")[0]))
+                        guild = self.bot.get_guild(int(ban["id"].split("-")[0]))
                         if guild != None:
 
-                            t = guild.get_member(int(mute["id"].split("-")[1]))
+                            t = guild.get_member(int(ban["id"].split("-")[1]))
                             if t == None:
                                 t = "Unknown#0000"
-
+                            else:
+                                try:
+                                    await guild.unban(user=t, reason="[ Auto ] Tempban expired")
+                                except Exception:
+                                    pass
+                                else:
+                                    self.bot.ignore_for_events.append(t.id)
+                                
                             await self.log_processor.execute(guild, "tempunban", **{
                                 "user": t,
-                                "user_id": int(mute["id"].split("-")[1]),
+                                "user_id": int(ban["id"].split("-")[1]),
                                 "mod": guild.get_member(self.bot.user.id),
                                 "mod_id": self.bot.user.id
                             })
-                        self.db.tbans.delete(mute["id"])
+                        self.db.tbans.delete(ban["id"])
 
     # soon
     async def decay_warns(self):
