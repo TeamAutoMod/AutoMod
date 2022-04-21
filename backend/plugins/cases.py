@@ -5,8 +5,9 @@ import datetime
 from typing import Union
 from toolbox import S as Object
 import logging; log = logging.getLogger()
+from typing import Union
 
-from . import AutoModPlugin
+from . import AutoModPlugin, ShardedBotInstance
 from ..types import DiscordUser, Embed
 from ..views import MultiPageView
 
@@ -14,11 +15,11 @@ from ..views import MultiPageView
 
 class CasesPlugin(AutoModPlugin):
     """Plugin for internal/log events"""
-    def __init__(self, bot):
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
 
-    def case_embed(self, opt, user, last_24_hours, last_7_days, total):
+    def case_embed(self, opt: str, user: Union[discord.Member, discord.User], last_24_hours: int, last_7_days: int, total: int) -> Embed:
         e = Embed(
             description=""
         )
@@ -55,15 +56,15 @@ class CasesPlugin(AutoModPlugin):
         return e
 
 
-    def update_case_embed(self, embed: Embed, inp):
+    def update_case_embed(self, embed: Embed, inp: str) -> None:
         embed.description = f"{embed.description}\n{inp}"
 
 
-    def get_log_for_case(self, ctx, case):
+    def get_log_for_case(self, ctx: commands.Context, case: dict) -> Union[None, str]:
         if not "log_id" in case: return None
 
         log_id = case["log_id"]
-        if log_id == None: return
+        if log_id == None: return None
 
         if "jump_url" in case:
             instant = case["jump_url"]
@@ -75,7 +76,7 @@ class CasesPlugin(AutoModPlugin):
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
     
-    async def ban_data(self, ctx, user):
+    async def ban_data(self, ctx: commands.Context, user: Union[discord.Member, discord.User]) -> Union[discord.guild.BanEntry, None]:
         try:
             data = await ctx.guild.fetch_ban(user)
         except discord.NotFound:
@@ -86,7 +87,7 @@ class CasesPlugin(AutoModPlugin):
 
     @commands.command(aliases=["history", "cases"])
     @AutoModPlugin.can("manage_messages")
-    async def infractions(self, ctx, user: Union[DiscordUser, discord.Member, discord.Guild] = None):
+    async def infractions(self, ctx: commands.Context, user: Union[DiscordUser, discord.Member, discord.Guild] = None) -> None:
         """
         infractions_help
         examples:
@@ -231,7 +232,7 @@ class CasesPlugin(AutoModPlugin):
 
     @commands.command()
     @AutoModPlugin.can("manage_messages")
-    async def case(self, ctx, case: str):
+    async def case(self, ctx: commands.Context, case: str) -> None:
         """
         case_help
         examples:
@@ -277,7 +278,7 @@ class CasesPlugin(AutoModPlugin):
 
     @commands.command(aliases=["fetch"])
     @AutoModPlugin.can("manage_messages")
-    async def check(self, ctx, user: DiscordUser):
+    async def check(self, ctx: commands.Context, user: DiscordUser) -> None:
         """
         check_help
         examples:
@@ -322,4 +323,4 @@ class CasesPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-async def setup(bot): await bot.register_plugin(CasesPlugin(bot))
+async def setup(bot) -> None: await bot.register_plugin(CasesPlugin(bot))

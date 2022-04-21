@@ -1,7 +1,12 @@
+from datetime import datetime
+import discord
+
+import datetime
+from typing import Union
 
 
 
-def Case(case, _type, msg, mod, user, reason, ts):
+def Case(case: int, _type: str, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], reason: str, ts: datetime.datetime) -> dict:
     return {
         "id": f"{msg.guild.id}-{case}",
         "case": f"{case}",

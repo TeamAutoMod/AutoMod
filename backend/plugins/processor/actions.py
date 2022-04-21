@@ -3,6 +3,9 @@ import discord
 from collections import OrderedDict
 import datetime
 
+from typing import Union
+
+from ...bot import ShardedBotInstance
 from ...schemas import Warn, Case, Mute
 from .log import LogProcessor
 from .dm import DMProcessor
@@ -10,7 +13,7 @@ from .dm import DMProcessor
 
 
 class ActionProcessor(object):
-    def __init__(self, bot):
+    def __init__(self, bot: ShardedBotInstance):
         self.bot = bot
         self.warns = self.bot.db.warns
         self.executors = {
@@ -22,7 +25,7 @@ class ActionProcessor(object):
         self.dm_processor = DMProcessor(bot)
 
 
-    def new_case(self, _type, msg, mod, user, reason):
+    def new_case(self, _type: str, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], reason: str) -> int:
         case = self.bot.db.configs.get(msg.guild.id, "cases") + 1
 
         if self.bot.db.cases.exists(f"{msg.guild.id}-{case}"):
@@ -46,7 +49,7 @@ class ActionProcessor(object):
         return case
 
 
-    async def execute(self, msg, mod, user, warns, reason):
+    async def execute(self, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], warns: int, reason: str) -> None:
         if "(" in reason:
             raw_reason = reason.split("(")[0]
         elif "Triggered filter" in reason:
@@ -132,7 +135,7 @@ class ActionProcessor(object):
             return None
 
 
-    async def ban(self, msg, _mod, _user, _reason, **log_kwargs):
+    async def ban(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
         try:
             await msg.guild.ban(user=user)
@@ -160,7 +163,7 @@ class ActionProcessor(object):
             return None
 
 
-    async def kick(self, msg, _mod, _user, _reason, **log_kwargs):
+    async def kick(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
         try:
             await msg.guild.kick(user=user)
@@ -188,7 +191,7 @@ class ActionProcessor(object):
             return None
 
 
-    async def mute(self, msg, _mod, _user, _reason, **log_kwargs):
+    async def mute(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
         user = msg.guild.get_member(user.id);
         if user == None: return "User not found"

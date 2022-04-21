@@ -3,17 +3,18 @@ from discord.ext import commands
 from discord.ext.commands import BadArgument
 
 import re
+from typing import Union
 
 
 
 class DurationHolder(object):
-    def __init__(self, length, unit=None) -> None:
+    def __init__(self, length: int, unit: str = None) -> None:
         super().__init__()
         self.length = length
         self.unit = unit
 
 
-    def to_seconds(self, ctx):
+    def to_seconds(self, ctx: commands.Context) -> None:
         if self.unit is None:
             self.unit = "seconds"
         unit = self.unit.lower()
@@ -41,7 +42,7 @@ class DurationHolder(object):
             return length
 
 
-    def __str__(self):
+    def __str__(self) -> str:
         if len(self.unit) == 1:
             return f"{self.length}{self.unit}"
         if self.unit[-1] != "s":
@@ -51,7 +52,7 @@ class DurationHolder(object):
 
 
 class DurationIdentifier(commands.Converter):
-    async def convert(self, ctx, argument):
+    async def convert(self, ctx: commands.Context, argument: Union[str, None]) -> Union[str, Exception]:
         if argument is None:
             argument = "seconds"
         if argument.lower() not in \
@@ -65,7 +66,7 @@ class DurationIdentifier(commands.Converter):
 
 
 class Duration(commands.Converter):
-    async def convert(self, ctx, argument):
+    async def convert(self, ctx: commands.Context, argument: Union[str, None]) -> Union[str, Exception]:
         match = re.compile(r"^(\d+)").match(argument)
         if match is None:
             raise BadArgument("Duration is not a number")

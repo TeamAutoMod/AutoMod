@@ -8,7 +8,7 @@ import ast
 import psutil
 import json
 
-from . import AutoModPlugin
+from . import AutoModPlugin, ShardedBotInstance
 from ..types import Embed
 from ..views import DeleteView
 
@@ -16,11 +16,11 @@ from ..views import DeleteView
 
 class AdminPlugin(AutoModPlugin):
     """Plugin for all bot admin commands/events"""
-    def __init__(self, bot):
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
     
-    def insert_returns(self, body):
+    def insert_returns(self, body: str) -> None:
         if isinstance(body[-1], ast.Expr):
             body[-1] = ast.Return(body[-1].value)
             ast.fix_missing_locations(body[-1])
@@ -33,7 +33,7 @@ class AdminPlugin(AutoModPlugin):
             self.insert_returns(body[-1].body)
 
 
-    def parse_shard_info(self, shard: discord.ShardInfo):
+    def parse_shard_info(self, shard: discord.ShardInfo) -> str:
         guilds = len(list(filter(lambda x: x.shard_id == shard.id, self.bot.guilds)))
         if not shard.is_closed():
             text = "+ {}: CONNECTED ~ {} guilds".format(shard.id, guilds)
@@ -44,7 +44,7 @@ class AdminPlugin(AutoModPlugin):
 
     @commands.command()
     @commands.is_owner()
-    async def eval(self, ctx, *, cmd: str):
+    async def eval(self, ctx: commands.Context, *, cmd: str) -> None:
         """
         eval_help
         examples:
@@ -89,7 +89,7 @@ class AdminPlugin(AutoModPlugin):
 
     @commands.is_owner()
     @commands.command()
-    async def debug(self, ctx):
+    async def debug(self, ctx: commands.Context) -> None:
         """
         debug_help
         examples:
@@ -120,22 +120,4 @@ class AdminPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-    @commands.command(aliases=["i18n", "locale"])
-    @commands.is_owner()
-    async def update_i18n(self, ctx, key: str, *, text: str) -> None:
-        """update_i18n_help"""
-        with open("../../i18n/en_US.json", "r", encoding="utf8", errors="ignore") as f:
-            content = json.load(f)
-            content.update({
-                key: text
-            })
-
-        with open("../../i18n/en_US.json", 'w') as file:
-            json.dump(content, file, indent=4)
-
-        self.bot.locale.__init__(self.bot)
-
-        await ctx.send(self.locale.t(ctx.guild, "updated_i18n", _emote="YES", key=key))
-
-
-async def setup(bot): await bot.register_plugin(AdminPlugin(bot))
+async def setup(bot) -> None: await bot.register_plugin(AdminPlugin(bot))

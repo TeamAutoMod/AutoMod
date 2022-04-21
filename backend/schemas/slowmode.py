@@ -1,7 +1,10 @@
+import discord
+
+from typing import Union
 
 
 
-def Slowmode(guild, channel, mod, time, pretty, mode):
+def Slowmode(guild: discord.Guild, channel: discord.TextChannel, mod: Union[discord.Member, discord.User], time: str, pretty: str, mode: str) -> dict:
     return {
         "id": f"{guild.id}-{channel.id}",
         "time": f"{time}",

@@ -3,13 +3,17 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 import traceback
+from typing import TypeVar
 
-from . import AutoModPlugin
+from . import AutoModPlugin, ShardedBotInstance
 
+
+
+T = TypeVar("T")
 
 
 class PostParseError(commands.BadArgument):
-    def __init__(self, type, error):
+    def __init__(self, type: T, error: Exception) -> None:
         super().__init__(None)
         self.type = type
         self.error = error
@@ -17,12 +21,12 @@ class PostParseError(commands.BadArgument):
 
 class ErrorPlugin(AutoModPlugin):
     """Plugin to handle command/event errors"""
-    def __init__(self, bot):
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
 
     @AutoModPlugin.listener()
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, ctx: commands.Context, error: Exception) -> None:
         if isinstance(error, commands.CommandNotFound):
             return
         
@@ -73,4 +77,4 @@ class ErrorPlugin(AutoModPlugin):
             log.error(f"❌ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
 
-async def setup(bot): await bot.register_plugin(ErrorPlugin(bot))
+async def setup(bot) -> None: await bot.register_plugin(ErrorPlugin(bot))

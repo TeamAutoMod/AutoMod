@@ -1,3 +1,4 @@
+from typing import Callable
 import discord
 from discord.ext import commands
 
@@ -5,6 +6,7 @@ import datetime
 import asyncio
 import logging; log = logging.getLogger()
 import datetime
+from typing import Union
 
 from .warn import WarnPlugin
 from .processor import LogProcessor, ActionProcessor, DMProcessor
@@ -36,7 +38,7 @@ ACTIONS = {
 
 class ModerationPlugin(WarnPlugin):
     """Plugin for all moderation commands"""
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         super().__init__(bot)
         self.log_processor = LogProcessor(bot)
         self.action_processor = ActionProcessor(bot)
@@ -45,7 +47,7 @@ class ModerationPlugin(WarnPlugin):
         self.bot.loop.create_task(self.handle_unbans())
 
 
-    async def handle_unmutes(self):
+    async def handle_unmutes(self) -> None:
         while True:
             await asyncio.sleep(10)
             if len(list(self.db.mutes.find({}))) > 0:
@@ -72,7 +74,7 @@ class ModerationPlugin(WarnPlugin):
                         self.db.mutes.delete(mute["id"])
 
 
-    async def handle_unbans(self):
+    async def handle_unbans(self) -> None:
         while True:
             await asyncio.sleep(10)
             if len(list(self.db.tbans.find({}))) > 0:
@@ -106,25 +108,25 @@ class ModerationPlugin(WarnPlugin):
                         self.db.tbans.delete(ban["id"])
 
     # soon
-    async def decay_warns(self):
-        while True:
-            await asyncio.sleep(10)
-            if len(self.warn_cache) > 0:
-                guilds = set([x.split("-")[0] for x in self.warn_cache.keys()])
-                for g in guilds:
-                    guild = self.bot.get_guild(int(g))
-                    if guild != None:
-                        for w, data in {x: y for x, y in self.warn_cache if int(x.split("-")[0] == int(g))}:
-                            if datetime.datetime.utcnow() > data["decay_after"]:
-                                decay = self.db.configs.get(int(g), "decay")
-                                self.warn_cache[w].update({
-                                    "decay_after": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(decay["every"])),
-                                    "warns": min(0, self.warn_cache[w]["warns"] - decay["amount"])
-                                })
+    # async def decay_warns(self) -> None:
+    #     while True:
+    #         await asyncio.sleep(10)
+    #         if len(self.warn_cache) > 0:
+    #             guilds = set([x.split("-")[0] for x in self.warn_cache.keys()])
+    #             for g in guilds:
+    #                 guild = self.bot.get_guild(int(g))
+    #                 if guild != None:
+    #                     for w, data in {x: y for x, y in self.warn_cache if int(x.split("-")[0] == int(g))}:
+    #                         if datetime.datetime.utcnow() > data["decay_after"]:
+    #                             decay = self.db.configs.get(int(g), "decay")
+    #                             self.warn_cache[w].update({
+    #                                 "decay_after": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(decay["every"])),
+    #                                 "warns": min(0, self.warn_cache[w]["warns"] - decay["amount"])
+    #                             })
 
 
 
-    async def clean_messages(self, ctx, amount, check, before=None, after=None):
+    async def clean_messages(self, ctx: commands.Context, amount: int, check: Callable, before: datetime.datetime = None, after: datetime.datetime = None) -> Union[str, Exception]:
         try:
             d = await ctx.channel.purge(
                 limit=amount,
@@ -145,7 +147,7 @@ class ModerationPlugin(WarnPlugin):
                return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {"delete_after": 5}
 
 
-    async def kick_or_ban(self, action, ctx, user, reason, **extra_kwargs):
+    async def kick_or_ban(self, action: str, ctx: commands.Context, user: Union[discord.Member, discord.User], reason: str, **extra_kwargs) -> None:
         if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
         if action != "hackban":
             if ctx.guild.get_member(user.id) == None:
@@ -191,7 +193,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def ban(self, ctx, user: DiscordUser, *, reason: str = None):
+    async def ban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
         """
         ban_help
         examples:
@@ -209,7 +211,7 @@ class ModerationPlugin(WarnPlugin):
     
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def unban(self, ctx, user: DiscordUser, *, reason: str = None):
+    async def unban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
         """
         unban_help
         examples:
@@ -244,7 +246,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def softban(self, ctx, user: DiscordUser, *, reason: str = None):
+    async def softban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
         """
         softban_help
         examples:
@@ -262,7 +264,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command(aliases=["forceban"])
     @WarnPlugin.can("ban_members")
-    async def hackban(self, ctx, user: DiscordUser, *, reason: str = None):
+    async def hackban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
         """
         hackban_help
         examples:
@@ -280,7 +282,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def tempban(self, ctx, user: DiscordUser, length: Duration, *, reason: str = None):
+    async def tempban(self, ctx: commands.Context, user: DiscordUser, length: Duration, *, reason: str = None) -> None:
         """
         tempban_help
         examples:
@@ -397,7 +399,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("kick_members")
-    async def kick(self, ctx, user: DiscordUser, *, reason: str = None):
+    async def kick(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
         """
         kick_help
         examples:
@@ -415,7 +417,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command(aliases=["timeout"])
     @WarnPlugin.can("moderate_members")
-    async def mute(self, ctx, user: discord.Member, length: Duration, *, reason: str = None):
+    async def mute(self, ctx: commands.Context, user: discord.Member, length: Duration, *, reason: str = None) -> None:
         """
         mute_help
         examples:
@@ -525,7 +527,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("kick_members")
-    async def unmute(self, ctx, user: discord.Member):
+    async def unmute(self, ctx: commands.Context, user: discord.Member) -> None:
         """
         unmute_help
         examples:
@@ -558,7 +560,7 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.group(aliases=["clear", "purge"])
     @WarnPlugin.can("manage_messages")
-    async def clean(self, ctx):
+    async def clean(self, ctx: commands.Context) -> None:
         """
         clean_help
         examples:
@@ -576,7 +578,7 @@ class ModerationPlugin(WarnPlugin):
 
     @clean.command()
     @WarnPlugin.can("manage_messages")
-    async def all(self, ctx, amount: int = 10):
+    async def all(self, ctx: commands.Context, amount: int = 10) -> None:
         """
         clean_all_help
         examples:
@@ -595,7 +597,7 @@ class ModerationPlugin(WarnPlugin):
 
     @clean.command()
     @WarnPlugin.can("manage_messages")
-    async def user(self, ctx, user: discord.Member, amount: int = 10):
+    async def user(self, ctx: commands.Context, user: discord.Member, amount: int = 10) -> None:
         """
         clean_user_help
         examples:
@@ -613,4 +615,4 @@ class ModerationPlugin(WarnPlugin):
         await ctx.send(msg, **kwargs)
 
 
-async def setup(bot): await bot.register_plugin(ModerationPlugin(bot))
+async def setup(bot) -> None: await bot.register_plugin(ModerationPlugin(bot))

@@ -5,7 +5,7 @@ from toolbox import S as Object
 import datetime
 import logging; log = logging.getLogger()
 
-from . import AutoModPlugin
+from . import AutoModPlugin, ShardedBotInstance
 from ..schemas import Tag
 from ..types import Embed
 
@@ -13,13 +13,13 @@ from ..types import Embed
 
 class TagsPlugin(AutoModPlugin):
     """Plugin for tags (custom commands)"""
-    def __init__(self, bot):
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
         self._tags = {}
         self.cache_tags()
 
 
-    def add_tag(self, ctx, name, content):
+    def add_tag(self, ctx: commands.Context, name: str, content: str) -> None:
         data = {
             name: {
                 "content": content,
@@ -33,12 +33,12 @@ class TagsPlugin(AutoModPlugin):
         self.db.tags.insert(Tag(ctx, name, content))
 
 
-    def remove_tag(self, guild, name):
+    def remove_tag(self, guild: discord.Guild, name: str) -> None:
         self._tags[guild.id].pop(name)
         self.db.tags.delete(f"{guild.id}-{name}")
 
 
-    def update_tag(self, ctx, name, content):
+    def update_tag(self, ctx: commands.Context, name: str, content: str) -> None:
         self._tags[ctx.guild.id][name].update({
             "content": content
         })
@@ -49,7 +49,7 @@ class TagsPlugin(AutoModPlugin):
         })
 
 
-    def cache_tags(self):
+    def cache_tags(self) -> None:
         for e in self.db.tags.find({}):
             _id = int(e["id"].split("-")[0])
             if "name" in e:
@@ -72,7 +72,7 @@ class TagsPlugin(AutoModPlugin):
                 self._tags[_id].update(data)
 
 
-    def update_uses(self, _id):
+    def update_uses(self, _id: str) -> None:
         self.bot.used_tags += 1
         cur = self.db.tags.get(_id, "uses")
         self.db.tags.update(_id, "uses", cur+1)
@@ -80,7 +80,7 @@ class TagsPlugin(AutoModPlugin):
 
     @commands.group(name="commands", aliases=["tags"])
     @AutoModPlugin.can("manage_messages")
-    async def custom_commands(self, ctx):
+    async def custom_commands(self, ctx: commands.Context) -> None:
         """
         commands_help
         examples:
@@ -108,7 +108,7 @@ class TagsPlugin(AutoModPlugin):
     
     @custom_commands.command(aliases=["create", "new"])
     @AutoModPlugin.can("manage_messages")
-    async def add(self, ctx, name: str, *, content: str):
+    async def add(self, ctx: commands.Context, name: str, *, content: str) -> None:
         """
         commands_add_help
         examples:
@@ -130,7 +130,7 @@ class TagsPlugin(AutoModPlugin):
 
     @custom_commands.command(aliases=["delete", "del"])
     @AutoModPlugin.can("manage_messages")
-    async def remove(self, ctx, name: str):
+    async def remove(self, ctx: commands.Context, name: str) -> None:
         """
         commands_remove_help
         examples:
@@ -150,7 +150,7 @@ class TagsPlugin(AutoModPlugin):
 
     @custom_commands.command()
     @AutoModPlugin.can("manage_messages")
-    async def update(self, ctx, name: str, *, content: str):
+    async def update(self, ctx: commands.Context, name: str, *, content: str) -> None:
         """
         commands_update_help
         examples:
@@ -172,7 +172,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message(self, msg: discord.Message):
+    async def on_message(self, msg: discord.Message) -> None:
         if msg.guild == None \
             or msg.author.bot \
             or msg.author.id == self.bot.user.id: return
@@ -190,4 +190,4 @@ class TagsPlugin(AutoModPlugin):
                     await msg.channel.send(f"{tag.content}")
 
 
-async def setup(bot): await bot.register_plugin(TagsPlugin(bot))
+async def setup(bot) -> None: await bot.register_plugin(TagsPlugin(bot))

@@ -1,11 +1,15 @@
+import discord
+
 import logging; log = logging.getLogger()
 import json
 import asyncio
 
+from typing import Union
+
 
 
 class Translator(object):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         self._langs = {}
         self._lang_cache = {}
@@ -15,7 +19,7 @@ class Translator(object):
                 log.info(f"📝 Loaded strings for language {l}")
     
     
-    def t(self, guild, key, _emote=None, **kwargs):
+    def t(self, guild: discord.Guild, key: str, _emote: str = None, **kwargs) -> str:
         if not guild.id in self._lang_cache:
             try:
                 lang = self.bot.db.configs.get(guild.id, "lang")
@@ -43,7 +47,7 @@ class Translator(object):
                 return str(string).format(**kwargs)
 
 
-    def get(self, key, lang="en_US", **kwargs):
+    def get(self, key: str, lang: str = "en_US", **kwargs) -> Union[str, None]:
         try:
             string = self._langs[lang][key]
         except KeyError:

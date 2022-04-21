@@ -65,15 +65,14 @@ class MongoCollection(Collection):
 class MongoDB(Database):
     def __init__(self, bot) -> None:
         super().__init__(name=bot.config.db_name, host=bot.config.mongo_host)
-        for obj_name, db_name in {
-            "configs": "configs",
-            "tags": "tags",
-            "cases": "cases",
-            "warns": "warns",
-            "mutes": "mutes",
-            "level": "level",
-            "slowmodes": "slowmodes",
-            "tbans": "tbans"
-        }.items():
-            setattr(self, obj_name, MongoCollection(bot, self, db_name))
+
+        self.configs = MongoCollection(bot, self, "configs")
+        self.tags = MongoCollection(bot, self, "tags")
+        self.cases = MongoCollection(bot, self, "cases")
+        self.warns = MongoCollection(bot, self, "warns")
+        self.mutes = MongoCollection(bot, self, "mutes")
+        self.level = MongoCollection(bot, self, "level")
+        self.slowmodes = MongoCollection(bot, self, "slowmodes")
+        self.tbans = MongoCollection(bot, self, "tbans")
+        
         log.info("⚙️  Database initialized")

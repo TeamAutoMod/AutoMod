@@ -1,13 +1,15 @@
 import discord
 
 import asyncio
+from typing import Union
 
 from ...types import Embed
+from ...bot import ShardedBotInstance
 
 
 
 class DMProcessor(object):
-    def __init__(self, bot):
+    def __init__(self, bot: ShardedBotInstance):
         self.bot = bot
         self.colors = {
             "kick": 0xf79554,
@@ -21,7 +23,7 @@ class DMProcessor(object):
         self.bot.loop.create_task(self.dm_users())
 
 
-    async def dm_users(self):
+    async def dm_users(self) -> None:
         while True:
             await asyncio.sleep(0.3)
             if len(self.queue) > 0:
@@ -30,7 +32,7 @@ class DMProcessor(object):
                     await self.actual_execute(**kw)
 
     
-    def execute(self, msg, _type, _user, **opt):
+    def execute(self, msg: discord.Message, _type: str, _user: Union[discord.Member, discord.User], **opt) -> None:
         self.queue.append(
             {
                 "msg": msg,
@@ -41,7 +43,7 @@ class DMProcessor(object):
         )
 
     
-    async def actual_execute(self, msg, _type, _user, **opt):
+    async def actual_execute(self, msg: discord.Message, _type: str, _user: Union[discord.Member, discord.User], **opt) -> None:
         try:
             e = Embed(
                 color=self.colors[_type],

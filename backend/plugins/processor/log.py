@@ -1,7 +1,10 @@
+import discord
+
 from toolbox import S as Object
+from typing import Union
 
 from ...types import Embed
-
+from ...bot import ShardedBotInstance
 
 
 LOG_TYPES = {
@@ -200,12 +203,12 @@ LOG_TYPES = {
 
 
 class LogProcessor(object):
-    def __init__(self, bot):
+    def __init__(self, bot: ShardedBotInstance) -> None:
         self.bot = bot
         self.db = bot.db
 
 
-    async def fetch_webhook(self, wid):
+    async def fetch_webhook(self, wid: int) -> Union[discord.Webhook, None]:
         try:
             w = await self.bot.fetch_webhook(wid)
         except Exception:
@@ -214,13 +217,13 @@ class LogProcessor(object):
             return w
 
 
-    async def get_webhook(self, bot, guild, wid, channel_type):
-        if not guild.id in bot.webhook_cache:
+    async def get_webhook(self, guild: discord.Guild, wid: int, channel_type: str) -> Union[discord.Webhook, None]:
+        if not guild.id in self.bot.webhook_cache:
             w = await self.fetch_webhook(wid)
             if w == None: 
                 return None
             else:
-                bot.webhook_cache.update({
+                self.bot.webhook_cache.update({
                     guild.id: {
                         **{
                             k: None for k in ["mod_log", "server_log", "message_log", "join_log"] if k != channel_type
@@ -232,27 +235,27 @@ class LogProcessor(object):
                 })
                 return w
         else:
-            if bot.webhook_cache[guild.id][channel_type] == None:
+            if self.bot.webhook_cache[guild.id][channel_type] == None:
                 w = await self.fetch_webhook(wid)
                 if w == None: 
                     return None
                 else:
-                    bot.webhook_cache[guild.id][channel_type] = w
+                    self.bot.webhook_cache[guild.id][channel_type] = w
                     return w
             else:
-                if bot.webhook_cache[guild.id][channel_type] != wid:
+                if self.bot.webhook_cache[guild.id][channel_type] != wid:
                     w = await self.fetch_webhook(wid)
                     if w == None: 
                         return None
                     else:
-                        bot.webhook_cache[guild.id][channel_type] = w
+                        self.bot.webhook_cache[guild.id][channel_type] = w
                         return w
                 else:
                     return w
 
 
 
-    async def execute(self, guild, log_type, **log_kwargs):
+    async def execute(self, guild: discord.Guild, log_type: str, **log_kwargs) -> None:
         config = Object(LOG_TYPES[log_type])
 
         log_channel_id = self.db.configs.get(guild.id, config.channel)

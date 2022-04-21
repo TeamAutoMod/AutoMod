@@ -6,19 +6,20 @@ import traceback
 import requests
 import datetime
 from toolbox import S as Object
+from typing import Union
 import logging; log = logging.getLogger()
 
 from .cache import InternalCache
 from .mongo import MongoDB
 from .schemas import GuildConfig
 from .utils import Translator, Emotes
-from .types import Context, embed
+from .types import embed
 from .views import pages
 from .observer import Observer
 
 
 
-def prefix_callable(bot, msg):
+def prefix_callable(bot, msg: discord.Message) -> list:
     default = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "] # when the bot is mentioned
     if msg.guild is None:
         default.append(bot.config.default_prefix)
@@ -71,7 +72,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     )
     if hasattr(intents, "message_content"):
         intents.message_content = True
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
         super().__init__(
@@ -107,7 +108,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.run()
 
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         if self.config.custom_status != "":
             if self.activity == None: await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=self.config.custom_status))
 
@@ -128,10 +129,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
             self.ready = True
 
     
-    async def on_message(self, msg: discord.Message):
+    async def on_message(self, msg: discord.Message) -> None:
         if msg.author.bot or msg.guild is None:
             return
-        ctx = await self.get_context(msg, cls=Context)
+        ctx = await self.get_context(msg)
         if ctx.valid and ctx.command is not None:
             self.used_commands += 1
             disabled = self.db.configs.get(msg.guild.id, "disabled_commands")
@@ -153,7 +154,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             await self.invoke(ctx)
             
     
-    async def load_plugins(self):
+    async def load_plugins(self) -> None:
         try:
             self.remove_command("help")
         except Exception:
@@ -164,11 +165,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
             self.plugins = self.cogs
 
 
-    async def register_plugin(self, plugin):
+    async def register_plugin(self, plugin: commands.Cog) -> None:
         await super().add_cog(plugin)
 
 
-    async def load_plugin(self, plugin):
+    async def load_plugin(self, plugin: str) -> None:
         try:
             await super().load_extension(f"backend.plugins.{plugin}")
         except Exception:
@@ -177,7 +178,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             log.info(f"🔥 Successfully loaded {plugin}")
 
     
-    async def reload_plugin(self, plugin):
+    async def reload_plugin(self, plugin: str) -> None:
         if plugin == "mod":
             in_plugins_name = "ModerationPlugin"
         elif plugin == "rr":
@@ -197,11 +198,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 except Exception: raise
 
 
-    def get_plugin(self, name):
+    def get_plugin(self, name: str) -> Union[commands.Cog, None]:
         return super().get_cog(name)
 
 
-    def handle_timeout(self, mute, guild, user, iso8601_ts):
+    def handle_timeout(self, mute: bool, guild: discord.Guild, user: Union[discord.Member, discord.User], iso8601_ts) -> str:
         exc = ""
         try:
             resp = requests.patch(
@@ -220,7 +221,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return exc
 
 
-    def get_uptime(self):
+    def get_uptime(self) -> None:
         raw = datetime.datetime.utcnow() - self.uptime
 
         hours, remainder = divmod(int(raw.total_seconds()), 3600)
@@ -230,7 +231,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         return "{}d, {}h, {}m & {}s".format(days, hours, minutes, seconds)
 
 
-    def run(self):
+    def run(self) -> None:
         try:
             super().run(self.config.token, reconnect=True)
         finally:

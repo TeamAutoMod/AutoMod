@@ -1,4 +1,8 @@
-def GuildConfig(guild, prefix):
+import discord
+
+
+
+def GuildConfig(guild: discord.Guild, prefix: str) -> dict:
     return {
         "id": f"{guild.id}", 
         "prefix": "{}".format(prefix if prefix != "" or prefix != None else "+"), 

@@ -1,8 +1,10 @@
+from discord.ext import commands
+
 import datetime
 
 
 
-def Tag(ctx, name, content):
+def Tag(ctx: commands, name: str, content: str) -> dict:
     return {
         "id": f"{ctx.guild.id}-{name}",
         "uses": 0,
