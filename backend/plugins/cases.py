@@ -20,18 +20,20 @@ class CasesPlugin(AutoModPlugin):
 
     def case_embed(self, opt, user, last_24_hours, last_7_days, total):
         e = Embed(
-            title="Recent Infractions",
             description=""
         )
+
+        url = None
         if opt == "guild":
             if user.icon != None:
-                e.set_thumbnail(
-                    url=user.icon.url
-                )
+                url=user.icon.url
         else:
-            e.set_thumbnail(
-                url=user.display_avatar
-            )
+            url=user.display_avatar
+
+        e.set_author(
+            name="Infractions for {}".format(user),
+            icon_url=url
+        )
         
         e.add_fields([
             {
@@ -163,7 +165,7 @@ class CasesPlugin(AutoModPlugin):
                 .format(
                     timestamp,
                     case["type"].upper(),
-                    f"[#{case_nr}]({log_url})" if log_url is not None else f"#{case_nr}",
+                    f"[``#{case_nr}``]({log_url})" if log_url is not None else f"``#{case_nr}``",
                     reason
                 )
             )

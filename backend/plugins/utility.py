@@ -278,13 +278,13 @@ class UtilityPlugin(AutoModPlugin):
                 "value": "> **• Guilds:** {} \n> **• Users:** {} \n> **• Shards:** {}"\
                 .format(
                     len(self.bot.guilds),
-                    len(self.bot.users),
+                    sum([x.member_count for x in self.bot.guilds]),
                     len(self.bot.shards)
                 )
             },
             {
                 "name": "❯ Usage",
-                "value": "> **• Commands:** {} \n> **• Custom Commands:** {}"\
+                "value": "> **• Commands:** {} \n> **• Custom:** {}"\
                 .format(
                     self.bot.used_commands,
                     self.bot.used_tags
@@ -480,7 +480,7 @@ class UtilityPlugin(AutoModPlugin):
         examples:
         -server
         """
-        g = ctx.guild
+        g: discord.Guild = ctx.guild
 
         e = Embed()
         if ctx.guild.icon != None:
@@ -491,18 +491,23 @@ class UtilityPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ Information",
-                "value": "> **• ID:** {} \n> **• Owner:** {} ({}) \n> **• Created at:** <t:{}>"\
+                "value": "> **• ID:** {} \n> **• Owner:** {} \n> **• Created at:** <t:{}> \n> **• Invite Splash:** {} \n> **• Banner:** {}"\
                 .format(
-                    g.id, g.owner, g.owner.id, round(g.created_at.timestamp())
+                    g.id, 
+                    g.owner, 
+                    round(g.created_at.timestamp()),
+                    f"[Here]({g.splash.url})" if g.splash != None else "None",
+                    f"[Here]({g.banner.url})" if g.banner != None else "None"
                 )
             },
             {
                 "name": "❯ Channels",
-                "value": "> **• Categories:** {} \n> **• Text:** {} \n> **• Voice:** {}"\
+                "value": "> **• Categories:** {} \n> **• Text:** {} \n> **• Voice:** {} \n> **• Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
                     len(g.text_channels), 
-                    len(g.voice_channels)
+                    len(g.voice_channels),
+                    len(g.threads)
                 )
             },
             {
