@@ -18,18 +18,22 @@ class ConfirmView(View):
         self.timeout_callback = on_timeout
         self.check = check
 
+
     async def on_timeout(self):
         await self.timeout_callback()
     
+
     async def confirm_callback(self, interaction):
         if await self.exec_check(interaction):
             await self.on_confirm(interaction)
             self.stop()
 
+
     async def cancel_callback(self, interaction):
         if await self.exec_check(interaction):
             await self.on_cancel(interaction)
             self.stop()
+
 
     async def exec_check(self, interaction):
         if not self.check:
@@ -38,6 +42,7 @@ class ConfirmView(View):
             return True
         await self.refuse(interaction)
         return False
+
 
     async def refuse(self, interaction):
         interaction.response.send_message("Invalid interactor", ephermal=True)

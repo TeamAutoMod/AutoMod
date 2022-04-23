@@ -50,14 +50,15 @@ SERVER_LOG_EVENTS = {
         "emote": "DELETE",
         "color": 0xff5c5c,
         "audit_log_action": AuditLogAction.channel_delete,
-        "text": "Channel deleted"
+        "text": "Channel deleted",
+        "extra_text": "**Type:** {_type}"
     },
     "channel_updated": {
         "emote": "UPDATE",
         "color": 0xffdc5c,
         "audit_log_action": AuditLogAction.channel_update,
         "text": "Channel updated",
-        "extra_text": "**Change:** {change}"
+        "extra_text": "**Type:** {_type} \n**Change:** {change} "
     },
 
     "thread_created": {
@@ -265,6 +266,7 @@ class InternalPlugin(AutoModPlugin):
         or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "mod_log") \
         or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "message_log") \
         or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "join_log") \
+        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "member_log") \
         or msg.type != discord.MessageType.default:
             return
 
@@ -302,6 +304,7 @@ class InternalPlugin(AutoModPlugin):
         or str(a.channel.id) == self.db.configs.get(a.guild.id, "server_log") \
         or str(a.channel.id) == self.db.configs.get(a.guild.id, "mod_log") \
         or str(a.channel.id) == self.db.configs.get(a.guild.id, "message_log") \
+        or str(a.channel.id) == self.db.configs.get(a.guild.id, "member_log") \
         or a.type != discord.MessageType.default:
             return
 
@@ -439,7 +442,7 @@ class InternalPlugin(AutoModPlugin):
             channel.guild,
             channel,
             lambda x: x.target.id == channel.id,
-            _type=str(channel.type)
+            _type=str(channel.type).replace("_", " ").title()
         )
 
         await self.log_processor.execute(channel.guild, "channel_created", **{
@@ -453,7 +456,8 @@ class InternalPlugin(AutoModPlugin):
             "channel_deleted",
             channel.guild,
             channel,
-            lambda x: x.target.id == channel.id
+            lambda x: x.target.id == channel.id,
+            _type=str(channel.type).replace("_", " ").title()
         )
 
         await self.log_processor.execute(channel.guild, "channel_deleted", **{
@@ -473,9 +477,10 @@ class InternalPlugin(AutoModPlugin):
             )
         
         new = ""
-        for i in b.overwrites.keys():
-            if i in a.overwrites.keys():
-                new = "Permissions updated"
+        for k, v in b.overwrites.items():
+            if k in a.overwrites:
+                if a.overwrites[k] != v:
+                    new = "Permissions updated"
             else:
                 new = "Permissions created"
         
@@ -492,7 +497,8 @@ class InternalPlugin(AutoModPlugin):
             a.guild,
             a,
             lambda x: x.target.id == b.id,
-            change=change
+            change=change,
+            _type=str(a.type).replace("_", " ").title()
         )
 
         await self.log_processor.execute(a.guild, "channel_updated", **{
