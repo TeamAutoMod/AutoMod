@@ -184,7 +184,7 @@ class InternalPlugin(AutoModPlugin):
             e.description = "{} **{}:** {} ({}) \n\n**Moderator:** {}\n{}".format(
                 self.bot.emotes.get(data.emote),
                 data.text,
-                obj.name if not (isinstance(obj, (discord.Member, discord.User))) else obj.mention,
+                obj.name if not hasattr(obj, "banner") else obj.mention,
                 obj.id,
                 f"{mod.mention} ({mod.id})" if mod != None else "Unknown",
                 str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
@@ -193,7 +193,7 @@ class InternalPlugin(AutoModPlugin):
             e.description = "{} **{}:** {} ({}) \n\n{}".format(
                 self.bot.emotes.get(data.emote),
                 data.text,
-                obj.name if not (isinstance(obj, (discord.Member, discord.User))) else obj.mention,
+                obj.name if not hasattr(obj, "banner") else obj.mention,
                 obj.id,
                 str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
             )
