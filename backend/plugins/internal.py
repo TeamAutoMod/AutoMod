@@ -660,7 +660,7 @@ class InternalPlugin(AutoModPlugin):
     async def on_user_update(self, b: discord.User, a: discord.User) -> None:
         change = ""
         if b.name != a.name or b.discriminator != a.discriminator:
-            change += "Username (``{}`` → ``{}``)".format(
+            change += "``{}`` → ``{}``".format(
                 f"{b.name}#{b.discriminator}",
                 f"{a.name}#{a.discriminator}"
             )
