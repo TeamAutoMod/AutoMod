@@ -463,6 +463,8 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_guild_channel_update(self, b: discord.abc.GuildChannel, a: discord.abc.GuildChannel) -> None:
+        if a.position != b.position: return
+
         change = ""
         if b.name != a.name:
             change += "Name (``{}`` → ``{}``)".format(
