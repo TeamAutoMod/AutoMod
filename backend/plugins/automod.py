@@ -1046,7 +1046,7 @@ class AutomodPlugin(AutoModPlugin):
                     )
                 })
                 self.db.configs.update(ctx.guild.id, "antispam", config)
-                await ctx.send(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per))
+                await ctx.send(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns))
 
 
     @commands.group()
