@@ -448,7 +448,18 @@ class InternalPlugin(AutoModPlugin):
                 b.name,
                 a.name
             )
-        print(b.overwrites, a.overwrites)
+        
+        for i in b.overwrites.keys():
+            if i in a.overwrites.keys():
+                new = "Permissions updated"
+            else:
+                new = "Permissions created"
+            if len(change) < 1:
+                change += new
+            else:
+                change += f" & {new}"
+
+
         if b.overwrites != a.overwrites:
             new = "Permissions"
             if len(change) < 1:
@@ -462,7 +473,7 @@ class InternalPlugin(AutoModPlugin):
             "channel_updated",
             a.guild,
             a,
-            lambda x: x.target.id == a.id,
+            lambda x: x.target.id == b.id,
             change=change
         )
 
