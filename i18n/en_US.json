@@ -268,7 +268,7 @@
 
     "disabled_antispam": "{emote} Disabled antispam filter",
     "antispam_info": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid message rate and second threshold or **off** as arguments (or none if you want to display the current antispam config). Here's a little help: \n• ``{prefix}antispam`` - Shows the current antispam config \n• ``{prefix}antispam 12 10 3`` - Enables the antispam with 12 messages allowed every 10 seconds and 3 warns as action when triggered\n• ``{prefix}antispam off`` - Disables the antispam filter",
-    "enabled_antispam": "{emote} Enabled the antispam filter with a threshold of **{rate}** messages allowed every **{per}** seconds and {warns} warns when triggered",
+    "enabled_antispam": "{emote} Enabled the antispam filter with a threshold of **{rate}** messages allowed every **{per}** seconds and **{warns}** warns when triggered",
     "min_rate": "{emote} Message rate has to be at least 6",
     "max_rate": "{emote} Message rate can only be up to 21",
     "min_per": "{emote} Per seconds amount has to be at least 5",
