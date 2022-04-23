@@ -35,7 +35,7 @@ class WarnPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("kick_members")
+    @AutoModPlugin.can("manage_messages")
     async def warn(self, ctx: commands.Context, user: discord.Member, warns = None, *, reason: str = None) -> None:
         """
         warn_help
@@ -71,7 +71,7 @@ class WarnPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["pardon"])
-    @AutoModPlugin.can("kick_members")
+    @AutoModPlugin.can("ban_members")
     async def unwarn(self, ctx: commands.Context, user: discord.Member, warns = None, *, reason: str = None) -> None:
         """
         unwarn_help
