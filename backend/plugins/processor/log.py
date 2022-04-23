@@ -299,8 +299,6 @@ class LogProcessor(object):
             else:
                 log_message = await log_channel.send(content=log_kwargs.get("content", None), embed=log_embed)
         except Exception:
-            ex = traceback.format_exc()
-            print(ex)
             pass
         else:
             if "case" in log_kwargs:

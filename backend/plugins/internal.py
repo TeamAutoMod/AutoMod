@@ -108,12 +108,26 @@ SERVER_LOG_EVENTS = {
         "text": "Sticker deleted"
     },
 
-    "member_updated": {
+    "nick_update": {
         "emote": "UPDATE",
         "color": 0xffdc5c,
-        "audit_log_action": AuditLogAction.member_role_update,
-        "text": "Member updated",
+        "audit_log_action": AuditLogAction.member_update,
+        "text": "Nickname updated",
         "extra_text": "**Change:** {change}"
+    },
+    "added_role": {
+        "emote": "CREATE",
+        "color": 0x5cff9d,
+        "audit_log_action": AuditLogAction.member_role_update,
+        "text": "Role added",
+        "extra_text": "**Role:** {change}"
+    },
+    "removed_role": {
+        "emote": "DELETE",
+        "color": 0xff5c5c,
+        "audit_log_action": AuditLogAction.member_role_update,
+        "text": "Role removed",
+        "extra_text": "**Role:** {change}"
     },
 }
 
@@ -449,19 +463,14 @@ class InternalPlugin(AutoModPlugin):
                 a.name
             )
         
+        new = ""
         for i in b.overwrites.keys():
             if i in a.overwrites.keys():
                 new = "Permissions updated"
             else:
                 new = "Permissions created"
-            if len(change) < 1:
-                change += new
-            else:
-                change += f" & {new}"
-
-
-        if b.overwrites != a.overwrites:
-            new = "Permissions"
+        
+        if new != "":
             if len(change) < 1:
                 change += new
             else:
@@ -603,32 +612,32 @@ class InternalPlugin(AutoModPlugin):
         roles, _ = self.get_ignored_roles_channels(a.guild)
         if any(x in [i.id for i in a.roles] for x in roles): return
 
+        key = ""
         change = ""
         check_audit = False
         if b.nick != a.nick:
-            change += "Nickname (``{}`` → ``{}``)".format(
+            change += "``{}`` → ``{}``".format(
                 b.nick,
                 a.nick
             )
+            key = "nick_update"
+
         if b.roles != a.roles:
             check_audit = True
             added_roles = [x.mention for x in a.roles if x not in b.roles]
             removed_roles = [x.mention for x in b.roles if x not in a.roles]
 
             if len(added_roles) > 0:
-                new = f"Added role ({', '.join(added_roles)})"
+                key = "added_role"
+                change = ", ".join(added_roles)
             elif len(removed_roles) > 0:
-                new = f"Removed role ({', '.join(removed_roles)})"
-            
-            if len(change) < 1:
-                change += new
-            else:
-                change += f" & {new}"
+                key = "removed_role"
+                change = ", ".join(removed_roles)
         
-        if len(change) < 1: return
+        if key == "": return
 
         embed = await self.server_log_embed(
-            "member_updated",
+            key,
             a.guild,
             a,
             False if check_audit == False else lambda x: x.target.id == a.id,

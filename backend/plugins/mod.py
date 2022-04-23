@@ -126,7 +126,6 @@ class ModerationPlugin(WarnPlugin):
 
 
     async def clean_messages(self, ctx: commands.Context, amount: int, check: Callable, before: Union[datetime.datetime, discord.Message] = None, after: Union[datetime.datetime, discord.Message] = None) -> Union[str, Exception]:
-        print(before, after)
         try:
             d = await ctx.channel.purge(
                 limit=amount,
