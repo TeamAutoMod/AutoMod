@@ -129,6 +129,13 @@ SERVER_LOG_EVENTS = {
         "text": "Role removed",
         "extra_text": "**Role:** {change}"
     },
+    "username_updated": {
+        "emote": "UPDATE",
+        "color": 0xffdc5c,
+        "audit_log_action": AuditLogAction.member_update,
+        "text": "Username updated",
+        "extra_text": "**Change:** {change}"
+    }
 }
 
 
@@ -667,7 +674,7 @@ class InternalPlugin(AutoModPlugin):
                 if any(x in [i.id for i in m.roles] for x in roles): return
 
                 embed = await self.server_log_embed(
-                    "member_updated",
+                    "username_updated",
                     guild,
                     a,
                     False,
