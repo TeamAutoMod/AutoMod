@@ -586,6 +586,8 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_member_update(self, b: discord.Member, a: discord.Member) -> None:
+        if not a.guild.chunked: await a.guild.chunk(cache=True)
+
         roles, _ = self.get_ignored_roles_channels(a.guild)
         if any(x in [i.id for i in a.roles] for x in roles): return
 

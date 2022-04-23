@@ -90,9 +90,9 @@
     "log_tempunban": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** [ Auto ] Tempban has expired",
     "log_mute_extended": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
     "log_tempban_extended": "**Moderator:** {mod.mention} ({mod_id}) \n**Reason:** {reason} \n**Expiration:** {until}",
-    "log_automod": "**Moderator:** {mod.mention} ({mod_id}) \n**Rule:** {rule} \n**Match:** {found}",
-    "log_regex": "**Moderator:** {mod.mention} ({mod_id}) \n**Pattern:** {pattern} \n**Match:** {found}",
-    "log_filter": "**Moderator:** {mod.mention} ({mod_id}) \n**Filter:** {pattern} \n**Match:** {found}",
+    "log_automod": "**Rule:** {rule} \n**Match:** {found}",
+    "log_regex": "**Regex:** {pattern} \n**Match:** {found}",
+    "log_filter": "**Filter:** {pattern} \n**Match:** {found}",
 
     "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
     "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",

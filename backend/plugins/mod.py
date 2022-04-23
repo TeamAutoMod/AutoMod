@@ -125,8 +125,8 @@ class ModerationPlugin(WarnPlugin):
     #                             })
 
 
-
-    async def clean_messages(self, ctx: commands.Context, amount: int, check: Callable, before: datetime.datetime = None, after: datetime.datetime = None) -> Union[str, Exception]:
+    async def clean_messages(self, ctx: commands.Context, amount: int, check: Callable, before: Union[datetime.datetime, discord.Message] = None, after: Union[datetime.datetime, discord.Message] = None) -> Union[str, Exception]:
+        print(before, after)
         try:
             d = await ctx.channel.purge(
                 limit=amount,
@@ -149,11 +149,14 @@ class ModerationPlugin(WarnPlugin):
 
     async def kick_or_ban(self, action: str, ctx: commands.Context, user: Union[discord.Member, discord.User], reason: str, **extra_kwargs) -> None:
         if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
+
         if action != "hackban":
             if ctx.guild.get_member(user.id) == None:
                 return await ctx.send(self.locale.t(ctx.guild, "not_in_server", _emote="NO"))
+
         if not self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
+
         try:
             func = getattr(ctx.guild, ACTIONS[action]["action"])
             await func(user=user, reason=reason)

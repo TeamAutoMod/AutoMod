@@ -342,8 +342,6 @@ class AutomodPlugin(AutoModPlugin):
                             "found": found,
                             "user_id": msg.author.id,
                             "user": msg.author,
-                            "mod_id": msg.guild.me.id,
-                            "mod": msg.guild.me,
                             "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, reason)
                         }
                     )
@@ -356,8 +354,6 @@ class AutomodPlugin(AutoModPlugin):
                             "found": found,
                             "user_id": msg.author.id,
                             "user": msg.author,
-                            "mod_id": msg.guild.me.id,
-                            "mod": msg.guild.me,
                             "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, reason)
                         }
                     )

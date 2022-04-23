@@ -2,6 +2,7 @@ import discord
 
 from toolbox import S as Object
 from typing import Union
+import traceback
 
 from ...types import Embed
 from ...bot import ShardedBotInstance
@@ -284,7 +285,6 @@ class LogProcessor(object):
             wid = self.bot.db.configs.get(guild.id, f"{config.channel}_webhook")
             if wid != "":
                 webhook = await self.get_webhook(
-                    self.bot,
                     guild,
                     int(wid),
                     config.channel
@@ -299,6 +299,8 @@ class LogProcessor(object):
             else:
                 log_message = await log_channel.send(content=log_kwargs.get("content", None), embed=log_embed)
         except Exception:
+            ex = traceback.format_exc()
+            print(ex)
             pass
         else:
             if "case" in log_kwargs:
