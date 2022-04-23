@@ -38,7 +38,7 @@
     "charinfo_help": "Shows info about the given characters",
 
     "config_help": "Shows the current server config",
-    "punishment_help": "Sets a punishment for a specific amount of warns",
+    "action_help": "Sets an action for a specific amount of warns",
     "log_help": "Base command for configuring logging. Either use a channel as the second argument to enable the log option or use **off** to disable it",
     "prefix_help": "Sets a new server prefix for the bot",
     "automod_help": "Base command for configuring the automoderator. You can use off as the argument in all subcommands to disable the respective feature",
@@ -149,11 +149,12 @@
 
     "about_description": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
 
-    "invalid_action": "{emote} This isn't a valid punishment action. Valid actions are: \n• kick \n• ban \n• mute \n• none",
-    "set_none": "{emote} Removed the punishment for {warns} warns. To view all current punishments, use ``{prefix}config``",
-    "set_kick": "{emote} Users will now be kicked when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
-    "set_ban": "{emote} Users will now be banned when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
-    "set_mute": "{emote} Users will now be muted for {length} {unit} when reaching {warns} warns. To view all current punishments, use ``{prefix}config``",
+    "invalid_action": "{emote} This isn't a valid action. Valid actions are: \n• kick \n• ban \n• mute \n• none",
+    "set_none": "{emote} Removed the action for {warns} warns. To view all current actions, use ``{prefix}config``",
+    "set_kick": "{emote} Users will now be kicked when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
+    "set_ban": "{emote} Users will now be banned when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
+    "set_mute": "{emote} Users will now be muted for {length}{unit} when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
+    "set_tempban": "{emote} Users will now be banned for {length}{unit} when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
     "time_needed": "{emote} The mute option needs an additional time, for example **10m** which would mean 10 minutes.",
 
     "invalid_log_option": "{emote} Invalid log option. Valid options are: \n• mod \n• server \n• messages \n• joins \n• members",
@@ -240,7 +241,7 @@
     "dm_ban": "{emote} You have been banned from **{guild_name}** for:\n```\n{reason}\n```",
     "dm_warn": "{emote} You have been warned in **{guild_name}** for:\n```\n{reason}\n```",
     "dm_mute": "{emote} You have been muted in **{guild_name}** until {until} for:\n```\n{reason}\n```",
-    "dm_tempban": "{emote} You have been muted in **{guild_name}** until {until} for:\n```\n{reason}\n```",
+    "dm_tempban": "{emote} You have been banned in **{guild_name}** until {until} for:\n```\n{reason}\n```",
 
     "no_regexes": "{emote} This server doesn't have any regexes",
     "regex_name_too_long": "{emote} Regex name is too long",

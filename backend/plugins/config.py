@@ -191,7 +191,7 @@ class ConfigPlugin(AutoModPlugin):
                 "inline": True
             },
             {
-                "name": "❯ Punishments",
+                "name": "❯ Actions",
                 "value": "\n".join([
                     f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in config.punishments.items()
@@ -225,16 +225,17 @@ class ConfigPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-    @commands.command()
+    @commands.command(aliases=["punishment"])
     @AutoModPlugin.can("manage_guild")
-    async def punishment(self, ctx: commands.Context, warns: int, action: str, time: Duration = None) -> None:
+    async def action(self, ctx: commands.Context, warns: int, action: str, time: Duration = None) -> None:
         """
-        punishment_help
+        action_help
         examples:
-        -punishment 3 kick
-        -punishment 4 ban
-        -punishment 2 mute 10m
-        -punishment 5 none
+        -action 3 kick
+        -action 4 ban
+        -action 2 mute 10m
+        -action 6 ban 7d
+        -action 5 none
         """
         action = action.lower()
         if not action in ["kick", "ban", "mute", "none"]: return await ctx.send(self.locale.t(ctx.guild, "invalid_action", _emote="NO"))
@@ -251,10 +252,34 @@ class ConfigPlugin(AutoModPlugin):
             text = self.locale.t(ctx.guild, "set_none", _emote="YES", warns=warns, prefix=prefix)
 
         elif action != "mute":
+            new = ""
+            key = action
+            kwargs = {
+                "prefix": prefix,
+                "warns": warns
+            }
+
+            if action == "ban":
+                if time != None:
+                    sec = time.to_seconds(ctx)
+                    if sec > 0:
+                        new = f"ban {sec} {time.length} {time.unit}"
+                        key = "tempban"
+                        kwargs.update({
+                            "length": time.length,
+                            "unit": time.unit
+                        })
+                    else:
+                        new = "ban"
+                else:
+                    new = "ban"
+            else:
+                new = action
+
             current.update({
-                str(warns): action
+                str(warns): new
             })
-            text = self.locale.t(ctx.guild, f"set_{action}", _emote="YES", warns=warns, prefix=prefix)
+            text = self.locale.t(ctx.guild, f"set_{key}", _emote="YES", **kwargs)
 
         else:
             if time == None: return await ctx.send(self.locale.t(ctx.guild, "time_needed", _emote="NO"))

@@ -32,7 +32,7 @@
     "server_help": "Zeigt Infos zum Server",
 
     "config_help": "Zeigt die aktuelle Server Konfiguration",
-    "punishment_help": "Fügt eine Aktion für die angegebene Anzahl an Verwarnungen hinzu",
+    "action_help": "Fügt eine Aktion für die angegebene Anzahl an Verwarnungen hinzu",
     "log_help": "Standart Command für die Log Konfiguration. Nutze entweder einen Kanal als zweites Argument um die Log Option zu aktivieren, oder **off** um sie zu deaktivieren",
     "prefix_help": "Setzt einen neuen Server Prefix",
     "automod_help": "Standart Command für die Automoderator Konfiguration. Nutze **off** als zweites Argument in allen Commands um diese jeweils zu deaktivieren",

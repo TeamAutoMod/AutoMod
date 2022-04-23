@@ -6,7 +6,7 @@ import datetime
 from typing import Union
 
 from ...bot import ShardedBotInstance
-from ...schemas import Warn, Case, Mute
+from ...schemas import Warn, Case, Mute, Tempban
 from .log import LogProcessor
 from .dm import DMProcessor
 
@@ -19,7 +19,8 @@ class ActionProcessor(object):
         self.executors = {
             "kick": self.kick,
             "ban": self.ban,
-            "mute": self.mute
+            "mute": self.mute,
+            "tempban": self.tempban
         }
         self.log_processor = LogProcessor(bot)
         self.dm_processor = DMProcessor(bot)
@@ -108,7 +109,10 @@ class ActionProcessor(object):
                         "length": int(action.split(" ")[1])
                     }
                 )
-                action = "mute"
+                if action.split(" ")[0] == "mute":
+                    action = "mute"
+                else:
+                    action = "tempban"
 
             func = self.executors[action]
             return await func(msg, mod, user, reason, **log_kwargs)
@@ -229,3 +233,44 @@ class ActionProcessor(object):
         )
         await self.log_processor.execute(msg.guild, "mute", **log_kwargs)
         return None
+
+    
+    async def tempban(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
+        mod, user, reason = _mod, _user, _reason
+        user = msg.guild.get_member(user.id);
+        if user == None: return "User not found"
+
+        length = log_kwargs["length"]
+        until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=length))
+
+        if self.bot.db.tbans.exists(f"{msg.guild.id}-{user.id}"): return
+        self.bot.db.tbans.insert(Tempban(msg.guild.id, user.id, until))
+
+        try:
+            await msg.guild.ban(user=user)
+        except Exception as ex:
+            return ex
+        else:
+            self.bot.ignore_for_events.append(user.id)
+
+            self.dm_processor.execute(
+                msg,
+                "tempban",
+                user,
+                **{
+                    "guild_name": msg.guild.name,
+                    "until": f"<t:{round(until.timestamp())}>",
+                    "reason": log_kwargs.get("raw_reason"),
+                    "_emote": "HAMMER"
+                }
+            )
+
+            log_kwargs.pop("length")
+            log_kwargs.update(
+                {
+                    "case": self.new_case("tempban", msg, mod, user, reason),
+                    "until": f"<t:{round(until.timestamp())}>"
+                }
+            )
+            await self.log_processor.execute(msg.guild, "tempban", **log_kwargs)
+            return None
