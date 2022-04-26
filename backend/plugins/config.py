@@ -158,12 +158,13 @@ class ConfigPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ General",
-                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Regexes:** {} \n> **• Mod Role:** {}"\
+                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Regexes:** {} \n> **• Reaction Roles:** {} \n> **• Mod Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
+                    len(config.reaction_roles),
                     n if config.mod_role == "" else f"<@&{config.mod_role}>"
                 ),
                 "inline": True
