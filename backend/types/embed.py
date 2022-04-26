@@ -55,5 +55,5 @@ class Embed(discord.Embed):
     
     def credits(self):
         self.set_footer(
-            text=f"Made with ❤ by paul2k#1337"
+            text=f"Made with ❤ by paul#0009"
         )
