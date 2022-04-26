@@ -1,0 +1,45 @@
+{
+    "dev": true,
+    "watch": true,
+    "default_prefix": "+",
+    "custom_status": "+help",
+    "embed_color": "0x202225",
+
+    "token": "",
+    "sentry_dsn": "",
+    "top_gg_token": "",
+    "support_invite": "https://discord.gg/S9BEBux",
+
+    "mongo_host": "",
+    "db_name": "main",
+    
+    "cluster_names": [
+        "C1",
+        "C2",
+        "C3"
+    ],
+    "cache_options": [
+        "configs",
+        "mutes",
+        "warns",
+        "cases"
+    ],
+    "langs": [
+        "en_US"
+    ],
+    "plugins": [
+        "error",
+        "utility",
+        "admin",
+        "internal",
+        "mod",
+        "tags",
+        "config",
+        "automod",
+        "cases"
+    ],
+    
+    "bot_admins": [],
+    "blocked_guilds": [],
+    "error_channel": 123456789
+}

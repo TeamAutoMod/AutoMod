@@ -1,0 +1,41 @@
+{
+    "YES": "<:yes:957255852081946624>",
+    "NO": "<:no:957255851851280384>",
+
+    "BLUE": "<:blue:968571053821534269>",
+    "RED": "<:red:968567993053372476>",
+    "GREEN": "<:green:968567992717807657>",
+    "YELLOW": "<:yellow:968567993019813899>",
+    "ORANGE": "<:orange:968567993019805776>",
+    
+    "NO_MOUTH": "😶",
+    "ANGEL": "😇",
+
+    "LOCK": "🔒",
+    "UNLOCK": "🔓",
+
+    "HAMMER": "🔨",
+    "SHOE": "👢",
+    "WARN": "⚠️",
+    "SWORDS": "⚔️",
+
+    "MUTE": "🔇",
+    "UNMUTE": "🔊",
+
+    "ALARM": "🚨",
+    "SEARCH": "🔎",
+
+    "PARTY": "🎉",
+
+    "CREATE": "✅",
+    "DELETE": "❌",
+    "UPDATE": "✏️",
+    "SWITCH": "🔀",
+
+    "GEAR": "⚙️",
+    "FOLDER": "📂",
+    "SHIELD": "🛡️",
+    "FLAG": "🚩",
+    "WHITE_FLAG": "🏳️",
+    "NO_ENTRY": "⛔"
+}
