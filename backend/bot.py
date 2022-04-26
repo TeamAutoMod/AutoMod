@@ -223,14 +223,17 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return exc
 
 
-    def get_uptime(self) -> None:
+    def get_uptime(self, split: bool = False) -> str:
         raw = datetime.datetime.utcnow() - self.uptime
 
         hours, remainder = divmod(int(raw.total_seconds()), 3600)
         days, hours = divmod(hours, 24)
         minutes, seconds = divmod(remainder, 60)
 
-        return "{}d, {}h, {}m & {}s".format(days, hours, minutes, seconds)
+        if split == False:
+            return "{}d, {}h, {}m & {}s".format(days, hours, minutes, seconds)
+        else:
+            return days, hours, minutes, seconds
 
 
     def run(self) -> None:

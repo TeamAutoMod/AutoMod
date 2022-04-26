@@ -6,7 +6,7 @@ import time
 import traceback
 import ast
 import psutil
-import json
+import datetime
 
 from . import AutoModPlugin, ShardedBotInstance
 from ..types import Embed
@@ -96,19 +96,20 @@ class AdminPlugin(AutoModPlugin):
         -debug
         """
         e = Embed()
+        d, h, m, s = self.bot.get_uptime(True)
         e.add_field(
             name="❯ AutoMod Statistics",
-            value="• Last startup: ``{}`` \n• RAM usage: ``{}%`` \n• CPU usage: ``{}%``"\
+            value="> **• Last startup:** {} \n> **• RAM usage:** {}% \n> **• CPU usage:** {}%"\
                 .format(
-                    self.bot.get_uptime(), 
+                    f"<t:{round((datetime.datetime.utcnow() - datetime.timedelta(days=d, hours=h, minutes=m, seconds=s)).timestamp())}>", 
                     round(psutil.virtual_memory().percent, 2),
                     round(psutil.cpu_percent())
                 )
         )
-        shards = [self.parseShardInfo(x) for x in self.bot.shards.values()]
+        shards = [self.parse_shard_info(x) for x in self.bot.shards.values()]
         e.add_field(
             name="❯ {} ({})".format(self.bot.user.name, self.bot.user.id),
-            value="• Guilds: ``{}`` \n• Latency: ``{}ms`` \n• Total shards: ``{}`` \n• Shard Connectivity: \n```diff\n{}\n```"\
+            value="> **• Guilds:** {} \n> **• Latency:** {}ms \n> **• Total shards:** {} \n> **• Shard Connectivity:** \n```diff\n{}\n```"\
             .format(
                 len(self.bot.guilds),
                 round(self.bot.latency * 1000, 2), 
