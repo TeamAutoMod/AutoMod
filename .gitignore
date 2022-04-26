@@ -132,3 +132,6 @@ dmypy.json
 /backend/config.json
 /dashboard
 /backend/api
+/backend/plugins/level.py
+/backend/plugins/processor/config.py
+/backend/schemas/level.py
