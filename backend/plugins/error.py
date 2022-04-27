@@ -40,44 +40,102 @@ class ErrorPlugin(AutoModPlugin):
                 role = ctx.guild.get_role(int(rid))
                 if role != None:
                     perms += f" or the ``{role.name}`` role"
-            await ctx.send(self.locale.t(ctx.guild, "missing_user_perms", _emote="LOCK", perms=perms))
+            
+            e = Embed(
+                description=self.locale.t(ctx.guild, "missing_user_perms", _emote="LOCK", perms=perms)
+            )
+            await ctx.send(embed=e)
         
         elif isinstance(error, commands.BotMissingPermissions):
             perms = ", ".join([f"``{x}``" for x in error.missing_permissions])
-            await ctx.send(self.locale.t(ctx.guild, "missing_bot_perms", _emote="LOCK", perms=perms))
+            e = Embed(
+                description=self.locale.t(ctx.guild, "missing_bot_perms", _emote="LOCK", perms=perms)
+            )
+            await ctx.send(embed=e)
         
         elif isinstance(error, commands.CheckFailure):
             if len(ctx.command.checks) < 1:
-                await ctx.send(self.locale.t(ctx.guild, "check_fail", _emote="LOCK"))
+                e = Embed(
+                    description=self.locale.t(ctx.guild, "check_fail", _emote="LOCK")
+                )
+                await ctx.send(embed=e)
             else:
                 await ctx.command.checks[0](ctx) # this raises a 'commands.MissingPermissions'
         
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after)))
+            e = Embed(
+                description=self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after))
+            )
+            await ctx.send(embed=e)
         
         elif isinstance(error.__cause__, discord.Forbidden):
-            await ctx.send(self.locale.t(ctx.guild, "forbidden", _emote="NO", exc=error))
+            e = Embed(
+                description=self.locale.t(ctx.guild, "forbidden", _emote="NO", exc=error)
+            )
+            await ctx.send(embed=e)
 
         elif isinstance(error, commands.MissingRequiredArgument):
             param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs) - 1, len(ctx.command.params)) - 1]
             usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
-            await ctx.send(self.locale.t(ctx.guild, "missing_arg", _emote="NO", param=param._name, usage=usage, info=info))
+
+            e = Embed(
+                description=self.locale.t(ctx.guild, "missing_arg", _emote="NO", param=param._name)
+            )
+            e.add_fields([
+                {
+                    "name": "❯ Usage",
+                    "value": f"``{usage}``"
+                },
+                {
+                    "name": "❯ Info",
+                    "value": f"``{info}``"
+                }
+            ])
+            await ctx.send(embed=e)
         
         elif isinstance(error, PostParseError):
             usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
-            await ctx.send(self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=error.type, error=error.error, usage=usage, info=info))
+
+            e = Embed(
+                description=self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=error.type, error=error.error)
+            )
+            e.add_fields([
+                {
+                    "name": "❯ Usage",
+                    "value": f"``{usage}``"
+                },
+                {
+                    "name": "❯ Info",
+                    "value": f"``{info}``"
+                }
+            ])
+            await ctx.send(embed=e)
 
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.BadUnionArgument):
             usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
+
+            e = Embed()
+            e.add_fields([
+                {
+                    "name": "❯ Usage",
+                    "value": f"``{usage}``"
+                },
+                {
+                    "name": "❯ Info",
+                    "value": f"``{info}``"
+                }
+            ])
             try:
                 param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
             except IndexError:
-                await ctx.send(self.locale.t(ctx.guild, "bad_arg_no_param", _emote="NO", error=error, usage=usage, info=info))
+                e.description = self.locale.t(ctx.guild, "bad_arg_no_param", _emote="NO", error=error)
             else:
-                await ctx.send(self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=param._name, error=error, usage=usage, info=info))
+                e.description = self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=param._name, error=error)
+            finally:
+                await ctx.send(embed=e)
 
         else:
             log.error(f"❌ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")

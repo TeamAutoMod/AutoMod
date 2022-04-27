@@ -8,7 +8,6 @@ from ..bot import ShardedBotInstance
 
 
 class AutoModPlugin(_commands.Cog):
-    #commands: list
     def __init__(self, bot: ShardedBotInstance):
         self.bot = bot
         self.db = bot.db
