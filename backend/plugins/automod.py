@@ -246,8 +246,12 @@ class AutomodPlugin(AutoModPlugin):
             if int(rid) in [x.id for x in target.roles]: return False
         
         roles, channels = self.get_ignored_roles_channels(guild)
+        if channels == None:
+            self.db.configs.update(guild.id, "ignored_channels_automod", [])
+        else:
+            if channel.id in channels: return False
+
         if any(x in [i.id for i in target.roles] for x in roles): return False
-        if channel.id in channels: return False
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
