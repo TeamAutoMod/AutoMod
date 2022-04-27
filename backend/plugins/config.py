@@ -202,7 +202,7 @@ class ConfigPlugin(AutoModPlugin):
                 "name": "❯ Actions",
                 "value": "\n".join([
                     f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
-                    for x, y in config.punishments.items()
+                    for x, y in dict(sorted(config.punishments.items(), key=lambda x: int(x[0]))).items()
                 ]) if len(config.punishments.items()) > 0 else f"> {n}",
                 "inline": True
             },
