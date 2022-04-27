@@ -160,11 +160,11 @@
 
     "invalid_log_option": "{emote} Invalid log option. Valid options are: \n• mod \n• server \n• messages \n• joins \n• members \n• voice",
     "log_off": "{emote} Disabled **{_type}**",
-    "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **off** as the second argument. Here's a little help: \n• ``{prefix}log {option} #channel`` - Sets the log channel \n• ``{prefix}log {option} off`` - Disables this log option",
+    "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **off** as the second argument",
     "log_on": "{emote} Enabled **{_type}** and will send them to {channel}",
 
     "mod_role_off": "{emote} Removed the mod role",
-    "invalid_mod_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument. Here's a little help: \n• ``{prefix}mod_role @role`` - Sets the mod role \n• ``{prefix}mod_role off`` - Removes the mod role",
+    "invalid_mod_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument",
     "mod_role_on": "{emote} Set {role} as the mod role",
 
     "prefix_too_long": "{emote} Prefix is too long (>20)",
@@ -176,7 +176,7 @@
     "automod_commands": "``{prefix}automod invites <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod links <warns>`` - *Warns a user gets when sending blacklisted links* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod zalgo <warns>`` - *Warns a user gets when sending zalgo characters*",
     "invalid_automod_rule": "{emote} Invalid automod rule. Valid rules are: \n• mentions \n• links \n• invites \n• files  \n• zalgo",
     "automod_off": "{emote} Disabled the {_type} automod rule",
-    "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field} amount/threshold or **off** as the second argument. Here's a little help: \n• ``{prefix}automod {rule} {field}`` - Enables this automod rule \n• ``{prefix}automod {rule} off`` - Disables this automod rule",
+    "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field_name} amount or **off** as the second argument",
     "set_mentions": "{emote} Users will now be warned when using more than {amount} mention{plural}",
     "set_links": "{emote} Users will now receive {amount} warn{plural} when using forbidden links (configure with the ``link_blacklist`` & ``link_whitelist`` command)",
     "set_invites": "{emote} Users will now receive {amount} warn{plural} when sending invite links (configure with the ``allowed_invites`` command)",
@@ -269,7 +269,7 @@
     "removed_rr": "{emote} Removed the reaction role pair",
 
     "disabled_antispam": "{emote} Disabled antispam filter",
-    "antispam_info": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid message rate and second threshold or **off** as arguments (or none if you want to display the current antispam config). Here's a little help: \n• ``{prefix}antispam`` - Shows the current antispam config \n• ``{prefix}antispam 12 10 3`` - Enables the antispam with 12 messages allowed every 10 seconds and 3 warns as action when triggered\n• ``{prefix}antispam off`` - Disables the antispam filter",
+    "antispam_info": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid message rate and second threshold or **off** as arguments (or none if you want to display the current antispam config)",
     "enabled_antispam": "{emote} Enabled the antispam filter with a threshold of **{rate}** messages allowed every **{per}** seconds and **{warns}** warns when triggered",
     "min_rate": "{emote} Message rate has to be at least 6",
     "max_rate": "{emote} Message rate can only be up to 21",

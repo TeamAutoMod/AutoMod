@@ -198,27 +198,37 @@ AUTOMOD_RULES = {
     "mentions": {
         "int_field_name": "threshold",
         "i18n_key": "set_mentions",
-        "i18n_type": "maximum mentions"
+        "i18n_type": "maximum mentions",
+        "field_name": "mention",
+        "field_help": "mentions"
     },
     "links": {
         "int_field_name": "warns",
         "i18n_key": "set_links",
-        "i18n_type": "link filtering"
+        "i18n_type": "link filtering",
+        "field_name": "warn",
+        "field_help": "warns"
     },
     "invites": {
         "int_field_name": "warns",
         "i18n_key": "set_invites",
-        "i18n_type": "invite filtering"
+        "i18n_type": "invite filtering",
+        "field_name": "warn",
+        "field_help": "warns"
     },
     "files": {
         "int_field_name": "warns",
         "i18n_key": "set_files",
-        "i18n_type": "bad file detection"
+        "i18n_type": "bad file detection",
+        "field_name": "warn",
+        "field_help": "warns"
     },
     "zalgo": {
         "int_field_name": "warns",
         "i18n_key": "set_zalgo",
-        "i18n_type": "zalgo filtering"
+        "i18n_type": "zalgo filtering",
+        "field_name": "warn",
+        "field_help": "warns"
     }
 }
 
@@ -585,7 +595,20 @@ class AutomodPlugin(AutoModPlugin):
                 self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
                 return await ctx.send(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
             else:
-                return await ctx.send(self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field=data.i18n_type))
+                e = Embed(
+                    description=self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field_name=data.field_name)
+                )
+                e.add_fields([
+                    {
+                        "name": "❯ Enable this rule",
+                        "value": f"``{prefix}automod {rule} <{data.field_help}>``"
+                    },
+                    {
+                        "name": "❯ Disable this rule",
+                        "value": f"``{prefix}automod {rule} off``"
+                    }
+                ])
+                return await ctx.send(embed=e)
         else:
             if rule == "mentions":
                 if amount < 8: return await ctx.send(self.locale.t(ctx.guild, "min_mentions", _emote="NO"))
@@ -984,6 +1007,26 @@ class AutomodPlugin(AutoModPlugin):
         -antispam off
         """
         config = self.db.configs.get(ctx.guild.id, "antispam")
+
+        prefix = self.get_prefix(ctx.guild)
+        info_embed = Embed(
+            description=self.locale.t(ctx.guild, "antispam_info", _emote="NO")
+        )
+        info_embed.add_fields([
+            {
+                "name": "❯ View current config",
+                "value": f"``{prefix}antispam``"
+            },
+            {
+                "name": "❯ Enable antispam",
+                "value": f"``{prefix}antispam <rate> <per> <warns>``"
+            },
+            {
+                "name": "❯ Disable antispam",
+                "value": f"``{prefix}antispam off``"
+            }
+        ])
+
         if rate == None and per == None and warns == None:
             e = Embed(
                 title="Antispam Config"
@@ -1016,17 +1059,17 @@ class AutomodPlugin(AutoModPlugin):
                     self.db.configs.update(ctx.guild.id, "antispam", config)
                     await ctx.send(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"))
                 else:
-                    await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+                    await ctx.send(embed=info_embed)
             else:
-                await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+                await ctx.send(embed=info_embed)
         elif warns == None:
-            await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+            await ctx.send(embed=info_embed)
         else:
             try:
                 rate = int(rate)
                 per = int(per)
             except ValueError:
-                return await ctx.send(self.locale.t(ctx.guild, "antispam_info", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+                return await ctx.send(embed=info_embed)
             else:
                 if rate < 6: return await ctx.send(self.locale.t(ctx.guild, "min_rate", _emote="NO"))
                 if rate > 21: return await ctx.send(self.locale.t(ctx.guild, "max_rate", _emote="NO"))

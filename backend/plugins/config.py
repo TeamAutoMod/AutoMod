@@ -334,7 +334,21 @@ class ConfigPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type))
             else:
                 prefix = self.get_prefix(ctx.guild)
-                return await ctx.send(self.locale.t(ctx.guild, "invalid_log_channel", _emote="NO", prefix=prefix, option=option))
+                e = Embed(
+                    description=self.locale.t(ctx.guild, "invalid_log_channel", _emote="NO", prefix=prefix, option=option)
+                )
+                e.add_fields([
+                    {
+                        "name": "❯ Enable this option",
+                        "value": f"``{prefix}log {option} #channel``"
+                    },
+                    {
+                        "name": "❯ Disable this option",
+                        "value": f"``{prefix}log {option} off``"
+                    }
+                ])
+
+                return await ctx.send(embed=e)
 
         else:
             self.db.configs.update(ctx.guild.id, data.db_field, f"{channel.id}")
@@ -444,7 +458,21 @@ class ConfigPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "mod_role_off", _emote="YES"))
             else:
                 prefix = self.get_prefix(ctx.guild)
-                return await ctx.send(self.locale.t(ctx.guild, "invalid_mod_role", _emote="NO", prefix=prefix))
+                e = Embed(
+                    description=self.locale.t(ctx.guild, "invalid_mod_role", _emote="NO")
+                )
+                e.add_fields([
+                    {
+                        "name": "❯ Set the mod role",
+                        "value": f"``{prefix}mod_role @role``"
+                    },
+                    {
+                        "name": "❯ Remove the mod role",
+                        "value": f"``{prefix}mod_role off``"
+                    }
+                ])
+
+                return await ctx.send(embed=e)
 
         else:
             self.db.configs.update(ctx.guild.id, "mod_role", f"{role.id}")
