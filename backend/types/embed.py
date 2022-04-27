@@ -44,7 +44,7 @@ class Embed(discord.Embed):
                     inline=field.get("inline", False)
                 )
 
-    def blank_field(self, inline: bool = False) -> None:
+    def blank_field(self, inline: bool = False) -> dict:
         self._add_color()
         return {
             "name": "⠀⠀", # This is a U+2800 char
@@ -53,7 +53,16 @@ class Embed(discord.Embed):
         }
 
     
-    def credits(self):
+    def dash_field(self, length: int = 29) -> dict:
+        self._add_color()
+        return {
+            "name": "​", # This is a U+200b char
+            "value": "▬" * length,
+            "inline": False
+        }
+
+    
+    def credits(self) -> None:
         self.set_footer(
             text=f"Made with ❤ by paul#0009"
         )

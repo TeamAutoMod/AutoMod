@@ -173,6 +173,9 @@ LOG_DATA = {
     "links": {
         "rule": "Anti-Links"
     },
+    "links_blacklist": {
+        "rule": "Anti-Links (blacklist)"
+    },
     "files": {
         "rule": "Anti-Files"
     },
@@ -399,7 +402,6 @@ class AutomodPlugin(AutoModPlugin):
                 if parsed != None:
                     found = parsed.findall(content)
                     if found:
-                        print("found")
                         return await self.delete_msg(
                             "filter",
                             ", ".join(found),
@@ -469,7 +471,7 @@ class AutomodPlugin(AutoModPlugin):
                     url = urlparse(link)
                     if url.hostname in config.black_listed_links:
                         return await self.delete_msg(
-                            "links", 
+                            "links_blacklist", 
                             url.hostname,
                             msg, 
                             rules.links.warns, 

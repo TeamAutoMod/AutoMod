@@ -152,6 +152,7 @@ class ConfigPlugin(AutoModPlugin):
         else:
             mute_perm = y
 
+        blank_length = 29 if (len(config.ignored_channels_automod) + len(config.ignored_roles_automod)) < 4 else 32
         e = Embed(
             title=f"Server config for {ctx.guild.name}",
         )
@@ -183,6 +184,7 @@ class ConfigPlugin(AutoModPlugin):
                 "inline": True
             },
             e.blank_field(True),
+            e.dash_field(blank_length),
             {
                 "name": "❯ Automod Rules",
                 "value": "> **• Max Mentions:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {} \n> **• Spam:** {}"\
@@ -205,6 +207,7 @@ class ConfigPlugin(AutoModPlugin):
                 "inline": True
             },
             e.blank_field(True),
+            e.dash_field(blank_length),
             {
                 "name": "❯ Ignored Roles (automod)",
                 "value": f"> {n}" if len(config.ignored_roles_automod) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),

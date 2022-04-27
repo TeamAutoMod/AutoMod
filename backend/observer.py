@@ -69,6 +69,7 @@ class Observer(object):
                     ) as file: content = file.read()
 
                     if content != data["content"]:
+                        self.stamp_cache[f]["data"] = content
                         if "/".join(data["file"].split("/")[:2]) == "backend/plugins":
                             await self.hot_reload(
                                 f,

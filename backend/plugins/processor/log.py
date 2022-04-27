@@ -192,21 +192,21 @@ LOG_TYPES = {
     "automod_rule_triggered": {
         "channel": "mod_log",
         "key": "log_automod",
-        "color": 0xff7514,
+        "color": 0x2b80b8,
         "emote": "SWORDS",
         "action": "Automod rule triggered"
     },
     "regex_triggered": {
         "channel": "mod_log",
         "key": "log_regex",
-        "color": 0xff7514,
+        "color": 0x2b80b8,
         "emote": "NO_ENTRY",
         "action": "Regex filter triggered"
     },
     "filter_triggered": {
         "channel": "mod_log",
         "key": "log_filter",
-        "color": 0xff7514,
+        "color": 0x2b80b8,
         "emote": "NO_ENTRY",
         "action": "Word filter triggered"
     }

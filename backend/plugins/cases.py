@@ -29,10 +29,11 @@ CASE_EMOJIS = {
     "MUTE": "YELLOW",
     "MUTE EXTENDED": "YELLOW",
 
-    "AUTOMOD": "ORANGE",
-    "KICK": "ORANGE",
-    "FILTER": "ORANGE",
-    "REGEX": "ORANGE"
+    "AUTOMOD": "BLUE",
+    "FILTER": "BLUE",
+    "REGEX": "BLUE",
+
+    "KICK": "ORANGE"
 }
 
 

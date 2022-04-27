@@ -1,5 +1,5 @@
 import discord
-from discord.ui import View
+from discord.ui import View # pyright: reportMissingImports=false
 
 from .buttons import LinkBtn
 

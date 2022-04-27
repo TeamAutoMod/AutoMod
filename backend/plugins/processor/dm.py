@@ -9,7 +9,7 @@ from ...bot import ShardedBotInstance
 
 
 class DMProcessor(object):
-    def __init__(self, bot: ShardedBotInstance):
+    def __init__(self, bot: ShardedBotInstance) -> None:
         self.bot = bot
         self.colors = {
             "kick": 0xf79554,
@@ -17,7 +17,7 @@ class DMProcessor(object):
             "tempban": 0xff5c5c,
             "mute": 0xffdc5c,
             "warn": 0xffdc5c,
-            "automod_rule_triggered": 0xff7514
+            "automod_rule_triggered": 0x2b80b8
         }
         self.queue = []
         self.bot.loop.create_task(self.dm_users())
