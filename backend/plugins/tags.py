@@ -194,7 +194,7 @@ class TagsPlugin(AutoModPlugin):
                     },
                     {
                         "name": "❯ Content",
-                        "value": f"```\n{data.content}\n```"
+                        "value": f"```\n{self._tags[ctx.guild.id][name].get('content')}\n```"
                     },
                     {
                         "name": "❯ Uses",
