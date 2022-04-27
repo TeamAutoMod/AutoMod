@@ -443,6 +443,15 @@ class InternalPlugin(AutoModPlugin):
                 change += new
             else:
                 change += f" & {new}"
+        if b.color != a.color:
+            new = "Color (``{}`` → ``{}``)".format(
+                b.color,
+                a.color
+            )
+            if len(change) < 1:
+                change += new
+            else:
+                change += f" & {new}"
         
         if len(change) < 1: return
 
