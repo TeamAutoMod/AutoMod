@@ -378,7 +378,8 @@ class LogProcessor(object):
             else:
                 log_messages = await self.default_log(log_channel, chunk)
         
-        except Exception:
+        except Exception as ex:
+            print(ex)
             pass
         else:
             if len(log_messages) > 0:
