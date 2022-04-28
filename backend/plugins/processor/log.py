@@ -315,7 +315,8 @@ class LogProcessor(object):
 
     async def execute(self, guild: discord.Guild, log_type: str, **log_kwargs) -> None:
         log.info("t")
-        log.info(len(self.queue), self.queue)
+        log.info(f"{len(self.queue)}")
+        log.info(self.queue)
         if not guild.id in self.queue: 
             self.queue[guild.id] = {
                 "mod_log": [],
@@ -325,6 +326,7 @@ class LogProcessor(object):
                 "member_log": [],
                 "voice_log": []
             }
+        log.info(self.queue[guild.id])
 
         config = Object(LOG_TYPES[log_type])
         if log_kwargs.get("_embed") == None:
