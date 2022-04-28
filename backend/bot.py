@@ -12,10 +12,10 @@ import logging; log = logging.getLogger()
 from .cache import InternalCache
 from .mongo import MongoDB
 from .schemas import GuildConfig
-from .utils import Translator, Emotes
+from .utils import Translator, Emotes, LogQueue
 from .types import embed
 from .views import pages
-from .observer import Observer
+from .observer import Observer 
 
 
 
@@ -99,6 +99,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.case_cmd_cache = {}
         self.webhook_cache = {}
         self.fetched_user_cache = {}
+        self.log_queue = {}
 
         if self.config.watch == True:
             self.observer = Observer(self)
@@ -106,6 +107,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.cache = InternalCache(self)
         self.emotes = Emotes(self)
         self.locale = Translator(self)
+        self._log_queue = LogQueue(self)
 
         self.run()
 
@@ -116,8 +118,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         if not self.ready:
             await self.load_plugins()
+            self.loop.create_task(self._log_queue.send_logs())
+
             if self.config.watch == True:
                 await self.observer.start()
+
             for g in self.guilds:
                 if not self.db.configs.exists(g.id):
                     self.db.configs.insert(GuildConfig(g, self.config.default_prefix))
@@ -128,6 +133,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     self.avatar_as_bytes = await m.avatar.read()
                 else:
                     self.avatar_as_bytes = None
+                    
             self.ready = True
 
     
