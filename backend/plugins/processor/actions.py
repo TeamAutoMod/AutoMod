@@ -141,6 +141,8 @@ class ActionProcessor(object):
 
     async def ban(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
+        if msg.guild.get_member(user.id) == None: return "User not found"
+
         try:
             await msg.guild.ban(user=user)
         except Exception as ex:
@@ -169,6 +171,8 @@ class ActionProcessor(object):
 
     async def kick(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
+        if msg.guild.get_member(user.id) == None: return "User not found"
+
         try:
             await msg.guild.kick(user=user)
         except Exception as ex:
@@ -191,13 +195,13 @@ class ActionProcessor(object):
                     "case": self.new_case("kick", msg, mod, user, reason)
                 }
             )
-            await self.log_processor.execute(msg.guild, "ban", **log_kwargs)
+            await self.log_processor.execute(msg.guild, "kick", **log_kwargs)
             return None
 
 
     async def mute(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
-        user = msg.guild.get_member(user.id);
+        user = msg.guild.get_member(user.id)
         if user == None: return "User not found"
 
         if (msg.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
