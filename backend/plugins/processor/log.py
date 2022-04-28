@@ -226,10 +226,8 @@ class LogProcessor(object):
     async def send_logs(self):
         while True:
             await asyncio.sleep(2.5)
-            log.info(f"{self.queue} {id(self)}")
             for g, opt in self.queue.items():
-                if 1 > 0:
-                    log.info(f"wow - {opt}")
+                if sum([len(x) for x in opt.values()]) > 0:
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
                             chunk = entries[:max(min(3, len(entries)), 0)]
@@ -244,7 +242,6 @@ class LogProcessor(object):
                             log_channel: discord.TextChannel = guild.get_channel(int(log_channel_id))
                             if log_channel == None: return
 
-                            log.info(chunk)
                             await self._execute(
                                 guild,
                                 channel_type,
@@ -323,7 +320,6 @@ class LogProcessor(object):
                 "member_log": [],
                 "voice_log": []
             }
-        log.info(self.queue[guild.id])
 
         config = Object(LOG_TYPES[log_type])
         if log_kwargs.get("_embed") == None:
@@ -347,6 +343,8 @@ class LogProcessor(object):
                 "has_case": log_kwargs.get("case", False)
             }
         )
+
+        log.info(self.queue)
         
         
     async def _execute(self, guild: discord.Guild, channel_type: str, log_channel: discord.TextChannel, chunk: dict) -> None:
