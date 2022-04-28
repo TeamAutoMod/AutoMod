@@ -1,3 +1,4 @@
+from inspect import trace
 import discord
 
 from toolbox import S as Object
@@ -229,6 +230,7 @@ class LogProcessor(object):
                 if sum([len(x) for x in opt.values()]) > 0:
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
+                            print("triggered")
                             chunk = entries[:max(min(3, len(entries)), 0)]
                             guild = self.bot.get_guild(g)
 
@@ -378,7 +380,8 @@ class LogProcessor(object):
             else:
                 log_messages = await self.default_log(log_channel, chunk)
         
-        except Exception as ex:
+        except Exception:
+            ex = traceback.format_exc()
             print(ex)
             pass
         else:
