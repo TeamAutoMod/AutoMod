@@ -228,11 +228,11 @@ class LogProcessor(object):
             await asyncio.sleep(2.5)
             for g, opt in self.queue.items():
                 if sum([len(x) for x in opt.values()]) > 0:
-                    log.info("wow")
+                    log.info(f"wow - {opt}")
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
                             chunk = entries[:max(min(3, len(entries)), 0)]
-                            print(chunk)
+                            log.info(chunk)
                             guild = self.bot.get_guild(g)
 
                             self.queue[g][channel_type] = [x for x in entries if x not in chunk]
