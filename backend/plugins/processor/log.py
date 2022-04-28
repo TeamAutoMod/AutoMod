@@ -226,8 +226,8 @@ class LogProcessor(object):
     async def send_logs(self):
         while True:
             await asyncio.sleep(2.5)
-            log.info("int")
             for g, opt in self.queue.items():
+                log.info(opt)
                 if sum([len(x) for x in opt.values()]) > 0:
                     log.info(f"wow - {opt}")
                     for channel_type, entries in opt.items():
@@ -314,6 +314,7 @@ class LogProcessor(object):
 
 
     async def execute(self, guild: discord.Guild, log_type: str, **log_kwargs) -> None:
+        log.info("t")
         if not guild.id in self.queue: 
             self.queue[guild.id] = {
                 "mod_log": [],
