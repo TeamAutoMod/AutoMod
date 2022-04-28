@@ -252,5 +252,3 @@ class LogProcessor(object):
                 "has_case": log_kwargs.get("case", False)
             }
         )
-
-        log.info(self.bot.log_queue[guild.id])

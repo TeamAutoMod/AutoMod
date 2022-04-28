@@ -223,6 +223,7 @@ class LogQueue(object):
         while True:
             await asyncio.sleep(2)
             for g, opt in self.bot.log_queue.items():
+                log.info(sum([len(x) for x in opt.values()]))
                 if sum([len(x) for x in opt.values()]) > 0:
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
