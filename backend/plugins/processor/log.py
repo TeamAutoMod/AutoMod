@@ -226,13 +226,13 @@ class LogProcessor(object):
     async def send_logs(self):
         while True:
             await asyncio.sleep(2.5)
+            log.info("int")
             for g, opt in self.queue.items():
                 if sum([len(x) for x in opt.values()]) > 0:
                     log.info(f"wow - {opt}")
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
                             chunk = entries[:max(min(3, len(entries)), 0)]
-                            log.info(chunk)
                             guild = self.bot.get_guild(g)
 
                             self.queue[g][channel_type] = [x for x in entries if x not in chunk]
@@ -244,6 +244,7 @@ class LogProcessor(object):
                             log_channel: discord.TextChannel = guild.get_channel(int(log_channel_id))
                             if log_channel == None: return
 
+                            log.info(chunk)
                             await self._execute(
                                 guild,
                                 channel_type,
