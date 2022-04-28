@@ -1,10 +1,10 @@
-from inspect import trace
 import discord
 
 from toolbox import S as Object
 from typing import Union
 import asyncio
 import traceback
+import logging; log = logging.getLogger(__name__)
 
 from ...types import Embed
 from ...bot import ShardedBotInstance
@@ -228,7 +228,7 @@ class LogProcessor(object):
             await asyncio.sleep(2.5)
             for g, opt in self.queue.items():
                 if sum([len(x) for x in opt.values()]) > 0:
-                    print("wow")
+                    log.info("wow")
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
                             chunk = entries[:max(min(3, len(entries)), 0)]
@@ -383,7 +383,7 @@ class LogProcessor(object):
         
         except Exception:
             ex = traceback.format_exc()
-            print(ex)
+            log.info(ex)
             pass
         else:
             if len(log_messages) > 0:
