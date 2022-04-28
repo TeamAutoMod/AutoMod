@@ -227,8 +227,8 @@ class LogProcessor(object):
         while True:
             await asyncio.sleep(2.5)
             for g, opt in self.queue.items():
-                log.info(opt)
-                if sum([len(x) for x in opt.values()]) > 0:
+                log.info(sum([len(x) for x in opt.values()]))
+                if 1 > 0:
                     log.info(f"wow - {opt}")
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
