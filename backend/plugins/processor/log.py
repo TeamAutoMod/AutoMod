@@ -315,6 +315,7 @@ class LogProcessor(object):
 
     async def execute(self, guild: discord.Guild, log_type: str, **log_kwargs) -> None:
         log.info("t")
+        log.info(len(self.queue), self.queue)
         if not guild.id in self.queue: 
             self.queue[guild.id] = {
                 "mod_log": [],
