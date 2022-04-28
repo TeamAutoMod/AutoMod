@@ -226,7 +226,7 @@ class LogProcessor(object):
     async def send_logs(self):
         while True:
             await asyncio.sleep(2.5)
-            log.info(f"{self.queue.items()}")
+            log.info(f"{self.queue} {id(self)}")
             for g, opt in self.queue.items():
                 if 1 > 0:
                     log.info(f"wow - {opt}")
