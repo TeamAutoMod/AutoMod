@@ -1,3 +1,4 @@
+from re import L
 import discord
 
 from typing import Union
@@ -228,13 +229,17 @@ class LogQueue(object):
                             chunk = entries[:max(min(3, len(entries)), 0)]
                             guild = self.bot.get_guild(g)
 
+                            log.info(guild)
+
                             self.bot.log_queue[g][channel_type] = [x for x in entries if x not in chunk]
                             if guild == None: return
 
                             log_channel_id = self.db.configs.get(guild.id, channel_type)
+                            log.info(log_channel_id)
                             if log_channel_id == None or log_channel_id == "": return
 
-                            log_channel: discord.TextChannel = guild.get_channel(int(log_channel_id))
+                            log_channel = guild.get_channel(int(log_channel_id))
+                            log.info(log_channel)
                             if log_channel == None: return
 
                             await self._execute(
@@ -307,6 +312,7 @@ class LogQueue(object):
         
     async def _execute(self, guild: discord.Guild, channel_type: str, log_channel: discord.TextChannel, chunk: dict) -> None:
         log_messages = {}
+        log.info("actually executing")
         try:
             wid = self.bot.db.configs.get(guild.id, f"{channel_type}_webhook")
             if wid != "":
