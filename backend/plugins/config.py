@@ -152,7 +152,7 @@ class ConfigPlugin(AutoModPlugin):
         else:
             mute_perm = y
 
-        blank_length = 29 if (len(config.ignored_channels_automod) + len(config.ignored_roles_automod)) < 4 else 32
+        dash_length = 29 if (len(config.ignored_channels_automod) + len(config.ignored_roles_automod)) < 4 else 32
         e = Embed(
             title=f"Server config for {ctx.guild.name}",
         )
@@ -184,7 +184,7 @@ class ConfigPlugin(AutoModPlugin):
                 "inline": True
             },
             e.blank_field(True),
-            e.dash_field(blank_length),
+            e.dash_field(dash_length),
             {
                 "name": "❯ Automod Rules",
                 "value": "> **• Max Mentions:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {} \n> **• Spam:** {}"\
@@ -202,12 +202,17 @@ class ConfigPlugin(AutoModPlugin):
                 "name": "❯ Actions",
                 "value": "\n".join([
                     f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
-                    for x, y in dict(sorted(config.punishments.items(), key=lambda x: int(x[0]))).items()
+                    for x, y in dict(
+                        sorted(
+                            config.punishments.items(), 
+                            key=lambda x: int(x[0])
+                        )
+                    ).items()
                 ]) if len(config.punishments.items()) > 0 else f"> {n}",
                 "inline": True
             },
             e.blank_field(True),
-            e.dash_field(blank_length),
+            e.dash_field(dash_length),
             {
                 "name": "❯ Ignored Roles (automod)",
                 "value": f"> {n}" if len(config.ignored_roles_automod) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),

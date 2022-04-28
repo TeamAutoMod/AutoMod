@@ -109,7 +109,21 @@ SERVER_LOG_EVENTS = {
         "text": "Sticker deleted"
     },
 
-    "nick_update": {
+    "nick_added": {
+        "emote": "CREATE",
+        "color": 0x5cff9d,
+        "audit_log_action": AuditLogAction.member_update,
+        "text": "Nickname added",
+        "extra_text": "**New:** {change}"
+    },
+    "nick_removed": {
+        "emote": "DELETE",
+        "color": 0xff5c5c,
+        "audit_log_action": AuditLogAction.member_update,
+        "text": "Nickname removed",
+        "extra_text": "**Old:** {change}"
+    },
+    "nick_updated": {
         "emote": "UPDATE",
         "color": 0xffdc5c,
         "audit_log_action": AuditLogAction.member_update,
@@ -664,12 +678,23 @@ class InternalPlugin(AutoModPlugin):
         change = ""
         check_audit = False
         if b.nick != a.nick:
-            change += "``{}`` → ``{}``".format(
-                b.nick,
-                a.nick
-            )
-            key = "nick_update"
-
+            if b.nick == None and a.nick != None:
+                change += "``{}``".format(
+                    a.nick
+                )
+                key = "nick_added"
+            elif b.nick != None and a.nick == None:
+                change += "``{}``".format(
+                    b.nick
+                )
+                key = "nick_removed"
+            else:
+                change += "``{}`` → ``{}``".format(
+                    b.nick,
+                    a.nick
+                )
+                key = "nick_updated"
+            
         if b.roles != a.roles:
             check_audit = True
             added_roles = [x.mention for x in a.roles if x not in b.roles]
