@@ -14,10 +14,10 @@ class Context(commands.Context):
 
     async def send(self, *args, embed: Union[Embed, None] = None, **kwargs) -> Optional[discord.Message]:
         if embed != None:
-            embed: dict = embed.to_dict()
-            if "fields" in embed:
-                for field in embed["fields"]:
+            e: dict = embed.to_dict()
+            if e.get("fields", None) != None:
+                for field in e.get("fields"):
                     field["value"] = field["value"][:1023]
-                embed = Embed.from_dict(embed)
+                embed = Embed.from_dict(e)
         
         return await super().send(*args, embed=embed, **kwargs)
