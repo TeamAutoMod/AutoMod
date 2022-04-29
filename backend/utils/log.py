@@ -223,7 +223,7 @@ class LogQueue(object):
     async def send_logs(self) -> None:
         while True:
             await asyncio.sleep(2)
-            for g, opt in self.bot.log_queue.items():
+            for g, opt in self.bot.log_queue.copy().items():
                 if sum([len(x) for x in opt.values()]) > 0:
                     for channel_type, entries in opt.items():
                         if len(entries) > 0:
