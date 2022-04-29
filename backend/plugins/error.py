@@ -164,14 +164,18 @@ class ErrorPlugin(AutoModPlugin):
                 except (AttributeError, ValueError):
                     return
                 else:
-                    clog = await self.bot.fetch_channel(cid)
-                    if clog != None:
-                        try:
-                            await clog.send(embed=e)
-                        except Exception:
-                            return
-                        else:
-                            self.bot.error_log = clog
+                    try:
+                        clog = await self.bot.fetch_channel(cid)
+                    except discord.NotFound:
+                        return
+                    else:
+                        if clog != None:
+                            try:
+                                await clog.send(embed=e)
+                            except Exception:
+                                return
+                            else:
+                                self.bot.error_log = clog
             else:
                 try:
                     await self.bot.error_log.send(embed=e)

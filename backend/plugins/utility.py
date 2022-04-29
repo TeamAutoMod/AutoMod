@@ -313,11 +313,12 @@ class UtilityPlugin(AutoModPlugin):
                 description=self.locale.t(ctx.guild, "help_desc", prefix=prefix)
             )
             for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
-                cmds = p.get_commands()
-                e.add_field(
-                    name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
-                    value=", ".join([f"``{x}``" for x in cmds])
-                )
+                if p != None:
+                    cmds = p.get_commands()
+                    e.add_field(
+                        name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
+                        value=", ".join([f"``{x}``" for x in cmds])
+                    )
             e.credits()
 
             await ctx.send(embed=e, view=HelpView(self.bot, show_invite=True))
