@@ -13,7 +13,7 @@ from .cache import InternalCache
 from .mongo import MongoDB
 from .schemas import GuildConfig
 from .utils import Translator, Emotes, LogQueue
-from .types import embed
+from .types import embed, Context
 from .views import pages
 from .observer import Observer 
 
@@ -100,6 +100,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.webhook_cache = {}
         self.fetched_user_cache = {}
         self.log_queue = {}
+        self.tasks = []
 
         if self.config.watch == True:
             self.observer = Observer(self)
@@ -140,7 +141,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     async def on_message(self, msg: discord.Message) -> None:
         if msg.author.bot or msg.guild is None:
             return
-        ctx = await self.get_context(msg)
+        ctx = await self.get_context(msg, cls=Context)
         if ctx.valid and ctx.command is not None:
             self.used_commands += 1
             disabled = self.db.configs.get(msg.guild.id, "disabled_commands")

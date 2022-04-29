@@ -216,7 +216,6 @@ class LogProcessor(object):
     def __init__(self, bot) -> None:
         self.bot = bot
         self.db = bot.db
-        self.bot = bot
 
 
     async def execute(self, guild: discord.Guild, log_type: str, **log_kwargs) -> None:

@@ -44,6 +44,7 @@ class Embed(discord.Embed):
                     inline=field.get("inline", False)
                 )
 
+
     def blank_field(self, inline: bool = False) -> dict:
         self._add_color()
         return {

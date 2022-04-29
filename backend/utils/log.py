@@ -3,8 +3,9 @@ import discord
 
 from typing import Union
 import asyncio
-import traceback
 import logging; log = logging.getLogger(__name__)
+
+from ..schemas import GuildConfig
 
 
 
@@ -234,29 +235,34 @@ class LogQueue(object):
 
                                 log_channel_id = self.db.configs.get(guild.id, channel_type)
                                 if log_channel_id != "":
+                                    if log_channel_id != None:
 
-                                    log_channel = guild.get_channel(int(log_channel_id))
-                                    if log_channel != None:
+                                        log_channel = guild.get_channel(int(log_channel_id))
+                                        if log_channel != None:
 
-                                        await self._execute(
-                                            guild,
-                                            channel_type,
-                                            log_channel,
-                                            chunk
-                                        )
+                                            await self._execute(
+                                                guild,
+                                                channel_type,
+                                                log_channel,
+                                                chunk
+                                            )
+                                    else:
+                                        if not self.db.configs.exists(guild.id):
+                                            self.db.configs.insert(GuildConfig(guild, self.bot.config.default_prefix))
+                                        else:
+                                            self.db.configs.update(guild.id, channel_type, "")
 
 
     async def default_log(self, channel: discord.TextChannel, chunk: list) -> dict:
         msgs = {}
         for entry in chunk:
-            for e, has_case in entry.items():
-                msg = await channel.send(embed=e)
-                if has_case != False:
-                    msgs.update(
-                        {
-                            has_case: msg
-                        }
-                    )
+            msg = await channel.send(embed=entry["embed"])
+            if entry["has_case"] != False:
+                msgs.update(
+                    {
+                        entry["has_case"]: msg
+                    }
+                )
         return msgs
 
 
@@ -339,7 +345,6 @@ class LogQueue(object):
                         log_messages = await self.default_log(log_channel, chunk)
             else:
                 log_messages = await self.default_log(log_channel, chunk)
-        
         except Exception:
             pass
         else:
