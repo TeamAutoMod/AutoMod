@@ -75,4 +75,4 @@ class MongoDB(Database):
         self.slowmodes = MongoCollection(bot, self, "slowmodes")
         self.tbans = MongoCollection(bot, self, "tbans")
         
-        log.info("⚙️  Database initialized")
+        log.info("📮 Database initialized")
