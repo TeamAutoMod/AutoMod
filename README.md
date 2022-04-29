@@ -18,7 +18,7 @@ AutoMod is a Discord moderation and utility bot, made for both small and large c
 - And much, much more
 
 ## Self-hosting/Development
-To run a local version, download or fork this repo and create a ``config.json`` file in the ``backend`` folder filling out the required values as shown in the ``config.json.example`` file. You can use your local version on your own servers, but please don't make it public.
+To run a local version, download or fork this repo and create a ``config.json`` file in the ``backend`` folder filling out the required values as shown in the ``config.json.example`` file. Then run ``pip install -r requirements.txt`` to install the required dependencies. The file you have to run in order to start the bot is ``launch.py`` in the root folder. You can use your local version on your own servers, but please don't make it public.
 
 ## Resources
 - [Invite the bot](https://automod.xyz/invite)
