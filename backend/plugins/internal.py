@@ -238,12 +238,24 @@ class InternalPlugin(AutoModPlugin):
                 data.audit_log_action,
                 check_for_audit
             )
+            
+            by_field = ""
+            if mod != None:
+                if mod.guild_permissions.manage_messages == True:
+                    by_field = "Moderator"
+                elif int(self.db.configs.get(guild.id, "mod_role")) in [x.id for x in mod.roles]:
+                    by_field = "Moderator"
+                else:
+                    by_field = "User"
+            else:
+                by_field = "User"
 
-            e.description = "{} **{}:** {} ({}) \n\n**Moderator:** {}\n{}".format(
+            e.description = "{} **{}:** {} ({}) \n\n**{}:** {}\n{}".format(
                 self.bot.emotes.get(data.emote),
                 data.text,
                 obj.name if not hasattr(obj, "banner") else obj.mention,
                 obj.id,
+                by_field,
                 f"{mod.mention} ({mod.id})" if mod != None else "Unknown",
                 str(data.extra_text).format(**text_kwargs) if len(text_kwargs) > 0 else ""
             )
