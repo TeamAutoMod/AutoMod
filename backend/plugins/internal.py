@@ -778,27 +778,29 @@ class InternalPlugin(AutoModPlugin):
 
         roles, channels = self.get_ignored_roles_channels(user.guild)
         if any(x in [i.id for i in user.roles] for x in roles): return
-        if a.channel.id in channels or b.channel.id in channels: return
 
         key = ""
         text = {}
         if b.channel != a.channel:
             if b.channel == None and a.channel != None:
-                key = "joined_voice"
-                text.update({
-                    "channel": a.channel.id
-                })
+                if a.channel.id not in channels:
+                    key = "joined_voice"
+                    text.update({
+                        "channel": a.channel.id
+                    })
             elif b.channel != None and a.channel == None:
-                key = "left_voice"
-                text.update({
-                    "channel": b.channel.id
-                })
+                if b.channel.id not in channels:
+                    key = "left_voice"
+                    text.update({
+                        "channel": b.channel.id
+                    })
             elif b.channel != None and a.channel != None:
-                key = "switched_voice"
-                text.update({
-                    "before": b.channel.id,
-                    "after": a.channel.id
-                })
+                if b.channel.id not in channels and a.channel.id not in channels:
+                    key = "switched_voice"
+                    text.update({
+                        "before": b.channel.id,
+                        "after": a.channel.id
+                    })
             else:
                 pass
             if key != "":
