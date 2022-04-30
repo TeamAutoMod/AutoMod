@@ -174,7 +174,11 @@ class UtilityPlugin(AutoModPlugin):
             return mod.id != target.id \
                 and mod.top_role > target.top_role \
                 and target.id != guild.owner.id \
-                and (target.guild_permissions.kick_members == False or target.guild_permissions.kick_members == False)
+                and (
+                    target.guild_permissions.ban_members == False 
+                    or target.guild_permissions.kick_members == False 
+                    or target.guild_permissions.manage_messages == False
+                )
         else:
             return True
 

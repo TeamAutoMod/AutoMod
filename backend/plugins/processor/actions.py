@@ -53,7 +53,7 @@ class ActionProcessor(object):
     async def execute(self, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], warns: int, reason: str) -> None:
         if "(" in reason:
             raw_reason = reason.split("(")[0]
-        elif "Triggered filter" in reason:
+        elif "Triggered filter" in reason or "Triggered regex" in reason:
             raw_reason = "Used one or more filtered words"
         else:
             raw_reason = reason

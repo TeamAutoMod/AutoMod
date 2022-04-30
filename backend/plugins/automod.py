@@ -265,7 +265,11 @@ class AutomodPlugin(AutoModPlugin):
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
-            and (target.guild_permissions.kick_members == False or target.guild_permissions.kick_members == False)
+            and (
+                target.guild_permissions.ban_members == False 
+                or target.guild_permissions.kick_members == False 
+                or target.guild_permissions.manage_messages == False
+            )
 
 
     def parse_filter(self, words: list) -> Union[re.Pattern, None]:
