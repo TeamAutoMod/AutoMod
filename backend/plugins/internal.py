@@ -693,6 +693,8 @@ class InternalPlugin(AutoModPlugin):
 
         roles, _ = self.get_ignored_roles_channels(a.guild)
         if any(x in [i.id for i in a.roles] for x in roles): return
+        for r in [*b.roles, *a.roles]:
+            if r.id in roles: return
 
         key = ""
         change = ""
@@ -719,6 +721,7 @@ class InternalPlugin(AutoModPlugin):
             check_audit = True
             added_roles = [x.mention for x in a.roles if x not in b.roles]
             removed_roles = [x.mention for x in b.roles if x not in a.roles]
+
 
             if len(added_roles) > 0:
                 key = "added_role"
