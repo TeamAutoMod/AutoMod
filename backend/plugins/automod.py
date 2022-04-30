@@ -363,6 +363,7 @@ class AutomodPlugin(AutoModPlugin):
                             "found": found,
                             "user_id": msg.author.id,
                             "user": msg.author,
+                            "channel": msg.channel.mention,
                             "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, reason)
                         }
                     )
@@ -375,6 +376,7 @@ class AutomodPlugin(AutoModPlugin):
                             "found": found,
                             "user_id": msg.author.id,
                             "user": msg.author,
+                            "channel": msg.channel.mention,
                             "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, reason)
                         }
                     )

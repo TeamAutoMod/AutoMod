@@ -519,7 +519,7 @@ class ConfigPlugin(AutoModPlugin):
 
     @ignore_log.command()
     @AutoModPlugin.can("manage_guild")
-    async def add(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel]]) -> None:
+    async def add(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel, discord.VoiceChannel]]) -> None:
         """
         ignore_log_add_help
         examples:
@@ -536,7 +536,7 @@ class ConfigPlugin(AutoModPlugin):
                     roles.append(e.id); added.append(e)
                 else:
                     ignored.append(e)
-            elif isinstance(e, discord.TextChannel):
+            elif isinstance(e, (discord.TextChannel, discord.VoiceChannel)):
                 if not e.id in channels:
                     channels.append(e.id); added.append(e)
                 else:
@@ -567,11 +567,11 @@ class ConfigPlugin(AutoModPlugin):
                 "name": "❯ Added Channels",
                 "value": ", ".join(
                     [
-                        x.mention for x in added if isinstance(x, discord.TextChannel)
+                        x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
                     ]
                 ) if len(
                     [
-                        _ for _ in added if isinstance(_, discord.TextChannel)
+                        _ for _ in added if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
                     ]
                 ) > 0 else "None"
             },
@@ -594,7 +594,7 @@ class ConfigPlugin(AutoModPlugin):
 
     @ignore_log.command()
     @AutoModPlugin.can("manage_guild")
-    async def remove(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel]]) -> None:
+    async def remove(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel, discord.VoiceChannel]]) -> None:
         """
         ignore_log_remove_help
         examples:
@@ -611,7 +611,7 @@ class ConfigPlugin(AutoModPlugin):
                     roles.remove(e.id); removed.append(e)
                 else:
                     ignored.append(e)
-            elif isinstance(e, discord.TextChannel):
+            elif isinstance(e, (discord.TextChannel, discord.VoiceChannel)):
                 if e.id in channels:
                     channels.remove(e.id); removed.append(e)
                 else:
@@ -644,11 +644,11 @@ class ConfigPlugin(AutoModPlugin):
                 "name": "❯ Removed Channels",
                 "value": ", ".join(
                     [
-                        x.mention for x in removed if isinstance(x, discord.TextChannel)
+                        x.mention for x in removed if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
                     ]
                 ) if len(
                     [
-                        _ for _ in removed if isinstance(_, discord.TextChannel)
+                        _ for _ in removed if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
                     ]
                 ) > 0 else "None"
             },

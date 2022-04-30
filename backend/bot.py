@@ -243,6 +243,13 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return days, hours, minutes, seconds
 
 
+    async def join_thread(self, thread: discord.Thread) -> None:
+        try:
+            await thread.add_user(self.user)
+        except Exception:
+            pass
+
+
     def run(self) -> None:
         try:
             super().run(self.config.token, reconnect=True)

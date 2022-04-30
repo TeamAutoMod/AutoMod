@@ -445,6 +445,9 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_guild_role_update(self, b: discord.Role, a: discord.Role) -> None:
+        roles, _ = self.get_ignored_roles_channels(a.guild)
+        if any(x in [i.id for i in a.roles] for x in roles): return
+
         change = ""
         if b.name != a.name:
             change += "Name (``{}`` → ``{}``)".format(
@@ -499,6 +502,9 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel) -> None:
+        _, channels = self.get_ignored_roles_channels(channel.guild)
+        if channel.id in channels: return
+
         embed = await self.server_log_embed(
             "channel_deleted",
             channel.guild,
@@ -514,6 +520,9 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_guild_channel_update(self, b: discord.abc.GuildChannel, a: discord.abc.GuildChannel) -> None:
+        _, channels = self.get_ignored_roles_channels(b.guild)
+        if a.id in channels: return
+
         if a.position != b.position: return
 
         change = ""
@@ -611,6 +620,9 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_thread_create(self, thread: discord.Thread) -> None:
+        _, channels = self.get_ignored_roles_channels(thread.guild)
+        if thread.parent.id in channels: return
+
         embed = await self.server_log_embed(
             "thread_created",
             thread.guild,
@@ -621,10 +633,15 @@ class InternalPlugin(AutoModPlugin):
         await self.log_processor.execute(thread.guild, "thread_created", **{
             "_embed": embed
         })
+        await self.bot.join_thread(thread)
 
     
     @AutoModPlugin.listener()
     async def on_thread_delete(self, thread: discord.Thread) -> None:
+        _, channels = self.get_ignored_roles_channels(thread.guild)
+        if thread.parent.id in channels:
+            return
+
         embed = await self.server_log_embed(
             "thread_deleted",
             thread.guild,
@@ -639,6 +656,9 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_thread_update(self, b: discord.Thread, a: discord.Thread) -> None:
+        _, channels = self.get_ignored_roles_channels(b.guild)
+        if b.parent.id in channels or a.parent.id in channels: return
+
         change = ""
         if b.name != a.name:
             change += "Name (``{}`` → ``{}``)".format(
@@ -756,8 +776,9 @@ class InternalPlugin(AutoModPlugin):
     async def on_voice_state_update(self, user: discord.Member, b: discord.VoiceState, a: discord.VoiceState) -> None:
         if user.guild == None: return
 
-        roles, _ = self.get_ignored_roles_channels(user.guild)
+        roles, channels = self.get_ignored_roles_channels(user.guild)
         if any(x in [i.id for i in user.roles] for x in roles): return
+        if a.channel.id in channels or b.channel.id in channels: return
 
         key = ""
         text = {}
