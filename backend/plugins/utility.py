@@ -1,3 +1,4 @@
+from email.mime import application
 import unicodedata
 import discord
 from discord.ext import commands
@@ -418,7 +419,7 @@ class UtilityPlugin(AutoModPlugin):
             else:
                 user = member = ctx.message.reference.resolved.author
         else:
-            member = discord.Member = ctx.guild.get_member(user.id) or None
+            member: discord.Member = ctx.guild.get_member(user.id) or None
 
         e = Embed()
         e.set_thumbnail(
@@ -439,12 +440,13 @@ class UtilityPlugin(AutoModPlugin):
 
             e.add_field(
                 name="❯ Server Information",
-                value="> **• Nickname:** {} \n> **• Joined at:** <t:{}> \n> **• Roles:** {} \n> **• Status:** {}"\
+                value="> **• Nickname:** {} \n> **• Joined at:** <t:{}> \n> **• Join position:** {} \n> **• Status:** {} \n> **• Roles:** {}"\
                 .format(
                     member.nick,
                     round(member.joined_at.timestamp()),
-                    len(roles),
-                    self.server_status_for(member)
+                    sorted(ctx.guild.members, key=lambda x: x.joined_at, reverse=False).index(member) + 1,
+                    self.server_status_for(member),
+                    len(roles) if len(roles) < 1 or len(roles) > 20 else ", ".join(roles)
                 )
             )
 
@@ -630,7 +632,7 @@ class UtilityPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
 
 
-    @commands.command(aliases=["char", "symbol"])
+    @commands.command()
     async def charinfo(self, ctx: commands.Context, *, chars: str) -> None:
         """
         charinfo_help

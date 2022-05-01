@@ -119,6 +119,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         if not self.ready:
             await self.load_plugins()
+
             self.loop.create_task(self._log_queue.send_logs())
 
             if self.config.watch == True:
@@ -192,6 +193,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = "ModerationPlugin"
         elif plugin == "rr":
             in_plugins_name = "ReactionRolesPlugin"
+        elif plugin == "reply":
+            in_plugins_name = "AutoReplyPlugin"
         else:
             in_plugins_name = f"{plugin.capitalize()}Plugin"
         if in_plugins_name not in self.plugins:
@@ -251,6 +254,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
 
     def run(self) -> None:
+        self.add_command
         try:
             super().run(self.config.token, reconnect=True)
         finally:

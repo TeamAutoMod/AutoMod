@@ -133,5 +133,7 @@ dmypy.json
 /dashboard
 /backend/api
 /backend/plugins/level.py
+/backend/plugins/reply.py
 /backend/plugins/processor/config.py
 /backend/schemas/level.py
+/backend/modals

@@ -76,6 +76,8 @@
     "reaction_roles_add_help": "Adds a new emote-role pair to the given message",
     "reaction_roles_remove_help": "Removes an emote-role pair from the given message",
 
+    "auto_reply_help": "Command for configuring automated replies",
+
     "log_ban": "**Moderator:** {mod.mention} ({mod_id}) \n**Grund:** {reason}",
     "log_kick": "**Moderator:** {mod.mention} ({mod_id}) \n**Grund:** {reason}",
     "log_unban": "**Moderator:** {mod.mention} ({mod_id}) \n**Grund:** {reason}",
@@ -276,5 +278,13 @@
     "max_per": "{emote} Per seconds Anzahl kann nur bis zu 20 sein",
 
     "no_ignored_am": "{emote} Keine extra Rollen oder Channels werden aktuell vom Automoderator ignoriert",
-    "no_ignored_log": "{emote} Keine extra Rollen oder Channels werden aktuell für Logs ignoriert"
+    "no_ignored_log": "{emote} Keine extra Rollen oder Channels werden aktuell für Logs ignoriert",
+
+    "plugins_desc": "• To enable a plugin, use: ``{prefix}plugins enable <plugin>`` \n• To disable a plugin, use: ``{prefix}plugins disable <plugin>``",
+
+    "no_replies": "{emote} This server doesn't have any auto replies",
+    "reply_exists": "{emote} A reply with that name already exists",
+    "added_reply": "{emote} Automated reply has been created",
+    "reply_doesnt_exist": "{emote} A reply with that name doesn't exist",
+    "removed_reply": "{emote} Automated reply has been removed"
 }

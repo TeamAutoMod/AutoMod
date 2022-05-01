@@ -39,6 +39,17 @@ LOG_OPTIONS = {
 }
 
 
+PRETTY_PLUGIN_NAMES = {
+    "AutomodPlugin": "Automoderator",
+    "ModerationPlugin": "Moderation",
+    "UtilityPlugin": "Utility",
+    "CasesPlugin": "Cases",
+    "TagsPlugin": "Custom Commands",
+    "ReactionRolesPlugin": "Reaction Roles",
+    "AutoReplyPlugin": "Auto Reply"
+}
+
+
 class ConfigPlugin(AutoModPlugin):
     """Plugin for all configuration commands"""
     def __init__(self, bot: ShardedBotInstance) -> None:
@@ -132,7 +143,7 @@ class ConfigPlugin(AutoModPlugin):
         return roles, channels
 
 
-    @commands.command()
+    @commands.command(aliases=["cfg", "settings"])
     @AutoModPlugin.can("manage_guild")
     async def config(self, ctx: commands.Context) -> None:
         """
