@@ -243,10 +243,15 @@ class InternalPlugin(AutoModPlugin):
             if mod != None:
                 if mod.guild_permissions.manage_messages == True:
                     by_field = "Moderator"
-                elif int(self.db.configs.get(guild.id, "mod_role")) in [x.id for x in mod.roles]:
-                    by_field = "Moderator"
                 else:
-                    by_field = "User"
+                    rid = self.db.configs.get(guild.id, "mod_role")
+                    if rid != "":
+                        if int(rid) in [x.id for x in mod.roles]:
+                            by_field = "Moderator"
+                        else:
+                            by_field = "User"
+                    else:
+                        by_field = "User"
             else:
                 by_field = "User"
 
@@ -307,15 +312,16 @@ class InternalPlugin(AutoModPlugin):
             return self.bot.ignore_for_events.remove(msg.id)
         
         # I hate this
-        if self.db.configs.get(msg.guild.id, "message_log") == "" \
+        cfg = self.db.configs.get_doc(msg.guild.id)
+        if cfg["message_log"] == "" \
         or not isinstance(msg.channel, discord.TextChannel) \
         or msg.author.id == self.bot.user.id \
-        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "server_log") \
-        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "mod_log") \
-        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "message_log") \
-        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "join_log") \
-        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "member_log") \
-        or str(msg.channel.id) == self.db.configs.get(msg.guild.id, "voice_log") \
+        or str(msg.channel.id) == cfg["server_log"] \
+        or str(msg.channel.id) == cfg["mod_log"] \
+        or str(msg.channel.id) == cfg["message_log"] \
+        or str(msg.channel.id) == cfg["join_log"] \
+        or str(msg.channel.id) == cfg["member_log"] \
+        or str(msg.channel.id) == cfg["voice_log"] \
         or msg.type != discord.MessageType.default:
             return
 
@@ -347,14 +353,16 @@ class InternalPlugin(AutoModPlugin):
     async def on_message_edit(self, b: discord.Message, a: discord.Message) -> None:
         if a.guild == None: return
 
-        if self.db.configs.get(a.guild.id, "message_log") == "" \
+        cfg = self.db.configs.get_doc(a.guild.id)
+        if cfg["message_log"] == "" \
         or not isinstance(a.channel, discord.TextChannel) \
         or a.author.id == self.bot.user.id \
-        or str(a.channel.id) == self.db.configs.get(a.guild.id, "server_log") \
-        or str(a.channel.id) == self.db.configs.get(a.guild.id, "mod_log") \
-        or str(a.channel.id) == self.db.configs.get(a.guild.id, "message_log") \
-        or str(a.channel.id) == self.db.configs.get(a.guild.id, "member_log") \
-        or str(a.channel.id) == self.db.configs.get(a.guild.id, "voice_log") \
+        or str(a.channel.id) == cfg["server_log"] \
+        or str(a.channel.id) == cfg["mod_log"] \
+        or str(a.channel.id) == cfg["message_log"] \
+        or str(a.channel.id) == cfg["join_log"] \
+        or str(a.channel.id) == cfg["member_log"] \
+        or str(a.channel.id) == cfg["voice_log"] \
         or a.type != discord.MessageType.default:
             return
 
