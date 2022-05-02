@@ -414,6 +414,7 @@ class UtilityPlugin(AutoModPlugin):
         -whois @paul#0009
         -whois 543056846601191508
         """
+        if ctx.guild.chunked == False: await ctx.guild.chunk(cache=True)
         if user == None:
             if ctx.message.reference == None:
                 user = member = ctx.author if isinstance(ctx, commands.Context) else ctx.user
