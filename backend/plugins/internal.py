@@ -241,17 +241,21 @@ class InternalPlugin(AutoModPlugin):
             
             by_field = ""
             if mod != None:
-                if mod.guild_permissions.manage_messages == True:
-                    by_field = "Moderator"
-                else:
-                    rid = self.db.configs.get(guild.id, "mod_role")
-                    if rid != "":
-                        if int(rid) in [x.id for x in mod.roles]:
-                            by_field = "Moderator"
+                mod = guild.get_member(mod.id)
+                if mod != None:
+                    if mod.guild_permissions.manage_messages == True:
+                        by_field = "Moderator"
+                    else:
+                        rid = self.db.configs.get(guild.id, "mod_role")
+                        if rid != "":
+                            if int(rid) in [x.id for x in mod.roles]:
+                                by_field = "Moderator"
+                            else:
+                                by_field = "User"
                         else:
                             by_field = "User"
-                    else:
-                        by_field = "User"
+                else:
+                    by_field = "User"
             else:
                 by_field = "User"
 
