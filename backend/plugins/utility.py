@@ -5,6 +5,7 @@ from discord.ext import commands
 
 import time
 import re
+from numpy import isin
 import requests
 import subprocess
 import datetime
@@ -405,7 +406,7 @@ class UtilityPlugin(AutoModPlugin):
     
     @commands.command(aliases=["info", "userinfo", "user"])
     @AutoModPlugin.can("manage_messages")
-    async def whois(self, ctx: commands.Context, user: DiscordUser = None) -> None:
+    async def whois(self, ctx: Union[commands.Context, discord.Interaction], user: DiscordUser = None) -> None:
         """
         whois_help
         examples:
@@ -415,7 +416,7 @@ class UtilityPlugin(AutoModPlugin):
         """
         if user == None:
             if ctx.message.reference == None:
-                user = member = ctx.author
+                user = member = ctx.author if isinstance(ctx, commands.Context) else ctx.user
             else:
                 user = member = ctx.message.reference.resolved.author
         else:
@@ -480,7 +481,10 @@ class UtilityPlugin(AutoModPlugin):
             )
         )
 
-        await ctx.send(embed=e)
+        if isinstance(ctx, commands.Context):
+            await ctx.send(embed=e)
+        else:
+            await ctx.response.send_message(embed=e, ephemeral=True)
 
 
     @commands.command(aliases=["guild", "serverinfo"])

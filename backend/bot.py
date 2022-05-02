@@ -120,6 +120,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
         if not self.ready:
             await self.load_plugins()
 
+            await self.register_user_info_ctx_menu()
+            await self.tree.sync()
+
             self.loop.create_task(self._log_queue.send_logs())
 
             if self.config.watch == True:
@@ -244,6 +247,34 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return "{}d, {}h, {}m & {}s".format(days, hours, minutes, seconds)
         else:
             return days, hours, minutes, seconds
+
+
+    async def register_user_info_ctx_menu(self):
+        @self.tree.context_menu(name="Userinfo")
+        async def _(i: discord.Interaction, user: discord.Member):
+            p = self.get_plugin("UtilityPlugin")
+            if i.user.guild_permissions.manage_messages == False:
+                rid = self.db.configs.get(i.guild.id, "mod_role")
+                if rid != "":
+                    if not int(rid) in [x.id for x in i.user.roles]:
+                        role = i.guild.get_role(int(rid)) or "mod role"
+                        return await i.response.send_message(
+                            embed=discord.Embed(
+                                color=int(self.config.embed_color, 16), 
+                                description=self.locale.t(i.guild, "missing_user_perms", perms=f"``manage messages`` or the ``{role}`` role")
+                            )
+                        )
+                    else:
+                        await p.whois(i, user)
+                else:
+                    return await i.response.send_message(
+                        embed=discord.Embed(
+                            color=int(self.config.embed_color, 16), 
+                            description=self.locale.t(i.guild, "missing_user_perms", perms=f"``manage messages``")
+                        )
+                    )
+            else:
+                await p.whois(i, user)
 
 
     async def join_thread(self, thread: discord.Thread) -> None:
