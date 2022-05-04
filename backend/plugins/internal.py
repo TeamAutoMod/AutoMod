@@ -871,7 +871,7 @@ class InternalPlugin(AutoModPlugin):
         if ctx.channel.id in channels: return
         if any(x in [i.id for i in ctx.author.roles] for x in roles): return
 
-        _args = [f"``{x}``" for x in ctx.args[2:] if x != None]
+        _args = [f"``{x if not isinstance(x, discord.Message) else x.id}``" for x in ctx.args[2:] if x != None]
         if len(_args) < 1:
             args = "None"
         else:
