@@ -481,7 +481,7 @@ class InternalPlugin(AutoModPlugin):
     @AutoModPlugin.listener()
     async def on_guild_role_update(self, b: discord.Role, a: discord.Role) -> None:
         roles, _ = self.get_ignored_roles_channels(a.guild)
-        if any(x in [i.id for i in a.roles] for x in roles): return
+        if a.id in roles: return
 
         change = ""
         if b.name != a.name:
