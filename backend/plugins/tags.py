@@ -233,7 +233,12 @@ class TagsPlugin(AutoModPlugin):
                     tag = Object(self._tags[msg.guild.id][name])
                     self.update_uses(f"{msg.guild.id}-{name}")
 
-                    await msg.channel.send(f"{tag.content}")
+                    try:
+                        await msg.channel.send(f"{tag.content}")
+                    except Exception:
+                        pass
+                    finally:
+                        self.bot.dispatch("custom_command_completion", msg, name)
 
 
 async def setup(bot) -> None: await bot.register_plugin(TagsPlugin(bot))

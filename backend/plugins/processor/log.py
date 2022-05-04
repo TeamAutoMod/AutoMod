@@ -191,6 +191,9 @@ LOG_TYPES = {
     "used_command": {
         "channel": "bot_log"
     },
+    "used_custom_command": {
+        "channel": "bot_log"
+    },
 
     "automod_rule_triggered": {
         "channel": "mod_log",

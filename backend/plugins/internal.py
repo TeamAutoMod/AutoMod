@@ -181,6 +181,13 @@ SERVER_LOG_EVENTS = {
         "audit_log_action": None,
         "text": "Used command",
         "extra_text": "**Command:** {command} \n**Arguments:** {arguments} \n**Channel:** <#{channel}>"
+    },
+    "used_custom_command": {
+        "emote": "TEXT",
+        "color": 0x2f3136,
+        "audit_log_action": None,
+        "text": "Used custom command",
+        "extra_text": "**Command:** {command} \n**Channel:** <#{channel}>"
     }
 }
 
@@ -880,6 +887,27 @@ class InternalPlugin(AutoModPlugin):
             arguments=args
         )
         await self.log_processor.execute(ctx.guild, "used_command", **{
+            "_embed": embed
+        })
+
+    
+    @AutoModPlugin.listener()
+    async def on_custom_command_completion(self, msg: discord.Message, name: str) -> None:
+        if msg.guild == None: return
+
+        roles, channels = self.get_ignored_roles_channels(msg.guild)
+        if msg.channel.id in channels: return
+        if any(x in [i.id for i in msg.author.roles] for x in roles): return
+
+        embed = await self.server_log_embed(
+            "used_custom_command",
+            msg.guild,
+            msg.author,
+            False,
+            command=name,
+            channel=msg.channel.id,
+        )
+        await self.log_processor.execute(msg.guild, "used_custom_command", **{
             "_embed": embed
         })
 
