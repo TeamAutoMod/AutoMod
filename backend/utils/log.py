@@ -284,7 +284,7 @@ class LogQueue(object):
                 self.bot.webhook_cache.update({
                     guild.id: {
                         **{
-                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log"] if k != channel_type
+                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "bot_log"] if k != channel_type
                         }, 
                         **{
                             channel_type: w

@@ -46,7 +46,7 @@ class Observer(object):
             else:
                 func(*func_args)
         except Exception as ex:
-            log.warn(f"⚠️ Failed to hot reload {file} - {ex}")
+            log.warn(f"❌ Failed to hot reload {file} - {ex}")
         else:
             log.info(f"🔄 Hot reload completed for {file}")
         finally:

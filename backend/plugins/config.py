@@ -35,6 +35,10 @@ LOG_OPTIONS = {
     "voice": {
         "db_field": "voice_log",
         "i18n_type": "voice logs"
+    },
+    "bot": {
+        "db_field": "bot_log",
+        "i18n_type": "bot logs"
     }
 }
 
@@ -101,7 +105,7 @@ class ConfigPlugin(AutoModPlugin):
                 self.bot.webhook_cache.update({
                     ctx.guild.id: {
                         **{
-                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log"] if k != option
+                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "bot_log"] if k != option
                         }, 
                         **{
                             option: w
@@ -142,6 +146,17 @@ class ConfigPlugin(AutoModPlugin):
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_log"), self.db.configs.get(guild.id, "ignored_channels_log")
         return roles, channels
 
+    
+    def parse_emote(self, guild: discord.Guild, emote: str) -> str:
+        if not emote.isnumeric(): 
+            return emote
+        else:
+            emote = discord.utils.find(lambda x: x.id == int(emote), guild.emojis)
+            if emote == None:
+                return "❓"
+            else:
+                f"<:{emote.name}:{emote.id}>"
+
 
     @commands.command(aliases=["cfg", "settings"])
     @AutoModPlugin.can("manage_guild")
@@ -153,8 +168,14 @@ class ConfigPlugin(AutoModPlugin):
         """
         config = Object(self.db.configs.get_doc(ctx.guild.id))
         rules = config.automod
+
         y = self.bot.emotes.get("YES")
         n = self.bot.emotes.get("NO")
+
+        rrs = {k: v for k, v in config.reaction_roles.items() if self.bot.get_channel(int(v['channel'])) != None}
+        role = "role"
+        emote = "emote"
+        tags = self.bot.get_plugin("TagsPlugin")._tags
 
         mute_perm = n
         if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
@@ -163,27 +184,28 @@ class ConfigPlugin(AutoModPlugin):
         else:
             mute_perm = y
 
-        dash_length = 29 if (len(config.ignored_channels_automod) + len(config.ignored_roles_automod)) < 4 else 32
+        dash_length = 34
         e = Embed(
             title=f"Server config for {ctx.guild.name}",
         )
         e.add_fields([
             {
                 "name": "❯ General",
-                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Regexes:** {} \n> **• Reaction Roles:** {} \n> **• Mod Role:** {}"\
+                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Regexes:** {} \n> **• Total Cases:** {} \n> **• Custom Commands:** {} \n> **• Mod Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
-                    len(config.reaction_roles),
+                    config.cases,
+                    len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
                     n if config.mod_role == "" else f"<@&{config.mod_role}>"
                 ),
                 "inline": True
             },
             {
                 "name": "❯ Logging",
-                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}\n> **• Join Log:** {} \n> **• Member Log:** {} \n> **• Voice Log:** {}"\
+                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}\n> **• Join Log:** {} \n> **• Member Log:** {} \n> **• Voice Log:** {} \n> **• Bot Log:** {}"\
                 .format(
                     n if config.mod_log == "" else f"<#{config.mod_log}>",
                     n if config.message_log == "" else f"<#{config.message_log}>",
@@ -191,6 +213,7 @@ class ConfigPlugin(AutoModPlugin):
                     n if config.join_log == "" else f"<#{config.join_log}>",
                     n if config.member_log == "" else f"<#{config.member_log}>",
                     n if config.voice_log == "" else f"<#{config.voice_log}>",
+                    n if config.bot_log == "" else f"<#{config.bot_log}>"
                 ),
                 "inline": True
             },
@@ -245,7 +268,17 @@ class ConfigPlugin(AutoModPlugin):
                 "value": f"> {n}" if len(config.ignored_channels_log) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
-            e.blank_field(True)
+            e.blank_field(True),
+            e.dash_field(dash_length),
+            {
+                "name": "❯ Reaction Roles",
+                "value": f"> {n}" if len(rrs) < 1 else "\n".join(
+                    [
+                        f"> **• [Message](https://discord.com/channels/{ctx.guild.id}/{v['channel']}/{k})** {', '.join([f'``[``{self.parse_emote(ctx.guild, data[emote])} <@&{data[role]}>``]``' for data in v['pairs']])}" for k, v in rrs.items()
+                    ]
+                ),
+                "inline": False
+            }
         ])
         await ctx.send(embed=e)
 
@@ -263,7 +296,15 @@ class ConfigPlugin(AutoModPlugin):
         -action 5 none
         """
         action = action.lower()
-        if not action in ["kick", "ban", "mute", "none"]: return await ctx.send(self.locale.t(ctx.guild, "invalid_action", _emote="NO"))
+        if not action in ["kick", "ban", "mute", "none"]: 
+            e = Embed(
+                description=self.locale.t(ctx.guild, "invalid_action_desc", _emote="NO", given=action)
+            )
+            e.add_field(
+                name="❯ Valid options",
+                value="• kick \n• ban \n• mute \n• none"
+            )
+            return await ctx.send(embed=e)
 
         if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
         if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
@@ -335,8 +376,15 @@ class ConfigPlugin(AutoModPlugin):
         -log server off
         """
         option = option.lower()
-        if not option in LOG_OPTIONS: 
-            return await ctx.send(self.locale.t(ctx.guild, "invalid_log_option", _emote="NO"))
+        if not option in LOG_OPTIONS:
+            e = Embed(
+                description=self.locale.t(ctx.guild, "invalid_log_option_desc", _emote="NO", given=option)
+            )
+            e.add_field(
+                name="❯ Valid options",
+                value="• mod \n• server \n• messages \n• joins \n• members \n• voice \n• bot"
+            )
+            return await ctx.send(embed=e)
         
         data = Object(LOG_OPTIONS[option])
         if isinstance(channel, str):

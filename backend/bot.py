@@ -186,7 +186,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             await super().load_extension(f"backend.plugins.{plugin}")
         except Exception:
-            log.error(f"❌ Failed to load {plugin} - {traceback.format_exc()}")
+            log.error(f"❗️ Failed to load {plugin} - {traceback.format_exc()}")
         else:
             log.info(f"🔥 Successfully loaded {plugin}")
 
@@ -231,7 +231,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             )
             if resp.status_code != 200: exc = resp.text
         except Exception as ex:
-            log.warn(f"⚠️ Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}"); exc = ex
+            log.warn(f"❌ Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}"); exc = ex
         finally:
             return exc
 

@@ -15,6 +15,7 @@ def GuildConfig(guild: discord.Guild, prefix: str) -> dict:
         "join_log": "",
         "member_log": "",
         "voice_log": "",
+        "bot_log": "",
 
         "mod_log_webhook": "",
         "message_log_webhook": "",
@@ -22,6 +23,7 @@ def GuildConfig(guild: discord.Guild, prefix: str) -> dict:
         "join_log_webhook": "",
         "member_log_webhook": "",
         "voice_log_webhook": "",
+        "bot_log_webhook": "",
 
         "ignored_channels_automod": [],
         "ignored_roles_automod": [],

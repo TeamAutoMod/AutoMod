@@ -138,7 +138,7 @@ class ErrorPlugin(AutoModPlugin):
                 await ctx.send(embed=e)
 
         else:
-            log.error(f"❌ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
+            log.error(f"❗️ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
             e = Embed(
                 color=0xff5c5c,

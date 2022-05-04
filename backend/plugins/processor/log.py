@@ -188,6 +188,10 @@ LOG_TYPES = {
         "channel": "voice_log",
     },
 
+    "used_command": {
+        "channel": "bot_log"
+    },
+
     "automod_rule_triggered": {
         "channel": "mod_log",
         "key": "log_automod",
@@ -226,7 +230,8 @@ class LogProcessor(object):
                 "server_log": [],
                 "join_log": [],
                 "member_log": [],
-                "voice_log": []
+                "voice_log": [],
+                "bot_log": []
             }
 
         config = Object(LOG_TYPES[log_type])

@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 from discord import AuditLogAction
 
 import asyncio
@@ -173,6 +174,14 @@ SERVER_LOG_EVENTS = {
         "text": "Switched voice channel",
         "extra_text": "**Change:** <#{before}> → <#{after}>"
     },
+
+    "used_command": {
+        "emote": "WRENCH",
+        "color": 0x5cff9d,
+        "audit_log_action": None,
+        "text": "Used command",
+        "extra_text": "**Command:** {command} \n**Arguments:** {arguments} \n**Channel:** <#{channel}>"
+    }
 }
 
 
@@ -292,7 +301,7 @@ class InternalPlugin(AutoModPlugin):
         try:
             await guild.chunk(cache=True)
         except Exception as ex:
-            log.warn(f"⚠️ Failed to chunk members for guild {guild.id} upon joining - {ex}")
+            log.warn(f"❌ Failed to chunk members for guild {guild.id} upon joining - {ex}")
         finally:
             if not self.db.configs.exists(guild.id):
                 self.db.configs.insert(GuildConfig(guild, self.config.default_prefix))
@@ -326,6 +335,7 @@ class InternalPlugin(AutoModPlugin):
         or str(msg.channel.id) == cfg["join_log"] \
         or str(msg.channel.id) == cfg["member_log"] \
         or str(msg.channel.id) == cfg["voice_log"] \
+        or str(msg.channel.id) == cfg["bot_log"] \
         or msg.type != discord.MessageType.default:
             return
 
@@ -367,6 +377,7 @@ class InternalPlugin(AutoModPlugin):
         or str(a.channel.id) == cfg["join_log"] \
         or str(a.channel.id) == cfg["member_log"] \
         or str(a.channel.id) == cfg["voice_log"] \
+        or str(a.channel.id) == cfg["bot_log"] \
         or a.type != discord.MessageType.default:
             return
 
@@ -842,6 +853,35 @@ class InternalPlugin(AutoModPlugin):
                 await self.log_processor.execute(user.guild, key, **{
                     "_embed": embed
                 })
+
+
+    @AutoModPlugin.listener()
+    async def on_command_completion(self, ctx: commands.Context):
+        if ctx.guild == None: return
+        if ctx.command == None: return
+
+        roles, channels = self.get_ignored_roles_channels(ctx.guild)
+        if ctx.channel.id in channels: return
+        if any(x in [i.id for i in ctx.author.roles] for x in roles): return
+
+        _args = [f"``{x}``" for x in ctx.args[2:] if x != None]
+        if len(_args) < 1:
+            args = "None"
+        else:
+            args = ", ".join(_args)
+
+        embed = await self.server_log_embed(
+            "used_command",
+            ctx.guild,
+            ctx.author,
+            False,
+            command=ctx.command.qualified_name,
+            channel=ctx.channel.id,
+            arguments=args
+        )
+        await self.log_processor.execute(ctx.guild, "used_command", **{
+            "_embed": embed
+        })
 
 
     @AutoModPlugin.listener()
