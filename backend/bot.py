@@ -217,7 +217,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         return super().get_cog(name)
 
 
-    def handle_timeout(self, mute: bool, guild: discord.Guild, user: Union[discord.Member, discord.User], iso8601_ts) -> str:
+    def handle_timeout(self, mute: bool, guild: discord.Guild, user: Union[discord.Member, discord.User], iso8601_ts) -> Union[str, Exception]:
         exc = ""
         try:
             resp = requests.patch(
@@ -251,30 +251,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     async def register_user_info_ctx_menu(self):
         @self.tree.context_menu(name="Userinfo")
+        @discord.app_commands.default_permissions(manage_messages=True)
         async def _(i: discord.Interaction, user: discord.Member):
             p = self.get_plugin("UtilityPlugin")
-            if i.user.guild_permissions.manage_messages == False:
-                rid = self.db.configs.get(i.guild.id, "mod_role")
-                if rid != "":
-                    if not int(rid) in [x.id for x in i.user.roles]:
-                        role = i.guild.get_role(int(rid)) or "mod role"
-                        return await i.response.send_message(
-                            embed=discord.Embed(
-                                color=int(self.config.embed_color, 16), 
-                                description=self.locale.t(i.guild, "missing_user_perms", perms=f"``manage messages`` or the ``{role}`` role")
-                            )
-                        )
-                    else:
-                        await p.whois(i, user)
-                else:
-                    return await i.response.send_message(
-                        embed=discord.Embed(
-                            color=int(self.config.embed_color, 16), 
-                            description=self.locale.t(i.guild, "missing_user_perms", perms=f"``manage messages``")
-                        )
-                    )
-            else:
-                await p.whois(i, user)
+            await p.whois(i, user)
 
 
     async def join_thread(self, thread: discord.Thread) -> None:

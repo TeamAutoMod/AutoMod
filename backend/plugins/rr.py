@@ -121,7 +121,7 @@ class ReactionRolesPlugin(AutoModPlugin):
                             "\n" if channel != None else ""
                         ) +
                         "\n".join(
-                            [f"> **•** {await ctx.guild.fetch_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
+                            [f"> **•** {self.bot.get_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
                         )
                     )
 

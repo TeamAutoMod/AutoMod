@@ -76,7 +76,7 @@ class ErrorPlugin(AutoModPlugin):
 
         elif isinstance(error, commands.MissingRequiredArgument):
             param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs) - 1, len(ctx.command.params)) - 1]
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '').replace('=None', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(

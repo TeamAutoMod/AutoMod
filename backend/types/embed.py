@@ -25,6 +25,11 @@ class Embed(discord.Embed):
     def set_thumbnail(self, url: str) -> None:
         self._add_color()
         super().set_thumbnail(url=url)
+
+    
+    def set_footer(self, *args, **kwargs):
+        self._add_color()
+        super().set_footer(*args, **kwargs)
     
 
     def add_field(self, name: str, value: str, inline: bool = False) -> None:

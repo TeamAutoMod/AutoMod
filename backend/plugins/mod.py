@@ -130,7 +130,7 @@ class ModerationPlugin(WarnPlugin):
             d = await ctx.channel.purge(
                 limit=amount,
                 check=check,
-                before=before,
+                before=before if before != None else ctx.message,
                 after=after
             )
         except discord.Forbidden:
@@ -138,12 +138,15 @@ class ModerationPlugin(WarnPlugin):
         except discord.NotFound:
             await asyncio.sleep(1); return self.locale.t(ctx.guild, "alr_cleaned", _emote="NO"), {}
         else:
-            try:
-                await ctx.message.delete()
-            except discord.NotFound:
-                pass
-            finally:
-               return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {"delete_after": 5}
+            if len(d) < 1:
+                return self.locale.t(ctx.guild, "no_messages_found", _emote="NO"), {}
+            else:
+                try:
+                    await ctx.message.delete()
+                except discord.NotFound:
+                    pass
+                finally:
+                    return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {"delete_after": 5}
 
 
     async def kick_or_ban(self, action: str, ctx: commands.Context, user: Union[discord.Member, discord.User], reason: str, **extra_kwargs) -> None:
@@ -613,6 +616,22 @@ class ModerationPlugin(WarnPlugin):
             ctx,
             amount,
             lambda m: m.author.id == user.id
+        )
+        await ctx.send(msg, **kwargs)
+
+
+    @clean.command()
+    @WarnPlugin.can("manage_messages")
+    async def content(self, ctx: commands.Context, *, text: str) -> None:
+        """
+        clean_content_help
+        examples:
+        -clean content bad words
+        """
+        msg, kwargs = await self.clean_messages(
+            ctx,
+            300,
+            lambda m: text.lower() in m.content.lower()
         )
         await ctx.send(msg, **kwargs)
 

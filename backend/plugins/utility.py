@@ -323,7 +323,7 @@ class UtilityPlugin(AutoModPlugin):
                     cmds = p.get_commands()
                     e.add_field(
                         name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
-                        value=", ".join([f"``{x}``" for x in cmds])
+                        value=" | ".join([f"``{x}``" for x in cmds])
                     )
             e.credits()
 

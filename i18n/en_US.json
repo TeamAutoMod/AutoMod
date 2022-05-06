@@ -19,6 +19,7 @@
     "clean_help": "Base command for deleting messages. Subcommands perform the actual cleaning",
     "clean_all_help": "Deletes between 1 and 300 messages from a channel",
     "clean_user_help": "Deletes between 1 and 300 messages from a specific user",
+    "clean_content_help": "Deletes up to 300 messages with the given content",
     "unban_help": "Unbans the specified user from the server",
     "slowmode_help": "Sets a slowmode in the current channel up to 14 days. Use 0 as the time argument to remove the slowmode or use no time argument to show a list of all bot-set slowmodes",
 
@@ -123,6 +124,7 @@
     "tempbanned": "{emote} User has been tempbanned",
     "unmuted": "{emote} User has been unmuted",
     "cleaned": "{emote} Deleted **{amount}** message{plural}",
+    "no_messages_found": "{emote} No messages found",
     "unbanned": "{emote} User has been unbanned",
     "mute_extended": "{emote} Mute has been extended until {until}",
     "tempban_extended": "{emote} Tempban has been extended until {until}",
@@ -140,8 +142,8 @@
     "max_warns": "{emote} Too many warns (>100)",
     "min_warns_esp": "{emote} Too few warns (<0)",
 
-    "min_mentions": "{emote} Too little mention amount (<8)",
-    "max_mentions": "{emote} Too big mention amount (>100)",
+    "min_am_amount": "{emote} Too little {field} amount (<5)",
+    "max_am_amount": "{emote} Too big {field} amount (>100)",
 
     "role_too_high": "{emote} Mute role is above my highest role. Please put it below my highest role, so I can add it to users",
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
@@ -174,12 +176,14 @@
 
     "no_timeout_perms": "{emote} The (un-)mute command now uses the timeout feature. It looks like I don't have the correct permissions to use this feature though, so please make sure to give me either the ``administrator`` permission or, if you're not comfortable with that, simply the ``Timeout Members`` permission",
 
-    "automod_description": "• Use ``off`` as the argument in all commands to disable the feature \n• To manage allowed invites, use the ``{prefix}allowed_invites`` command \n• To manage blacklisted links, use the ``{prefix}link_blacklist`` command \n• To manage whitelisted links, use the ``{prefix}link_whitelist`` command \n• Actions are only taken on non-mods (People without ban members perms)",
-    "automod_commands": "``{prefix}automod invites <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod links <warns>`` - *Warns a user gets when sending blacklisted links* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod zalgo <warns>`` - *Warns a user gets when sending zalgo characters*",
-    "invalid_automod_rule": "{emote} Invalid automod rule. Valid rules are: \n• mentions \n• links \n• invites \n• files  \n• zalgo",
+    "automod_description": "• Use ``off`` as the argument in all commands to disable the feature \n• Use ``0`` as the warn argument to just delete the message \n• To manage allowed invites, use the ``{prefix}allowed_invites`` command \n• To manage blacklisted links, use the ``{prefix}link_blacklist`` command \n• To manage whitelisted links, use the ``{prefix}link_whitelist`` command \n• Actions are only taken on non-mods",
+    "automod_commands": "``{prefix}automod invites <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod links <warns>`` - *Warns a user gets when sending blacklisted links* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod lines <number>`` - *Max number of line splits allowed per message* \n\n``{prefix}automod emotes <number>`` - *Max number of emotes allowed per message* \n\n``{prefix}automod zalgo <warns>`` - *Warns a user gets when sending zalgo characters*",
+    "invalid_automod_rule": "{emote} ``{given}`` isn't a valid automod rule",
     "automod_off": "{emote} Disabled the {_type} automod rule",
     "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field_name} amount or **off** as the second argument",
     "set_mentions": "{emote} Users will now be warned when using more than {amount} mention{plural}",
+    "set_lines": "{emote} Users will now be warned when using more than {amount} line split{plural}",
+    "set_emotes": "{emote} Users will now be warned when using more than {amount} emote{plural}",
     "set_links": "{emote} Users will now receive {amount} warn{plural} when using forbidden links (configure with the ``link_blacklist`` & ``link_whitelist`` command)",
     "set_invites": "{emote} Users will now receive {amount} warn{plural} when sending invite links (configure with the ``allowed_invites`` command)",
     "set_files": "{emote} Users will now receive {amount} warn{plural} when sending forbidden file formats",

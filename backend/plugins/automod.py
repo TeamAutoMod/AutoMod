@@ -26,6 +26,9 @@ LINK_RE = re.compile(
 MENTION_RE = re.compile(
     r"<@[!&]?\\d+>"
 )
+EMOTE_RE = re.compile(
+    r"<(a?):([^: \n]+):([0-9]{15,20})>"
+)
 ALLOWED_FILE_FORMATS = [
     # plain text/markdown
     "txt",
@@ -163,7 +166,9 @@ ZALGO = [
     u'\u035a',
     u'\u0323',
 ]
-ZALGO_RE = re.compile(u'|'.join(ZALGO))
+ZALGO_RE = re.compile(
+    u"|".join(ZALGO)
+)
 
 
 LOG_DATA = {
@@ -181,6 +186,15 @@ LOG_DATA = {
     },
     "zalgo": {
         "rule": "Anti-Zalgo"
+    },
+    "lines": {
+        "rule": "Newline-Spam"
+    },
+    "mentions": {
+        "rule": "Mention-Spam"
+    },
+    "emotes": {
+        "rule": "Emote-Spam"
     },
     "regex": {
         "rule": "Regex-Filter"
@@ -222,6 +236,20 @@ AUTOMOD_RULES = {
         "i18n_type": "bad file detection",
         "field_name": "warn",
         "field_help": "warns"
+    },
+    "lines": {
+        "int_field_name": "threshold",
+        "i18n_key": "set_lines",
+        "i18n_type": "maximum lines",
+        "field_name": "line",
+        "field_help": "lines"
+    },
+    "emotes": {
+        "int_field_name": "threshold",
+        "i18n_key": "set_emotes",
+        "i18n_type": "maximum emotes",
+        "field_name": "emote",
+        "field_help": "emotes"
     },
     "zalgo": {
         "int_field_name": "warns",
@@ -543,8 +571,30 @@ class AutomodPlugin(AutoModPlugin):
                     "mentions", 
                     found, 
                     msg, 
-                    abs(rules.mentions.threshold - found), 
+                    1 if abs(rules.mentions.threshold - found) < 0 else 0, 
                     f"Spamming mentions ({found})"
+                )
+
+        if hasattr(rules, "lines"):
+            found = len(content.split("\n"))
+            if found >= rules.lines.threshold:
+                return await self.delete_msg(
+                    "lines", 
+                    found, 
+                    msg, 
+                    1 if abs(rules.lines.threshold - found) < 0 else 0, 
+                    f"Message has too many line splits ({found})"
+                )
+
+        if hasattr(rules, "emotes"):
+            found = len(EMOTE_RE.findall(content))
+            if found >= rules.emotes.threshold:
+                return await self.delete_msg(
+                    "emotes", 
+                    found, 
+                    msg, 
+                    1 if abs(rules.emotes.threshold - found) < 0 else 0, 
+                    f"Spamming emotes ({found})"
                 )
     
 
@@ -591,7 +641,14 @@ class AutomodPlugin(AutoModPlugin):
         
         rule = rule.lower()
         if not rule in AUTOMOD_RULES:
-            return await ctx.send(self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO"))
+            e = Embed(
+                description=self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO", given=rule)
+            )
+            e.add_field(
+                name="❯ Valid rules",
+                value="• mentions \n• links \n• invites \n• files  \n• zalgo \n• lines \n• emotes"
+            )
+            return await ctx.send(embed=e)
         
         current = self.db.configs.get(ctx.guild.id, "automod")
         data = Object(AUTOMOD_RULES[rule])
@@ -607,7 +664,7 @@ class AutomodPlugin(AutoModPlugin):
                 e.add_fields([
                     {
                         "name": "❯ Enable this rule",
-                        "value": f"``{prefix}automod {rule} <{data.field_help}>``"
+                        "value": f"``{prefix}automod {rule} <{'max_amount' if data.field_name in ['mentions', 'lines', 'emotes'] else 'warns'}>``"
                     },
                     {
                         "name": "❯ Disable this rule",
@@ -616,9 +673,9 @@ class AutomodPlugin(AutoModPlugin):
                 ])
                 return await ctx.send(embed=e)
         else:
-            if rule == "mentions":
-                if amount < 8: return await ctx.send(self.locale.t(ctx.guild, "min_mentions", _emote="NO"))
-                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_mentions", _emote="NO"))
+            if rule == "mentions" or rule == "lines" or rule == "emotes":
+                if amount < 5: return await ctx.send(self.locale.t(ctx.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")))
+                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")))
             else:
                 if amount < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
                 if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
@@ -631,7 +688,7 @@ class AutomodPlugin(AutoModPlugin):
             self.db.configs.update(ctx.guild.id, "automod", current)
 
             text = ""
-            if rule != "mentions" and amount == 0:
+            if rule != "mentions" and rule != "lines" and rule != "emotes" and amount == 0:
                 text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
             else:
                 text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
