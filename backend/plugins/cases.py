@@ -152,7 +152,7 @@ class CasesPlugin(AutoModPlugin):
             key=lambda e: int(e["id"].split("-")[-1]),
             reverse=True
         )
-        if len(found) < 1: return await msg.edit(self.locale.t(ctx.guild, "no_cases", _emote="NO"))
+        if len(found) < 1: return await msg.edit(content=self.locale.t(ctx.guild, "no_cases", _emote="NO"))
 
         out = []
 
