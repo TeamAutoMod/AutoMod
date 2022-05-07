@@ -15,6 +15,7 @@ class Embed(discord.Embed):
         else:
             self.imu = True
         super().__init__(color=color, **kwargs)
+        self._add_color()
 
 
     def _add_color(self) -> None:

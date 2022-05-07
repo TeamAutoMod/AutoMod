@@ -79,7 +79,6 @@ class TagsPlugin(AutoModPlugin):
 
 
     @commands.group(name="commands", aliases=["tags"])
-    @AutoModPlugin.can("manage_messages")
     async def custom_commands(self, ctx: commands.Context) -> None:
         """
         commands_help

@@ -871,12 +871,21 @@ class InternalPlugin(AutoModPlugin):
         if ctx.channel.id in channels: return
         if any(x in [i.id for i in ctx.author.roles] for x in roles): return
 
-        _args = [f"``{x if not isinstance(x, discord.Message) else x.id}``" for x in ctx.args[2:] if x != None]
+        _args = [
+            f"``{x if not isinstance(x, discord.Message) else x.id}``" for x in [
+                *[
+                    _ for _ in ctx.args[2:] if _ != None
+                ],
+                *[
+                    v for _, v in ctx.kwargs.items() if v != None
+                ]
+            ]
+        ]
         if len(_args) < 1:
             args = "None"
         else:
             args = ", ".join(_args)
-
+            
         embed = await self.server_log_embed(
             "used_command",
             ctx.guild,
