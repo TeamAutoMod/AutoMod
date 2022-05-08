@@ -49,7 +49,7 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
     if name[-1] == " ": name = name[:-1]
 
     e = Embed(
-        title=f"``{name.replace('...', '')}``"
+        title=f"``{name.replace('...', '').replace('=None', '')}``"
     )
     e.add_field(
         name="❯ Description", 

@@ -446,33 +446,35 @@ class AutomodPlugin(AutoModPlugin):
         if len(filters) > 0:
             for name in filters:
                 f = filters[name]
-                parsed = self.parse_filter(f["words"])
-                if parsed != None:
-                    found = parsed.findall(content)
-                    if found:
-                        return await self.delete_msg(
-                            "filter",
-                            ", ".join(found),
-                            msg, 
-                            int(f["warns"]), 
-                            f"Triggered filter '{name}' with '{', '.join(found)}'",
-                            name
-                        )
+                if msg.channel.id in f["channels"] or len(f["channels"]) < 1:
+                    parsed = self.parse_filter(f["words"])
+                    if parsed != None:
+                        found = parsed.findall(content)
+                        if found:
+                            return await self.delete_msg(
+                                "filter",
+                                ", ".join(found),
+                                msg, 
+                                int(f["warns"]), 
+                                f"Triggered filter '{name}' with '{', '.join(found)}'",
+                                name
+                            )
         
         if len(regexes) > 0:
             for name, data in regexes.items():
-                parsed = self.parse_regex(data["regex"])
-                if parsed != None:
-                    found = parsed.findall(content)
-                    if found:
-                        return await self.delete_msg(
-                            "regex",
-                            ", ".join(found),
-                            msg, 
-                            int(data["warns"]), 
-                            f"Triggered regex '{name}' with '{', '.join(found)}'",
-                            name
-                        )
+                if msg.channel.id in f["channels"] or len(f["channels"]) < 1:
+                    parsed = self.parse_regex(data["regex"])
+                    if parsed != None:
+                        found = parsed.findall(content)
+                        if found:
+                            return await self.delete_msg(
+                                "regex",
+                                ", ".join(found),
+                                msg, 
+                                int(data["warns"]), 
+                                f"Triggered regex '{name}' with '{', '.join(found)}'",
+                                name
+                            )
         
         if len(rules) < 1: return
 
@@ -556,12 +558,13 @@ class AutomodPlugin(AutoModPlugin):
         if hasattr(rules, "zalgo"):
             found = ZALGO_RE.search(content)
             if found:
+                print(f"{found}")
                 return await self.delete_msg(
                     "zalgo", 
                     found, 
                     msg, 
                     rules.zalgo.warns, 
-                    "Zalgo found"
+                    f"Zalgo found"
                 )
 
         if hasattr(rules, "mentions"):
@@ -890,6 +893,7 @@ class AutomodPlugin(AutoModPlugin):
         filter_help
         examples:
         -filter add test_filter 1 banana, apples, grape fruit
+        -filter add test_filter 0 #test-channel #other-channel banana, apples, grape fruit
         -filter remove test_filter
         -filter show
         """
@@ -897,30 +901,31 @@ class AutomodPlugin(AutoModPlugin):
             prefix = self.get_prefix(ctx.guild)
             e = Embed(
                 title="How to use filters",
-                description=f"• Adding a filter: ``{prefix}filter add <name> <warns> <words>`` \n• Deleting a filter: ``{prefix}filter remove <name>``"
+                description=f"• Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n• Deleting a filter: ``{prefix}filter remove <name>``"
             )
             e.add_field(
                 name="❯ Arguments",
-                value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when flagged. Use 0 if you want the message to be deleted* \n``<words>`` - *Words contained in the filter, seperated by commas*"
+                value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when flagged. Use 0 if you want the message to be deleted* \n``[channels]`` - *Channels in which this filter should be enforced. Don't pass any to have it enabled in all channels* \n``<words>`` - *Words contained in the filter, seperated by commas*"
             )
             e.add_field(
                 name="❯ Wildcards",
                 value="You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered."
             )
             e.add_field(
-                name="❯ Example",
-                value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*``"
+                name="❯ Examples",
+                value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*`` \n\n``{prefix}filter add test2 0 #test #other oneword, two words, wildcar*``"
             )
             await ctx.send(embed=e)
 
 
     @_filter.command(name="add")
     @AutoModPlugin.can("manage_guild")
-    async def add_filter(self, ctx: commands.Context, name: str, warns: int, *, words: str) -> None:
+    async def add_filter(self, ctx: commands.Context, name: str, warns: int, channels: commands.Greedy[discord.TextChannel] = None, *, words: str) -> None:
         """
         filter_add_help
         examples:
         -filter add test_filter 1 banana, apples, grape fruit
+        -filter add test_filter 0 #test-channel #other-channel banana, apples, grape fruit
         """
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
@@ -933,7 +938,8 @@ class AutomodPlugin(AutoModPlugin):
 
         filters[name] = {
             "warns": warns,
-            "words": words.split(", ")
+            "words": words.split(", "),
+            "channels": [] if channels == None else [x.id for x in channels if x != None]
         }
         self.db.configs.update(ctx.guild.id, "filters", filters)
 
@@ -960,7 +966,7 @@ class AutomodPlugin(AutoModPlugin):
         await ctx.send(self.locale.t(ctx.guild, "removed_filter", _emote="YES"))
 
 
-    @_filter.command()
+    @_filter.command(aliases=["l", "list"])
     @AutoModPlugin.can("ban_members")
     async def show(self, ctx: commands.Context) -> None:
         """
@@ -974,12 +980,17 @@ class AutomodPlugin(AutoModPlugin):
         e = Embed(
             title="Filters"
         )
-        for name in dict(itertools.islice(filters.items(), 10)):
+        for indx, name in enumerate(dict(itertools.islice(filters.items(), 10))):
             i = filters[name]
+            action = str(i["warns"]) + " warns" if i["warns"] == 1 else str(i["warns"]) + " warns" if i["warns"] > 0 else "delete message"
+            channels = "all channels" if len(i["channels"]) < 1 else ", ".join([f'#{ctx.guild.get_channel(int(x))}' for x in i["channels"]])
+
             e.add_field(
-                name=f"❯ {name} ({str(i['warns']) + ' warn' if i['warns'] == 1 else str(i['warns']) + ' warns' if i['warns'] > 0 else 'delete message'})",
-                value=", ".join([f"``{x}``" for x in i["words"]])
+                name=f"❯ {name}",
+                value=f"> **• Action:** {action} \n> **• Channels:** {channels} \n> **• Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
+                inline=True
             )
+            if indx % 2 == 0: e.add_fields([e.blank_field(True, 8)])
 
             footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
             if footer != None: e.set_footer(text=footer)
@@ -990,11 +1001,12 @@ class AutomodPlugin(AutoModPlugin):
     @commands.group(aliases=["rgx"])
     @AutoModPlugin.can("manage_messages")
     async def regex(self, ctx: commands.Context) -> None:
-        """
+        r"""
         regex_help
         examples:
         -regex
         -regex add test_regex \b(banana)\b 1
+        -regex add test_regex \b(banana)\b 0 #test-channel #other-channel
         -regex remove test_regex
         """
         if ctx.invoked_subcommand == None:
@@ -1004,22 +1016,32 @@ class AutomodPlugin(AutoModPlugin):
             e = Embed(
                 title="Regexes"
             )
-            for name, data in regexes.items():
+            for indx, name in enumerate(dict(itertools.islice(regexes.items(), 10))):
+                data = regexes[name]
+                action = str(data["warns"]) + " warn" if data["warns"] == 1 else str(data["warns"]) + " warns" if data["warns"] > 0 else "delete message"
+                channels = "all channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
+
                 e.add_field(
-                    name=f"❯ {name} ({str(data['warns']) + ' warn' if data['warns'] == 1 else str(data['warns']) + ' warns' if data['warns'] > 0 else 'delete message'})",
-                    value=f"```\n{data['regex']}\n```"
+                    name=f"❯ {name}",
+                    value=f"> **• Action:** {action} \n> **• Channels:** {channels} \n> **• Pattern:** \n```\n{data['regex']}\n```",
+                    inline=True
                 )
+                if indx % 2 == 0: e.add_fields([e.blank_field(True, 8)])
+
+                footer = f"And {len(regexes)-len(dict(itertools.islice(regexes.items(), 10)))} more filters" if len(regexes) > 10 else None
+            if footer != None: e.set_footer(text=footer)
             
             await ctx.send(embed=e)
 
 
     @regex.command(name="add")
     @AutoModPlugin.can("manage_messages")
-    async def add_regex(self, ctx: commands.Context, name: str, regex: str, warns: int) -> None:
-        """
+    async def add_regex(self, ctx: commands.Context, name: str, regex: str, warns: int, channels: commands.Greedy[discord.TextChannel] = None) -> None:
+        r"""
         regex_add_help
         examples:
         -regex add test_regex \b(banana)\b 1
+        -regex add test_regex \b(banana)\b 0 #test-channel #other-channel
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
@@ -1034,7 +1056,8 @@ class AutomodPlugin(AutoModPlugin):
 
         regexes[name] = {
             "warns": warns,
-            "regex": regex
+            "regex": regex,
+            "channels": [] if channels == None else [x.id for x in channels if x != None]
         }
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 

@@ -51,11 +51,11 @@ class Embed(discord.Embed):
                 )
 
 
-    def blank_field(self, inline: bool = False) -> dict:
+    def blank_field(self, inline: bool = False, length: int = 2) -> dict:
         self._add_color()
         return {
-            "name": "⠀⠀", # This is a U+2800 char
-            "value": "⠀⠀", # This is a U+2800 char
+            "name": "⠀" * length, # This is a U+2800 char
+            "value": "⠀" * length, # This is a U+2800 char
             "inline": inline
         }
 
