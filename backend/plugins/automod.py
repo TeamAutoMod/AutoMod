@@ -558,7 +558,6 @@ class AutomodPlugin(AutoModPlugin):
         if hasattr(rules, "zalgo"):
             found = ZALGO_RE.search(content)
             if found:
-                print(f"{found}")
                 return await self.delete_msg(
                     "zalgo", 
                     found, 
