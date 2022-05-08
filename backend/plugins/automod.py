@@ -568,34 +568,34 @@ class AutomodPlugin(AutoModPlugin):
 
         if hasattr(rules, "mentions"):
             found = len(MENTION_RE.findall(content))
-            if found >= rules.mentions.threshold:
+            if found > rules.mentions.threshold:
                 return await self.delete_msg(
                     "mentions", 
                     found, 
                     msg, 
-                    1 if abs(rules.mentions.threshold - found) < 0 else 0, 
+                    0 if (found - rules.mentions.threshold) == 1 else 1, 
                     f"Spamming mentions ({found})"
                 )
 
         if hasattr(rules, "lines"):
             found = len(content.split("\n"))
-            if found >= rules.lines.threshold:
+            if found > rules.lines.threshold:
                 return await self.delete_msg(
                     "lines", 
                     found, 
                     msg, 
-                    1 if abs(rules.lines.threshold - found) < 0 else 0, 
+                    0 if (found - rules.lines.threshold) == 1 else 1, 
                     f"Message has too many line splits ({found})"
                 )
 
         if hasattr(rules, "emotes"):
             found = len(EMOTE_RE.findall(content))
-            if found >= rules.emotes.threshold:
+            if found > rules.emotes.threshold:
                 return await self.delete_msg(
                     "emotes", 
                     found, 
                     msg, 
-                    1 if abs(rules.emotes.threshold - found) < 0 else 0, 
+                    0 if (found - rules.emotes.threshold) == 1 else 1, 
                     f"Spamming emotes ({found})"
                 )
     

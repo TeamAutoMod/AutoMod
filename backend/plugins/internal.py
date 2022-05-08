@@ -300,6 +300,13 @@ class InternalPlugin(AutoModPlugin):
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_log"), self.db.configs.get(guild.id, "ignored_channels_log")
         return roles, channels
 
+    
+    def get_message(self, guild: discord.Guild, payload: Union[discord.RawMessageDeleteEvent, discord.RawMessageUpdateEvent]) -> Union[None, discord.Message]:
+        if payload.cached_message != None: 
+            return payload.cached_message
+        else:
+            return self.bot.message_cache.get(guild, payload.message_id)
+
 
     @AutoModPlugin.listener()
     async def on_guild_join(self, guild: discord.Guild) -> None:
@@ -322,10 +329,24 @@ class InternalPlugin(AutoModPlugin):
             self.db.cases.multi_delete({"guild": f"{guild.id}"})
             self.db.configs.delete(guild.id)
 
+    
+    @AutoModPlugin.listener()
+    async def on_message(self, msg: discord.Message) -> None:
+        if msg.guild == None: return
+        if msg.type != discord.MessageType.default: return
+        self.bot.message_cache.insert(msg.guild, msg)
+
 
     @AutoModPlugin.listener()
-    async def on_message_delete(self, msg: discord.Message) -> None:
-        if msg.guild == None: return
+    async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent) -> None:
+        if payload.guild_id == None: return
+        self.bot.message_cache.delete(payload.guild_id, payload.message_id)
+
+        guild = self.bot.get_guild(payload.guild_id)
+        if guild == None: return
+
+        msg = self.get_message(guild, payload)
+        if msg == None: return
 
         await asyncio.sleep(0.3) # wait a bit before checking ignore_for_events
         if msg.id in self.bot.ignore_for_events:
@@ -353,8 +374,7 @@ class InternalPlugin(AutoModPlugin):
         content = " ".join([x.url for x in msg.attachments]) + msg.content
         if content == "": return
         e = Embed(
-            color=0xff5c5c, 
-            timestamp=datetime.datetime.utcnow(),
+            color=0xff5c5c,
             description=content[:2000] # idk the limits tbh
         )
         e.set_author(
@@ -371,49 +391,57 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message_edit(self, b: discord.Message, a: discord.Message) -> None:
-        if a.guild == None: return
+    async def on_raw_message_edit(self, payload: discord.RawMessageUpdateEvent) -> None:
+        if payload.guild_id == None: return
 
-        cfg = self.db.configs.get_doc(a.guild.id)
+        guild = self.bot.get_guild(payload.guild_id)
+        if guild == None: return
+
+        msg = self.get_message(guild, payload)
+        if msg == None: return
+
+        content = payload.data.get("content", None)
+        if content == None: return
+
+        cfg = self.db.configs.get_doc(msg.guild.id)
         if cfg["message_log"] == "" \
-        or not isinstance(a.channel, discord.TextChannel) \
-        or a.author.id == self.bot.user.id \
-        or str(a.channel.id) == cfg["server_log"] \
-        or str(a.channel.id) == cfg["mod_log"] \
-        or str(a.channel.id) == cfg["message_log"] \
-        or str(a.channel.id) == cfg["join_log"] \
-        or str(a.channel.id) == cfg["member_log"] \
-        or str(a.channel.id) == cfg["voice_log"] \
-        or str(a.channel.id) == cfg["bot_log"] \
-        or a.type != discord.MessageType.default:
+        or not isinstance(msg.channel, discord.TextChannel) \
+        or msg.author.id == self.bot.user.id \
+        or str(msg.channel.id) == cfg["server_log"] \
+        or str(msg.channel.id) == cfg["mod_log"] \
+        or str(msg.channel.id) == cfg["message_log"] \
+        or str(msg.channel.id) == cfg["join_log"] \
+        or str(msg.channel.id) == cfg["member_log"] \
+        or str(msg.channel.id) == cfg["voice_log"] \
+        or str(msg.channel.id) == cfg["bot_log"] \
+        or msg.type != discord.MessageType.default:
             return
 
-        roles, channels = self.get_ignored_roles_channels(a.guild)
-        if a.channel.id in channels: return
-        if any(x in [i.id for i in a.author.roles] for x in roles): return
+        roles, channels = self.get_ignored_roles_channels(msg.guild)
+        if msg.channel.id in channels: return
+        if any(x in [i.id for i in msg.author.roles] for x in roles): return
         
-        if b.content != a.content and len(a.content) > 0:
+        if msg.content != content and len(content) > 0:
             e = Embed(
-                color=0xffdc5c, 
-                timestamp=a.created_at
+                color=0xffdc5c
             )
             e.set_author(
-                name="{0.name}#{0.discriminator} ({0.id})".format(a.author),
-                icon_url=a.author.display_avatar
+                name="{0.name}#{0.discriminator} ({0.id})".format(msg.author),
+                icon_url=msg.author.display_avatar
             )
             e.add_field(
                 name="Before",
-                value=b.content
+                value=msg.content
             )
             e.add_field(
                 name="After",
-                value=a.content
+                value=content
             )
             e.set_footer(
-                text="#{}".format(a.channel.name)
+                text="#{}".format(msg.channel.name)
             )
 
-            await self.log_processor.execute(a.guild, "message_edited", **{
+            await self.log_processor.execute(msg.guild, "message_edited", **{
                 "_embed": e
             })
 

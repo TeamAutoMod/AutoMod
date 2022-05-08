@@ -12,7 +12,7 @@ import logging; log = logging.getLogger()
 from .cache import InternalCache
 from .mongo import MongoDB
 from .schemas import GuildConfig
-from .utils import Translator, Emotes, LogQueue
+from .utils import Translator, Emotes, LogQueue, MessageCache
 from .types import embed, Context
 from .views import pages
 from .observer import Observer 
@@ -109,6 +109,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.emotes = Emotes(self)
         self.locale = Translator(self)
         self._log_queue = LogQueue(self)
+        self.message_cache = MessageCache()
 
         self.run()
 
