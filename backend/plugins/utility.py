@@ -25,7 +25,7 @@ ACTUAL_PLUGIN_NAMES = {
     "AutomodPlugin": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
     "UtilityPlugin": "🔧 Utility",
-    "CasesPlugin": "🗃 Cases",
+    "CasesPlugin": "📦 Cases",
     "TagsPlugin": "📝 Custom Commands",
     "ReactionRolesPlugin": "🎭 Reaction Roles"
 }
