@@ -5,7 +5,6 @@ from discord.ext import commands
 
 import time
 import re
-from numpy import isin
 import requests
 import subprocess
 import datetime
@@ -23,10 +22,10 @@ from ..schemas import Slowmode
 
 ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "⚙️ Configuration",
-    "AutomodPlugin": "🛡️ Automoderator",
+    "AutomodPlugin": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
     "UtilityPlugin": "🔧 Utility",
-    "CasesPlugin": "🔒 Cases",
+    "CasesPlugin": "🗃 Cases",
     "TagsPlugin": "📝 Custom Commands",
     "ReactionRolesPlugin": "🎭 Reaction Roles"
 }
@@ -323,7 +322,7 @@ class UtilityPlugin(AutoModPlugin):
                     cmds = p.get_commands()
                     e.add_field(
                         name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
-                        value=", ".join([f"``{x}``" for x in cmds])
+                        value="> {}".format(", ".join([f"``{x}``" for x in cmds]))
                     )
             e.credits()
 

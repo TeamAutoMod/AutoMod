@@ -34,7 +34,7 @@ class ErrorPlugin(AutoModPlugin):
         if isinstance(error, commands.NotOwner):
             await ctx.send(f"{self.bot.emotes.get('NO')} You can't use this command")
         elif isinstance(error, commands.MissingPermissions):
-            perms = ", ".join([f"``{x}``" for x in error.missing_permissions])
+            perms = ", ".join([f"``{x.replace('_', ' ').title()}``" for x in error.missing_permissions])
             rid = self.bot.db.configs.get(ctx.guild.id, "mod_role")
             if rid != "":
                 role = ctx.guild.get_role(int(rid))

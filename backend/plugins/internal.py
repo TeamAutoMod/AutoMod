@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import AuditLogAction
 
 import asyncio
-import datetime
+import inspect
 import topgg
 from toolbox import S as Object
 from typing import Callable, List, Union, Tuple, TypeVar

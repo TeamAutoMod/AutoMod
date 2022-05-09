@@ -1184,7 +1184,7 @@ class AutomodPlugin(AutoModPlugin):
                 await ctx.send(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns))
 
 
-    @commands.group()
+    @commands.group(aliases=["automod_ignore"])
     @AutoModPlugin.can("manage_guild")
     async def ignore_automod(self, ctx: commands.Context) -> None:
         """

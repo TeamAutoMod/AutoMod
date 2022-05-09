@@ -169,20 +169,17 @@ class ConfigPlugin(AutoModPlugin):
         config = Object(self.db.configs.get_doc(ctx.guild.id))
         rules = config.automod
 
-        y = self.bot.emotes.get("YES")
-        n = self.bot.emotes.get("NO")
-
         rrs = {k: v for k, v in config.reaction_roles.items() if self.bot.get_channel(int(v['channel'])) != None}
         role = "role"
         emote = "emote"
         tags = self.bot.get_plugin("TagsPlugin")._tags
 
-        mute_perm = n
+        mute_perm = "no"
         if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
             if ctx.guild.me.guild_permissions.administrator == True: 
-                mute_perm = y
+                mute_perm = "yes"
         else:
-            mute_perm = y
+            mute_perm = "yes"
 
         dash_length = 34
         e = Embed(
@@ -190,7 +187,7 @@ class ConfigPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "❯ General",
+                "name": "⚙️ General",
                 "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Regexes:** {} \n> **• Total Cases:** {} \n> **• Custom Commands:** {} \n> **• Mod Role:** {}"\
                 .format(
                     config.prefix,
@@ -199,43 +196,43 @@ class ConfigPlugin(AutoModPlugin):
                     len(config.regexes),
                     config.cases,
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
-                    n if config.mod_role == "" else f"<@&{config.mod_role}>"
+                    "none" if config.mod_role == "" else f"<@&{config.mod_role}>"
                 ),
                 "inline": True
             },
             {
-                "name": "❯ Logging",
+                "name": "📁 Logging",
                 "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}\n> **• Join Log:** {} \n> **• Member Log:** {} \n> **• Voice Log:** {} \n> **• Bot Log:** {}"\
                 .format(
-                    n if config.mod_log == "" else f"<#{config.mod_log}>",
-                    n if config.message_log == "" else f"<#{config.message_log}>",
-                    n if config.server_log == "" else f"<#{config.server_log}>",
-                    n if config.join_log == "" else f"<#{config.join_log}>",
-                    n if config.member_log == "" else f"<#{config.member_log}>",
-                    n if config.voice_log == "" else f"<#{config.voice_log}>",
-                    n if config.bot_log == "" else f"<#{config.bot_log}>"
+                    "disabled" if config.mod_log == "" else f"<#{config.mod_log}>",
+                    "disabled" if config.message_log == "" else f"<#{config.message_log}>",
+                    "disabled" if config.server_log == "" else f"<#{config.server_log}>",
+                    "disabled" if config.join_log == "" else f"<#{config.join_log}>",
+                    "disabled" if config.member_log == "" else f"<#{config.member_log}>",
+                    "disabled" if config.voice_log == "" else f"<#{config.voice_log}>",
+                    "disabled" if config.bot_log == "" else f"<#{config.bot_log}>"
                 ),
                 "inline": True
             },
             e.blank_field(True),
             e.dash_field(dash_length),
             {
-                "name": "❯ Automod Rules",
+                "name": "⚔️ Automod Rules",
                 "value": "> **• Max Mentions:** {} \n> **• Max Newlines:** {} \n> **• Max Emotes:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {} \n> **• Spam:** {}"\
                 .format(
-                    n if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
-                    n if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
-                    n if not hasattr(rules, "emotes") else f"{rules.emotes.threshold}",
-                    n if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
-                    n if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
-                    n if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
-                    n if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
-                    n if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} warn{'' if config.antispam.warns == 1 else 's'})"
+                    "disabled" if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
+                    "disabled" if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
+                    "disabled" if not hasattr(rules, "emotes") else f"{rules.emotes.threshold}",
+                    "disabled" if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
+                    "disabled" if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
+                    "disabled" if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
+                    "disabled" if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
+                    "disabled" if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} warn{'' if config.antispam.warns == 1 else 's'})"
                 ),
                 "inline": True
             },
             {
-                "name": "❯ Actions",
+                "name": "🔨 Actions",
                 "value": "\n".join([
                     f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in dict(
@@ -244,37 +241,37 @@ class ConfigPlugin(AutoModPlugin):
                             key=lambda x: int(x[0])
                         )
                     ).items()
-                ]) if len(config.punishments.items()) > 0 else f"> {n}",
+                ]) if len(config.punishments.items()) > 0 else "> None",
                 "inline": True
             },
             e.blank_field(True),
             e.dash_field(dash_length),
             {
-                "name": "❯ Ignored Roles (automod)",
-                "value": f"> {n}" if len(config.ignored_roles_automod) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
+                "name": "🔒 Ignored Roles (automod)",
+                "value": "> None" if len(config.ignored_roles_automod) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             {
-                "name": "❯ Ignored Channels (automod)",
-                "value": f"> {n}" if len(config.ignored_channels_automod) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
+                "name": "🔒 Ignored Channels (automod)",
+                "value": "> None" if len(config.ignored_channels_automod) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             e.blank_field(True),
             {
-                "name": "❯ Ignored Roles (logging)",
-                "value": f"> {n}" if len(config.ignored_roles_log) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
+                "name": "🔒 Ignored Roles (logging)",
+                "value": "> None" if len(config.ignored_roles_log) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
-                "name": "❯ Ignored Channels (logging)",
-                "value": f"> {n}" if len(config.ignored_channels_log) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
+                "name": "🔒 Ignored Channels (logging)",
+                "value": "> None" if len(config.ignored_channels_log) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
             e.blank_field(True),
             e.dash_field(dash_length),
             {
-                "name": "❯ Reaction Roles",
-                "value": f"> {n}" if len(rrs) < 1 else "\n".join(
+                "name": "🎭 Reaction Roles",
+                "value": "> None" if len(rrs) < 1 else "\n".join(
                     [
                         f"> **• [Message](https://discord.com/channels/{ctx.guild.id}/{v['channel']}/{k})** {', '.join([f'``[``{self.parse_emote(ctx.guild, data[emote])} <@&{data[role]}>``]``' for data in v['pairs']])}" for k, v in rrs.items()
                     ]
@@ -545,7 +542,7 @@ class ConfigPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "mod_role_on", _emote="YES", role=role.name))
 
 
-    @commands.group()
+    @commands.group(aliases=["log_ignore"])
     @AutoModPlugin.can("manage_guild")
     async def ignore_log(self, ctx: commands.Context) -> None:
         """

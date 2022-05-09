@@ -45,3 +45,7 @@ class MessageCache(object):
             return None
         else:
             return self.__store[guild.id].get(msg_id, None)
+
+
+    def __len__(self) -> int:
+        return len(self.__store)
