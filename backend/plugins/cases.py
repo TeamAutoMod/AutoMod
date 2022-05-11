@@ -45,6 +45,7 @@ class CasesPlugin(AutoModPlugin):
 
     def case_embed(self, opt: str, user: Union[discord.Member, discord.User], last_24_hours: int, last_7_days: int, total: int) -> Embed:
         e = Embed(
+            None,
             description=""
         )
 
@@ -272,6 +273,7 @@ class CasesPlugin(AutoModPlugin):
         log_msg_url = self.get_log_for_case(ctx, raw)
 
         e = Embed(
+            ctx,
             title=f"{data.type.upper()} | #{case}"
         )
         if log_msg_url != None:
@@ -310,6 +312,7 @@ class CasesPlugin(AutoModPlugin):
         -check 543056846601191508
         """
         e = Embed(
+            ctx,
             title="Info for {0.name}#{0.discriminator}".format(
                 user
             )

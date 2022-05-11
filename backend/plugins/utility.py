@@ -48,6 +48,7 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
     if name[-1] == " ": name = name[:-1]
 
     e = Embed(
+        ctx,
         title=f"``{name.replace('...', '').replace('=None', '')}``"
     )
     e.add_field(
@@ -351,6 +352,7 @@ class UtilityPlugin(AutoModPlugin):
         if user == None: user = ctx.author
 
         e = Embed(
+            ctx,
             title="{0.name}#{0.discriminator}'s Avatar".format(user)
         )
         e.set_image(
@@ -567,7 +569,7 @@ class UtilityPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
             else:
                 e = Embed(
-                ctx,
+                    ctx,
                     title="Bot-set slowmodes"
                 )
                 for s in slowmodes:

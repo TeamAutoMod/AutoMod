@@ -64,7 +64,7 @@ class MongoCollection(Collection):
 
 class MongoDB(Database):
     def __init__(self, bot) -> None:
-        super().__init__(name=bot.config.db_name, host=bot.config.mongo_host)
+        super().__init__(name=bot.config.db_name, host=bot.config.mongo_url)
 
         self.configs = MongoCollection(bot, self, "configs")
         self.tags = MongoCollection(bot, self, "tags")

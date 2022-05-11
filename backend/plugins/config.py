@@ -401,7 +401,7 @@ class ConfigPlugin(AutoModPlugin):
             else:
                 prefix = self.get_prefix(ctx.guild)
                 e = Embed(
-                ctx,
+                    ctx,
                     description=self.locale.t(ctx.guild, "invalid_log_channel", _emote="NO", prefix=prefix, option=option)
                 )
                 e.add_fields([
@@ -459,7 +459,7 @@ class ConfigPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_disabled_commands", _emote="NO"))
             else:
                 e = Embed(
-                ctx,
+                    ctx,
                     title="Disabled commands (mod-only)",
                     description=", ".join([f"``{x}``" for x in _disabled])
                 )
@@ -488,6 +488,7 @@ class ConfigPlugin(AutoModPlugin):
         
         self.db.configs.update(ctx.guild.id, "disabled_commands", disabled)
         e = Embed(
+            ctx,
             title="Command config changes"
         )
         if len(disabled) > 0:
@@ -527,7 +528,7 @@ class ConfigPlugin(AutoModPlugin):
             else:
                 prefix = self.get_prefix(ctx.guild)
                 e = Embed(
-                ctx,
+                    ctx,
                     description=self.locale.t(ctx.guild, "invalid_mod_role", _emote="NO")
                 )
                 e.add_fields([
@@ -565,7 +566,7 @@ class ConfigPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"))
             else:
                 e = Embed(
-                ctx,
+                    ctx,
                     title="Ignored roles & channels for logging"
                 )
                 e.add_fields([
@@ -613,6 +614,7 @@ class ConfigPlugin(AutoModPlugin):
         })
 
         e = Embed(
+            ctx,
             title="Updated the following roles & channels"
         )
         e.add_fields([
@@ -690,6 +692,7 @@ class ConfigPlugin(AutoModPlugin):
         })
 
         e = Embed(
+            ctx,
             title="Updated the following roles & channels"
         )
         e.add_fields([

@@ -10,7 +10,7 @@
     "top_gg_token": "",
     "support_invite": "https://discord.gg/S9BEBux",
 
-    "mongo_host": "",
+    "mongo_url": "",
     "db_name": "main",
     "cache_options": [
         "configs",

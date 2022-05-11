@@ -377,6 +377,7 @@ class InternalPlugin(AutoModPlugin):
         content = " ".join([x.url for x in msg.attachments]) + msg.content
         if content == "": return
         e = Embed(
+            None,
             color=0xff5c5c,
             description=content[:2000] # idk the limits tbh
         )
@@ -454,6 +455,7 @@ class InternalPlugin(AutoModPlugin):
     @AutoModPlugin.listener()
     async def on_member_join(self, user: discord.Member) -> None:
         e = Embed(
+            None,
             color=0x5cff9d,
             description=self.locale.t(user.guild, "user_joined", profile=user.mention, created=round(user.created_at.timestamp()))
         )
@@ -476,6 +478,7 @@ class InternalPlugin(AutoModPlugin):
         if user.id == self.bot.user.id: return
         
         e = Embed(
+            None,
             color=0x2f3136,
             description=self.locale.t(user.guild, "user_left", profile=user.mention, joined=round(user.joined_at.timestamp()))
         )

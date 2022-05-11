@@ -848,7 +848,6 @@ class AutomodPlugin(AutoModPlugin):
             
             e = Embed(
                 ctx,
-                
                 title="Allowed links",
                 description=", ".join(links)
             )
@@ -988,6 +987,7 @@ class AutomodPlugin(AutoModPlugin):
         if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
 
         e = Embed(
+            ctx,
             title="Filters"
         )
         for indx, name in enumerate(dict(itertools.islice(filters.items(), 10))):
@@ -1214,7 +1214,7 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"))
             else:
                 e = Embed(
-                ctx,
+                    ctx,
                     title="Ignored roles & channels for the automoderator"
                 )
                 e.add_fields([
@@ -1262,6 +1262,7 @@ class AutomodPlugin(AutoModPlugin):
         })
 
         e = Embed(
+            ctx,
             title="Updated the following roles & channels"
         )
         e.add_fields([
@@ -1339,6 +1340,7 @@ class AutomodPlugin(AutoModPlugin):
         })
 
         e = Embed(
+            ctx,
             title="Updated the following roles & channels"
         )
         e.add_fields([
