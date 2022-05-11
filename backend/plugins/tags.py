@@ -94,6 +94,7 @@ class TagsPlugin(AutoModPlugin):
                 prefix = self.get_prefix(ctx.guild)
                 if len(tags) > 0:
                     e = Embed(
+                ctx,
                         title="Custom Commands",
                         description=", ".join([f"``{x}``" for x in tags])
                     )
@@ -184,6 +185,7 @@ class TagsPlugin(AutoModPlugin):
                 data = Object(self.db.tags.get_doc(f"{ctx.guild.id}-{name}"))
 
                 e = Embed(
+                ctx,
                     title="Command Info"
                 )
                 e.add_fields([

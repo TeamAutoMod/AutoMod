@@ -110,6 +110,7 @@ class ReactionRolesPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_rr", _emote="NO"))
             else:
                 e = Embed(
+                ctx,
                     title="Reaction roles"
                 )
                 for msg, data in rrs.items():

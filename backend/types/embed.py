@@ -1,4 +1,7 @@
 import discord
+from discord.ext import commands
+
+from typing import Union
 
 
 
@@ -9,11 +12,12 @@ def inject_bot_obj(bot) -> None:
 
 class Embed(discord.Embed):
     #0x5764f1
-    def __init__(self, color: int = None, **kwargs) -> None:
+    def __init__(self, _: Union[commands.Context, None], color: int = None, **kwargs) -> None:
         if color != None:
             self.imu = False
         else:
             self.imu = True
+
         super().__init__(color=color, **kwargs)
         self._add_color()
 

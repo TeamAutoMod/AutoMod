@@ -36,7 +36,10 @@ class DiscordUser(commands.Converter):
                     try:
                         user = await ctx.bot.fetch_user(
                             await IntegerConverter(min=20000000000000000, max=9223372036854775807).convert(ctx, argument))
-                    except (ValueError, discord.HTTPException):
+                    except (
+                        ValueError, 
+                        discord.HTTPException
+                    ):
                         pass
 
         if user is None or (self.id_only and str(user.id) != argument):

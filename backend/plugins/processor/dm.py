@@ -46,6 +46,7 @@ class DMProcessor(object):
     async def actual_execute(self, msg: discord.Message, _type: str, _user: Union[discord.Member, discord.User], **opt) -> None:
         try:
             e = Embed(
+                None,
                 color=self.colors[_type],
                 description=self.bot.locale.t(msg.guild, f"dm_{_type}", **opt)
             )

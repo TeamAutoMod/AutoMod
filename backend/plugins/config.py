@@ -183,6 +183,7 @@ class ConfigPlugin(AutoModPlugin):
 
         dash_length = 34
         e = Embed(
+            ctx,
             title=f"Server config for {ctx.guild.name}",
         )
         e.add_fields([
@@ -297,10 +298,11 @@ class ConfigPlugin(AutoModPlugin):
         action = action.lower()
         if not action in ["kick", "ban", "mute", "none"]: 
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "invalid_action_desc", _emote="NO", given=action)
             )
             e.add_field(
-                name="❯ Valid options",
+                name="❯ Valid actions",
                 value="• kick \n• ban \n• mute \n• none"
             )
             return await ctx.send(embed=e)
@@ -377,6 +379,7 @@ class ConfigPlugin(AutoModPlugin):
         option = option.lower()
         if not option in LOG_OPTIONS:
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "invalid_log_option_desc", _emote="NO", given=option)
             )
             e.add_field(
@@ -398,6 +401,7 @@ class ConfigPlugin(AutoModPlugin):
             else:
                 prefix = self.get_prefix(ctx.guild)
                 e = Embed(
+                ctx,
                     description=self.locale.t(ctx.guild, "invalid_log_channel", _emote="NO", prefix=prefix, option=option)
                 )
                 e.add_fields([
@@ -455,6 +459,7 @@ class ConfigPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_disabled_commands", _emote="NO"))
             else:
                 e = Embed(
+                ctx,
                     title="Disabled commands (mod-only)",
                     description=", ".join([f"``{x}``" for x in _disabled])
                 )
@@ -522,6 +527,7 @@ class ConfigPlugin(AutoModPlugin):
             else:
                 prefix = self.get_prefix(ctx.guild)
                 e = Embed(
+                ctx,
                     description=self.locale.t(ctx.guild, "invalid_mod_role", _emote="NO")
                 )
                 e.add_fields([
@@ -559,6 +565,7 @@ class ConfigPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"))
             else:
                 e = Embed(
+                ctx,
                     title="Ignored roles & channels for logging"
                 )
                 e.add_fields([

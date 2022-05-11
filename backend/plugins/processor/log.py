@@ -240,6 +240,7 @@ class LogProcessor(object):
         config = Object(LOG_TYPES[log_type])
         if log_kwargs.get("_embed") == None:
             log_embed = Embed(
+                None,
                 color=config.color
             )
             log_embed.description = "{} **{}{}:** {} ({}) \n\n{}".format(

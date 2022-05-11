@@ -264,6 +264,7 @@ class UtilityPlugin(AutoModPlugin):
         -about
         """
         e = Embed(
+            ctx,
             title="AutoMod",
             description=self.locale.t(ctx.guild, "about_description")
         )
@@ -314,6 +315,7 @@ class UtilityPlugin(AutoModPlugin):
             prefix = self.get_prefix(ctx.guild)
 
             e = Embed(
+                ctx,
                 title="Command List",
                 description=self.locale.t(ctx.guild, "help_desc", prefix=prefix)
             )
@@ -422,7 +424,7 @@ class UtilityPlugin(AutoModPlugin):
         else:
             member: discord.Member = ctx.guild.get_member(user.id) or None
 
-        e = Embed()
+        e = Embed(ctx)
         e.set_thumbnail(
             url=user.display_avatar
         )
@@ -498,7 +500,7 @@ class UtilityPlugin(AutoModPlugin):
         """
         g: discord.Guild = ctx.guild
 
-        e = Embed()
+        e = Embed(ctx)
         if ctx.guild.icon != None:
             e.set_thumbnail(
                 url=ctx.guild.icon.url
@@ -565,6 +567,7 @@ class UtilityPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
             else:
                 e = Embed(
+                ctx,
                     title="Bot-set slowmodes"
                 )
                 for s in slowmodes:

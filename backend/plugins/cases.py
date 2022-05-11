@@ -327,10 +327,10 @@ class CasesPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ Status",
-                "value": "> **• Banned:** {} \n> **• Reason:** {} \n> **• Muted:** {} \n> **• Muted until:** {}"\
+                "value": "> **• Banned:** {}{} \n> **• Muted:** {} \n> **• Muted until:** {}"\
                 .format(
                     Y if ban_data != None else N,
-                    ban_data.reason if ban_data != None else "N/A",
+                    f" (``{ban_data.reason}``)" if ban_data != None else "",
                     Y if mute_data != None else N,
                     f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
                 )

@@ -12,18 +12,15 @@
 
     "mongo_host": "",
     "db_name": "main",
-    
-    "cluster_names": [
-        "C1",
-        "C2",
-        "C3"
-    ],
     "cache_options": [
         "configs",
         "mutes",
         "warns",
-        "cases"
+        "cases",
+        "slowmodes",
+        "tbans"
     ],
+    
     "langs": [
         "en_US"
     ],
@@ -38,8 +35,5 @@
         "automod",
         "cases"
     ],
-    
-    "bot_admins": [],
-    "blocked_guilds": [],
     "error_channel": 123456789
 }

@@ -95,7 +95,7 @@ class AdminPlugin(AutoModPlugin):
         examples:
         -debug
         """
-        e = Embed()
+        e = Embed(ctx)
         d, h, m, s = self.bot.get_uptime(True)
         e.add_field(
             name="❯ AutoMod Statistics",

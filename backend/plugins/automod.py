@@ -356,7 +356,10 @@ class AutomodPlugin(AutoModPlugin):
     async def delete_msg(self, rule: str, found: str, msg: discord.Message, warns: int, reason: str, pattern_or_filter: Union[str, None] = None) -> None:
         try:
             await msg.delete()
-        except (discord.NotFound, discord.Forbidden):
+        except (
+            discord.NotFound, 
+            discord.Forbidden
+        ):
             pass
         else:
             self.bot.ignore_for_events.append(msg.id)
@@ -632,6 +635,7 @@ class AutomodPlugin(AutoModPlugin):
         prefix = self.get_prefix(ctx.guild)
         if rule == None or amount == None:
             e = Embed(
+                ctx,
                 title="Automoderator Configuration",
                 description=self.locale.t(ctx.guild, "automod_description", prefix=prefix)
             )
@@ -644,6 +648,7 @@ class AutomodPlugin(AutoModPlugin):
         rule = rule.lower()
         if not rule in AUTOMOD_RULES:
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO", given=rule)
             )
             e.add_field(
@@ -661,6 +666,7 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
             else:
                 e = Embed(
+                ctx,
                     description=self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field_name=data.field_name)
                 )
                 e.add_fields([
@@ -715,6 +721,7 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix=prefix))
             
             e = Embed(
+                ctx,
                 title="Allowed invites (by server ID)",
                 description=", ".join(allowed)
             )
@@ -776,6 +783,7 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix=prefix))
             
             e = Embed(
+                ctx,
                 title="Blacklisted links",
                 description=", ".join(links)
             )
@@ -839,6 +847,8 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix=prefix))
             
             e = Embed(
+                ctx,
+                
                 title="Allowed links",
                 description=", ".join(links)
             )
@@ -899,6 +909,7 @@ class AutomodPlugin(AutoModPlugin):
         if ctx.invoked_subcommand == None:
             prefix = self.get_prefix(ctx.guild)
             e = Embed(
+                ctx,
                 title="How to use filters",
                 description=f"• Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n• Deleting a filter: ``{prefix}filter remove <name>``"
             )
@@ -1013,6 +1024,7 @@ class AutomodPlugin(AutoModPlugin):
             if len(regexes) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_regexes", _emote="NO"))
 
             e = Embed(
+                ctx,
                 title="Regexes"
             )
             for indx, name in enumerate(dict(itertools.islice(regexes.items(), 10))):
@@ -1114,6 +1126,7 @@ class AutomodPlugin(AutoModPlugin):
 
         if rate == None and per == None and warns == None:
             e = Embed(
+                ctx,
                 title="Antispam Config"
             )
             e.add_fields([
@@ -1201,6 +1214,7 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"))
             else:
                 e = Embed(
+                ctx,
                     title="Ignored roles & channels for the automoderator"
                 )
                 e.add_fields([

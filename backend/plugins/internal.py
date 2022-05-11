@@ -228,7 +228,8 @@ class InternalPlugin(AutoModPlugin):
             else:
                 return None
         except (
-            asyncio.TimeoutError, asyncio.CancelledError
+            asyncio.TimeoutError, 
+            asyncio.CancelledError
         ): return None
 
 
@@ -239,13 +240,15 @@ class InternalPlugin(AutoModPlugin):
                 timeout=10
             )
         except (
-            asyncio.TimeoutError, asyncio.CancelledError
+            asyncio.TimeoutError, 
+            asyncio.CancelledError
         ): return None
 
 
     async def server_log_embed(self, action: discord.AuditLogAction, guild: discord.Guild, obj: T, check_for_audit: Union[Callable, bool], **text_kwargs) -> Embed:
         data = Object(SERVER_LOG_EVENTS[action])
         e = Embed(
+            None,
             color=data.color
         )
         if check_for_audit != False:
@@ -423,11 +426,13 @@ class InternalPlugin(AutoModPlugin):
         
         if msg.content != content and len(content) > 0:
             e = Embed(
+                None,
                 color=0xffdc5c
             )
             e.set_author(
                 name="{0.name}#{0.discriminator} ({0.id})".format(msg.author),
-                icon_url=msg.author.display_avatar
+                icon_url=msg.author.display_avatar,
+                url=msg.jump_url
             )
             e.add_field(
                 name="Before",

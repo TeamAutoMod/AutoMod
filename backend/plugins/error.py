@@ -42,6 +42,7 @@ class ErrorPlugin(AutoModPlugin):
                     perms += f" or the ``{role.name}`` role"
             
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "missing_user_perms", _emote="LOCK", perms=perms)
             )
             await ctx.send(embed=e)
@@ -49,6 +50,7 @@ class ErrorPlugin(AutoModPlugin):
         elif isinstance(error, commands.BotMissingPermissions):
             perms = ", ".join([f"``{x}``" for x in error.missing_permissions])
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "missing_bot_perms", _emote="LOCK", perms=perms)
             )
             await ctx.send(embed=e)
@@ -56,6 +58,7 @@ class ErrorPlugin(AutoModPlugin):
         elif isinstance(error, commands.CheckFailure):
             if len(ctx.command.checks) < 1:
                 e = Embed(
+                ctx,
                     description=self.locale.t(ctx.guild, "check_fail", _emote="LOCK")
                 )
                 await ctx.send(embed=e)
@@ -64,12 +67,14 @@ class ErrorPlugin(AutoModPlugin):
         
         elif isinstance(error, commands.CommandOnCooldown):
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after))
             )
             await ctx.send(embed=e)
         
         elif isinstance(error.__cause__, discord.Forbidden):
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "forbidden", _emote="NO", exc=error)
             )
             await ctx.send(embed=e)
@@ -80,6 +85,7 @@ class ErrorPlugin(AutoModPlugin):
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "missing_arg", _emote="NO", param=param._name)
             )
             e.add_fields([
@@ -99,6 +105,7 @@ class ErrorPlugin(AutoModPlugin):
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(
+                ctx,
                 description=self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=error.type, error=error.error)
             )
             e.add_fields([
@@ -117,7 +124,7 @@ class ErrorPlugin(AutoModPlugin):
             usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
-            e = Embed()
+            e = Embed(ctx)
             e.add_fields([
                 {
                     "name": "❯ Usage",
@@ -141,6 +148,7 @@ class ErrorPlugin(AutoModPlugin):
             log.error(f"❗️ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
             e = Embed(
+                ctx,
                 color=0xff5c5c,
                 title="Uncaught error",
                 description="```py\n{}\n```".format(("".join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__)))[:4000])
@@ -161,7 +169,10 @@ class ErrorPlugin(AutoModPlugin):
             if self.bot.error_log == None:
                 try:
                     cid = int(self.bot.config.error_channel)
-                except (AttributeError, ValueError):
+                except (
+                    AttributeError, 
+                    ValueError
+                ):
                     return
                 else:
                     try:

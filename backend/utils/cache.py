@@ -48,4 +48,4 @@ class MessageCache(object):
 
 
     def __len__(self) -> int:
-        return len(self.__store)
+        return sum([len(x) for _, x in self.__store.items()])

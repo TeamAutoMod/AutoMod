@@ -6,3 +6,4 @@ sentry_sdk==1.3.1
 toolbox_py==0.0.1
 topggpy
 emoji
+pymongo==3.12.0
