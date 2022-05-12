@@ -107,23 +107,6 @@ class ModerationPlugin(WarnPlugin):
                             })
                         self.db.tbans.delete(ban["id"])
 
-    # soon
-    # async def decay_warns(self) -> None:
-    #     while True:
-    #         await asyncio.sleep(10)
-    #         if len(self.warn_cache) > 0:
-    #             guilds = set([x.split("-")[0] for x in self.warn_cache.keys()])
-    #             for g in guilds:
-    #                 guild = self.bot.get_guild(int(g))
-    #                 if guild != None:
-    #                     for w, data in {x: y for x, y in self.warn_cache if int(x.split("-")[0] == int(g))}:
-    #                         if datetime.datetime.utcnow() > data["decay_after"]:
-    #                             decay = self.db.configs.get(int(g), "decay")
-    #                             self.warn_cache[w].update({
-    #                                 "decay_after": datetime.datetime.utcnow() + datetime.timedelta(seconds=int(decay["every"])),
-    #                                 "warns": min(0, self.warn_cache[w]["warns"] - decay["amount"])
-    #                             })
-
 
     async def clean_messages(self, ctx: commands.Context, amount: int, check: Callable, before: Union[datetime.datetime, discord.Message] = None, after: Union[datetime.datetime, discord.Message] = None) -> Union[str, Exception]:
         try:

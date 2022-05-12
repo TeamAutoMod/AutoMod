@@ -3,6 +3,7 @@
     "watch": true,
     "default_prefix": "+",
     "custom_status": "+help",
+    "status_type": "playing",
     "embed_color": "0x202225",
 
     "token": "",

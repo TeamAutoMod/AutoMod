@@ -117,6 +117,26 @@ def to_string(char: str) -> str:
     return f"\\U{dig:>08} | {name} | {char}"
 
 
+def get_user_badges(bot: ShardedBotInstance, flags: discord.PublicUserFlags) -> str:
+    badges = []
+    if flags.staff: badges.append(bot.emotes.get("STAFF"))
+    if flags.partner: badges.append(bot.emotes.get("PARTNER"))
+    if flags.discord_certified_moderator: badges.append(bot.emotes.get("MOD"))
+
+    if flags.hypesquad: badges.append(bot.emotes.get("HYPESQUAD"))
+    if flags.hypesquad_balance: badges.append(bot.emotes.get("BALANCE"))
+    if flags.hypesquad_bravery: badges.append(bot.emotes.get("BRAVERY"))
+    if flags.hypesquad_brilliance: badges.append(bot.emotes.get("BRILLIANCE"))
+
+    if flags.bug_hunter: badges.append(bot.emotes.get("BUG_HUNTER"))
+    if flags.bug_hunter_level_2: badges.append(bot.emotes.get("BUG_HUNTER_GOLD"))
+
+    if flags.early_verified_bot_developer: badges.append(bot.emotes.get("DEV"))
+    if flags.early_supporter: badges.append(bot.emotes.get("SUPPORTER"))
+
+    return " ".join(badges)
+
+
 class UtilityPlugin(AutoModPlugin):
     """Plugin for all utility commands"""
     def __init__(self, bot: ShardedBotInstance) -> None:
@@ -432,10 +452,11 @@ class UtilityPlugin(AutoModPlugin):
         )
         e.add_field(
             name="❯ User Information",
-            value="> **• ID:** {} \n> **• Profile:** {} \n> **• Created at:** <t:{}> \n> **• Banner:** {}"\
+            value="> **• ID:** {} \n> **• Profile:** {} \n> **• Badges:** {} \n> **• Created at:** <t:{}> \n> **• Banner:** {}"\
             .format(
                 user.id,
-                user.mention, 
+                user.mention,
+                get_user_badges(self.bot, user.public_flags),
                 round(user.created_at.timestamp()),
                 f"[Here]({user.banner.url})" if user.banner != None else "None"
             )

@@ -116,7 +116,15 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     async def on_ready(self) -> None:
         if self.config.custom_status != "":
-            if self.activity == None: await self.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=self.config.custom_status))
+            if self.activity == None:
+                    await self.change_presence(
+                        activity=discord.Activity(
+                            type=discord.ActivityType.playing if self.config.status_type.lower() not in [
+                                "playing", "listening", "watching"
+                            ] else getattr(discord.ActivityType, self.config.status_type.lower()), 
+                            name=self.config.custom_status
+                        )
+                    )
 
         if not self.ready:
             await self.load_plugins()

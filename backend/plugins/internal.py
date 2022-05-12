@@ -480,7 +480,13 @@ class InternalPlugin(AutoModPlugin):
         e = Embed(
             None,
             color=0x2f3136,
-            description=self.locale.t(user.guild, "user_left", profile=user.mention, joined=round(user.joined_at.timestamp()))
+            description=self.locale.t(
+                user.guild, 
+                "user_left", 
+                profile=user.mention, 
+                joined=round(user.joined_at.timestamp()),
+                roles=", ".join([x.mention for x in user.roles]) if len(user.roles) < 15 and len(user.roles) > 0 else len(user.roles) if len(user.roles) > 15 else "None"
+            )
         )
         e.set_thumbnail(
             url=user.display_avatar
@@ -851,6 +857,21 @@ class InternalPlugin(AutoModPlugin):
                 await self.log_processor.execute(guild, "member_updated", **{
                     "_embed": embed
                 })
+
+
+    # @AutoModPlugin.listener()
+    # async def on_guild_update(self, b: discord.Guild, a: discord.Guild):
+    #     change = ""
+    #     if b.name != a.name:
+    #         change += "Name (``{}`` → ``{}``)".format()
+        
+    #     if b.verification_level != a.verification_level:
+    #         new = f"Verification Level (``{b.verification_level}`` → ``{a.verification_level}``)"
+    #         if len(change) < 1:
+    #             change += new
+    #         else:
+    #             change += f" & {new}"
+        
 
 
     @AutoModPlugin.listener()
