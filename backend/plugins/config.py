@@ -233,7 +233,7 @@ class ConfigPlugin(AutoModPlugin):
                 "inline": True
             },
             {
-                "name": "🔨 Actions",
+                "name": "🔨 Punishments",
                 "value": "\n".join([
                     f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in dict(
@@ -283,17 +283,17 @@ class ConfigPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-    @commands.command(aliases=["punishment"])
+    @commands.command(aliases=["action"])
     @AutoModPlugin.can("manage_guild")
-    async def action(self, ctx: commands.Context, warns: int, action: str, time: Duration = None) -> None:
+    async def punishment(self, ctx: commands.Context, warns: int, action: str, time: Duration = None) -> None:
         """
-        action_help
+        punishment_help
         examples:
-        -action 3 kick
-        -action 4 ban
-        -action 2 mute 10m
-        -action 6 ban 7d
-        -action 5 none
+        -punishment 3 kick
+        -punishment 4 ban
+        -punishment 2 mute 10m
+        -punishment 6 ban 7d
+        -punishment 5 none
         """
         action = action.lower()
         if not action in ["kick", "ban", "mute", "none"]: 

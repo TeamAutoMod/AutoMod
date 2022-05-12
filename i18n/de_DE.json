@@ -39,7 +39,7 @@
     "charinfo_help": "Zeigt einige Infos zu dem angegebenen Zeichen",
 
     "config_help": "Zeigt die aktuelle Server Konfiguration",
-    "action_help": "Setzt eine Aktion für die angegebene Anzahl an Verwarnungen",
+    "punishment_help": "Setzt eine Aktion für die angegebene Anzahl an Verwarnungen",
     "log_help": "Standard Command zum Verwalten von Logs. Nutze entweder einen Channel als zweites Argument um die Option zu akivieren oder **off** um sie zu deaktivieren",
     "prefix_help": "Setzt einen neuen Prefix für den Bot",
     "automod_help": "Standard Command zum Verwalten des Automoderators. Nutze **off** in allen Subcommands um die jeweilige Option zu deaktivieren",
