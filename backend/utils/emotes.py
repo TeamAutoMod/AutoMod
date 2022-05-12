@@ -17,11 +17,11 @@ class Emotes(object):
                 })
 
 
-    def get(self, key: str) -> Union[str, None]:
+    def get(self, key: str) -> str:
         try:
             return self.emotes[key]
         except KeyError:
-            log.warn("❌ Failed to obtain an emoji with key {}".format(key))
+            log.warn("❌ Failed to obtain an emoji with key {}".format(key)); return "❓"
 
 
     def reload(self) -> None:
