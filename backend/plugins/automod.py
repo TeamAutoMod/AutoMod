@@ -666,7 +666,7 @@ class AutomodPlugin(AutoModPlugin):
                 return await ctx.send(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
             else:
                 e = Embed(
-                ctx,
+                    ctx,
                     description=self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field_name=data.field_name)
                 )
                 e.add_fields([
@@ -1107,6 +1107,7 @@ class AutomodPlugin(AutoModPlugin):
 
         prefix = self.get_prefix(ctx.guild)
         info_embed = Embed(
+            ctx,
             description=self.locale.t(ctx.guild, "antispam_info", _emote="NO")
         )
         info_embed.add_fields([
