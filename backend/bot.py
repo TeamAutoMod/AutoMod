@@ -77,9 +77,15 @@ class ShardedBotInstance(commands.AutoShardedBot):
         with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
         super().__init__(
-            command_prefix=prefix_callable, intents=self.intents, 
-            case_insensitive=True, max_messages=1000, chunk_guilds_at_startup=False, 
-            allowed_mentions=discord.AllowedMentions(everyone=False, replied_user=False),
+            command_prefix=prefix_callable, 
+            intents=self.intents, 
+            case_insensitive=True, 
+            max_messages=1000, 
+            chunk_guilds_at_startup=False, 
+            allowed_mentions=discord.AllowedMentions(
+                everyone=False, 
+                replied_user=False
+            ),
             *args, **kwargs
         )
         for f in [pages, embed]: f.inject_bot_obj(self)
@@ -101,6 +107,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.fetched_user_cache = {}
         self.log_queue = {}
         self.tasks = []
+        self.auto_processing = []
 
         if self.config.watch == True:
             self.observer = Observer(self)

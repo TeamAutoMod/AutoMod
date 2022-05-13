@@ -142,7 +142,9 @@ class ActionProcessor(object):
     async def ban(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
         if msg.guild.get_member(user.id) == None: return "User not found"
+        if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already banning user"
 
+        self.bot.auto_processing.append(f"{msg.guild.id}-{user.id}")
         try:
             await msg.guild.ban(user=user)
         except Exception as ex:
@@ -167,12 +169,16 @@ class ActionProcessor(object):
             )
             await self.log_processor.execute(msg.guild, "ban", **log_kwargs)
             return None
+        finally:
+            self.bot.auto_processing.remove(f"{msg.guild.id}-{user.id}")
 
 
     async def kick(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
         if msg.guild.get_member(user.id) == None: return "User not found"
+        if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already kicking user"
 
+        self.bot.auto_processing.append(f"{msg.guild.id}-{user.id}")
         try:
             await msg.guild.kick(user=user)
         except Exception as ex:
@@ -197,6 +203,8 @@ class ActionProcessor(object):
             )
             await self.log_processor.execute(msg.guild, "kick", **log_kwargs)
             return None
+        finally:
+            self.bot.auto_processing.remove(f"{msg.guild.id}-{user.id}")
 
 
     async def mute(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
@@ -208,41 +216,52 @@ class ActionProcessor(object):
             if msg.guild.me.guild_permissions.administrator == False: 
                 return "Missing permissions. Make sure I have the ``Timeout members`` permission"
 
-        length = log_kwargs["length"]
-        until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=length))
+        if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already kicking user"
+        self.bot.auto_processing.append(f"{msg.guild.id}-{user.id}")
 
-        if self.bot.db.mutes.exists(f"{msg.guild.id}-{user.id}"): return
-        self.bot.db.mutes.insert(Mute(msg.guild.id, user.id, until))
+        try:
+            length = log_kwargs["length"]
+            until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=length))
 
-        self.bot.handle_timeout(True, msg.guild, user, until.isoformat())
+            if self.bot.db.mutes.exists(f"{msg.guild.id}-{user.id}"): return
+            self.bot.db.mutes.insert(Mute(msg.guild.id, user.id, until))
 
-        self.dm_processor.execute(
-            msg,
-            "mute",
-            user,
-            **{
-                "guild_name": msg.guild.name,
-                "until": f"<t:{round(until.timestamp())}>",
-                "reason": log_kwargs.get("raw_reason"),
-                "_emote": "MUTE"
-            }
-        )
+            self.bot.handle_timeout(True, msg.guild, user, until.isoformat())
 
-        log_kwargs.pop("length")
-        log_kwargs.update(
-            {
-                "case": self.new_case("mute", msg, mod, user, reason),
-                "until": f"<t:{round(until.timestamp())}>"
-            }
-        )
-        await self.log_processor.execute(msg.guild, "mute", **log_kwargs)
-        return None
+            self.dm_processor.execute(
+                msg,
+                "mute",
+                user,
+                **{
+                    "guild_name": msg.guild.name,
+                    "until": f"<t:{round(until.timestamp())}>",
+                    "reason": log_kwargs.get("raw_reason"),
+                    "_emote": "MUTE"
+                }
+            )
+
+            log_kwargs.pop("length")
+            log_kwargs.update(
+                {
+                    "case": self.new_case("mute", msg, mod, user, reason),
+                    "until": f"<t:{round(until.timestamp())}>"
+                }
+            )
+            await self.log_processor.execute(msg.guild, "mute", **log_kwargs)
+            return None
+        except Exception as ex:
+            return ex
+        finally:
+            self.bot.auto_processing.remove(f"{msg.guild.id}-{user.id}")
 
     
     async def tempban(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
         user = msg.guild.get_member(user.id);
         if user == None: return "User not found"
+        
+        if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already kicking user"
+        self.bot.auto_processing.append(f"{msg.guild.id}-{user.id}")
 
         length = log_kwargs["length"]
         until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=length))
@@ -278,3 +297,5 @@ class ActionProcessor(object):
             )
             await self.log_processor.execute(msg.guild, "tempban", **log_kwargs)
             return None
+        finally:
+            self.bot.auto_processing.remove(f"{msg.guild.id}-{user.id}")

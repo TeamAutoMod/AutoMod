@@ -995,4 +995,10 @@ class InternalPlugin(AutoModPlugin):
         log.info(f"📬 Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
 
 
+    @AutoModPlugin.listener()
+    async def on_dbl_vote(self, data) -> None:
+        print(type(data))
+        print(data)
+
+
 async def setup(bot) -> None: await bot.register_plugin(InternalPlugin(bot))

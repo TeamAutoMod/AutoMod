@@ -36,5 +36,6 @@
         "automod",
         "cases"
     ],
-    "error_channel": 123456789
+    "error_channel": 123456789,
+    "vote_channel": 123456789
 }
