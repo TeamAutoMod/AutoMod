@@ -997,8 +997,8 @@ class InternalPlugin(AutoModPlugin):
 
     @AutoModPlugin.listener()
     async def on_dbl_vote(self, data) -> None:
-        print(type(data))
-        print(data)
+        log.info(type(data))
+        log.info(data)
 
 
 async def setup(bot) -> None: await bot.register_plugin(InternalPlugin(bot))

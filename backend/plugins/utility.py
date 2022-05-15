@@ -355,7 +355,7 @@ class UtilityPlugin(AutoModPlugin):
 
             _help = get_command_help(self, ctx, query)
             if _help == None:
-                return await ctx.send(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
+                await ctx.send(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
             else:
                 await ctx.send(embed=_help, view=HelpView(self.bot))
 

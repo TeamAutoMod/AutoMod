@@ -230,7 +230,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
 
     def get_plugin(self, name: str) -> Union[commands.Cog, None]:
-        return super().get_cog(name)
+        try:
+            return super().get_cog(name)
+        except Exception:
+            return None
 
 
     def handle_timeout(self, mute: bool, guild: discord.Guild, user: Union[discord.Member, discord.User], iso8601_ts) -> Union[str, Exception]:

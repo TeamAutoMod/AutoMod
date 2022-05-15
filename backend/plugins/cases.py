@@ -10,6 +10,7 @@ from typing import Union
 from . import AutoModPlugin, ShardedBotInstance
 from ..types import DiscordUser, Embed
 from ..views import MultiPageView
+from .processor.log import LOG_TYPES
 
 
 
@@ -274,6 +275,7 @@ class CasesPlugin(AutoModPlugin):
 
         e = Embed(
             ctx,
+            color=LOG_TYPES[data.type.lower()]["color"],
             title=f"{data.type.upper()} | #{case}"
         )
         if log_msg_url != None:

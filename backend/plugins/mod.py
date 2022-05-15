@@ -4,7 +4,9 @@ from discord.ext import commands
 
 import datetime
 import asyncio
-import logging; log = logging.getLogger()
+import logging
+
+from backend.plugins import AutoModPlugin; log = logging.getLogger()
 import datetime
 from typing import Union
 
@@ -623,6 +625,19 @@ class ModerationPlugin(WarnPlugin):
             lambda m: text.lower() in m.content.lower()
         )
         await ctx.send(msg, **kwargs)
+
+
+    # @commands.command(aliases=["modnote"])
+    # @AutoModPlugin.can("manage_messages")
+    # async def note(self, ctx: commands.Context, user: DiscordUser, *, text: str = None):
+    #     """
+    #     note_help
+    #     examples:
+    #     -note @paul#0009
+    #     -note @paul#0009 Test
+    #     """
+    #     if text == None:
+    #         e = Embed()
 
 
 async def setup(bot) -> None: await bot.register_plugin(ModerationPlugin(bot))
