@@ -26,14 +26,14 @@ class ActionProcessor(object):
         self.dm_processor = DMProcessor(bot)
 
 
-    def new_case(self, _type: str, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], reason: str) -> int:
+    def new_case(self, _type: str, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], reason: str, warns_added: int = 0, until: datetime.datetime = None) -> int:
         case = self.bot.db.configs.get(msg.guild.id, "cases") + 1
 
         if self.bot.db.cases.exists(f"{msg.guild.id}-{case}"):
             self.bot.db.cases.delete(f"{msg.guild.id}-{case}") # we need to overwrite old cases
         
         now = datetime.datetime.utcnow()
-        self.bot.db.cases.insert(Case(case, _type, msg, mod, user, reason, now))
+        self.bot.db.cases.insert(Case(case, _type, msg, mod, user, reason, now, warns_added, until))
         self.bot.db.configs.update(msg.guild.id, "cases", case)
 
         case_ids = self.bot.db.configs.get(msg.guild.id, "case_ids")
@@ -130,7 +130,7 @@ class ActionProcessor(object):
 
             log_kwargs.update(
                 {
-                    "case": self.new_case("warn", msg, mod, user, reason),
+                    "case": self.new_case("warn", msg, mod, user, reason, warns_added=warns),
                     "old_warns": old_warns,
                     "new_warns": new_warns
                 }
@@ -243,7 +243,7 @@ class ActionProcessor(object):
             log_kwargs.pop("length")
             log_kwargs.update(
                 {
-                    "case": self.new_case("mute", msg, mod, user, reason),
+                    "case": self.new_case("mute", msg, mod, user, reason, until=until),
                     "until": f"<t:{round(until.timestamp())}>"
                 }
             )
@@ -291,7 +291,7 @@ class ActionProcessor(object):
             log_kwargs.pop("length")
             log_kwargs.update(
                 {
-                    "case": self.new_case("tempban", msg, mod, user, reason),
+                    "case": self.new_case("tempban", msg, mod, user, reason, until=until),
                     "until": f"<t:{round(until.timestamp())}>"
                 }
             )

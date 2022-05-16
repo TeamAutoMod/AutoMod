@@ -71,7 +71,7 @@ class WarnPlugin(AutoModPlugin):
         if exc != None:
             await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
         else:
-            await ctx.send(self.locale.t(ctx.guild, "warned", _emote="YES"))
+            await ctx.send(self.locale.t(ctx.guild, "warned", _emote="YES", user=user))
 
 
     @commands.command(aliases=["pardon"])
@@ -122,6 +122,6 @@ class WarnPlugin(AutoModPlugin):
                     "reason": reason,
                     "old_warns": cur,
                     "new_warns": new,
-                    "case": self.action_processor.new_case("unwarn", ctx.message, ctx.author, user, reason)
+                    "case": self.action_processor.new_case("unwarn", ctx.message, ctx.author, user, reason, warns_added=warns)
                 })
-                await ctx.send(self.locale.t(ctx.guild, "unwarned", _emote="YES"))
+                await ctx.send(self.locale.t(ctx.guild, "unwarned", _emote="YES", user=user))

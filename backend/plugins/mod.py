@@ -168,7 +168,7 @@ class ModerationPlugin(WarnPlugin):
                     await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
                 else:
                     self.bot.ignore_for_events.append(user.id)
-                    await ctx.send(self.locale.t(ctx.guild, "softbanned", _emote="YES"))
+                    await ctx.send(self.locale.t(ctx.guild, "softbanned", _emote="YES", user=user))
             
             await self.log_processor.execute(ctx.guild, action, **{
                 "user": user,
@@ -178,7 +178,7 @@ class ModerationPlugin(WarnPlugin):
                 "reason": reason,
                 "case": self.action_processor.new_case(action, ctx.message, ctx.author, user, reason)
             })
-            await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES"))
+            await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES", user=user))
 
 
     @commands.command()
@@ -228,7 +228,7 @@ class ModerationPlugin(WarnPlugin):
                     "case": self.action_processor.new_case("unban", ctx.message, ctx.author, user, reason)
                 })
 
-                await ctx.send(self.locale.t(ctx.guild, "unbanned", _emote="YES"))
+                await ctx.send(self.locale.t(ctx.guild, "unbanned", _emote="YES", user=user))
             finally:
                 if self.db.tbans.exists(f"{ctx.guild.id}-{user.id}"):
                     self.db.tbans.delete(f"{ctx.guild.id}-{user.id}")
@@ -297,7 +297,7 @@ class ModerationPlugin(WarnPlugin):
                     self.db.tbans.update(_id, "until", until)
 
                     await i.response.edit_message(
-                        content=self.locale.t(ctx.guild, "tempban_extended", _emote="YES", until=f"<t:{round(until.timestamp())}>"), 
+                        content=self.locale.t(ctx.guild, "tempban_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"), 
                         embed=None, 
                         view=None
                     )
@@ -321,7 +321,7 @@ class ModerationPlugin(WarnPlugin):
                         "user_id": user.id,
                         "until": f"<t:{round(until.timestamp())}>",
                         "reason": reason,
-                        "case": self.action_processor.new_case("tempban extended", ctx.message, ctx.author, user, reason)
+                        "case": self.action_processor.new_case("tempban extended", ctx.message, ctx.author, user, reason, until=until)
                     })
                     self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
                     return
@@ -379,11 +379,11 @@ class ModerationPlugin(WarnPlugin):
                             "user": user,
                             "user_id": user.id,
                             "until": f"<t:{round(until.timestamp())}>",
-                            "case": self.action_processor.new_case("tempban", ctx.message, ctx.author, user, reason),
+                            "case": self.action_processor.new_case("tempban", ctx.message, ctx.author, user, reason, until=until),
                             "reason": reason
                         }) 
 
-                        await ctx.send(self.locale.t(ctx.guild, "tempbanned", _emote="YES"))
+                        await ctx.send(self.locale.t(ctx.guild, "tempbanned", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"))
                 else:
                     raise commands.BadArgument("Number too small")
         else:
@@ -432,7 +432,7 @@ class ModerationPlugin(WarnPlugin):
                 self.db.mutes.update(_id, "until", until)
 
                 await i.response.edit_message(
-                    content=self.locale.t(ctx.guild, "mute_extended", _emote="YES", until=f"<t:{round(until.timestamp())}>"), 
+                    content=self.locale.t(ctx.guild, "mute_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"), 
                     embed=None, 
                     view=None
                 )
@@ -456,7 +456,7 @@ class ModerationPlugin(WarnPlugin):
                     "user_id": user.id,
                     "until": f"<t:{round(until.timestamp())}>",
                     "reason": reason,
-                    "case": self.action_processor.new_case("mute extended", ctx.message, ctx.author, user, reason)
+                    "case": self.action_processor.new_case("mute extended", ctx.message, ctx.author, user, reason, until=until)
                 })
                 self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
                 return
@@ -512,11 +512,11 @@ class ModerationPlugin(WarnPlugin):
                         "user": user,
                         "user_id": user.id,
                         "until": f"<t:{round(until.timestamp())}>",
-                        "case": self.action_processor.new_case("mute", ctx.message, ctx.author, user, reason),
+                        "case": self.action_processor.new_case("mute", ctx.message, ctx.author, user, reason, until=until),
                         "reason": reason
                     }) 
 
-                    await ctx.send(self.locale.t(ctx.guild, "muted", _emote="YES"))
+                    await ctx.send(self.locale.t(ctx.guild, "muted", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"))
             else:
                 raise commands.BadArgument("Number too small")
 
@@ -548,10 +548,10 @@ class ModerationPlugin(WarnPlugin):
                 "mod_id": ctx.author.id,
                 "user": user,
                 "user_id": user.id,
-                "case": self.action_processor.new_case("unmute", ctx.message, ctx.author, user, "[ Auto ] Mute has expired")
+                "case": self.action_processor.new_case("unmute", ctx.message, ctx.author, user, "Manual unmute")
             }) 
 
-            await ctx.send(self.locale.t(ctx.guild, "unmuted", _emote="YES"))
+            await ctx.send(self.locale.t(ctx.guild, "unmuted", _emote="YES", user=user))
 
 
     @commands.group(aliases=["clear", "purge"])
@@ -586,7 +586,7 @@ class ModerationPlugin(WarnPlugin):
         msg, kwargs = await self.clean_messages(
             ctx,
             amount,
-            lambda m: True
+            lambda _: True
         )
         await ctx.send(msg, **kwargs)
 

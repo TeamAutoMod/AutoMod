@@ -6,7 +6,16 @@ from typing import Union
 
 
 
-def Case(case: int, _type: str, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], reason: str, ts: datetime.datetime) -> dict:
+def Case(
+    case: int, 
+    _type: str, 
+    msg: discord.Message, 
+    mod: discord.Member, 
+    user: Union[discord.Member, discord.User], 
+    reason: str, ts: datetime.datetime, 
+    warns_added: int = 0, 
+    until: datetime.datetime = None
+) -> dict:
     return {
         "id": f"{msg.guild.id}-{case}",
         "case": f"{case}",
@@ -20,6 +29,8 @@ def Case(case: int, _type: str, msg: discord.Message, mod: discord.Member, user:
         "reason": f"{reason}",
         "user_av": f"{user.display_avatar}",
         "mod_av": f"{mod.display_avatar}",
+        "warns_added": warns_added,
+        "until": f"<t:{round(until.timestamp())}>" if until != None else "",
         "log_id": "",
         "jump_url": ""
     }

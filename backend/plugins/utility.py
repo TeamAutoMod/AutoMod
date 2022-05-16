@@ -27,7 +27,8 @@ ACTUAL_PLUGIN_NAMES = {
     "UtilityPlugin": "🔧 Utility",
     "CasesPlugin": "📦 Cases",
     "TagsPlugin": "📝 Custom Commands",
-    "ReactionRolesPlugin": "🎭 Reaction Roles"
+    "ReactionRolesPlugin": "🎭 Reaction Roles",
+    "AutoReplyPlugin": "💬 Auto Reply"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
@@ -342,10 +343,16 @@ class UtilityPlugin(AutoModPlugin):
             )
             for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
                 if p != None:
-                    cmds = p.get_commands()
+                    cmds = [*[x.name for x in p.get_commands()], *[f"/{x.name}" for x in p.__cog_app_commands__]]
                     e.add_field(
                         name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
-                        value="> {}".format(", ".join([f"``{x}``" for x in cmds]))
+                        value="> {}".format(
+                            ", ".join(
+                                [
+                                    f"``{x}``" for x in cmds
+                                ]
+                            )
+                        )
                     )
             e.credits()
 

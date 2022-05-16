@@ -273,7 +273,15 @@ class ShardedBotInstance(commands.AutoShardedBot):
         @discord.app_commands.default_permissions(manage_messages=True)
         async def _(i: discord.Interaction, user: discord.Member):
             p = self.get_plugin("UtilityPlugin")
-            await p.whois(i, user)
+            try:
+                await p.whois(i, user)
+            except Exception as ex:
+                await i.response.send_message(
+                    embed=discord.Embed(
+                        color=int(self.config.embed_color, 16),
+                        description=self.locale.t(i.guild, "fail", _emote="NO", exc=ex)
+                    )
+                )
 
 
     async def join_thread(self, thread: discord.Thread) -> None:

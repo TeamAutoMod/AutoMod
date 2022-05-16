@@ -301,6 +301,20 @@ class CasesPlugin(AutoModPlugin):
                 "value": f"{data.reason}"
             },
         ])
+
+        if hasattr(data, "warns_added"):
+            if int(data.warns_added) > 0: 
+                e.add_field(
+                    name=f"❯ Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}",
+                    value=f"{data.warns_added}"
+                )
+        
+        if hasattr(data, "until"):
+            if data.until != "": 
+                e.add_field(
+                    name="❯ Until",
+                    value=f"{data.until}"
+                )
         await ctx.send(embed=e)
 
 
