@@ -280,7 +280,7 @@ class AutomodPlugin(AutoModPlugin):
         if mod == None or target == None: return False
 
         rid = self.bot.db.configs.get(guild.id, "mod_role")
-        if rid != "":
+        if rid != "" and rid != None:
             if int(rid) in [x.id for x in target.roles]: return False
         
         roles, channels = self.get_ignored_roles_channels(guild)
@@ -341,7 +341,12 @@ class AutomodPlugin(AutoModPlugin):
             url.startswith("https://") or
             url.startswith("http://")
         ):
-            for x in ["www", "www5"]:
+            for x in [
+                "www", 
+                "www5", 
+                "www2", 
+                "www3"
+            ]:
                 url = url.replace(x, "")
         else:
             url = urlparse(url).hostname
