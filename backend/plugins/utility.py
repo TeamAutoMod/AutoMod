@@ -135,7 +135,7 @@ def get_user_badges(bot: ShardedBotInstance, flags: discord.PublicUserFlags) -> 
     if flags.early_verified_bot_developer: badges.append(bot.emotes.get("DEV"))
     if flags.early_supporter: badges.append(bot.emotes.get("SUPPORTER"))
 
-    return " ".join(badges)
+    badges = [x for x in badges if x != None]; return " ".join(badges) if len(badges) > 0 else ""
 
 
 class UtilityPlugin(AutoModPlugin):

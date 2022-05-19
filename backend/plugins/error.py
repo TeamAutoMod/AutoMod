@@ -101,7 +101,7 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(embed=e)
         
         elif isinstance(error, PostParseError):
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '').replace('=None', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(
@@ -121,7 +121,7 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(embed=e)
 
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.BadUnionArgument):
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '')}"
+            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '').replace('=None', '')}"
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(ctx)
