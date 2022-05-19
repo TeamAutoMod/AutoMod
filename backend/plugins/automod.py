@@ -647,15 +647,16 @@ class AutomodPlugin(AutoModPlugin):
                 found.update({
                     word.lower(): found.get(word.lower(), 0) + 1
                 })
-            for k, v in found.items():
-                if v > rules.repeat.threshold:
-                    return await self.delete_msg(
-                        "repeat", 
-                        f"{k} ({v}x)", 
-                        msg, 
-                        0 if (v - rules.repeat.threshold) == 1 else 1, 
-                        f"Duplicated text"
-                    )
+            if len(found.keys()) < 12:
+                for k, v in found.items():
+                    if v > rules.repeat.threshold:
+                        return await self.delete_msg(
+                            "repeat", 
+                            f"{k} ({v}x)", 
+                            msg, 
+                            0 if (v - rules.repeat.threshold) == 1 else 1, 
+                            f"Duplicated text"
+                        )
 
 
     @AutoModPlugin.listener()
