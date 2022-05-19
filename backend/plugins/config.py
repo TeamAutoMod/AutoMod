@@ -219,11 +219,12 @@ class ConfigPlugin(AutoModPlugin):
             e.dash_field(dash_length),
             {
                 "name": "⚔️ Automod Rules",
-                "value": "> **• Max Mentions:** {} \n> **• Max Newlines:** {} \n> **• Max Emotes:** {} \n> **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {} \n> **• Spam:** {}"\
+                "value": "> **• Max Mentions:** {} \n> **• Max Newlines:** {} \n> **• Max Emotes:** {} \n> **• Max Repetitions:** {} \n > **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {} \n> **• Spam:** {}"\
                 .format(
                     "disabled" if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
                     "disabled" if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
                     "disabled" if not hasattr(rules, "emotes") else f"{rules.emotes.threshold}",
+                    "disabled" if not hasattr(rules, "repeat") else f"{rules.repeat.threshold}",
                     "disabled" if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
                     "disabled" if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
                     "disabled" if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
