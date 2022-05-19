@@ -196,6 +196,9 @@ LOG_DATA = {
     "emotes": {
         "rule": "Emote-Spam"
     },
+    "repeat": {
+        "rule": "Anti-Repetition"  
+    },
     "regex": {
         "rule": "Regex-Filter"
     },
@@ -250,6 +253,13 @@ AUTOMOD_RULES = {
         "i18n_type": "maximum emotes",
         "field_name": "emote",
         "field_help": "emotes"
+    },
+    "repeat": {
+        "int_field_name": "threshold",
+        "i18n_key": "set_repeat",
+        "i18n_type": "maximum repetitions",
+        "field_name": "repeat",
+        "field_help": "repeat"
     },
     "zalgo": {
         "int_field_name": "warns",
@@ -375,7 +385,21 @@ class AutomodPlugin(AutoModPlugin):
                     msg.guild.me,
                     msg.author,
                     warns, 
-                    reason
+                    reason,
+                    **{
+                        "extra_fields": [
+                            {
+                                "name": "Channel",
+                                "value": f"{msg.channel.mention} ({msg.channel.id})",
+                                "inline": False
+                            },
+                            {
+                                "name": "Content",
+                                "value": msg.content[:1023],
+                                "inline": False
+                            }
+                        ]
+                    }
                 )
             else:
                 data = Object(LOG_DATA[rule])
@@ -400,7 +424,12 @@ class AutomodPlugin(AutoModPlugin):
                             "user_id": msg.author.id,
                             "user": msg.author,
                             "channel": msg.channel.mention,
-                            "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, reason)
+                            "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, reason),
+                            "extra_fields": [{
+                                "name": "Content",
+                                "value": msg.content[:1023],
+                                "inline": False
+                            }]
                         }
                     )
                 else:
@@ -413,7 +442,12 @@ class AutomodPlugin(AutoModPlugin):
                             "user_id": msg.author.id,
                             "user": msg.author,
                             "channel": msg.channel.mention,
-                            "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, reason)
+                            "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, reason),
+                            "extra_fields": [{
+                                "name": "Content",
+                                "value": msg.content[:1023],
+                                "inline": False
+                            }]
                         }
                     )
 
@@ -606,7 +640,23 @@ class AutomodPlugin(AutoModPlugin):
                     0 if (found - rules.emotes.threshold) == 1 else 1, 
                     f"Spamming emotes ({found})"
                 )
-    
+
+        if hasattr(rules, "repeat"):
+            found = {}
+            for word in content.split(" "):
+                found.update({
+                    word.lower(): found.get(word.lower(), 0) + 1
+                })
+            for k, v in found.items():
+                if v > rules.repeat.threshold:
+                    return await self.delete_msg(
+                        "repeat", 
+                        f"{k} ({v}x)", 
+                        msg, 
+                        0 if (v - rules.repeat.threshold) == 1 else 1, 
+                        f"Duplicated text"
+                    )
+
 
     @AutoModPlugin.listener()
     async def on_message(self, msg: discord.Message) -> None:
@@ -658,7 +708,7 @@ class AutomodPlugin(AutoModPlugin):
             )
             e.add_field(
                 name="❯ Valid rules",
-                value="• mentions \n• links \n• invites \n• files  \n• zalgo \n• lines \n• emotes"
+                value="• mentions \n• links \n• invites \n• files  \n• zalgo \n• lines \n• emotes \n• repeat"
             )
             return await ctx.send(embed=e)
         
@@ -677,7 +727,7 @@ class AutomodPlugin(AutoModPlugin):
                 e.add_fields([
                     {
                         "name": "❯ Enable this rule",
-                        "value": f"``{prefix}automod {rule} <{'max_amount' if data.field_name in ['mentions', 'lines', 'emotes'] else 'warns'}>``"
+                        "value": f"``{prefix}automod {rule} <{'max_amount' if data.field_name in ['mentions', 'lines', 'emotes', 'repeat'] else 'warns'}>``"
                     },
                     {
                         "name": "❯ Disable this rule",
@@ -686,7 +736,7 @@ class AutomodPlugin(AutoModPlugin):
                 ])
                 return await ctx.send(embed=e)
         else:
-            if rule == "mentions" or rule == "lines" or rule == "emotes":
+            if rule in ["mentions", "lines", "emotes", "repeat"]:
                 if amount < 5: return await ctx.send(self.locale.t(ctx.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")))
                 if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")))
             else:
@@ -701,7 +751,7 @@ class AutomodPlugin(AutoModPlugin):
             self.db.configs.update(ctx.guild.id, "automod", current)
 
             text = ""
-            if rule != "mentions" and rule != "lines" and rule != "emotes" and amount == 0:
+            if not rule in ["mentions", "lines", "emotes", "repeat"] and amount == 0:
                 text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
             else:
                 text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")

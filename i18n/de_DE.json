@@ -182,6 +182,7 @@
     "set_mentions": "{emote} Users will now be warned when using more than {amount} mention{plural}",
     "set_lines": "{emote} Users will now be warned when using more than {amount} line split{plural}",
     "set_emotes": "{emote} Users will now be warned when using more than {amount} emote{plural}",
+    "set_repeat": "{emote} Users will now be warned when using the same word more than {amount} time{plural}",
     "set_links": "{emote} Users will now receive {amount} warn{plural} when using forbidden links (configure with the ``link_blacklist`` & ``link_whitelist`` command)",
     "set_invites": "{emote} Users will now receive {amount} warn{plural} when sending invite links (configure with the ``allowed_invites`` command)",
     "set_files": "{emote} Users will now receive {amount} warn{plural} when sending forbidden file formats",

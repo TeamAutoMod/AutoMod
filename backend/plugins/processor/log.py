@@ -47,7 +47,7 @@ LOG_TYPES = {
         "channel": "mod_log",
         "key": "log_tempban_extended",
         "color": 0xff5c5c,
-        "emote": "HAMMER",
+        "emote": "MORE",
         "action": "Tempban extended"
     },
     "unban": {
@@ -68,15 +68,15 @@ LOG_TYPES = {
     "mute": {
         "channel": "mod_log",
         "key": "log_mute",
-        "color": 0xffdc5c,
+        "color": 0xe67e22,
         "emote": "MUTE",
         "action": "User muted"
     },
     "mute_extended": {
         "channel": "mod_log",
         "key": "log_mute_extended",
-        "color": 0xffdc5c,
-        "emote": "MUTE",
+        "color": 0xe67e22,
+        "emote": "MORE",
         "action": "Mute extended"
     },
     "unmute": {
@@ -251,6 +251,8 @@ class LogProcessor(object):
                 log_kwargs.get("user_id"),
                 self.bot.locale.t(guild, config.key, _emote=config.emote, **log_kwargs)
             )
+            fields = log_kwargs.get("extra_fields", [])
+            if len(fields) > 0: log_embed.add_fields(fields)
         else:
             log_embed = log_kwargs.get("_embed")
 

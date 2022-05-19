@@ -50,7 +50,7 @@ class ActionProcessor(object):
         return case
 
 
-    async def execute(self, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], warns: int, reason: str) -> None:
+    async def execute(self, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], warns: int, reason: str, **special_log_kwargs) -> None:
         if "(" in reason:
             raw_reason = reason.split("(")[0]
         elif "Triggered filter" in reason or "Triggered regex" in reason:
@@ -63,7 +63,8 @@ class ActionProcessor(object):
             "user": f"{user.name}#{user.discriminator}",
             "user_id": user.id,
             "reason": reason,
-            "raw_reason": raw_reason
+            "raw_reason": raw_reason,
+            **special_log_kwargs
         }
         warn_id = f"{msg.guild.id}-{user.id}"
 
