@@ -27,14 +27,14 @@ CASE_EMOJIS = {
     "UNWARN": "GREEN",
 
     "WARN": "YELLOW",
-    "MUTE": "YELLOW",
-    "MUTE EXTENDED": "YELLOW",
 
     "AUTOMOD": "BLUE",
     "FILTER": "BLUE",
     "REGEX": "BLUE",
 
-    "KICK": "ORANGE"
+    "KICK": "ORANGE",
+    "MUTE": "ORANGE",
+    "MUTE EXTENDED": "ORANGE",
 }
 
 
