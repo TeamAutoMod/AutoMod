@@ -6,13 +6,13 @@ from .buttons import DeleteBtn
 
 
 class DeleteView(View):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.add_item(DeleteBtn())
 
 
 class ChoiceView(View):
-    def __init__(self, placeholder: str, guild: discord.Guild, opt: list, *args, **kwargs):
+    def __init__(self, placeholder: str, guild: discord.Guild, opt: list, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.add_item(discord.ui.Select(
             custom_id=f"{guild.id}:replies",

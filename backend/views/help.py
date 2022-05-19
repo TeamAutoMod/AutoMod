@@ -6,7 +6,7 @@ from .buttons import LinkBtn
 
 
 class HelpView(View):
-    def __init__(self, bot, show_invite=False, *args, **kwargs):
+    def __init__(self, bot, show_invite=False, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.add_item(LinkBtn(_url=f"{bot.config.support_invite}", _label="Support"))
         self.add_item(LinkBtn(_url=f"https://top.gg/bot/{bot.user.id}/vote", _label="Vote"))

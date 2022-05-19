@@ -348,7 +348,7 @@ class ModerationPlugin(WarnPlugin):
                     ctx,
                     description=self.locale.t(ctx.guild, "already_tempbanned_description")
                 )
-                message = await ctx.send(embed=e, view=ConfirmView(ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
+                message = await ctx.send(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
             else:
                 seconds = length.to_seconds(ctx)
                 if seconds >= 1:
@@ -483,7 +483,7 @@ class ModerationPlugin(WarnPlugin):
                 ctx,
                 description=self.locale.t(ctx.guild, "already_muted_description")
             )
-            message = await ctx.send(embed=e, view=ConfirmView(ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
+            message = await ctx.send(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
         else:
             seconds = length.to_seconds(ctx)
             if seconds >= 1:

@@ -1,6 +1,8 @@
 import discord
 from discord.ui import View
 
+from typing import Tuple
+
 from .buttons import CallbackBtn
 
 
@@ -10,7 +12,7 @@ def inject_bot_obj(bot):
     global bot_obj; bot_obj = bot
     
 
-async def get_cases_from_cache(i: discord.Interaction, diff):
+async def get_cases_from_cache(i: discord.Interaction, diff: int) -> Tuple[discord.Embed, int]:
     data = bot_obj.case_cmd_cache.get(i.message.id, None)
     if data == None: return await i.response.send_message("No longer valid")
 
@@ -33,7 +35,7 @@ async def get_cases_from_cache(i: discord.Interaction, diff):
 
 
 class MultiPageView(View):
-    def __init__(self, page, pages):
+    def __init__(self, page: int, pages: list) -> None:
         super().__init__(timeout=None)
         self.id = ""
 
@@ -57,7 +59,7 @@ class MultiPageView(View):
 
 
     @staticmethod
-    async def first_page(i: discord.Interaction):
+    async def first_page(i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(i, 100)
         await i.response.edit_message(
             embed=embed,
@@ -66,7 +68,7 @@ class MultiPageView(View):
 
 
     @staticmethod
-    async def prev_page(i: discord.Interaction):
+    async def prev_page(i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(i, -1)
         await i.response.edit_message(
             embed=embed,
@@ -75,14 +77,14 @@ class MultiPageView(View):
 
 
     @staticmethod
-    async def delete(i: discord.Interaction):
+    async def delete(i: discord.Interaction) -> None:
         await i.message.delete()
         if i.message.id in bot_obj.case_cmd_cache:
             del bot_obj.case_cmd_cache[i.message.id]
 
     
     @staticmethod
-    async def next_page(i: discord.Interaction):
+    async def next_page(i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(i, 1)
         await i.response.edit_message(
             embed=embed,
@@ -91,7 +93,7 @@ class MultiPageView(View):
 
 
     @staticmethod
-    async def last_page(i: discord.Interaction):
+    async def last_page(i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(i, -100)
         await i.response.edit_message(
             embed=embed,

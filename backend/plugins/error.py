@@ -58,7 +58,7 @@ class ErrorPlugin(AutoModPlugin):
         elif isinstance(error, commands.CheckFailure):
             if len(ctx.command.checks) < 1:
                 e = Embed(
-                ctx,
+                    ctx,
                     description=self.locale.t(ctx.guild, "check_fail", _emote="LOCK")
                 )
                 await ctx.send(embed=e)

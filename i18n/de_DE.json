@@ -131,7 +131,7 @@
     "name_too_long": "{emote} The command name is too long (>30 chars)",
     "content_too_long": "{emote} The command content is too long (>1900 chars)",
     "tag_alr_exists": "{emote} A command with that name already exists",
-    "tag_added": "{emote} Leave it to me! Command has been created, you can use it with {prefix}{tag}",
+    "tag_added": "{emote} Leave it to me! Command has been created, you can use it with ``{prefix}{tag}``",
     "tag_doesnt_exists": "{emote} A command with that name doesn't exist",
     "tag_removed": "{emote} Command has been deleted",
     "no_tags": "{emote} This server doesn't have any custom commands yet",
