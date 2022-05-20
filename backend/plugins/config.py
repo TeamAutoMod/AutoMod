@@ -304,7 +304,7 @@ class ConfigPlugin(AutoModPlugin):
             )
             e.add_field(
                 name="❯ Valid actions",
-                value="• kick \n• ban \n• mute \n• none"
+                value="``▶`` kick \n``▶`` ban \n``▶`` mute \n``▶`` none"
             )
             return await ctx.send(embed=e)
 
@@ -385,7 +385,7 @@ class ConfigPlugin(AutoModPlugin):
             )
             e.add_field(
                 name="❯ Valid options",
-                value="• mod \n• server \n• messages \n• joins \n• members \n• voice \n• bot"
+                value="``▶`` mod \n``▶`` server \n``▶`` messages \n``▶`` joins \n``▶`` members \n``▶`` voice \n``▶`` bot"
             )
             return await ctx.send(embed=e)
         
@@ -511,7 +511,7 @@ class ConfigPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-    @commands.command()
+    @commands.command(aliases=["modrole"])
     @AutoModPlugin.can("manage_guild")
     async def mod_role(self, ctx: commands.Context, role: Union[discord.Role, str]) -> None:
         """

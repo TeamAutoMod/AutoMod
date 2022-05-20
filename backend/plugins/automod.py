@@ -709,7 +709,7 @@ class AutomodPlugin(AutoModPlugin):
             )
             e.add_field(
                 name="❯ Valid rules",
-                value="• mentions \n• links \n• invites \n• files  \n• zalgo \n• lines \n• emotes \n• repeat"
+                value="``▶`` mentions \n``▶`` links \n``▶`` invites \n``▶`` files \n``▶`` zalgo \n``▶`` lines \n``▶`` emotes \n``▶`` repeat"
             )
             return await ctx.send(embed=e)
         

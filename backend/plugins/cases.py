@@ -110,7 +110,7 @@ class CasesPlugin(AutoModPlugin):
             return data
 
 
-    @commands.command(aliases=["history", "cases"])
+    @commands.command(aliases=["history", "cases", "modlogs"])
     @AutoModPlugin.can("manage_messages")
     async def infractions(self, ctx: commands.Context, user: Union[DiscordUser, discord.Member, discord.Guild] = None) -> None:
         """

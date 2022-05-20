@@ -323,7 +323,6 @@ class ModerationPlugin(WarnPlugin):
                         "reason": reason,
                         "case": self.action_processor.new_case("tempban extended", ctx.message, ctx.author, user, reason, until=until)
                     })
-                    self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
                     return
 
                 async def cancel(i):
@@ -353,7 +352,10 @@ class ModerationPlugin(WarnPlugin):
                 seconds = length.to_seconds(ctx)
                 if seconds >= 1:
                     try:
-                        await ctx.guild.ban(user=user, reason=reason)
+                        await ctx.guild.ban(
+                            user=user, 
+                            reason=f"{reason} | {length}{length.unit}"
+                        )
                     except Exception as ex:
                         await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
                     else:
