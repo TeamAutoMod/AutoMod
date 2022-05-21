@@ -346,7 +346,7 @@ class CasesPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ Status",
-                "value": "> **• Banned:** {}{} \n> **• Muted:** {} \n> **• Muted until:** {}"\
+                "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
                 .format(
                     Y if ban_data != None else N,
                     f" (``{ban_data.reason}``)" if ban_data != None else "",
@@ -355,8 +355,8 @@ class CasesPlugin(AutoModPlugin):
                 )
             },
             {
-                "name": "❯ Stats",
-                "value": "> **• Warns:** {}"\
+                "name": "❯ Warnings",
+                "value": "``▶`` **Warns:** {}"\
                 .format(
                     0 if warns == None else warns
                 )

@@ -966,7 +966,7 @@ class AutomodPlugin(AutoModPlugin):
             e = Embed(
                 ctx,
                 title="How to use filters",
-                description=f"• Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n• Deleting a filter: ``{prefix}filter remove <name>``"
+                description=f"``▶`` Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n``▶`` Deleting a filter: ``{prefix}filter remove <name>``"
             )
             e.add_field(
                 name="❯ Arguments",
@@ -1053,7 +1053,7 @@ class AutomodPlugin(AutoModPlugin):
 
             e.add_field(
                 name=f"❯ {name}",
-                value=f"> **• Action:** {action} \n> **• Channels:** {channels} \n> **• Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
+                value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
                 inline=True
             )
             if indx % 2 == 0: e.add_fields([e.blank_field(True, 8)])
@@ -1090,7 +1090,7 @@ class AutomodPlugin(AutoModPlugin):
 
                 e.add_field(
                     name=f"❯ {name}",
-                    value=f"> **• Action:** {action} \n> **• Channels:** {channels} \n> **• Pattern:** \n```\n{data['regex']}\n```",
+                    value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Pattern:** \n```\n{data['regex']}\n```",
                     inline=True
                 )
                 if indx % 2 == 0: e.add_fields([e.blank_field(True, 8)])

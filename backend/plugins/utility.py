@@ -270,7 +270,7 @@ class UtilityPlugin(AutoModPlugin):
         # Shard
         shard = self.bot.get_shard(ctx.guild.shard_id)
         
-        await msg.edit(content="• **Rest:** {}ms \n• **Client:** {}ms \n• **Shard:** {}ms \n• **Database:** {}ms".format(
+        await msg.edit(content="``▶`` **Rest:** {}ms \n``▶`` **Client:** {}ms \n``▶`` **Shard:** {}ms \n``▶`` **Database:** {}ms".format(
             round((msg_t2 - msg_t1) * 1000),
             round(self.bot.latency * 1000),
             round(shard.latency * 1000),
@@ -294,7 +294,7 @@ class UtilityPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ Status",
-                "value": "> **• Uptime:** {} \n> **• Last reload:** {} \n> **• Version:** {} \n> **• Latency:** {}ms"\
+                "value": "``▶`` **Uptime:** {} \n``▶`` **Last reload:** {} \n``▶`` **Version:** {} \n``▶`` **Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
                     f"<t:{round(self.bot.last_reload)}>",
@@ -304,7 +304,7 @@ class UtilityPlugin(AutoModPlugin):
             },
             {
                 "name": "❯ Stats",
-                "value": "> **• Guilds:** {} \n> **• Users:** {} \n> **• Shards:** {}"\
+                "value": "``▶`` **Guilds:** {} \n``▶`` **Users:** {} \n``▶`` **Shards:** {}"\
                 .format(
                     len(self.bot.guilds),
                     sum([x.member_count for x in self.bot.guilds]),
@@ -313,7 +313,7 @@ class UtilityPlugin(AutoModPlugin):
             },
             {
                 "name": "❯ Usage",
-                "value": "> **• Commands:** {} \n> **• Custom:** {}"\
+                "value": "``▶`` **Commands:** {} \n``▶`` **Custom:** {}"\
                 .format(
                     self.bot.used_commands,
                     self.bot.used_tags
@@ -459,7 +459,7 @@ class UtilityPlugin(AutoModPlugin):
         )
         e.add_field(
             name="❯ User Information",
-            value="> **• ID:** {} \n> **• Profile:** {} \n> **• Badges:** {} \n> **• Created at:** <t:{}> \n> **• Banner:** {}"\
+            value="``▶`` **ID:** {} \n``▶`` **Profile:** {} \n``▶`` **Badges:** {} \n``▶`` **Created at:** <t:{}> \n``▶`` **Banner:** {}"\
             .format(
                 user.id,
                 user.mention,
@@ -473,7 +473,7 @@ class UtilityPlugin(AutoModPlugin):
 
             e.add_field(
                 name="❯ Server Information",
-                value="> **• Nickname:** {} \n> **• Joined at:** <t:{}> \n> **• Join position:** {} \n> **• Status:** {} \n> **• Roles:** {}"\
+                value="``▶`` **Nickname:** {} \n``▶`` **Joined at:** <t:{}> \n``▶`` **Join position:** {} \n``▶`` **Status:** {} \n``▶`` **Roles:** {}"\
                 .format(
                     member.nick,
                     round(member.joined_at.timestamp()),
@@ -506,7 +506,7 @@ class UtilityPlugin(AutoModPlugin):
 
         e.add_field(
             name="❯ Infractions",
-            value="> **• Total Cases:** {} \n> **• Last 3 Cases:** {}"\
+            value="``▶`` **Total Cases:** {} \n``▶`` **Last 3 Cases:** {}"\
             .format(
                 len(cases),
                 ", ".join(last_3)
@@ -539,42 +539,48 @@ class UtilityPlugin(AutoModPlugin):
         e.add_fields([
             {
                 "name": "❯ Information",
-                "value": "> **• ID:** {} \n> **• Owner:** {} \n> **• Created at:** <t:{}> \n> **• Invite Splash:** {} \n> **• Banner:** {}"\
+                "value": "``▶`` **ID:** {} \n``▶`` **Owner:** {} \n``▶`` **Created:** <t:{}> \n``▶`` **Invite Splash:** {} \n``▶`` **Banner:** {}"\
                 .format(
                     g.id, 
                     g.owner, 
                     round(g.created_at.timestamp()),
                     f"[Here]({g.splash.url})" if g.splash != None else "None",
                     f"[Here]({g.banner.url})" if g.banner != None else "None"
-                )
+                ),
+                "inline": True
             },
+            e.blank_field(True),
             {
                 "name": "❯ Channels",
-                "value": "> **• Categories:** {} \n> **• Text:** {} \n> **• Voice:** {} \n> **• Threads:** {}"\
+                "value": "``▶`` **Categories:** {} \n``▶`` **Text:** {} \n``▶`` **Voice:** {} \n``▶`` **Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
                     len(g.text_channels), 
                     len(g.voice_channels),
                     len(g.threads)
-                )
+                ),
+                "inline": True
             },
             {
                 "name": "❯ Members",
-                "value": "> **• Total:** {} \n> **• Users:** {} \n> **• Bots:** {}"\
+                "value": "``▶`` **Total:** {} \n``▶`` **Users:** {} \n``▶`` **Bots:** {}"\
                 .format(
                     len(g.members), 
                     len([x for x in g.members if not x.bot]), 
                     len([x for x in g.members if x.bot])
-                )
+                ),
+                "inline": True
             },
+            e.blank_field(True),
             {
                 "name": "❯ Other",
-                "value": "> **• Roles:** {} \n> **• Emojis:** {} \n> **• Features:** {}"\
+                "value": "``▶`` **Roles:** {} \n``▶`` **Emojis:** {} \n``▶`` **Features:** {}"\
                 .format(
                     len(g.roles), 
                     len(g.emojis), 
                     ", ".join(g.features) if len(g.features) > 0 else "None"
-                )
+                ),
+                "inline": True
             }
         ])
         await ctx.send(embed=e)
@@ -605,7 +611,7 @@ class UtilityPlugin(AutoModPlugin):
                     if channel != None:
                         e.add_field(
                             name=f"❯ #{channel.name}",
-                            value="> **• Time:** {} \n> **• Mode:** {} \n> **• Moderator:** {}"\
+                            value="``▶`` **Time:** {} \n``▶`` **Mode:** {} \n``▶`` **Moderator:** {}"\
                                 .format(
                                     s["pretty"],
                                     s["mode"],

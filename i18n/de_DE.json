@@ -175,7 +175,7 @@
 
     "no_timeout_perms": "{emote} The (un-)mute command now uses the timeout feature. It looks like I don't have the correct permissions to use this feature though, so please make sure to give me either the ``administrator`` permission or, if you're not comfortable with that, simply the ``Timeout Members`` permission",
 
-    "automod_description": "• Use ``off`` as the argument in all commands to disable the feature \n• Use ``0`` as the warn argument to just delete the message \n• To manage allowed invites, use the ``{prefix}allowed_invites`` command \n• To manage blacklisted links, use the ``{prefix}link_blacklist`` command \n• To manage whitelisted links, use the ``{prefix}link_whitelist`` command \n• Actions are only taken on non-mods",
+    "automod_description": "``▶`` Use ``off`` as the argument in all commands to disable the feature \n``▶`` Use ``0`` as the warn argument to just delete the message \n``▶`` To manage allowed invites, use the ``{prefix}allowed_invites`` command \n``▶`` To manage blacklisted links, use the ``{prefix}link_blacklist`` command \n``▶`` To manage whitelisted links, use the ``{prefix}link_whitelist`` command \n``▶`` Actions are only taken on non-mods",
     "invalid_automod_rule": "{emote} ``{given}`` isn't a valid automod rule",
     "automod_off": "{emote} Disabled the {_type} automod rule",
     "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field_name} amount or **off** as the second argument",
@@ -284,7 +284,7 @@
     "no_ignored_am": "{emote} Keine extra Rollen oder Channels werden aktuell vom Automoderator ignoriert",
     "no_ignored_log": "{emote} Keine extra Rollen oder Channels werden aktuell für Logs ignoriert",
 
-    "plugins_desc": "• To enable a plugin, use: ``{prefix}plugins enable <plugin>`` \n• To disable a plugin, use: ``{prefix}plugins disable <plugin>``",
+    "plugins_desc": "``▶`` To enable a plugin, use: ``{prefix}plugins enable <plugin>`` \n``▶`` To disable a plugin, use: ``{prefix}plugins disable <plugin>``",
 
     "no_replies": "{emote} This server doesn't have any auto replies",
     "reply_exists": "{emote} A reply with that name already exists",

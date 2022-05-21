@@ -176,7 +176,7 @@
 
     "no_timeout_perms": "{emote} The (un-)mute command now uses the timeout feature. It looks like I don't have the correct permissions to use this feature though, so please make sure to give me either the ``administrator`` permission or, if you're not comfortable with that, simply the ``Timeout Members`` permission",
 
-    "automod_description": "• Use ``off`` as the argument in all commands to disable the feature \n• Use ``0`` as the warn argument to just delete the message \n• To manage allowed invites, use the ``{prefix}allowed_invites`` command \n• To manage blacklisted links, use the ``{prefix}link_blacklist`` command \n• To manage whitelisted links, use the ``{prefix}link_whitelist`` command \n• Actions are only taken on non-mods",
+    "automod_description": "``▶`` Use ``off`` as the argument in all commands to disable the feature \n``▶`` Use ``0`` as the warn argument to just delete the message \n``▶`` To manage allowed invites, use the ``{prefix}allowed_invites`` command \n``▶`` To manage blacklisted links, use the ``{prefix}link_blacklist`` command \n``▶`` To manage whitelisted links, use the ``{prefix}link_whitelist`` command \n``▶`` Actions are only taken on non-mods",
     "automod_commands": "``{prefix}automod invites <warns>`` - *Warns a user gets when sending Discord invites* \n \n``{prefix}automod links <warns>`` - *Warns a user gets when sending blacklisted links* \n\n``{prefix}automod files <warns>`` - *Warns a user gets when sending malicious files* \n\n``{prefix}automod mentions <number>`` - *Max number of pings allowed per message* \n\n``{prefix}automod lines <number>`` - *Max number of line splits allowed per message* \n\n``{prefix}automod emotes <number>`` - *Max number of emotes allowed per message* \n\n``{prefix}automod repeat <number>`` - *Max number of allowed occurrences of a word* \n\n``{prefix}automod zalgo <warns>`` - *Warns a user gets when sending zalgo characters*",
     "invalid_automod_rule": "{emote} ``{given}`` isn't a valid automod rule",
     "automod_off": "{emote} Disabled the {_type} automod rule",
@@ -286,7 +286,7 @@
     "no_ignored_am": "{emote} No extra roles or channels are currently being ignored by the automoderator",
     "no_ignored_log": "{emote} No extra roles or channels are currently being ignored for logging events",
 
-    "plugins_desc": "• To enable a plugin, use: ``{prefix}plugins enable <plugin>`` \n• To disable a plugin, use: ``{prefix}plugins disable <plugin>``",
+    "plugins_desc": "``▶`` To enable a plugin, use: ``{prefix}plugins enable <plugin>`` \n``▶`` To disable a plugin, use: ``{prefix}plugins disable <plugin>``",
 
     "no_replies": "{emote} This server doesn't have any auto replies",
     "reply_exists": "{emote} A reply with that name already exists",

@@ -39,7 +39,11 @@ class Embed(discord.Embed):
 
     def add_field(self, name: str, value: str, inline: bool = False) -> None:
         self._add_color()
-        super().add_field(name=name, value=value, inline=inline)
+        super().add_field(
+            name=name, 
+            value=str(value)[:1023], 
+            inline=inline
+        )
 
     
     def add_fields(self, fields: list) -> None:
@@ -50,7 +54,7 @@ class Embed(discord.Embed):
             else:
                 self.add_field(
                     name=field["name"],
-                    value=field["value"],
+                    value=str(field["value"])[:1023],
                     inline=field.get("inline", False)
                 )
 

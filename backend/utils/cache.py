@@ -7,7 +7,7 @@ from typing import Union
 class MessageCache(object):
     def __init__(self) -> None:
         self.__store = {}
-        self._MAX_SIZE = 5000
+        self._MAX_SIZE = 1500
 
 
     def insert(self, guild: discord.Guild, msg: discord.Message) -> None:

@@ -188,8 +188,8 @@ class ConfigPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "⚙️ General",
-                "value": "> **• Prefix:** {} \n> **• Can mute:** {} \n> **• Filters:** {} \n> **• Regexes:** {} \n> **• Total Cases:** {} \n> **• Custom Commands:** {} \n> **• Mod Role:** {}"\
+                "name": "⚙️ __**General**__",
+                "value": "``▶`` **Prefix** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes: {}** \n``▶`` **Total Cases:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Mod Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
@@ -202,8 +202,8 @@ class ConfigPlugin(AutoModPlugin):
                 "inline": True
             },
             {
-                "name": "📁 Logging",
-                "value": "> **• Mod Log:** {} \n> **• Message Log:** {}\n> **• Server Log:** {}\n> **• Join Log:** {} \n> **• Member Log:** {} \n> **• Voice Log:** {} \n> **• Bot Log:** {}"\
+                "name": "📁 __**Logging**__",
+                "value": "``▶`` **Mod Log:** {} \n``▶`` **Message Log:** {}\n``▶`` **Server Log:** {}\n``▶`` **Join Log:** {} \n``▶`` **Member Log:** {} \n``▶`` **Voice Log:** {} \n``▶`` **Bot Log:** {}"\
                 .format(
                     "disabled" if config.mod_log == "" else f"<#{config.mod_log}>",
                     "disabled" if config.message_log == "" else f"<#{config.message_log}>",
@@ -218,8 +218,8 @@ class ConfigPlugin(AutoModPlugin):
             e.blank_field(True),
             e.dash_field(dash_length),
             {
-                "name": "⚔️ Automod Rules",
-                "value": "> **• Max Mentions:** {} \n> **• Max Newlines:** {} \n> **• Max Emotes:** {} \n> **• Max Repetitions:** {} \n > **• Links:** {} \n> **• Invites:** {} \n> **• Bad Files:** {} \n> **• Zalgo:** {} \n> **• Spam:** {}"\
+                "name": "⚔️ __**Automod Rules**__",
+                "value": "``▶`` **Max Mentions:** {} \n``▶`` **Max Newlines:** {} \n``▶`` **Max Emotes:** {} \n``▶`` **Max Repetitions:** {} \n``▶`` **Links:** {} \n``▶`` **Invites:** {} \n``▶`` **Bad Files:** {} \n``▶`` **Zalgo:** {} \n``▶`` **Spam:** {}"\
                 .format(
                     "disabled" if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
                     "disabled" if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
@@ -234,9 +234,9 @@ class ConfigPlugin(AutoModPlugin):
                 "inline": True
             },
             {
-                "name": "🔨 Punishments",
+                "name": "🔨 __**Punishments**__",
                 "value": "\n".join([
-                    f"> **• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
+                    f"``▶`` **{x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
                     for x, y in dict(
                         sorted(
                             config.punishments.items(), 
@@ -249,33 +249,33 @@ class ConfigPlugin(AutoModPlugin):
             e.blank_field(True),
             e.dash_field(dash_length),
             {
-                "name": "🔒 Ignored Roles (automod)",
-                "value": "> None" if len(config.ignored_roles_automod) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
+                "name": "🔒 __**Ignored Roles (automod)**__",
+                "value": "``▶`` None" if len(config.ignored_roles_automod) < 1 else "``▶`` {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             {
-                "name": "🔒 Ignored Channels (automod)",
-                "value": "> None" if len(config.ignored_channels_automod) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
+                "name": "🔒 __**Ignored Channels (automod)**__",
+                "value": "``▶`` None" if len(config.ignored_channels_automod) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             e.blank_field(True),
             {
-                "name": "🔒 Ignored Roles (logging)",
-                "value": "> None" if len(config.ignored_roles_log) < 1 else "> {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
+                "name": "🔒 __**Ignored Roles (logging)**__",
+                "value": "``▶`` None" if len(config.ignored_roles_log) < 1 else "``▶`` {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
-                "name": "🔒 Ignored Channels (logging)",
-                "value": "> None" if len(config.ignored_channels_log) < 1 else "> {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
+                "name": "🔒 __**Ignored Channels (logging)**__",
+                "value": "``▶`` None" if len(config.ignored_channels_log) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
             e.blank_field(True),
             e.dash_field(dash_length),
             {
-                "name": "🎭 Reaction Roles",
-                "value": "> None" if len(rrs) < 1 else "\n".join(
+                "name": "🎭 __**Reaction Roles**__",
+                "value": "``▶`` None" if len(rrs) < 1 else "\n".join(
                     [
-                        f"> **• [Message](https://discord.com/channels/{ctx.guild.id}/{v['channel']}/{k})** {', '.join([f'``[``{self.parse_emote(ctx.guild, data[emote])} <@&{data[role]}>``]``' for data in v['pairs']])}" for k, v in rrs.items()
+                        f"``▶`` **[Message](https://discord.com/channels/{ctx.guild.id}/{v['channel']}/{k})** {', '.join([f'``[``{self.parse_emote(ctx.guild, data[emote])} <@&{data[role]}>``]``' for data in v['pairs']])}" for k, v in rrs.items()
                     ]
                 ),
                 "inline": False
