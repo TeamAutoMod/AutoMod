@@ -37,7 +37,7 @@ MAX_NATIVE_SLOWMODE = 21600 # 6 hours
 MAX_BOT_SLOWMODE = 1209600 # 14 days
 
 
-def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Command, commands.GroupMixin]) -> Embed:
+def get_help_embed(plugin: AutoModPlugin, ctx: commands.Context, cmd: Union[commands.Command, commands.GroupMixin]) -> Embed:
     if len(cmd.aliases) > 0:
         cmd_name = f"{cmd.qualified_name}{'|{}'.format('|'.join(cmd.aliases)) if len(cmd.aliases) > 1 else f'|{cmd.aliases[0]}'}"
     else:
@@ -53,8 +53,8 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
         title=f"``{name.replace('...', '').replace('=None', '')}``"
     )
     e.add_field(
-        name="__**Description**__", 
-        value=help_message
+        name="🔎 __**Description**__", 
+        value=f"``▶`` {help_message}"
     )
 
     if isinstance(cmd, commands.GroupMixin) and hasattr(cmd, "all_commands"):
@@ -65,18 +65,18 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
 
         if len(actual_subcommands.keys()) > 0:
             e.add_field(
-                name="__**Subcommands**__", 
-                value=", ".join([f"``{x}``" for x in actual_subcommands.keys()])
+                name="🔗 __**Subcommands**__", 
+                value="``▶`` {}".format(", ".join([f"``{x}``" for x in actual_subcommands.keys()]))
             )
     
     examples = cmd.help.split("\nexamples:")[1].split("\n-")[1:]
     if len(examples) > 0:
         prefix = plugin.get_prefix(ctx.guild)
         e.add_field(
-            name="__**Examples**__",
+            name="✏️ __**Examples**__",
             value="\n".join(
                 [
-                    f"{prefix}{exmp}" for exmp in examples
+                    f"``▶`` {prefix}{exmp}" for exmp in examples
                 ]
             )
         )
@@ -84,7 +84,7 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
     return e
 
 
-def get_command_help(plugin: str, ctx: commands.Context, query: str) -> Union[Embed, None]:
+def get_command_help(plugin: AutoModPlugin, ctx: commands.Context, query: str) -> Union[Embed, None]:
     cmd = plugin.bot
     layers = query.split(" ")
 
@@ -347,7 +347,7 @@ class UtilityPlugin(AutoModPlugin):
                 if p != None:
                     cmds = [*[x.name for x in p.get_commands()], *[f"/{x.name}" for x in p.__cog_app_commands__]]
                     e.add_field(
-                        name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} __**{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])} [{len(cmds)}]**__",
+                        name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} __**{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}**__",
                         value="> {}".format(
                             ", ".join(
                                 [
@@ -392,6 +392,7 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command()
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
     async def jumbo(self, ctx: commands.Context, *, emotes: str) -> None:
         """
         jumbo_help

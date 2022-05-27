@@ -14,30 +14,6 @@ from .processor.log import LOG_TYPES
 
 
 
-CASE_EMOJIS = {
-    "BAN": "RED",
-    "SOFTBAN": "RED",
-    "HACKBAN": "RED",
-    "TEMPBAN": "RED",
-    "TEMPBAN EXTENDED": "RED",
-
-    "UNBAN": "GREEN",
-    "TEMPUNBAN": "GREEN",
-    "UNMUTE": "GREEN",
-    "UNWARN": "GREEN",
-
-    "WARN": "YELLOW",
-
-    "AUTOMOD": "BLUE",
-    "FILTER": "BLUE",
-    "REGEX": "BLUE",
-
-    "KICK": "ORANGE",
-    "MUTE": "ORANGE",
-    "MUTE EXTENDED": "ORANGE",
-}
-
-
 class CasesPlugin(AutoModPlugin):
     """Plugin for internal/log events"""
     def __init__(self, bot: ShardedBotInstance) -> None:
@@ -187,9 +163,8 @@ class CasesPlugin(AutoModPlugin):
             log_url = self.get_log_for_case(ctx, case)
 
             out.append(
-                "{} {} ``{}`` {} {}"\
+                "``▶`` {} ``{}`` {} {}"\
                 .format(
-                    self.bot.emotes.get(CASE_EMOJIS.get(case["type"].upper(), "BLUE")),
                     timestamp,
                     case["type"].upper(),
                     f"[``#{case_nr}``]({log_url})" if log_url is not None else f"``#{case_nr}``",
@@ -275,7 +250,7 @@ class CasesPlugin(AutoModPlugin):
 
         e = Embed(
             ctx,
-            color=LOG_TYPES[data.type.lower()]["color"],
+            color=LOG_TYPES[data.type.replace(" ", "_").lower()]["color"],
             title=f"{data.type.upper()} | #{case}"
         )
         if log_msg_url != None:
@@ -338,19 +313,17 @@ class CasesPlugin(AutoModPlugin):
                 url=user.display_avatar
             )
 
-        Y = self.bot.emotes.get("YES")
-        N = self.bot.emotes.get("NO")
         mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
         ban_data = await self.ban_data(ctx, user)
         warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
         e.add_fields([
             {
-                "name": "__**Status**__",
+                "name": "📝 __**Status**__",
                 "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
                 .format(
-                    Y if ban_data != None else N,
+                    "yes" if ban_data != None else "no",
                     f" (``{ban_data.reason}``)" if ban_data != None else "",
-                    Y if mute_data != None else N,
+                    "yes" if mute_data != None else "no",
                     f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
                 )
             },

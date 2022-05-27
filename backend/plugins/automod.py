@@ -708,7 +708,7 @@ class AutomodPlugin(AutoModPlugin):
                 description=self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO", given=rule)
             )
             e.add_field(
-                name="__**Valid rules**__",
+                name="📝 __**Valid rules**__",
                 value="``▶`` mentions \n``▶`` links \n``▶`` invites \n``▶`` files \n``▶`` zalgo \n``▶`` lines \n``▶`` emotes \n``▶`` repeat"
             )
             return await ctx.send(embed=e)
@@ -1056,7 +1056,7 @@ class AutomodPlugin(AutoModPlugin):
                 value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
                 inline=True
             )
-            if indx % 2 == 0: e.add_fields([e.blank_field(True, 8)])
+            if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
 
             footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
             if footer != None: e.set_footer(text=footer)
@@ -1093,7 +1093,7 @@ class AutomodPlugin(AutoModPlugin):
                     value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Pattern:** \n```\n{data['regex']}\n```",
                     inline=True
                 )
-                if indx % 2 == 0: e.add_fields([e.blank_field(True, 8)])
+                if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
 
                 footer = f"And {len(regexes)-len(dict(itertools.islice(regexes.items(), 10)))} more filters" if len(regexes) > 10 else None
             if footer != None: e.set_footer(text=footer)
@@ -1188,18 +1188,18 @@ class AutomodPlugin(AutoModPlugin):
             )
             e.add_fields([
                 {
-                    "name": "__**Status**__",
-                    "value": "Enabled" if config["enabled"] == True else "Disabled",
+                    "name": "📝 __**Status**__",
+                    "value": "``▶`` Enabled" if config["enabled"] == True else "``▶`` Disabled",
                     "inline": False
                 },
                 {
-                    "name": "__**Threshold**__",
-                    "value": f"**{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "N/A",
+                    "name": "🚪 __**Threshold**__",
+                    "value": f"``▶`` **{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "``▶`` N/A",
                     "inline": False
                 },
                 {
-                    "name": "__**Action**__",
-                    "value": f"**{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "N/A",
+                    "name": "🚩 __**Action**__",
+                    "value": f"``▶`` **{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "``▶`` N/A",
                     "inline": False
                 }
             ])
@@ -1276,12 +1276,12 @@ class AutomodPlugin(AutoModPlugin):
                 )
                 e.add_fields([
                     {
-                        "name": "__**Roles**__",
-                        "value": "> {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
+                        "name": "🎭 __**Roles**__",
+                        "value": "``▶`` {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "``▶`` None"
                     },
                     {
-                        "name": "__**Channels**__",
-                        "value": "> {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
+                        "name": "💬 __**Channels**__",
+                        "value": "``▶`` {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "``▶`` None"
                     }
                 ])
 
@@ -1324,8 +1324,8 @@ class AutomodPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "__**Added roles**__",
-                "value": "> {}".format(", ".join(
+                "name": "🎭 __**Added roles**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
                     ]
@@ -1333,11 +1333,11 @@ class AutomodPlugin(AutoModPlugin):
                     [
                         _ for _ in added if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Added Channels**__",
-                "value": "> {}".format(", ".join(
+                "name": "💬 __**Added channels**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.TextChannel)
                     ]
@@ -1345,11 +1345,11 @@ class AutomodPlugin(AutoModPlugin):
                     [
                         _ for _ in added if isinstance(_, discord.TextChannel)
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Ignored**__",
-                "value": "> {}".format(", ".join(
+                "name": "🔒 __**Ignored**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -1357,7 +1357,7 @@ class AutomodPlugin(AutoModPlugin):
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
         ])
 
@@ -1402,8 +1402,8 @@ class AutomodPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "__**Removed roles**__",
-                "value": "> {}".format(", ".join(
+                "name": "🎭 __**Removed roles**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.Role)
                     ]
@@ -1411,11 +1411,11 @@ class AutomodPlugin(AutoModPlugin):
                     [
                         _ for _ in removed if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Removed Channels**__",
-                "value": "> {}".format(", ".join(
+                "name": "💬 __**Removed channels**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.TextChannel)
                     ]
@@ -1423,11 +1423,11 @@ class AutomodPlugin(AutoModPlugin):
                     [
                         _ for _ in removed if isinstance(_, discord.TextChannel)
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Ignored**__",
-                "value": "> {}".format(", ".join(
+                "name": "🔒 __**Ignored**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -1435,7 +1435,7 @@ class AutomodPlugin(AutoModPlugin):
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
         ])
 

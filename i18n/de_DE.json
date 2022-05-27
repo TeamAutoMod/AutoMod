@@ -100,7 +100,7 @@
     "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
     "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",
     "check_fail": "{emote} A command check failed, looks like you're missing the required permissions",
-    "on_cooldown": "{emote} Command is on cooldown, you can use it again in ``{retry_after}`` seconds",
+    "on_cooldown": "{emote} Command is on cooldown, you can use it again in ``{retry_after}`` second{plural}",
     "forbidden": "{emote} Looks like there's a permissions error ||{exc}||",
     "missing_arg": "{emote} Missing required argument: ``{param}``",
     "bad_arg": "{emote} Failed to parse the {param} argument: ``{error}``",

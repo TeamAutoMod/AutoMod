@@ -116,8 +116,8 @@ class ReactionRolesPlugin(AutoModPlugin):
                 for msg, data in rrs.items():
                     channel = ctx.guild.get_channel(int(data["channel"]))
                     e.add_field(
-                        name=f"__**{msg}{f' (#{channel.name})' if channel != None else ''}",
-                        value=f"{f'[Jump to message](https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg})' if channel != None else ''}" + 
+                        name=f"__**{msg}{f' (#{channel.name})' if channel != None else ''}**__",
+                        value=f"{f'``▶`` [Jump to message](https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg})' if channel != None else ''}" + 
                         "{}".format(
                             "\n" if channel != None else ""
                         ) +

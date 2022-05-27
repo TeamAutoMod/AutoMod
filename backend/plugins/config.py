@@ -303,7 +303,7 @@ class ConfigPlugin(AutoModPlugin):
                 description=self.locale.t(ctx.guild, "invalid_action_desc", _emote="NO", given=action)
             )
             e.add_field(
-                name="__** Valid actions**__",
+                name="📝 __**Valid actions**__",
                 value="``▶`` kick \n``▶`` ban \n``▶`` mute \n``▶`` none"
             )
             return await ctx.send(embed=e)
@@ -384,7 +384,7 @@ class ConfigPlugin(AutoModPlugin):
                 description=self.locale.t(ctx.guild, "invalid_log_option_desc", _emote="NO", given=option)
             )
             e.add_field(
-                name="__**Valid options**__",
+                name="📝 __**Valid options**__",
                 value="``▶`` mod \n``▶`` server \n``▶`` messages \n``▶`` joins \n``▶`` members \n``▶`` voice \n``▶`` bot"
             )
             return await ctx.send(embed=e)
@@ -495,17 +495,17 @@ class ConfigPlugin(AutoModPlugin):
         if len(disabled) > 0:
             e.add_field(
                 name="__**Disabled the following commands**__", 
-                value="> {}".format(", ".join([f"``{x}``" for x in disabled]))
+                value="``▶`` {}".format(", ".join([f"``{x}``" for x in disabled]))
             )
         if len(enabled) > 0:
             e.add_field(
                 name="__**Re-enabled the following commands**__",
-                value="> {}".format(", ".join([f"``{x}``" for x in enabled])),
+                value="``▶`` {}".format(", ".join([f"``{x}``" for x in enabled])),
             )
         if len(failed) > 0:
             e.add_field(
                 name="__**Following commands are unknown or mod-commands**__",
-                value="> {}".format(", ".join([f"``{x}``" for x in failed])),
+                value="``▶`` {}".format(", ".join([f"``{x}``" for x in failed])),
             )
         
         await ctx.send(embed=e)
@@ -572,12 +572,12 @@ class ConfigPlugin(AutoModPlugin):
                 )
                 e.add_fields([
                     {
-                        "name": "__**Roles**__",
-                        "value": "> {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
+                        "name": "🎭 __**Roles**__",
+                        "value": "``▶`` {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "``▶`` None"
                     },
                     {
-                        "name": "__**Channels**__",
-                        "value": "> {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
+                        "name": "💬 __**Channels**__",
+                        "value": "``▶`` {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "``▶`` None"
                     }
                 ])
 
@@ -620,8 +620,8 @@ class ConfigPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "__**Added roles**__",
-                "value": "> {}".format(", ".join(
+                "name": "🎭 __**Added roles**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
                     ]
@@ -629,11 +629,11 @@ class ConfigPlugin(AutoModPlugin):
                     [
                         _ for _ in added if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Added Channels**__",
-                "value": "> {}".format(", ".join(
+                "name": "💬 __**Added channels**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
                     ]
@@ -641,11 +641,11 @@ class ConfigPlugin(AutoModPlugin):
                     [
                         _ for _ in added if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Ignored**__",
-                "value": "> {}".format(", ".join(
+                "name": "🔒 __**Ignored**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -653,7 +653,7 @@ class ConfigPlugin(AutoModPlugin):
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
         ])
 
@@ -698,8 +698,8 @@ class ConfigPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "__**Removed roles**__",
-                "value": "> {}".format(", ".join(
+                "name": "🎭 __**Removed roles**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.Role)
                     ]
@@ -707,11 +707,11 @@ class ConfigPlugin(AutoModPlugin):
                     [
                         _ for _ in removed if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Removed Channels**__",
-                "value": "> {}".format(", ".join(
+                "name": "💬 __**Removed channels**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
                     ]
@@ -719,11 +719,11 @@ class ConfigPlugin(AutoModPlugin):
                     [
                         _ for _ in removed if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
             {
-                "name": "__**Ignored**__",
-                "value": "> {}".format(", ".join(
+                "name": "🔒 __**Ignored**__",
+                "value": "``▶`` {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -731,7 +731,7 @@ class ConfigPlugin(AutoModPlugin):
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "> None"
+                ) > 0 else "``▶`` None"
             },
         ])
 

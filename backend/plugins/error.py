@@ -68,7 +68,7 @@ class ErrorPlugin(AutoModPlugin):
         elif isinstance(error, commands.CommandOnCooldown):
             e = Embed(
                 ctx,
-                description=self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after))
+                description=self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after), plural="" if round(error.retry_after) == 1 else "s")
             )
             await ctx.send(embed=e)
         
