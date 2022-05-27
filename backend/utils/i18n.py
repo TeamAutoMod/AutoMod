@@ -46,7 +46,7 @@ class Translator(object):
         except KeyError:
             channel = self.bot.get_channel(self.bot.config.error_channel)
             asyncio.run_coroutine_threadsafe(
-                channel.send(f"{key} not found | {lang} | {guild.name} | {guild.id}"), 
+                channel.send(f"{key} not found | {lang} | {guild.name} | {guild.id} | {kwargs}"), 
                 loop=self.bot.loop
             )
 
