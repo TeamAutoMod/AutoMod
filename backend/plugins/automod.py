@@ -696,7 +696,7 @@ class AutomodPlugin(AutoModPlugin):
                 description=self.locale.t(ctx.guild, "automod_description", prefix=prefix)
             )
             e.add_field(
-                name="❯ Commands",
+                name="__**Command usage**__",
                 value=self.locale.t(ctx.guild, "automod_commands", prefix=prefix)
             )
             return await ctx.send(embed=e)
@@ -708,7 +708,7 @@ class AutomodPlugin(AutoModPlugin):
                 description=self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO", given=rule)
             )
             e.add_field(
-                name="❯ Valid rules",
+                name="__**Valid rules**__",
                 value="``▶`` mentions \n``▶`` links \n``▶`` invites \n``▶`` files \n``▶`` zalgo \n``▶`` lines \n``▶`` emotes \n``▶`` repeat"
             )
             return await ctx.send(embed=e)
@@ -727,11 +727,11 @@ class AutomodPlugin(AutoModPlugin):
                 )
                 e.add_fields([
                     {
-                        "name": "❯ Enable this rule",
+                        "name": "__**Enable this rule**__",
                         "value": f"``{prefix}automod {rule} <{'max_amount' if data.field_name in ['mentions', 'lines', 'emotes', 'repeat'] else 'warns'}>``"
                     },
                     {
-                        "name": "❯ Disable this rule",
+                        "name": "__**Disable this rule**__",
                         "value": f"``{prefix}automod {rule} off``"
                     }
                 ])
@@ -779,7 +779,7 @@ class AutomodPlugin(AutoModPlugin):
             e = Embed(
                 ctx,
                 title="Allowed invites (by server ID)",
-                description=", ".join(allowed)
+                description="> {}".format(", ".join(allowed))
             )
             await ctx.send(embed=e)
 
@@ -841,7 +841,7 @@ class AutomodPlugin(AutoModPlugin):
             e = Embed(
                 ctx,
                 title="Blacklisted links",
-                description=", ".join(links)
+                description="> {}".format(", ".join(links))
             )
             await ctx.send(embed=e)
 
@@ -905,7 +905,7 @@ class AutomodPlugin(AutoModPlugin):
             e = Embed(
                 ctx,
                 title="Allowed links",
-                description=", ".join(links)
+                description="> {}".format(", ".join(links))
             )
             await ctx.send(embed=e)
 
@@ -969,15 +969,15 @@ class AutomodPlugin(AutoModPlugin):
                 description=f"``▶`` Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n``▶`` Deleting a filter: ``{prefix}filter remove <name>``"
             )
             e.add_field(
-                name="❯ Arguments",
+                name="__**Arguments**__",
                 value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when flagged. Use 0 if you want the message to be deleted* \n``[channels]`` - *Channels in which this filter should be enforced. Don't pass any to have it enabled in all channels* \n``<words>`` - *Words contained in the filter, seperated by commas*"
             )
             e.add_field(
-                name="❯ Wildcards",
+                name="__**Wildcard**__",
                 value="You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered."
             )
             e.add_field(
-                name="❯ Examples",
+                name="__**Examples**__",
                 value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*`` \n\n``{prefix}filter add test2 0 #test #other oneword, two words, wildcar*``"
             )
             await ctx.send(embed=e)
@@ -1052,7 +1052,7 @@ class AutomodPlugin(AutoModPlugin):
             channels = "all channels" if len(i["channels"]) < 1 else ", ".join([f'#{ctx.guild.get_channel(int(x))}' for x in i["channels"]])
 
             e.add_field(
-                name=f"❯ {name}",
+                name=f"__**{name}**__",
                 value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
                 inline=True
             )
@@ -1089,7 +1089,7 @@ class AutomodPlugin(AutoModPlugin):
                 channels = "all channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
 
                 e.add_field(
-                    name=f"❯ {name}",
+                    name=f"__**{name}**__",
                     value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Pattern:** \n```\n{data['regex']}\n```",
                     inline=True
                 )
@@ -1168,15 +1168,15 @@ class AutomodPlugin(AutoModPlugin):
         )
         info_embed.add_fields([
             {
-                "name": "❯ View current config",
+                "name": "__**View current config**__",
                 "value": f"``{prefix}antispam``"
             },
             {
-                "name": "❯ Enable antispam",
+                "name": "__**Enable antispam**__",
                 "value": f"``{prefix}antispam <rate> <per> <warns>``"
             },
             {
-                "name": "❯ Disable antispam",
+                "name": "__**Disable antispam**__",
                 "value": f"``{prefix}antispam off``"
             }
         ])
@@ -1188,19 +1188,19 @@ class AutomodPlugin(AutoModPlugin):
             )
             e.add_fields([
                 {
-                    "name": "❯ Status",
+                    "name": "__**Status**__",
                     "value": "Enabled" if config["enabled"] == True else "Disabled",
                     "inline": False
                 },
                 {
-                    "name": "❯ Threshold",
+                    "name": "__**Threshold**__",
                     "value": f"**{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "N/A",
-                    "inline": True
+                    "inline": False
                 },
                 {
-                    "name": "❯ Action",
+                    "name": "__**Action**__",
                     "value": f"**{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "N/A",
-                    "inline": True
+                    "inline": False
                 }
             ])
 
@@ -1276,12 +1276,12 @@ class AutomodPlugin(AutoModPlugin):
                 )
                 e.add_fields([
                     {
-                        "name": "❯ Roles",
-                        "value": ", ".join([f"<@&{x}>" for x in roles]) if len(roles) > 0 else "None"
+                        "name": "__**Roles**__",
+                        "value": "> {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                     },
                     {
-                        "name": "❯ Channels",
-                        "value": ", ".join([f"<#{x}>" for x in channels]) if len(channels) > 0 else "None"
+                        "name": "__**Channels**__",
+                        "value": "> {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                     }
                 ])
 
@@ -1324,40 +1324,40 @@ class AutomodPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "❯ Added roles",
-                "value": ", ".join(
+                "name": "__**Added roles**__",
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
                     ]
-                ) if len(
+                )) if len(
                     [
                         _ for _ in added if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "None"
+                ) > 0 else "> None"
             },
             {
-                "name": "❯ Added Channels",
-                "value": ", ".join(
+                "name": "__**Added Channels**__",
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.TextChannel)
                     ]
-                ) if len(
+                )) if len(
                     [
                         _ for _ in added if isinstance(_, discord.TextChannel)
                     ]
-                ) > 0 else "None"
+                ) > 0 else "> None"
             },
             {
-                "name": "❯ Ignored",
-                "value": ", ".join(
+                "name": "__**Ignored**__",
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
-                ) if len(
+                )) if len(
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "None"
+                ) > 0 else "> None"
             },
         ])
 
@@ -1402,40 +1402,40 @@ class AutomodPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "❯ Removed roles",
-                "value": ", ".join(
+                "name": "__**Removed roles**__",
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.Role)
                     ]
-                ) if len(
+                )) if len(
                     [
                         _ for _ in removed if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "None"
+                ) > 0 else "> None"
             },
             {
-                "name": "❯ Removed Channels",
-                "value": ", ".join(
+                "name": "__**Removed Channels**__",
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.TextChannel)
                     ]
-                ) if len(
+                )) if len(
                     [
                         _ for _ in removed if isinstance(_, discord.TextChannel)
                     ]
-                ) > 0 else "None"
+                ) > 0 else "> None"
             },
             {
-                "name": "❯ Ignored",
-                "value": ", ".join(
+                "name": "__**Ignored**__",
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
-                ) if len(
+                )) if len(
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "None"
+                ) > 0 else "> None"
             },
         ])
 

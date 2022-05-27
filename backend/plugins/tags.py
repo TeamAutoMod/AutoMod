@@ -96,7 +96,7 @@ class TagsPlugin(AutoModPlugin):
                     e = Embed(
                 ctx,
                         title="Custom Commands",
-                        description=", ".join([f"``{x}``" for x in tags])
+                        description="> {}".format(", ".join([f"``{x}``" for x in tags]))
                     )
                     e.set_footer(text=f"Use these as commands (e.g. {prefix}{list(tags.keys())[0]})")
                     await ctx.send(embed=e)

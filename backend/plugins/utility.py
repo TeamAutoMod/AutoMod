@@ -53,7 +53,7 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
         title=f"``{name.replace('...', '').replace('=None', '')}``"
     )
     e.add_field(
-        name="❯ Description", 
+        name="__**Description**__", 
         value=help_message
     )
 
@@ -65,7 +65,7 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
 
         if len(actual_subcommands.keys()) > 0:
             e.add_field(
-                name="❯ Subcommands", 
+                name="__**Subcommands**__", 
                 value=", ".join([f"``{x}``" for x in actual_subcommands.keys()])
             )
     
@@ -73,7 +73,7 @@ def get_help_embed(plugin: str, ctx: commands.Context, cmd: Union[commands.Comma
     if len(examples) > 0:
         prefix = plugin.get_prefix(ctx.guild)
         e.add_field(
-            name="❯ Examples",
+            name="__**Examples**__",
             value="\n".join(
                 [
                     f"{prefix}{exmp}" for exmp in examples
@@ -293,31 +293,33 @@ class UtilityPlugin(AutoModPlugin):
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
             {
-                "name": "❯ Status",
-                "value": "``▶`` **Uptime:** {} \n``▶`` **Last reload:** {} \n``▶`` **Version:** {} \n``▶`` **Latency:** {}ms"\
+                "name": "📈 __**Status**__",
+                "value": "``▶`` **Uptime:** {} \n``▶`` **Version:** {} \n``▶`` **Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
-                    f"<t:{round(self.bot.last_reload)}>",
                     get_version(),
                     round(self.bot.latency * 1000)
-                )
+                ),
+                "inline": True
             },
             {
-                "name": "❯ Stats",
+                "name": "📰 __**Stats**__",
                 "value": "``▶`` **Guilds:** {} \n``▶`` **Users:** {} \n``▶`` **Shards:** {}"\
                 .format(
                     len(self.bot.guilds),
                     sum([x.member_count for x in self.bot.guilds]),
                     len(self.bot.shards)
-                )
+                ),
+                "inline": True
             },
             {
-                "name": "❯ Usage",
+                "name": "✏️ __**Usage**__",
                 "value": "``▶`` **Commands:** {} \n``▶`` **Custom:** {}"\
                 .format(
                     self.bot.used_commands,
                     self.bot.used_tags
-                )
+                ),
+                "inline": True
             }
         ])
         e.credits()
@@ -345,7 +347,7 @@ class UtilityPlugin(AutoModPlugin):
                 if p != None:
                     cmds = [*[x.name for x in p.get_commands()], *[f"/{x.name}" for x in p.__cog_app_commands__]]
                     e.add_field(
-                        name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name]} [{len(cmds)}]",
+                        name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} __**{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])} [{len(cmds)}]**__",
                         value="> {}".format(
                             ", ".join(
                                 [
@@ -458,7 +460,7 @@ class UtilityPlugin(AutoModPlugin):
             url=user.display_avatar
         )
         e.add_field(
-            name="❯ User Information",
+            name="👤 __**User Information**__",
             value="``▶`` **ID:** {} \n``▶`` **Profile:** {} \n``▶`` **Badges:** {} \n``▶`` **Created at:** <t:{}> \n``▶`` **Banner:** {}"\
             .format(
                 user.id,
@@ -472,7 +474,7 @@ class UtilityPlugin(AutoModPlugin):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             e.add_field(
-                name="❯ Server Information",
+                name="📍 __**Server Information**__",
                 value="``▶`` **Nickname:** {} \n``▶`` **Joined at:** <t:{}> \n``▶`` **Join position:** {} \n``▶`` **Status:** {} \n``▶`` **Roles:** {}"\
                 .format(
                     member.nick,
@@ -505,7 +507,7 @@ class UtilityPlugin(AutoModPlugin):
                     last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")    
 
         e.add_field(
-            name="❯ Infractions",
+            name="🚩 __**Infractions**__",
             value="``▶`` **Total Cases:** {} \n``▶`` **Last 3 Cases:** {}"\
             .format(
                 len(cases),
@@ -538,7 +540,7 @@ class UtilityPlugin(AutoModPlugin):
         
         e.add_fields([
             {
-                "name": "❯ Information",
+                "name": "📌 __**Information**__",
                 "value": "``▶`` **ID:** {} \n``▶`` **Owner:** {} \n``▶`` **Created:** <t:{}> \n``▶`` **Invite Splash:** {} \n``▶`` **Banner:** {}"\
                 .format(
                     g.id, 
@@ -551,7 +553,7 @@ class UtilityPlugin(AutoModPlugin):
             },
             e.blank_field(True),
             {
-                "name": "❯ Channels",
+                "name": "💬 __**Channels**__",
                 "value": "``▶`` **Categories:** {} \n``▶`` **Text:** {} \n``▶`` **Voice:** {} \n``▶`` **Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
@@ -562,7 +564,7 @@ class UtilityPlugin(AutoModPlugin):
                 "inline": True
             },
             {
-                "name": "❯ Members",
+                "name": "👥 __**Members**__",
                 "value": "``▶`` **Total:** {} \n``▶`` **Users:** {} \n``▶`` **Bots:** {}"\
                 .format(
                     len(g.members), 
@@ -573,7 +575,7 @@ class UtilityPlugin(AutoModPlugin):
             },
             e.blank_field(True),
             {
-                "name": "❯ Other",
+                "name": "🌀 __**Other**__",
                 "value": "``▶`` **Roles:** {} \n``▶`` **Emojis:** {} \n``▶`` **Features:** {}"\
                 .format(
                     len(g.roles), 
@@ -586,7 +588,7 @@ class UtilityPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-    @commands.command()
+    @commands.command(aliases=["slow"])
     @AutoModPlugin.can("manage_channels")
     async def slowmode(self, ctx: commands.Context, time: Duration = None) -> None:
         """
@@ -610,7 +612,7 @@ class UtilityPlugin(AutoModPlugin):
                     channel = ctx.guild.get_channel(int(s["id"].split("-")[1]))
                     if channel != None:
                         e.add_field(
-                            name=f"❯ #{channel.name}",
+                            name=f"__**#{channel.name}**__",
                             value="``▶`` **Time:** {} \n``▶`` **Mode:** {} \n``▶`` **Moderator:** {}"\
                                 .format(
                                     s["pretty"],

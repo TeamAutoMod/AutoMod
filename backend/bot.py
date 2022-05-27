@@ -19,7 +19,10 @@ from .observer import Observer
 
 
 
-def prefix_callable(bot, msg: discord.Message) -> list:
+def prefix_callable(
+    bot, 
+    msg: discord.Message
+) -> list:
     default = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "] # when the bot is mentioned
     if msg.guild is None:
         default.append(bot.config.default_prefix)
@@ -73,7 +76,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
     )
     if hasattr(intents, "message_content"):
         intents.message_content = True
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        *args, 
+        **kwargs
+    ) -> None:
         with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
         super().__init__(
@@ -121,7 +128,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.run()
 
 
-    async def on_ready(self) -> None:
+    async def on_ready(
+        self
+    ) -> None:
         if self.config.custom_status != "":
             if self.activity == None:
                     await self.change_presence(
@@ -158,7 +167,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
             self.ready = True
 
     
-    async def on_message(self, msg: discord.Message) -> None:
+    async def on_message(
+        self, 
+        msg: discord.Message
+    ) -> None:
         if msg.author.bot or msg.guild is None:
             return
         ctx = await self.get_context(msg, cls=Context)
@@ -183,7 +195,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
             await self.invoke(ctx)
             
     
-    async def load_plugins(self) -> None:
+    async def load_plugins(
+        self
+    ) -> None:
         try:
             self.remove_command("help")
         except Exception:
@@ -194,20 +208,29 @@ class ShardedBotInstance(commands.AutoShardedBot):
             self.plugins = self.cogs
 
 
-    async def register_plugin(self, plugin: commands.Cog) -> None:
+    async def register_plugin(
+        self, 
+        plugin: commands.Cog
+    ) -> None:
         await super().add_cog(plugin)
 
 
-    async def load_plugin(self, plugin: str) -> None:
+    async def load_plugin(
+        self, 
+        plugin: str
+    ) -> None:
         try:
             await super().load_extension(f"backend.plugins.{plugin}")
         except Exception:
             log.error(f"❗️ Failed to load {plugin} - {traceback.format_exc()}")
         else:
-            log.info(f"🔥 Successfully loaded {plugin}")
+            log.info(f"✅ Successfully loaded {plugin}")
 
     
-    async def reload_plugin(self, plugin: str) -> None:
+    async def reload_plugin(
+        self, 
+        plugin: str
+    ) -> None:
         if plugin == "mod":
             in_plugins_name = "ModerationPlugin"
         elif plugin == "rr":
@@ -216,6 +239,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = "AutoReplyPlugin"
         else:
             in_plugins_name = f"{plugin.capitalize()}Plugin"
+            
         if in_plugins_name not in self.plugins:
             try: await super().load_extension(f"backend.plugins.{plugin}")
             except Exception: raise
@@ -229,14 +253,29 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 except Exception: raise
 
 
-    def get_plugin(self, name: str) -> Union[commands.Cog, None]:
+    def get_plugin(
+        self, 
+        name: str
+    ) -> Union[
+        commands.Cog, 
+        None
+    ]:
         try:
             return super().get_cog(name)
         except Exception:
             return None
 
 
-    def handle_timeout(self, mute: bool, guild: discord.Guild, user: Union[discord.Member, discord.User], iso8601_ts) -> Union[str, Exception]:
+    def handle_timeout(
+        self, 
+        mute: bool, 
+        guild: discord.Guild, 
+        user: Union[discord.Member, discord.User], 
+        iso8601_ts: str
+    ) -> Union[
+        str, 
+        Exception
+    ]:
         exc = ""
         try:
             resp = requests.patch(
@@ -255,7 +294,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return exc
 
 
-    def get_uptime(self, split: bool = False) -> str:
+    def get_uptime(
+        self, 
+        split: bool = False
+    ) -> str:
         raw = datetime.datetime.utcnow() - self.uptime
 
         hours, remainder = divmod(int(raw.total_seconds()), 3600)
@@ -263,15 +305,20 @@ class ShardedBotInstance(commands.AutoShardedBot):
         minutes, seconds = divmod(remainder, 60)
 
         if split == False:
-            return "{}d, {}h, {}m & {}s".format(days, hours, minutes, seconds)
+            return "{}d, {}h & {}m".format(days, hours, minutes)
         else:
             return days, hours, minutes, seconds
 
 
-    async def register_user_info_ctx_menu(self):
+    async def register_user_info_ctx_menu(
+        self
+    ):
         @self.tree.context_menu(name="Userinfo")
         @discord.app_commands.default_permissions(manage_messages=True)
-        async def _(i: discord.Interaction, user: discord.Member):
+        async def _(
+            i: discord.Interaction, 
+            user: discord.Member
+        ) -> None:
             p = self.get_plugin("UtilityPlugin")
             try:
                 await p.whois(i, user)
@@ -284,15 +331,19 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 )
 
 
-    async def join_thread(self, thread: discord.Thread) -> None:
+    async def join_thread(
+        self, 
+        thread: discord.Thread
+    ) -> None:
         try:
             await thread.add_user(self.user)
         except Exception:
             pass
 
 
-    def run(self) -> None:
-        self.add_command
+    def run(
+        self
+    ) -> None:
         try:
             super().run(self.config.token, reconnect=True)
         finally:

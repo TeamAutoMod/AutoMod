@@ -90,11 +90,11 @@ class ErrorPlugin(AutoModPlugin):
             )
             e.add_fields([
                 {
-                    "name": "❯ Usage",
+                    "name": "__**Usage**__",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "❯ Info",
+                    "name": "__**Info**__",
                     "value": f"``{info}``"
                 }
             ])
@@ -110,11 +110,11 @@ class ErrorPlugin(AutoModPlugin):
             )
             e.add_fields([
                 {
-                    "name": "❯ Usage",
+                    "name": "__**Usage**__",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "❯ Info",
+                    "name": "__**Info**__",
                     "value": f"``{info}``"
                 }
             ])
@@ -127,11 +127,11 @@ class ErrorPlugin(AutoModPlugin):
             e = Embed(ctx)
             e.add_fields([
                 {
-                    "name": "❯ Usage",
+                    "name": "__**Usage**__",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "❯ Info",
+                    "name": "__**Info**__",
                     "value": f"``{info}``"
                 }
             ])
@@ -155,12 +155,12 @@ class ErrorPlugin(AutoModPlugin):
             )
             e.add_fields([
                 {
-                    "name": "❯ Command",
+                    "name": "✏️ __**Command**__",
                     "value": f"{ctx.command.qualified_name}" if ctx.command != None else "Unknown",
                     "inline": True
                 },
                 {
-                    "name": "❯ Location",
+                    "name": "🔎 __**Location**__",
                     "value": f"{ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
                     "inline": True
                 }

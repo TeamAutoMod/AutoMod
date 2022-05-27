@@ -285,35 +285,35 @@ class CasesPlugin(AutoModPlugin):
         )
         e.add_fields([
             {
-                "name": "❯ User",
-                "value": f"<@{data.user_id}> ({data.user_id})"
+                "name": "👤 __**User**__",
+                "value": f"``▶`` <@{data.user_id}> ({data.user_id})"
             },
             {
-                "name": "❯ Moderator",
-                "value": f"<@{data.mod_id}> ({data.mod_id})"
+                "name": "🔨 __**Moderator**__",
+                "value": f"``▶`` <@{data.mod_id}> ({data.mod_id})"
             },
             {
-                "name": "❯ Timestamp",
-                "value": f"<t:{round(data.timestamp.timestamp())}>"
+                "name": "⌚ __**Timestamp**__",
+                "value": f"``▶`` <t:{round(data.timestamp.timestamp())}>"
             },
             {
-                "name": "❯ Reason",
-                "value": f"{data.reason}"
+                "name": "📝 __**Reason**__",
+                "value": f"``▶`` {data.reason}"
             },
         ])
 
         if hasattr(data, "warns_added"):
             if int(data.warns_added) > 0: 
                 e.add_field(
-                    name=f"❯ Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}",
-                    value=f"{data.warns_added}"
+                    name=f"🚩 __**Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}**__",
+                    value=f"``▶`` {data.warns_added}"
                 )
         
         if hasattr(data, "until"):
             if data.until != "": 
                 e.add_field(
-                    name="❯ Until",
-                    value=f"{data.until}"
+                    name="⏳ __**Until**__",
+                    value=f"``▶`` {data.until}"
                 )
         await ctx.send(embed=e)
 
@@ -345,7 +345,7 @@ class CasesPlugin(AutoModPlugin):
         warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
         e.add_fields([
             {
-                "name": "❯ Status",
+                "name": "__**Status**__",
                 "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
                 .format(
                     Y if ban_data != None else N,
@@ -355,7 +355,7 @@ class CasesPlugin(AutoModPlugin):
                 )
             },
             {
-                "name": "❯ Warnings",
+                "name": "🚩 __**Warnings**__",
                 "value": "``▶`` **Warns:** {}"\
                 .format(
                     0 if warns == None else warns
