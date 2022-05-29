@@ -270,7 +270,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self, 
         mute: bool, 
         guild: discord.Guild, 
-        user: Union[discord.Member, discord.User], 
+        user: Union[
+            discord.Member, 
+            discord.User
+        ], 
         iso8601_ts: str
     ) -> Union[
         str, 

@@ -16,11 +16,17 @@ from ..views import DeleteView
 
 class AdminPlugin(AutoModPlugin):
     """Plugin for all bot admin commands/events"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
 
     
-    def insert_returns(self, body: str) -> None:
+    def insert_returns(
+        self, 
+        body: str
+    ) -> None:
         if isinstance(body[-1], ast.Expr):
             body[-1] = ast.Return(body[-1].value)
             ast.fix_missing_locations(body[-1])
@@ -33,7 +39,10 @@ class AdminPlugin(AutoModPlugin):
             self.insert_returns(body[-1].body)
 
 
-    def parse_shard_info(self, shard: discord.ShardInfo) -> str:
+    def parse_shard_info(
+        self, 
+        shard: discord.ShardInfo
+    ) -> str:
         guilds = len(list(filter(lambda x: x.shard_id == shard.id, self.bot.guilds)))
         if not shard.is_closed():
             text = "+ {}: CONNECTED ~ {} guilds".format(shard.id, guilds)
@@ -44,7 +53,12 @@ class AdminPlugin(AutoModPlugin):
 
     @commands.command()
     @commands.is_owner()
-    async def eval(self, ctx: commands.Context, *, cmd: str) -> None:
+    async def eval(
+        self, 
+        ctx: commands.Context, 
+        *, 
+        cmd: str
+    ) -> None:
         """
         eval_help
         examples:
@@ -89,7 +103,10 @@ class AdminPlugin(AutoModPlugin):
 
     @commands.is_owner()
     @commands.command()
-    async def debug(self, ctx: commands.Context) -> None:
+    async def debug(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         debug_help
         examples:
@@ -121,4 +138,6 @@ class AdminPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-async def setup(bot) -> None: await bot.register_plugin(AdminPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(AdminPlugin(bot))

@@ -156,12 +156,12 @@ class ErrorPlugin(AutoModPlugin):
             e.add_fields([
                 {
                     "name": "✏️ __**Command**__",
-                    "value": f"{ctx.command.qualified_name}" if ctx.command != None else "Unknown",
+                    "value": f"``▶`` {ctx.command.qualified_name}" if ctx.command != None else "Unknown",
                     "inline": True
                 },
                 {
                     "name": "🔎 __**Location**__",
-                    "value": f"{ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
+                    "value": f"``▶`` {ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
                     "inline": True
                 }
             ])
@@ -194,4 +194,6 @@ class ErrorPlugin(AutoModPlugin):
                     self.bot.error_log = None
 
 
-async def setup(bot) -> None: await bot.register_plugin(ErrorPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(ErrorPlugin(bot))

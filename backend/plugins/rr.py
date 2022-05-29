@@ -10,12 +10,18 @@ from ..types import Embed, Emote
 
 class ReactionRolesPlugin(AutoModPlugin):
     """Plugin for reaction roles"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
 
 
     @AutoModPlugin.listener()
-    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None: 
+    async def on_raw_reaction_add(
+        self, 
+        payload: discord.RawReactionActionEvent
+    ) -> None: 
         if f"{payload.user_id}" == f"{self.bot.user.id}": return
         if payload.member.bot == True: return
 
@@ -48,7 +54,10 @@ class ReactionRolesPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent) -> None:
+    async def on_raw_reaction_remove(
+        self, 
+        payload: discord.RawReactionActionEvent
+    ) -> None:
         if f"{payload.user_id}" == f"{self.bot.user.id}": return
 
         rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
@@ -84,7 +93,10 @@ class ReactionRolesPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent) -> None:
+    async def on_raw_message_delete(
+        self, 
+        payload: discord.RawMessageDeleteEvent
+    ) -> None:
         if payload.guild_id == None: return
         rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
         if not f"{payload.message_id}" in rrs: return
@@ -95,7 +107,10 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @commands.group(aliases=["rr"])
     @AutoModPlugin.can("manage_roles")
-    async def reaction_roles(self, ctx: commands.Context) -> None:
+    async def reaction_roles(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         reaction_roles_help
         examples:
@@ -131,7 +146,13 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @reaction_roles.command()
     @AutoModPlugin.can("manage_roles")
-    async def add(self, ctx: commands.Context, message_id: discord.Message, emote: Emote, role: discord.Role) -> None:
+    async def add(
+        self, 
+        ctx: commands.Context, 
+        message_id: discord.Message, 
+        emote: Emote, 
+        role: discord.Role
+    ) -> None:
         """
         reaction_roles_add_help
         examples:
@@ -180,7 +201,12 @@ class ReactionRolesPlugin(AutoModPlugin):
 
     @reaction_roles.command()
     @AutoModPlugin.can("manage_roles")
-    async def remove(self, ctx: commands.Context, message_id: discord.Message, role: discord.Role) -> None:
+    async def remove(
+        self, 
+        ctx: commands.Context, 
+        message_id: discord.Message, 
+        role: discord.Role
+    ) -> None:
         """
         reaction_roles_remove_help
         examples:
@@ -208,4 +234,6 @@ class ReactionRolesPlugin(AutoModPlugin):
                     await ctx.send(self.locale.t(ctx.guild, "removed_rr", _emote="YES"))
 
 
-async def setup(bot) -> None: await bot.register_plugin(ReactionRolesPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(ReactionRolesPlugin(bot))

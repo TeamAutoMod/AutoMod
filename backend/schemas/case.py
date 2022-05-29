@@ -11,7 +11,10 @@ def Case(
     _type: str, 
     msg: discord.Message, 
     mod: discord.Member, 
-    user: Union[discord.Member, discord.User], 
+    user: Union[
+        discord.Member, 
+        discord.User
+    ], 
     reason: str, ts: datetime.datetime, 
     warns_added: int = 0, 
     until: datetime.datetime = None

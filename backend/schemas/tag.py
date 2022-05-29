@@ -4,7 +4,11 @@ import datetime
 
 
 
-def Tag(ctx: commands, name: str, content: str) -> dict:
+def Tag(
+    ctx: commands, 
+    name: str, 
+    content: str
+) -> dict:
     return {
         "id": f"{ctx.guild.id}-{name}",
         "uses": 0,

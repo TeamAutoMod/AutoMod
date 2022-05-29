@@ -56,13 +56,18 @@ PRETTY_PLUGIN_NAMES = {
 
 class ConfigPlugin(AutoModPlugin):
     """Plugin for all configuration commands"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
         self.webhook_queue = []
         self.bot.loop.create_task(self.create_webhooks())
 
 
-    async def create_webhooks(self) -> None:
+    async def create_webhooks(
+        self
+    ) -> None:
         while True:
             await asyncio.sleep(1)
             if len(self.webhook_queue) > 0:
@@ -75,7 +80,12 @@ class ConfigPlugin(AutoModPlugin):
                     )
 
 
-    async def create_log_webhook(self, ctx: commands.Context, option: str, channel: discord.TextChannel) -> None:
+    async def create_log_webhook(
+        self, 
+        ctx: commands.Context, 
+        option: str, 
+        channel: discord.TextChannel
+    ) -> None:
         wid = self.bot.db.configs.get(ctx.guild.id, f"{option}_webhook")
         if wid != "":
             try:
@@ -120,7 +130,11 @@ class ConfigPlugin(AutoModPlugin):
                         self.bot.webhook_cache[ctx.guild.id][option] = w
 
 
-    async def delete_webhook(self, ctx: commands.Context, option: str) -> None:
+    async def delete_webhook(
+        self, 
+        ctx: commands.Context, 
+        option: str
+    ) -> None:
         if ctx.guild.id in self.bot.webhook_cache:
             if self.bot.webhook_cache[ctx.guild.id][option] != None:
                 try:
@@ -142,12 +156,22 @@ class ConfigPlugin(AutoModPlugin):
                 await ow.delete()
 
 
-    def get_ignored_roles_channels(self, guild: discord.Guild) -> Tuple[list, list]:
+    def get_ignored_roles_channels(
+        self, 
+        guild: discord.Guild
+    ) -> Tuple[
+        list, 
+        list
+    ]:
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_log"), self.db.configs.get(guild.id, "ignored_channels_log")
         return roles, channels
 
     
-    def parse_emote(self, guild: discord.Guild, emote: str) -> str:
+    def parse_emote(
+        self, 
+        guild: discord.Guild, 
+        emote: str
+    ) -> str:
         if not emote.isnumeric(): 
             return emote
         else:
@@ -160,7 +184,10 @@ class ConfigPlugin(AutoModPlugin):
 
     @commands.command(aliases=["cfg", "settings"])
     @AutoModPlugin.can("manage_guild")
-    async def config(self, ctx: commands.Context) -> None:
+    async def config(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         config_help
         examples:
@@ -286,7 +313,13 @@ class ConfigPlugin(AutoModPlugin):
 
     @commands.command(aliases=["action"])
     @AutoModPlugin.can("manage_guild")
-    async def punishment(self, ctx: commands.Context, warns: int, action: str, time: Duration = None) -> None:
+    async def punishment(
+        self, 
+        ctx: commands.Context, 
+        warns: int, 
+        action: str, 
+        time: Duration = None
+    ) -> None:
         """
         punishment_help
         examples:
@@ -369,7 +402,15 @@ class ConfigPlugin(AutoModPlugin):
 
     @commands.command(name="log")
     @AutoModPlugin.can("manage_guild")
-    async def _log(self, ctx: commands.Context, option: str, channel: Union[discord.TextChannel, str]) -> None:
+    async def _log(
+        self, 
+        ctx: commands.Context, 
+        option: str, 
+        channel: Union[
+            discord.TextChannel, 
+            str
+        ]
+    ) -> None:
         """
         log_help
         examples:
@@ -431,7 +472,11 @@ class ConfigPlugin(AutoModPlugin):
 
     @commands.command()
     @AutoModPlugin.can("manage_guild")
-    async def prefix(self, ctx: commands.Context, prefix: str) -> None:
+    async def prefix(
+        self, 
+        ctx: commands.Context, 
+        prefix: str
+    ) -> None:
         """
         prefix_help
         examples:
@@ -446,7 +491,12 @@ class ConfigPlugin(AutoModPlugin):
 
     @commands.command(aliases=["restrict"])
     @AutoModPlugin.can("manage_guild")
-    async def disable(self, ctx: commands.Context, *, commands: str = None) -> None:
+    async def disable(
+        self, 
+        ctx: commands.Context, 
+        *, 
+        commands: str = None
+    ) -> None:
         """
         disable_help
         examples:
@@ -513,7 +563,14 @@ class ConfigPlugin(AutoModPlugin):
 
     @commands.command(aliases=["modrole"])
     @AutoModPlugin.can("manage_guild")
-    async def mod_role(self, ctx: commands.Context, role: Union[discord.Role, str]) -> None:
+    async def mod_role(
+        self, 
+        ctx: commands.Context, 
+        role: Union[
+            discord.Role, 
+            str
+        ]
+    ) -> None:
         """
         mod_role_help
         examples:
@@ -552,7 +609,10 @@ class ConfigPlugin(AutoModPlugin):
 
     @commands.group(aliases=["log_ignore"])
     @AutoModPlugin.can("manage_guild")
-    async def ignore_log(self, ctx: commands.Context) -> None:
+    async def ignore_log(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         ignore_log_help
         examples:
@@ -586,7 +646,17 @@ class ConfigPlugin(AutoModPlugin):
 
     @ignore_log.command()
     @AutoModPlugin.can("manage_guild")
-    async def add(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel, discord.VoiceChannel]]) -> None:
+    async def add(
+        self, 
+        ctx: commands.Context, 
+        roles_or_channels: commands.Greedy[
+            Union[
+                discord.Role, 
+                discord.TextChannel, 
+                discord.VoiceChannel
+            ]
+        ]
+    ) -> None:
         """
         ignore_log_add_help
         examples:
@@ -662,7 +732,17 @@ class ConfigPlugin(AutoModPlugin):
 
     @ignore_log.command()
     @AutoModPlugin.can("manage_guild")
-    async def remove(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel, discord.VoiceChannel]]) -> None:
+    async def remove(
+        self, 
+        ctx: commands.Context, 
+        roles_or_channels: commands.Greedy[
+            Union[
+                discord.Role, 
+                discord.TextChannel, 
+                discord.VoiceChannel
+            ]
+        ]
+    ) -> None:
         """
         ignore_log_remove_help
         examples:
@@ -738,4 +818,6 @@ class ConfigPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-async def setup(bot) -> None: await bot.register_plugin(ConfigPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(ConfigPlugin(bot))

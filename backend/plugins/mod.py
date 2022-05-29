@@ -4,13 +4,11 @@ from discord.ext import commands
 
 import datetime
 import asyncio
-import logging
-
-from backend.plugins import AutoModPlugin; log = logging.getLogger()
+import logging; log = logging.getLogger()
 import datetime
 from typing import Union
 
-from .warn import WarnPlugin
+from .warn import WarnPlugin, ShardedBotInstance
 from .processor import LogProcessor, ActionProcessor, DMProcessor
 from ..types import DiscordUser, Duration, Embed
 from ..views import ConfirmView
@@ -40,16 +38,20 @@ ACTIONS = {
 
 class ModerationPlugin(WarnPlugin):
     """Plugin for all moderation commands"""
-    def __init__(self, bot) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
         self.log_processor = LogProcessor(bot)
         self.action_processor = ActionProcessor(bot)
         self.dm_processor = DMProcessor(bot)
-        self.bot.loop.create_task(self.handle_unmutes())
-        self.bot.loop.create_task(self.handle_unbans())
+        for f in ["unmutes", "unbans"]: self.bot.loop.create_task((getattr(self, f"handle_{f}"))())
 
 
-    async def handle_unmutes(self) -> None:
+    async def handle_unmutes(
+        self
+    ) -> None:
         while True:
             await asyncio.sleep(10)
             if len(list(self.db.mutes.find({}))) > 0:
@@ -76,7 +78,9 @@ class ModerationPlugin(WarnPlugin):
                         self.db.mutes.delete(mute["id"])
 
 
-    async def handle_unbans(self) -> None:
+    async def handle_unbans(
+        self
+    ) -> None:
         while True:
             await asyncio.sleep(10)
             if len(list(self.db.tbans.find({}))) > 0:
@@ -110,7 +114,23 @@ class ModerationPlugin(WarnPlugin):
                         self.db.tbans.delete(ban["id"])
 
 
-    async def clean_messages(self, ctx: commands.Context, amount: int, check: Callable, before: Union[datetime.datetime, discord.Message] = None, after: Union[datetime.datetime, discord.Message] = None) -> Union[str, Exception]:
+    async def clean_messages(
+        self, 
+        ctx: commands.Context, 
+        amount: int, 
+        check: Callable, 
+        before: Union[
+            datetime.datetime, 
+            discord.Message
+        ] = None, 
+        after: Union[
+            datetime.datetime, 
+            discord.Message
+        ] = None
+    ) -> Union[
+        str, 
+        Exception
+    ]:
         try:
             d = await ctx.channel.purge(
                 limit=amount,
@@ -134,7 +154,17 @@ class ModerationPlugin(WarnPlugin):
                     return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {"delete_after": 5}
 
 
-    async def kick_or_ban(self, action: str, ctx: commands.Context, user: Union[discord.Member, discord.User], reason: str, **extra_kwargs) -> None:
+    async def kick_or_ban(
+        self, 
+        action: str, 
+        ctx: commands.Context, 
+        user: Union[
+            discord.Member, 
+            discord.User
+        ], 
+        reason: str, 
+        **extra_kwargs
+    ) -> None:
         if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
 
         if action != "hackban":
@@ -183,7 +213,13 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def ban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
+    async def ban(
+        self, 
+        ctx: commands.Context,
+        user: DiscordUser, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         ban_help
         examples:
@@ -201,7 +237,13 @@ class ModerationPlugin(WarnPlugin):
     
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def unban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
+    async def unban(
+        self,
+        ctx: commands.Context, 
+        user: DiscordUser, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         unban_help
         examples:
@@ -236,7 +278,13 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def softban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
+    async def softban(
+        self, 
+        ctx: commands.Context, 
+        user: DiscordUser, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         softban_help
         examples:
@@ -254,7 +302,13 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command(aliases=["forceban"])
     @WarnPlugin.can("ban_members")
-    async def hackban(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
+    async def hackban(
+        self, 
+        ctx: commands.Context, 
+        user: DiscordUser, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         hackban_help
         examples:
@@ -272,7 +326,14 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("ban_members")
-    async def tempban(self, ctx: commands.Context, user: DiscordUser, length: Duration, *, reason: str = None) -> None:
+    async def tempban(
+        self, 
+        ctx: commands.Context, 
+        user: DiscordUser, 
+        length: Duration, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         tempban_help
         examples:
@@ -394,7 +455,13 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("kick_members")
-    async def kick(self, ctx: commands.Context, user: DiscordUser, *, reason: str = None) -> None:
+    async def kick(
+        self, 
+        ctx: commands.Context, 
+        user: DiscordUser, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         kick_help
         examples:
@@ -412,7 +479,14 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command(aliases=["timeout"])
     @WarnPlugin.can("moderate_members")
-    async def mute(self, ctx: commands.Context, user: discord.Member, length: Duration, *, reason: str = None) -> None:
+    async def mute(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member, 
+        length: Duration, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         mute_help
         examples:
@@ -525,7 +599,11 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.command()
     @WarnPlugin.can("kick_members")
-    async def unmute(self, ctx: commands.Context, user: discord.Member) -> None:
+    async def unmute(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member
+    ) -> None:
         """
         unmute_help
         examples:
@@ -558,7 +636,10 @@ class ModerationPlugin(WarnPlugin):
 
     @commands.group(aliases=["clear", "purge"])
     @WarnPlugin.can("manage_messages")
-    async def clean(self, ctx: commands.Context) -> None:
+    async def clean(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         clean_help
         examples:
@@ -576,7 +657,11 @@ class ModerationPlugin(WarnPlugin):
 
     @clean.command()
     @WarnPlugin.can("manage_messages")
-    async def all(self, ctx: commands.Context, amount: int = 10) -> None:
+    async def all(
+        self, 
+        ctx: commands.Context, 
+        amount: int = 10
+    ) -> None:
         """
         clean_all_help
         examples:
@@ -595,7 +680,12 @@ class ModerationPlugin(WarnPlugin):
 
     @clean.command()
     @WarnPlugin.can("manage_messages")
-    async def user(self, ctx: commands.Context, user: discord.Member, amount: int = 10) -> None:
+    async def user(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member, 
+        amount: int = 10
+    ) -> None:
         """
         clean_user_help
         examples:
@@ -615,7 +705,12 @@ class ModerationPlugin(WarnPlugin):
 
     @clean.command()
     @WarnPlugin.can("manage_messages")
-    async def content(self, ctx: commands.Context, *, text: str) -> None:
+    async def content(
+        self, 
+        ctx: commands.Context, 
+        *, 
+        text: str
+    ) -> None:
         """
         clean_content_help
         examples:
@@ -642,4 +737,6 @@ class ModerationPlugin(WarnPlugin):
     #         e = Embed()
 
 
-async def setup(bot) -> None: await bot.register_plugin(ModerationPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(ModerationPlugin(bot))

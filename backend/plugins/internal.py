@@ -3,7 +3,6 @@ from discord.ext import commands
 from discord import AuditLogAction
 
 import asyncio
-import inspect
 import topgg
 from toolbox import S as Object
 from typing import Callable, List, Union, Tuple, TypeVar
@@ -194,7 +193,10 @@ SERVER_LOG_EVENTS = {
 
 class InternalPlugin(AutoModPlugin):
     """Plugin for internal/log events"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
         self.log_processor = LogProcessor(bot)
         if bot.config.top_gg_token != "":
@@ -206,7 +208,16 @@ class InternalPlugin(AutoModPlugin):
             )
 
 
-    async def _find_in_audit_log(self, guild: discord.Guild, action: discord.AuditLogAction, check: Callable) -> Union[discord.Member, discord.User, None]:
+    async def _find_in_audit_log(
+        self, 
+        guild: discord.Guild, 
+        action: discord.AuditLogAction, 
+        check: Callable
+    ) -> Union[
+        discord.Member, 
+        discord.User, 
+        None
+    ]:
         try:
             if guild.me == None: return None
 
@@ -233,7 +244,16 @@ class InternalPlugin(AutoModPlugin):
         ): return None
 
 
-    async def find_in_audit_log(self, guild: discord.Guild, action: discord.AuditLogAction, check: Callable) -> Union[discord.Member, discord.User, None]:
+    async def find_in_audit_log(
+        self, 
+        guild: discord.Guild, 
+        action: discord.AuditLogAction, 
+        check: Callable
+    ) -> Union[
+        discord.Member, 
+        discord.User, 
+        None
+    ]:
         try:
             return await asyncio.wait_for(
                 self._find_in_audit_log(guild, action, check),
@@ -245,7 +265,17 @@ class InternalPlugin(AutoModPlugin):
         ): return None
 
 
-    async def server_log_embed(self, action: discord.AuditLogAction, guild: discord.Guild, obj: T, check_for_audit: Union[Callable, bool], **text_kwargs) -> Embed:
+    async def server_log_embed(
+        self, 
+        action: discord.AuditLogAction, 
+        guild: discord.Guild, 
+        obj: T, 
+        check_for_audit: Union[
+            Callable, 
+            bool
+        ], 
+        **text_kwargs
+    ) -> Embed:
         data = Object(SERVER_LOG_EVENTS[action])
         e = Embed(
             None,
@@ -299,12 +329,28 @@ class InternalPlugin(AutoModPlugin):
         return e
 
 
-    def get_ignored_roles_channels(self, guild: discord.Guild) -> Tuple[list, list]:
+    def get_ignored_roles_channels(
+        self, 
+        guild: discord.Guild
+    ) -> Tuple[
+        list, 
+        list
+    ]:
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_log"), self.db.configs.get(guild.id, "ignored_channels_log")
         return roles, channels
 
     
-    def get_message(self, guild: discord.Guild, payload: Union[discord.RawMessageDeleteEvent, discord.RawMessageUpdateEvent]) -> Union[None, discord.Message]:
+    def get_message(
+        self, 
+        guild: discord.Guild, 
+        payload: Union[
+            discord.RawMessageDeleteEvent, 
+            discord.RawMessageUpdateEvent
+        ]
+    ) -> Union[
+        None, 
+        discord.Message
+    ]:
         if payload.cached_message != None: 
             return payload.cached_message
         else:
@@ -312,7 +358,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_join(self, guild: discord.Guild) -> None:
+    async def on_guild_join(
+        self, 
+        guild: discord.Guild
+    ) -> None:
         log.info(f"📥 Joined guild: {guild.name} ({guild.id})")
 
         try:
@@ -325,7 +374,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_remove(self, guild: discord.Guild) -> None:
+    async def on_guild_remove(
+        self, 
+        guild: discord.Guild
+    ) -> None:
         if guild == None: return
         log.info(f"📤 Removed from guild: {guild.name} ({guild.id})")
         if self.db.configs.exists(guild.id):
@@ -334,14 +386,20 @@ class InternalPlugin(AutoModPlugin):
 
     
     @AutoModPlugin.listener()
-    async def on_message(self, msg: discord.Message) -> None:
+    async def on_message(
+        self, 
+        msg: discord.Message
+    ) -> None:
         if msg.guild == None: return
         if msg.type != discord.MessageType.default: return
         self.bot.message_cache.insert(msg.guild, msg)
 
 
     @AutoModPlugin.listener()
-    async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent) -> None:
+    async def on_raw_message_delete(
+        self, 
+        payload: discord.RawMessageDeleteEvent
+    ) -> None:
         if payload.guild_id == None: return
         self.bot.message_cache.delete(payload.guild_id, payload.message_id)
 
@@ -395,7 +453,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_raw_message_edit(self, payload: discord.RawMessageUpdateEvent) -> None:
+    async def on_raw_message_edit(
+        self, 
+        payload: discord.RawMessageUpdateEvent
+    ) -> None:
         if payload.guild_id == None: return
 
         guild = self.bot.get_guild(payload.guild_id)
@@ -453,7 +514,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_member_join(self, user: discord.Member) -> None:
+    async def on_member_join(
+        self, 
+        user: discord.Member
+    ) -> None:
         e = Embed(
             None,
             color=0x5cff9d,
@@ -471,7 +535,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_member_remove(self, user: discord.Member) -> None:
+    async def on_member_remove(
+        self, 
+        user: discord.Member
+    ) -> None:
         await asyncio.sleep(0.3)
         if user.id in self.bot.ignore_for_events:
             return self.bot.ignore_for_events.remove(user.id)
@@ -500,7 +567,10 @@ class InternalPlugin(AutoModPlugin):
 
     
     @AutoModPlugin.listener()
-    async def on_guild_role_create(self, role: discord.Role) -> None:
+    async def on_guild_role_create(
+        self, 
+        role: discord.Role
+    ) -> None:
         embed = await self.server_log_embed(
             "role_created",
             role.guild,
@@ -514,7 +584,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_role_delete(self, role: discord.Role) -> None:
+    async def on_guild_role_delete(
+        self, 
+        role: discord.Role
+    ) -> None:
         embed = await self.server_log_embed(
             "role_deleted",
             role.guild,
@@ -528,7 +601,11 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_role_update(self, b: discord.Role, a: discord.Role) -> None:
+    async def on_guild_role_update(
+        self, 
+        b: discord.Role, 
+        a: discord.Role
+    ) -> None:
         roles, _ = self.get_ignored_roles_channels(a.guild)
         if a.id in roles: return
 
@@ -570,7 +647,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_channel_create(self, channel: discord.abc.GuildChannel) -> None:
+    async def on_guild_channel_create(
+        self, 
+        channel: discord.abc.GuildChannel
+    ) -> None:
         embed = await self.server_log_embed(
             "channel_created",
             channel.guild,
@@ -585,7 +665,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel) -> None:
+    async def on_guild_channel_delete(
+        self, 
+        channel: discord.abc.GuildChannel
+    ) -> None:
         _, channels = self.get_ignored_roles_channels(channel.guild)
         if channel.id in channels: return
 
@@ -603,7 +686,11 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_channel_update(self, b: discord.abc.GuildChannel, a: discord.abc.GuildChannel) -> None:
+    async def on_guild_channel_update(
+        self, 
+        b: discord.abc.GuildChannel, 
+        a: discord.abc.GuildChannel
+    ) -> None:
         _, channels = self.get_ignored_roles_channels(b.guild)
         if a.id in channels: return
 
@@ -660,7 +747,16 @@ class InternalPlugin(AutoModPlugin):
 
     
     @AutoModPlugin.listener()
-    async def on_guild_emojis_update(self, _, b: List[discord.Emoji], a: List[discord.Emoji]) -> None:
+    async def on_guild_emojis_update(
+        self, 
+        _, 
+        b: List[
+            discord.Emoji
+        ], 
+        a: List[
+            discord.Emoji
+        ]
+    ) -> None:
         if len(b) > len(a):
             action = "emoji_deleted"
             emoji = [x for x in b if x not in a][0]
@@ -688,7 +784,16 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_guild_stickers_update(self, _, b: List[discord.GuildSticker], a: List[discord.GuildSticker]) -> None:
+    async def on_guild_stickers_update(
+        self, 
+        _, 
+        b: List[
+            discord.GuildSticker
+        ], 
+        a: List[
+            discord.GuildSticker
+        ]
+    ) -> None:
         if len(b) > len(a):
             action = "sticker_deleted"
             sticker = [x for x in b if x not in a][0]
@@ -716,7 +821,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_thread_create(self, thread: discord.Thread) -> None:
+    async def on_thread_create(
+        self, 
+        thread: discord.Thread
+    ) -> None:
         _, channels = self.get_ignored_roles_channels(thread.guild)
         if thread.parent.id in channels: return
 
@@ -734,7 +842,10 @@ class InternalPlugin(AutoModPlugin):
 
     
     @AutoModPlugin.listener()
-    async def on_thread_delete(self, thread: discord.Thread) -> None:
+    async def on_thread_delete(
+        self, 
+        thread: discord.Thread
+    ) -> None:
         _, channels = self.get_ignored_roles_channels(thread.guild)
         if thread.parent.id in channels:
             return
@@ -752,7 +863,11 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_thread_update(self, b: discord.Thread, a: discord.Thread) -> None:
+    async def on_thread_update(
+        self, 
+        b: discord.Thread, 
+        a: discord.Thread
+    ) -> None:
         _, channels = self.get_ignored_roles_channels(b.guild)
         if b.parent.id in channels or a.parent.id in channels: return
 
@@ -785,7 +900,11 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_member_update(self, b: discord.Member, a: discord.Member) -> None:
+    async def on_member_update(
+        self, 
+        b: discord.Member, 
+        a: discord.Member
+    ) -> None:
         if not a.guild.chunked: await a.guild.chunk(cache=True)
 
         roles, _ = self.get_ignored_roles_channels(a.guild)
@@ -843,7 +962,11 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_user_update(self, b: discord.User, a: discord.User) -> None:
+    async def on_user_update(
+        self, 
+        b: discord.User, 
+        a: discord.User
+    ) -> None:
         change = ""
         if b.name != a.name or b.discriminator != a.discriminator:
             change += "``{}`` → ``{}``".format(
@@ -888,7 +1011,12 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_voice_state_update(self, user: discord.Member, b: discord.VoiceState, a: discord.VoiceState) -> None:
+    async def on_voice_state_update(
+        self, 
+        user: discord.Member, 
+        b: discord.VoiceState, 
+        a: discord.VoiceState
+    ) -> None:
         if user.guild == None: return
 
         roles, channels = self.get_ignored_roles_channels(user.guild)
@@ -933,7 +1061,10 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_command_completion(self, ctx: commands.Context):
+    async def on_command_completion(
+        self, 
+        ctx: commands.Context
+    ):
         if ctx.guild == None: return
         if ctx.command == None: return
 
@@ -971,7 +1102,11 @@ class InternalPlugin(AutoModPlugin):
 
     
     @AutoModPlugin.listener()
-    async def on_custom_command_completion(self, msg: discord.Message, name: str) -> None:
+    async def on_custom_command_completion(
+        self, 
+        msg: discord.Message, 
+        name: str
+    ) -> None:
         if msg.guild == None: return
 
         roles, channels = self.get_ignored_roles_channels(msg.guild)
@@ -992,7 +1127,11 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_member_unban(self, guild: discord.Guild, user: discord.User) -> None:
+    async def on_member_unban(
+        self, 
+        guild: discord.Guild, 
+        user: discord.User
+    ) -> None:
         await asyncio.sleep(0.3) # wait a bit before checking ignore_for_events
         if user.id in self.bot.ignore_for_events:
             return self.bot.ignore_for_events.remove(user.id)
@@ -1004,14 +1143,21 @@ class InternalPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_autopost_success(self):
+    async def on_autopost_success(
+        self
+    ):
         log.info(f"📬 Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
 
 
     @AutoModPlugin.listener()
-    async def on_dbl_vote(self, data) -> None:
+    async def on_dbl_vote(
+        self, 
+        data
+    ) -> None:
         log.info(type(data))
         log.info(data)
 
 
-async def setup(bot) -> None: await bot.register_plugin(InternalPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(InternalPlugin(bot))

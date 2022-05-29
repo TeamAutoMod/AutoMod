@@ -23,11 +23,11 @@
     "unban_help": "Unbans the specified user from the server",
     "slowmode_help": "Sets a slowmode in the current channel up to 14 days. Use 0 as the time argument to remove the slowmode or use no time argument to show a list of all bot-set slowmodes",
 
-    "commands_help": "Base command for managing custom commands. When used without a subcommand, this shows a list of all custom commands in this guild",
-    "commands_add_help": "Creates a custom command with the given name and content",
-    "commands_remove_help": "Removes the custom command with the specified name",
-    "commands_update_help": "Updates the content of the custom command with the specified name",
-    "commands_info_help": "Shows some info about the given custom command",
+    "commands_help": "Shows a list of all custom commands in this guild",
+    "addcom_help": "Creates a custom command with the given name and content",
+    "delcom_help": "Removes the custom command with the specified name",
+    "editcom_help": "Updates the content of the custom command with the specified name",
+    "infocom_help": "Shows some info about the given custom command",
 
     "ping_help": "Shows the bots latencies",
     "about_help": "Shows some stats and what AutoMod is about",
@@ -101,7 +101,7 @@
     "missing_user_perms": "{emote} You're missing the following permissions to use this command: {perms}",
     "missing_bot_perms": "{emote} Please grant me the following permissions to use this command: {perms}",
     "check_fail": "{emote} A command check failed, looks like you're missing the required permissions",
-    "on_cooldown": "{emote} Command is on cooldown, you can use it again in ``{retry_after}`` seconds",
+    "on_cooldown": "{emote} Command is on cooldown, you can use it again in ``{retry_after}`` second{plural}",
     "forbidden": "{emote} Looks like there's a permissions error ||{exc}||",
     "missing_arg": "{emote} Missing required argument: ``{param}``",
     "bad_arg": "{emote} Failed to parse the {param} argument: ``{error}``",
@@ -152,7 +152,7 @@
     "amount_too_small": "{emote} Too few messages (<1)",
     "amount_too_big": "{emote} Too many messages (>300)",
 
-    "about_description": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
+    "about_description": "AutoMod is a moderation bot with multiple, customizable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
 
     "invalid_action_desc": "{emote} ``{given}`` isn't a valid action",
     "set_none": "{emote} Removed the action for {warns} warns. To view all current actions, use ``{prefix}config``",

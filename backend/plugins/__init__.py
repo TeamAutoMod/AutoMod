@@ -8,21 +8,37 @@ from ..bot import ShardedBotInstance
 
 
 class AutoModPlugin(_commands.Cog):
-    def __init__(self, bot: ShardedBotInstance):
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ):
         self.bot = bot
         self.db = bot.db
         self.config = bot.config
         self.locale = bot.locale
 
 
-    def get_prefix(self, guild: discord.Guild) -> str:
+    def get_prefix(
+        self, 
+        guild: discord.Guild
+    ) -> str:
         p = self.db.configs.get(guild.id, "prefix")
         return p if p != None else self.bot.config.default_prefix
 
 
     @staticmethod
-    def can(perm: str) -> Union[bool, _commands.MissingPermissions]:
-        def predicate(ctx: _commands.Context):
+    def can(
+        perm: str
+    ) -> Union[
+        bool, 
+        _commands.MissingPermissions
+    ]:
+        def predicate(
+            ctx: _commands.Context
+        ) -> Union[
+            bool, 
+            _commands.MissingPermissions
+        ]: 
             if getattr(
                 ctx.author.guild_permissions,
                 perm
@@ -43,9 +59,17 @@ class AutoModPlugin(_commands.Cog):
         return _commands.check(predicate)
 
 
-    def before_load(self, *args, **kwargs) -> None:
+    def before_load(
+        self, 
+        *args, 
+        **kwargs
+    ) -> None:
         super().cog_load(*args, **kwargs)
 
     
-    def after_load(self, *args, **kwargs) -> None:
+    def after_load(
+        self, 
+        *args, 
+        **kwargs
+    ) -> None:
         super().cog_unload(*args, **kwargs)

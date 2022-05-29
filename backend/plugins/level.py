@@ -3,8 +3,9 @@ from discord.ext import commands
 
 from toolbox import S as Object
 from random import randint
+from typing import Union
 
-from . import AutoModPlugin
+from . import AutoModPlugin, ShardedBotInstance
 from ..schemas import UserLevel
 from ..types import Embed
 
@@ -12,11 +13,23 @@ from ..types import Embed
 
 class LevelPlugin(AutoModPlugin):
     """Plugin for all level system commands"""
-    def __init__(self, bot):
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
 
 
-    def exists(self, config, guild, user, insert=True):
+    def exists(
+        self, 
+        config: Object, 
+        guild: discord.Guild, 
+        user: Union[
+            discord.Member,
+            discord.User
+        ], 
+        insert: bool = True
+    ) -> bool:
         if not str(user.id) in config.users:
             if insert == True:
                 config.users.append(str(user.id))
@@ -35,18 +48,37 @@ class LevelPlugin(AutoModPlugin):
             return True
 
 
-    def get_user_data(self, guild, user):
+    def get_user_data(
+        self, 
+        guild: discord.Guild, 
+        user: Union[
+            discord.Member,
+            discord.User
+        ], 
+    ) -> Object:
         return Object(self.db.level.get_doc(f"{guild.id}-{user.id}"))
 
 
-    def update_user_data(self, guild, user, xp, lvl):
+    def update_user_data(
+        self, 
+        guild: discord.Guild, 
+        user: Union[
+            discord.Member,
+            discord.User
+        ],
+        xp: int, 
+        lvl: int
+    ) -> None:
         self.db.level.multi_update(f"{guild.id}-{user.id}", {
             "xp": xp,
             "lvl": lvl
         })
 
 
-    def lb_pos(self, i):
+    def lb_pos(
+        self, 
+        i: int
+    ) -> str:
         i = (i+1)
         if i == 1:
             return "🏆"
@@ -70,7 +102,10 @@ class LevelPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message(self, msg: discord.Message):
+    async def on_message(
+        self, 
+        msg: discord.Message
+    ) -> None:
         if msg.guild == None: return
         if msg.author == None: return
         if msg.author.bot == True: return
@@ -137,7 +172,11 @@ class LevelPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["level", "lvl"])
-    async def rank(self, ctx, user: discord.Member = None):
+    async def rank(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member = None
+    ) -> None:
         """rank_help"""
         if user == None: user = ctx.message.author
 
@@ -178,7 +217,10 @@ class LevelPlugin(AutoModPlugin):
 
     @commands.command(aliases=["lb"])
     @commands.cooldown(rate=1, per=30.0, type=commands.BucketType.user)
-    async def leaderboard(self, ctx):
+    async def leaderboard(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """leaderboard_help"""
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
         if config.enabled == False: 
@@ -215,4 +257,6 @@ class LevelPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-async def setup(bot): await bot.register_plugin(LevelPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(LevelPlugin(bot))

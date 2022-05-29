@@ -276,7 +276,10 @@ CHANNEL_OR_ROLE_T = TypeVar("CHANNEL_OR_ROLE_T", discord.Role, discord.TextChann
 
 class AutomodPlugin(AutoModPlugin):
     """Plugin for enforcing automoderator rules"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
@@ -284,7 +287,16 @@ class AutomodPlugin(AutoModPlugin):
         self.spam_cache = {}
 
 
-    def can_act(self, guild: discord.Guild, channel: discord.TextChannel, mod: discord.Member, target: Union[discord.Member, discord.User]) -> bool:
+    def can_act(
+        self, 
+        guild: discord.Guild, 
+        channel: discord.TextChannel, 
+        mod: discord.Member, 
+        target: Union[
+            discord.Member, 
+            discord.User
+        ]
+    ) -> bool:
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
         if mod == None or target == None: return False
@@ -310,7 +322,13 @@ class AutomodPlugin(AutoModPlugin):
             )
 
 
-    def parse_filter(self, words: list) -> Union[re.Pattern, None]:
+    def parse_filter(
+        self, 
+        words: list
+    ) -> Union[
+        re.Pattern, 
+        None
+    ]:
         normal = []
         wildcards = []
 
@@ -327,7 +345,13 @@ class AutomodPlugin(AutoModPlugin):
             return None
 
 
-    def parse_regex(self, regex: str) -> Union[re.Pattern, None]:
+    def parse_regex(
+        self, 
+        regex: str
+    ) -> Union[
+        re.Pattern, 
+        None
+    ]:
         try:
             parsed = re.compile(regex)
         except Exception:
@@ -336,7 +360,10 @@ class AutomodPlugin(AutoModPlugin):
             return parsed
 
 
-    def validate_regex(self, regex: str) -> bool:
+    def validate_regex(
+        self, 
+        regex: str
+    ) -> bool:
         try:
             re.compile(regex)
         except re.error:
@@ -345,7 +372,10 @@ class AutomodPlugin(AutoModPlugin):
             return True
 
 
-    def safe_parse_url(self, url: str) -> str:
+    def safe_parse_url(
+        self, 
+        url: str
+    ) -> str:
         url = url.lower()
         if not (
             url.startswith("https://") or
@@ -363,12 +393,29 @@ class AutomodPlugin(AutoModPlugin):
         return url
 
 
-    def get_ignored_roles_channels(self, guild: discord.Guild) -> Tuple[list, list]:
+    def get_ignored_roles_channels(
+        self, 
+        guild: discord.Guild
+    ) -> Tuple[
+        list, 
+        list
+    ]:
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_automod"), self.db.configs.get(guild.id, "ignored_channels_automod")
         return roles, channels
 
 
-    async def delete_msg(self, rule: str, found: str, msg: discord.Message, warns: int, reason: str, pattern_or_filter: Union[str, None] = None) -> None:
+    async def delete_msg(
+        self, 
+        rule: str, 
+        found: str, 
+        msg: discord.Message, 
+        warns: int, 
+        reason: str, 
+        pattern_or_filter: Union[
+            str, 
+            None
+        ] = None
+    ) -> None:
         try:
             await msg.delete()
         except (
@@ -452,7 +499,10 @@ class AutomodPlugin(AutoModPlugin):
                     )
 
 
-    async def enforce_rules(self, msg: discord.Message) -> None:
+    async def enforce_rules(
+        self, 
+        msg: discord.Message
+    ) -> None:
         content = msg.content.replace("\\", "")
 
         config = Object(self.db.configs.get_doc(msg.guild.id))
@@ -660,7 +710,10 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message(self, msg: discord.Message) -> None:
+    async def on_message(
+        self, 
+        msg: discord.Message
+    ) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
         if not self.can_act(msg.guild, msg.channel, msg.guild.me, msg.author): return
@@ -669,7 +722,11 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message_edit(self, _, msg: discord.Message) -> None:
+    async def on_message_edit(
+        self, 
+        _, 
+        msg: discord.Message
+    ) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
         if not self.can_act(msg.guild, msg.channel, msg.guild.me, msg.author): return
@@ -679,7 +736,15 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.command()
     @AutoModPlugin.can("manage_guild")
-    async def automod(self, ctx: commands.Context, rule = None, amount: Union[int, str] = None) -> None:
+    async def automod(
+        self, 
+        ctx: commands.Context, 
+        rule = None, 
+        amount: Union[
+            int, 
+            str
+        ] = None
+    ) -> None:
         """
         automod_help
         examples:
@@ -762,7 +827,10 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.group()
     @AutoModPlugin.can("manage_guild")
-    async def allowed_invites(self, ctx: commands.Context) -> None:
+    async def allowed_invites(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         allowed_invites_help
         examples:
@@ -786,7 +854,11 @@ class AutomodPlugin(AutoModPlugin):
 
     @allowed_invites.command(name="add")
     @AutoModPlugin.can("manage_guild")
-    async def add_inv(self, ctx: commands.Context, guild_id: int) -> None:
+    async def add_inv(
+        self, 
+        ctx: commands.Context, 
+        guild_id: int
+    ) -> None:
         """
         allowed_invites_add_help
         examples:
@@ -805,7 +877,11 @@ class AutomodPlugin(AutoModPlugin):
 
     @allowed_invites.command(name="remove")
     @AutoModPlugin.can("manage_guild")
-    async def remove_inv(self, ctx: commands.Context, guild_id: int) -> None:
+    async def remove_inv(
+        self, 
+        ctx: commands.Context, 
+        guild_id: int
+    ) -> None:
         """
         allowed_invites_remove_help
         examples:
@@ -824,7 +900,10 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.group(aliases=["links"])
     @AutoModPlugin.can("manage_guild")
-    async def link_blacklist(self, ctx: commands.Context) -> None:
+    async def link_blacklist(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         link_blacklist_help
         examples:
@@ -848,7 +927,11 @@ class AutomodPlugin(AutoModPlugin):
 
     @link_blacklist.command(name="add")
     @AutoModPlugin.can("manage_guild")
-    async def add_link(self, ctx: commands.Context, url: str) -> None:
+    async def add_link(
+        self, 
+        ctx: commands.Context, 
+        url: str
+    ) -> None:
         """
         link_blacklist_add_help
         examples:
@@ -868,7 +951,11 @@ class AutomodPlugin(AutoModPlugin):
 
     @link_blacklist.command(name="remove")
     @AutoModPlugin.can("manage_guild")
-    async def remove_link(self, ctx: commands.Context, url: str) -> None:
+    async def remove_link(
+        self, 
+        ctx: commands.Context, 
+        url: str
+    ) -> None:
         """
         link_blacklist_remove_help
         examples:
@@ -888,7 +975,10 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.group()
     @AutoModPlugin.can("manage_guild")
-    async def link_whitelist(self, ctx: commands.Context) -> None:
+    async def link_whitelist(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         link_whitelist_help
         examples:
@@ -912,7 +1002,11 @@ class AutomodPlugin(AutoModPlugin):
 
     @link_whitelist.command(name="add")
     @AutoModPlugin.can("manage_guild")
-    async def add_link2(self, ctx: commands.Context, url: str) -> None:
+    async def add_link2(
+        self, 
+        ctx: commands.Context, 
+        url: str
+    ) -> None:
         """
         link_whitelist_add_help
         examples:
@@ -932,7 +1026,11 @@ class AutomodPlugin(AutoModPlugin):
 
     @link_whitelist.command(name="remove")
     @AutoModPlugin.can("manage_guild")
-    async def remove_link_2(self, ctx: commands.Context, url: str) -> None:
+    async def remove_link_2(
+        self, 
+        ctx: commands.Context, 
+        url: str
+    ) -> None:
         """
         link_whitelist_remove_help
         examples:
@@ -952,7 +1050,10 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.group(name="filter", aliases=["filters"])
     @AutoModPlugin.can("manage_guild")
-    async def _filter(self, ctx: commands.Context) -> None:
+    async def _filter(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         filter_help
         examples:
@@ -985,7 +1086,16 @@ class AutomodPlugin(AutoModPlugin):
 
     @_filter.command(name="add")
     @AutoModPlugin.can("manage_guild")
-    async def add_filter(self, ctx: commands.Context, name: str, warns: int, channels: commands.Greedy[discord.TextChannel] = None, *, words: str) -> None:
+    async def add_filter(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        warns: int, 
+        channels: commands.Greedy[
+            discord.TextChannel
+        ] = None, 
+        *, words: str
+    ) -> None:
         """
         filter_add_help
         examples:
@@ -1013,7 +1123,11 @@ class AutomodPlugin(AutoModPlugin):
     
     @_filter.command(name="remove")
     @AutoModPlugin.can("manage_guild")
-    async def remove_filter(self, ctx: commands.Context, name: str) -> None:
+    async def remove_filter(
+        self, 
+        ctx: commands.Context, 
+        name: str
+    ) -> None:
         """
         filter_remove_help
         examples:
@@ -1033,7 +1147,10 @@ class AutomodPlugin(AutoModPlugin):
 
     @_filter.command(aliases=["l", "list"])
     @AutoModPlugin.can("ban_members")
-    async def show(self, ctx: commands.Context) -> None:
+    async def show(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         filter_show_help
         examples:
@@ -1066,7 +1183,10 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.group(aliases=["rgx"])
     @AutoModPlugin.can("manage_messages")
-    async def regex(self, ctx: commands.Context) -> None:
+    async def regex(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         r"""
         regex_help
         examples:
@@ -1103,7 +1223,16 @@ class AutomodPlugin(AutoModPlugin):
 
     @regex.command(name="add")
     @AutoModPlugin.can("manage_messages")
-    async def add_regex(self, ctx: commands.Context, name: str, regex: str, warns: int, channels: commands.Greedy[discord.TextChannel] = None) -> None:
+    async def add_regex(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        regex: str, 
+        warns: int, 
+        channels: commands.Greedy[
+            discord.TextChannel
+        ] = None
+    ) -> None:
         r"""
         regex_add_help
         examples:
@@ -1132,7 +1261,11 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @regex.command(name="remove", aliases=["delete", "del"])
-    async def remove_regex(self, ctx: commands.Context, name: str) -> None:
+    async def remove_regex(
+        self, 
+        ctx: commands.Context, 
+        name: str
+    ) -> None:
         """
         regex_remove_help
         examples:
@@ -1151,7 +1284,16 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.command(aliases=["spam"])
     @AutoModPlugin.can("manage_guild")
-    async def antispam(self, ctx: commands.Context, rate: Union[str, int] = None, per: int = None, warns: int = None) -> None:
+    async def antispam(
+        self, 
+        ctx: commands.Context, 
+        rate: Union[
+            str, 
+            int
+        ] = None, 
+        per: int = None, 
+        warns: int = None
+    ) -> None:
         """
         antispam_help
         examples:
@@ -1256,7 +1398,10 @@ class AutomodPlugin(AutoModPlugin):
 
     @commands.group(aliases=["automod_ignore"])
     @AutoModPlugin.can("manage_guild")
-    async def ignore_automod(self, ctx: commands.Context) -> None:
+    async def ignore_automod(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         ignore_automod_help
         examples:
@@ -1290,7 +1435,16 @@ class AutomodPlugin(AutoModPlugin):
 
     @ignore_automod.command()
     @AutoModPlugin.can("manage_guild")
-    async def add(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel]]) -> None:
+    async def add(
+        self, 
+        ctx: commands.Context, 
+        roles_or_channels: commands.Greedy[
+            Union[
+                discord.Role, 
+                discord.TextChannel
+            ]
+        ]
+    ) -> None:
         """
         ignore_automod_add_help
         examples:
@@ -1366,7 +1520,16 @@ class AutomodPlugin(AutoModPlugin):
 
     @ignore_automod.command()
     @AutoModPlugin.can("manage_guild")
-    async def remove(self, ctx: commands.Context, roles_or_channels: commands.Greedy[Union[discord.Role, discord.TextChannel]]) -> None:
+    async def remove(
+        self, 
+        ctx: commands.Context, 
+        roles_or_channels: commands.Greedy[
+            Union[
+                discord.Role, 
+                discord.TextChannel
+            ]
+        ]
+    ) -> None:
         """
         ignore_automod_remove_help
         examples:
@@ -1442,4 +1605,6 @@ class AutomodPlugin(AutoModPlugin):
         await ctx.send(embed=e)
 
 
-async def setup(bot) -> None: await bot.register_plugin(AutomodPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(AutomodPlugin(bot))

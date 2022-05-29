@@ -11,13 +11,24 @@ from .processor import ActionProcessor, LogProcessor
 
 class WarnPlugin(AutoModPlugin):
     """Plugin for warn commands. This isn't being added seperately, instead the mod plugin will subclass from this"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
 
 
-    def can_act(self, guild: discord.Guild, mod: discord.Member, target: Union[discord.Member, discord.User]) -> bool:
+    def can_act(
+        self, 
+        guild: discord.Guild, 
+        mod: discord.Member, 
+        target: Union[
+            discord.Member, 
+            discord.User
+        ]
+    ) -> bool:
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
 
@@ -40,7 +51,13 @@ class WarnPlugin(AutoModPlugin):
 
     @commands.command()
     @AutoModPlugin.can("manage_messages")
-    async def warn(self, ctx: commands.Context, user: discord.Member, warns = None, *, reason: str = None) -> None:
+    async def warn(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member, warns = None, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         warn_help
         examples:
@@ -76,7 +93,14 @@ class WarnPlugin(AutoModPlugin):
 
     @commands.command(aliases=["pardon"])
     @AutoModPlugin.can("ban_members")
-    async def unwarn(self, ctx: commands.Context, user: discord.Member, warns = None, *, reason: str = None) -> None:
+    async def unwarn(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member, 
+        warns = None, 
+        *, 
+        reason: str = None
+    ) -> None:
         """
         unwarn_help
         examples:

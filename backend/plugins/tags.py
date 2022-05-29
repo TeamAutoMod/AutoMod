@@ -13,13 +13,21 @@ from ..types import Embed
 
 class TagsPlugin(AutoModPlugin):
     """Plugin for tags (custom commands)"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
         self._tags = {}
         self.cache_tags()
 
 
-    def add_tag(self, ctx: commands.Context, name: str, content: str) -> None:
+    def add_tag(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        content: str
+    ) -> None:
         data = {
             name: {
                 "content": content,
@@ -33,12 +41,21 @@ class TagsPlugin(AutoModPlugin):
         self.db.tags.insert(Tag(ctx, name, content))
 
 
-    def remove_tag(self, guild: discord.Guild, name: str) -> None:
+    def remove_tag(
+        self, 
+        guild: discord.Guild, 
+        name: str
+    ) -> None:
         self._tags[guild.id].pop(name)
         self.db.tags.delete(f"{guild.id}-{name}")
 
 
-    def update_tag(self, ctx: commands.Context, name: str, content: str) -> None:
+    def update_tag(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        content: str
+    ) -> None:
         self._tags[ctx.guild.id][name].update({
             "content": content
         })
@@ -49,7 +66,9 @@ class TagsPlugin(AutoModPlugin):
         })
 
 
-    def cache_tags(self) -> None:
+    def cache_tags(
+        self
+    ) -> None:
         for e in self.db.tags.find({}):
             _id = int(e["id"].split("-")[0])
             if "name" in e:
@@ -72,47 +91,55 @@ class TagsPlugin(AutoModPlugin):
                 self._tags[_id].update(data)
 
 
-    def update_uses(self, _id: str) -> None:
+    def update_uses(
+        self, 
+        _id: str
+    ) -> None:
         self.bot.used_tags += 1
         cur = self.db.tags.get(_id, "uses")
         self.db.tags.update(_id, "uses", cur+1)
 
 
-    @commands.group(name="commands", aliases=["tags"])
-    async def custom_commands(self, ctx: commands.Context) -> None:
+    @commands.command(name="commands", aliases=["tags"])
+    async def custom_commands(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         commands_help
         examples:
         -commands
-        -commands add test_cmd This is a test command
-        -commands remove test_cmd
-        -commands update test_cmd This is the new content
         """
-        if ctx.invoked_subcommand is None:
-            if ctx.guild.id in self._tags:
-                tags = self._tags[ctx.guild.id]
-                prefix = self.get_prefix(ctx.guild)
-                if len(tags) > 0:
-                    e = Embed(
-                ctx,
-                        title="Custom Commands",
-                        description="> {}".format(", ".join([f"``{x}``" for x in tags]))
-                    )
-                    e.set_footer(text=f"Use these as commands (e.g. {prefix}{list(tags.keys())[0]})")
-                    await ctx.send(embed=e)
-                else:
-                    await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+        if ctx.guild.id in self._tags:
+            tags = self._tags[ctx.guild.id]
+            prefix = self.get_prefix(ctx.guild)
+            if len(tags) > 0:
+                e = Embed(
+            ctx,
+                    title="Custom Commands",
+                    description="> {}".format(", ".join([f"``{x}``" for x in tags]))
+                )
+                e.set_footer(text=f"Use these as commands (e.g. {prefix}{list(tags.keys())[0]})")
+                await ctx.send(embed=e)
             else:
                 await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+        else:
+            await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
     
-    @custom_commands.command(aliases=["create", "new"])
+    @commands.command()
     @AutoModPlugin.can("manage_messages")
-    async def add(self, ctx: commands.Context, name: str, *, content: str) -> None:
+    async def addcom(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        *, 
+        content: str
+    ) -> None:
         """
-        commands_add_help
+        addcom_help
         examples:
-        -commands add test_cmd This is a test command
+        -addcom test_cmd This is a test command
         """
         if len(name) > 30:
             return await ctx.send(self.locale.t(ctx.guild, "name_too_long", _emote="NO"))
@@ -128,13 +155,17 @@ class TagsPlugin(AutoModPlugin):
         await ctx.send(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name, prefix=self.get_prefix(ctx.guild)))
 
 
-    @custom_commands.command(aliases=["delete", "del"])
+    @commands.command()
     @AutoModPlugin.can("manage_messages")
-    async def remove(self, ctx: commands.Context, name: str) -> None:
+    async def delcom(
+        self, 
+        ctx: commands.Context, 
+        name: str
+    ) -> None:
         """
-        commands_remove_help
+        delcom_help
         examples:
-        -commands remove test_command
+        -delcom test_command
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
@@ -147,13 +178,19 @@ class TagsPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
 
-    @custom_commands.command()
+    @commands.command()
     @AutoModPlugin.can("manage_messages")
-    async def update(self, ctx: commands.Context, name: str, *, content: str) -> None:
+    async def editcom(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        *, 
+        content: str
+    ) -> None:
         """
-        commands_update_help
+        editcom_help
         examples:
-        -commands update test_cmd This is the new content
+        -editcom test_cmd This is the new content
         """
         if len(content) > 1900:
             return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
@@ -169,13 +206,17 @@ class TagsPlugin(AutoModPlugin):
             await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
 
-    @custom_commands.command()
+    @commands.command()
     @AutoModPlugin.can("manage_messages")
-    async def info(self, ctx: commands.Context, name: str):
+    async def infocom(
+        self, 
+        ctx: commands.Context, 
+        name: str
+    ) -> None:
         """
-        commands_info_help
+        infocom_help
         examples:
-        -commands info test_cmd
+        -infocom test_cmd
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
@@ -190,26 +231,26 @@ class TagsPlugin(AutoModPlugin):
                 )
                 e.add_fields([
                     {
-                        "name": "❯ Name",
-                        "value": f"``{name}``"
+                        "name": "📝 __**Name**__",
+                        "value": f"``▶`` {name}"
                     },
                     {
-                        "name": "❯ Content",
+                        "name": "💬 __**Content**__",
                         "value": f"```\n{data.content}\n```"
                     },
                     {
-                        "name": "❯ Uses",
-                        "value": f"``{data.uses}``"
+                        "name": "📈 __**Uses**__",
+                        "value": f"``▶`` {data.uses}"
                     },
                     {
-                        "name": "❯ Creator",
-                        "value": f"<@{data.author}> (<t:{round(data.created.timestamp())}>)"
+                        "name": "👤 __**Creator**__",
+                        "value": f"``▶`` <@{data.author}> (<t:{round(data.created.timestamp())}>)"
                     }
                 ])
                 if data.edited != None:
                     e.add_field(
-                        name="❯ Editor",
-                        value=f"<@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
+                        name="✏️ __**Editor**__",
+                        value=f"``▶`` <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
                     )
 
                 await ctx.send(embed=e)
@@ -219,7 +260,10 @@ class TagsPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message(self, msg: discord.Message) -> None:
+    async def on_message(
+        self, 
+        msg: discord.Message
+    ) -> None:
         if msg.guild == None \
             or msg.author.bot \
             or msg.author.id == self.bot.user.id: return
@@ -242,4 +286,6 @@ class TagsPlugin(AutoModPlugin):
                         self.bot.dispatch("custom_command_completion", msg, name)
 
 
-async def setup(bot) -> None: await bot.register_plugin(TagsPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(TagsPlugin(bot))

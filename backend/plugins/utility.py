@@ -25,10 +25,9 @@ ACTUAL_PLUGIN_NAMES = {
     "AutomodPlugin": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
     "UtilityPlugin": "🔧 Utility",
-    "CasesPlugin": "📦 Cases",
     "TagsPlugin": "📝 Custom Commands",
+    "CasesPlugin": "📦 Cases",
     "ReactionRolesPlugin": "🎭 Reaction Roles",
-    "AutoReplyPlugin": "💬 Auto Reply"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
@@ -37,7 +36,14 @@ MAX_NATIVE_SLOWMODE = 21600 # 6 hours
 MAX_BOT_SLOWMODE = 1209600 # 14 days
 
 
-def get_help_embed(plugin: AutoModPlugin, ctx: commands.Context, cmd: Union[commands.Command, commands.GroupMixin]) -> Embed:
+def get_help_embed(
+    plugin: AutoModPlugin, 
+    ctx: commands.Context, 
+    cmd: Union[
+        commands.Command, 
+        commands.GroupMixin
+    ]
+) -> Embed:
     if len(cmd.aliases) > 0:
         cmd_name = f"{cmd.qualified_name}{'|{}'.format('|'.join(cmd.aliases)) if len(cmd.aliases) > 1 else f'|{cmd.aliases[0]}'}"
     else:
@@ -81,10 +87,18 @@ def get_help_embed(plugin: AutoModPlugin, ctx: commands.Context, cmd: Union[comm
             )
         )
 
+    e.set_footer(text="<required> | [optional]")
     return e
 
 
-def get_command_help(plugin: AutoModPlugin, ctx: commands.Context, query: str) -> Union[Embed, None]:
+def get_command_help(
+    plugin: AutoModPlugin, 
+    ctx: commands.Context, 
+    query: str
+) -> Union[
+    Embed, 
+    None
+]:
     cmd = plugin.bot
     layers = query.split(" ")
 
@@ -112,13 +126,18 @@ def get_version() -> str:
         return VERSION
 
 
-def to_string(char: str) -> str:
+def to_string(
+    char: str
+) -> str:
     dig = f"{ord(char):x}"
     name = unicodedata.name(char, "Name not found")
     return f"\\U{dig:>08} | {name} | {char}"
 
 
-def get_user_badges(bot: ShardedBotInstance, flags: discord.PublicUserFlags) -> str:
+def get_user_badges(
+    bot: ShardedBotInstance, 
+    flags: discord.PublicUserFlags
+) -> str:
     badges = []
     if flags.staff: badges.append(bot.emotes.get("STAFF"))
     if flags.partner: badges.append(bot.emotes.get("PARTNER"))
@@ -140,11 +159,21 @@ def get_user_badges(bot: ShardedBotInstance, flags: discord.PublicUserFlags) -> 
 
 class UtilityPlugin(AutoModPlugin):
     """Plugin for all utility commands"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
 
 
-    def get_log_for_case(self, ctx: commands.Context, case: dict) -> Union[str, None]:
+    def get_log_for_case(
+        self, 
+        ctx: commands.Context, 
+        case: dict
+    ) -> Union[
+        str, 
+        None
+    ]:
         if not "log_id" in case: return None
 
         log_id = case["log_id"]
@@ -160,7 +189,10 @@ class UtilityPlugin(AutoModPlugin):
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
 
-    def server_status_for(self, user: discord.Member) -> str:
+    def server_status_for(
+        self, 
+        user: discord.Member
+    ) -> str:
         perms: discord.Permissions = user.guild_permissions
         if (
             perms.administrator == True \
@@ -185,7 +217,15 @@ class UtilityPlugin(AutoModPlugin):
             return "User"
 
 
-    def can_act(self, guild: discord.Guild, mod: discord.Member, target: Union[discord.Member, discord.User]) -> bool:
+    def can_act(
+        self, 
+        guild: discord.Guild, 
+        mod: discord.Member, 
+        target: Union[
+            discord.Member, 
+            discord.User
+        ]
+    ) -> bool:
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
 
@@ -207,7 +247,42 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @AutoModPlugin.listener()
-    async def on_message(self, msg: discord.Message) -> None:
+    async def on_interaction(
+        self,
+        i: discord.Interaction
+    ) -> None:
+        if i.type == discord.InteractionType.component:
+            cid = i.data.get("custom_id")
+            if cid == "help-select":
+                p = self.bot.get_plugin(i.data.get("values")[0])
+                if p != None:
+                    e = Embed(
+                        i,
+                        title=ACTUAL_PLUGIN_NAMES.get(i.data.get("values")[0], i.data.get("values")[0])
+                    )
+
+                    for cmd in p.get_commands():
+                        e.add_field(
+                            name="**{}**".format(
+                                f"{self.get_prefix(i.guild)}{cmd.qualified_name} {cmd.signature}".replace('...', '').replace('=None', '')
+                            ),
+                            value="``▶`` {}".format(
+                                self.bot.locale.t(i.guild, cmd.help.split('\nexamples:')[0])
+                            ),
+                            inline=False
+                        )
+
+                    e.set_footer(text="<required> [optional]")
+                    await i.response.edit_message(embed=e)
+            else:
+                await i.response.defer()
+
+
+    @AutoModPlugin.listener()
+    async def on_message(
+        self, 
+        msg: discord.Message
+    ) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
         if not self.can_act(
@@ -251,7 +326,10 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command()
-    async def ping(self, ctx: commands.Context) -> None:
+    async def ping(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         ping_help
         examples:
@@ -279,7 +357,10 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command()
-    async def about(self, ctx: commands.Context) -> None:
+    async def about(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """
         about_help
         examples:
@@ -327,7 +408,12 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command()
-    async def help(self, ctx: commands.Context, *, query: str = None) -> None:
+    async def help(
+        self, 
+        ctx: commands.Context, 
+        *, 
+        query: str = None
+    ) -> None:
         """
         help_help
         examples:
@@ -370,7 +456,11 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["av"])
-    async def avatar(self, ctx: commands.Context, user: DiscordUser = None) -> None:
+    async def avatar(
+        self, 
+        ctx: commands.Context, 
+        user: DiscordUser = None
+    ) -> None:
         """
         avatar_help
         examples:
@@ -393,7 +483,12 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command()
     @commands.cooldown(1, 5.0, commands.BucketType.user)
-    async def jumbo(self, ctx: commands.Context, *, emotes: str) -> None:
+    async def jumbo(
+        self, 
+        ctx: commands.Context, 
+        *, 
+        emotes: str
+    ) -> None:
         """
         jumbo_help
         examples:
@@ -439,7 +534,14 @@ class UtilityPlugin(AutoModPlugin):
     
     @commands.command(aliases=["info", "userinfo", "user"])
     @AutoModPlugin.can("manage_messages")
-    async def whois(self, ctx: Union[commands.Context, discord.Interaction], user: DiscordUser = None) -> None:
+    async def whois(
+        self, 
+        ctx: Union[
+            commands.Context, 
+            discord.Interaction
+        ], 
+        user: DiscordUser = None
+    ) -> None:
         """
         whois_help
         examples:
@@ -525,7 +627,10 @@ class UtilityPlugin(AutoModPlugin):
     @commands.command(aliases=["guild", "serverinfo"])
     @commands.guild_only()
     @AutoModPlugin.can("manage_messages")
-    async def server(self, ctx: commands.Context) -> None:
+    async def server(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         """ 
         server_help
         examples:
@@ -591,7 +696,11 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command(aliases=["slow"])
     @AutoModPlugin.can("manage_channels")
-    async def slowmode(self, ctx: commands.Context, time: Duration = None) -> None:
+    async def slowmode(
+        self, 
+        ctx: commands.Context, 
+        time: Duration = None
+    ) -> None:
         """
         slowmode_help
         examples:
@@ -679,7 +788,12 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command()
-    async def charinfo(self, ctx: commands.Context, *, chars: str) -> None:
+    async def charinfo(
+        self, 
+        ctx: commands.Context, 
+        *, 
+        chars: str
+    ) -> None:
         """
         charinfo_help
         examples:
@@ -691,4 +805,6 @@ class UtilityPlugin(AutoModPlugin):
         await ctx.send(msg[:2000])
 
 
-async def setup(bot) -> None: await bot.register_plugin(UtilityPlugin(bot))
+async def setup(
+    bot: ShardedBotInstance
+) -> None: await bot.register_plugin(UtilityPlugin(bot))

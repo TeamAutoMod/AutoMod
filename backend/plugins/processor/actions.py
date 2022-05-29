@@ -13,7 +13,10 @@ from .dm import DMProcessor
 
 
 class ActionProcessor(object):
-    def __init__(self, bot: ShardedBotInstance):
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ):
         self.bot = bot
         self.warns = self.bot.db.warns
         self.executors = {
@@ -26,7 +29,19 @@ class ActionProcessor(object):
         self.dm_processor = DMProcessor(bot)
 
 
-    def new_case(self, _type: str, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], reason: str, warns_added: int = 0, until: datetime.datetime = None) -> int:
+    def new_case(
+        self, 
+        _type: str, 
+        msg: discord.Message, 
+        mod: discord.Member, 
+        user: Union[
+            discord.Member, 
+            discord.User
+        ], 
+        reason: str, 
+        warns_added: int = 0, 
+        until: datetime.datetime = None
+    ) -> int:
         case = self.bot.db.configs.get(msg.guild.id, "cases") + 1
 
         if self.bot.db.cases.exists(f"{msg.guild.id}-{case}"):
@@ -50,7 +65,18 @@ class ActionProcessor(object):
         return case
 
 
-    async def execute(self, msg: discord.Message, mod: discord.Member, user: Union[discord.Member, discord.User], warns: int, reason: str, **special_log_kwargs) -> None:
+    async def execute(
+        self, 
+        msg: discord.Message, 
+        mod: discord.Member, 
+        user: Union[
+            discord.Member, 
+            discord.User
+        ], 
+        warns: int, 
+        reason: str, 
+        **special_log_kwargs
+    ) -> None:
         if "(" in reason:
             raw_reason = reason.split("(")[0]
         elif "Triggered filter" in reason or "Triggered regex" in reason:
@@ -140,7 +166,17 @@ class ActionProcessor(object):
             return None
 
 
-    async def ban(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
+    async def ban(
+        self, 
+        msg: discord.Message, 
+        _mod: discord.Member, 
+        _user: Union[
+            discord.Member, 
+            discord.User
+        ], 
+        _reason: str, 
+        **log_kwargs
+    ) -> Union[None, Exception]:
         mod, user, reason = _mod, _user, _reason
         if msg.guild.get_member(user.id) == None: return "User not found"
         if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already banning user"
@@ -174,7 +210,20 @@ class ActionProcessor(object):
             self.bot.auto_processing.remove(f"{msg.guild.id}-{user.id}")
 
 
-    async def kick(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
+    async def kick(
+        self, 
+        msg: discord.Message, 
+        _mod: discord.Member, 
+        _user: Union[
+            discord.Member, 
+            discord.User
+        ], 
+        _reason: str, 
+        **log_kwargs
+    ) -> Union[
+        None, 
+        Exception
+    ]:
         mod, user, reason = _mod, _user, _reason
         if msg.guild.get_member(user.id) == None: return "User not found"
         if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already kicking user"
@@ -208,7 +257,20 @@ class ActionProcessor(object):
             self.bot.auto_processing.remove(f"{msg.guild.id}-{user.id}")
 
 
-    async def mute(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
+    async def mute(
+        self, 
+        msg: discord.Message, 
+        _mod: discord.Member, 
+        _user: Union[
+            discord.Member, 
+            discord.User
+        ], 
+        _reason: str, 
+        **log_kwargs
+    ) -> Union[
+        None, 
+        Exception
+    ]:
         mod, user, reason = _mod, _user, _reason
         user = msg.guild.get_member(user.id)
         if user == None: return "User not found"
@@ -256,7 +318,20 @@ class ActionProcessor(object):
             self.bot.auto_processing.remove(f"{msg.guild.id}-{user.id}")
 
     
-    async def tempban(self, msg: discord.Message, _mod: discord.Member, _user: Union[discord.Member, discord.User], _reason: str, **log_kwargs) -> Union[None, Exception]:
+    async def tempban(
+        self, 
+        msg: discord.Message, 
+        _mod: discord.Member, 
+        _user: Union[
+            discord.Member, 
+            discord.User
+        ], 
+        _reason: str, 
+        **log_kwargs
+    ) -> Union[
+        None, 
+        Exception
+    ]:
         mod, user, reason = _mod, _user, _reason
         user = msg.guild.get_member(user.id);
         if user == None: return "User not found"

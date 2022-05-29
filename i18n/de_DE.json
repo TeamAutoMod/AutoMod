@@ -23,11 +23,11 @@
     "unban_help": "Entbannt den angegebenen User vom Server",
     "slowmode_help": "Setzt einen Slowmode von bis zu 14 Tagen in dem aktuellen Channel. Nutze 0 als das time argument um den Slowmode des aktuellen Channels zu löschen oder gar kein Argument, um alle aktuell Bot-verwalteten Slowmodes zu sehen",
 
-    "commands_help": "Standard Command um Custom Commands zu verwalten. Wenn kein Subcommannd gegeben ist, zeigt dies eine Liste aller aktuellen Custom Commands an",
-    "commands_add_help": "Erstellt einen neuen Custom Command mit dem gegebenen Namen und Inhalt",
-    "commands_remove_help": "Löscht den Custom Command mit dem gegebenen Namen",
-    "commands_update_help": "Aktualisiert den Inhalt des Custom Commands mit dem gegebenen Namen",
-    "commands_info_help": "Zeigt einige Infos zum gegebenen Custom Command",
+    "commands_help": "Zeigt dies eine Liste aller aktuellen Custom Commands an",
+    "addcom_help": "Erstellt einen neuen Custom Command mit dem gegebenen Namen und Inhalt",
+    "delcom_help": "Löscht den Custom Command mit dem gegebenen Namen",
+    "editcom_help": "Aktualisiert den Inhalt des Custom Commands mit dem gegebenen Namen",
+    "infocom_help": "Zeigt einige Infos zum gegebenen Custom Command",
 
     "ping_help": "Zeigt die Latenzen des Bots",
     "about_help": "Zeigt einige Statistiken und Infos zu AutoMod",
@@ -151,7 +151,7 @@
     "amount_too_small": "{emote} Too few messages (<1)",
     "amount_too_big": "{emote} Too many messages (>300)",
 
-    "about_description": "AutoMod is a moderation bot with multiple, customisable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
+    "about_description": "AutoMod is a moderation bot with multiple, customizable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
 
     "invalid_action_desc": "{emote} ``{given}`` isn't a valid action",
     "set_none": "{emote} Removed the action for {warns} warns. To view all current actions, use ``{prefix}config``",

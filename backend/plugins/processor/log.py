@@ -220,12 +220,20 @@ LOG_TYPES = {
 
 
 class LogProcessor(object):
-    def __init__(self, bot) -> None:
+    def __init__(
+        self, 
+        bot
+    ) -> None:
         self.bot = bot
         self.db = bot.db
 
 
-    async def execute(self, guild: discord.Guild, log_type: str, **log_kwargs) -> None:
+    async def execute(
+        self, 
+        guild: discord.Guild, 
+        log_type: str, 
+        **log_kwargs
+    ) -> None:
         if not guild.id in self.bot.log_queue: 
             self.bot.log_queue[guild.id] = {
                 "mod_log": [],

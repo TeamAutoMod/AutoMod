@@ -63,7 +63,10 @@ class Translator(object):
         key: str, 
         lang: str = "en_US", 
         **kwargs
-    ) -> Union[str, None]:
+    ) -> Union[
+        str, 
+        None
+    ]:
         try:
             string = self._langs[lang][key]
         except KeyError:

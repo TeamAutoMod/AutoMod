@@ -8,13 +8,20 @@ from typing import Union
 
 
 class DurationHolder(object):
-    def __init__(self, length: int, unit: str = None) -> None:
+    def __init__(
+        self, 
+        length: int, 
+        unit: str = None
+    ) -> None:
         super().__init__()
         self.length = length
         self.unit = unit
 
 
-    def to_seconds(self, ctx: commands.Context) -> None:
+    def to_seconds(
+        self, 
+        ctx: commands.Context
+    ) -> None:
         if self.unit is None:
             self.unit = "seconds"
         unit = self.unit.lower()
@@ -52,7 +59,17 @@ class DurationHolder(object):
 
 
 class DurationIdentifier(commands.Converter):
-    async def convert(self, ctx: commands.Context, argument: Union[str, None]) -> Union[str, Exception]:
+    async def convert(
+        self, 
+        ctx: commands.Context, 
+        argument: Union[
+            str, 
+            None
+        ]
+    ) -> Union[
+        str, 
+        Exception
+    ]:
         if argument is None:
             argument = "seconds"
         if argument.lower() not in \
@@ -66,7 +83,17 @@ class DurationIdentifier(commands.Converter):
 
 
 class Duration(commands.Converter):
-    async def convert(self, ctx: commands.Context, argument: Union[str, None]) -> Union[str, Exception]:
+    async def convert(
+        self, 
+        ctx: commands.Context, 
+        argument: Union[
+            str, 
+            None
+        ]
+    ) -> Union[
+        str, 
+        Exception
+    ]:
         match = re.compile(r"^(\d+)").match(argument)
         if match is None:
             raise BadArgument("Duration is not a number")

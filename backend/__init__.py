@@ -18,10 +18,11 @@ with open("backend/config.json", "r", encoding="utf8", errors="ignore") as confi
     config = json.load(config_file)
 
 
-sentry_sdk.init(
-    config["sentry_dsn"],
-    traces_sample_rate=1.0
-)
+if config.get("sentry_dsn", "") != "":
+    sentry_sdk.init(
+        config["sentry_dsn"],
+        traces_sample_rate=1.0
+    )
 
 
 logging.getLogger("discord").propagate = False
