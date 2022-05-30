@@ -16,7 +16,14 @@ class DeleteView(View):
 
 
 class ChoiceView(View):
-    def __init__(self, placeholder: str, guild: discord.Guild, opt: list, *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        placeholder: str, 
+        guild: discord.Guild, 
+        opt: list, 
+        *args, 
+        **kwargs
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.add_item(discord.ui.Select(
             custom_id=f"{guild.id}:replies",

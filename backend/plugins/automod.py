@@ -289,8 +289,7 @@ class AutomodPlugin(AutoModPlugin):
 
     def can_act(
         self, 
-        guild: discord.Guild, 
-        channel: discord.TextChannel, 
+        guild: discord.Guild,  
         mod: discord.Member, 
         target: Union[
             discord.Member, 
@@ -304,14 +303,6 @@ class AutomodPlugin(AutoModPlugin):
         rid = self.bot.db.configs.get(guild.id, "mod_role")
         if rid != "" and rid != None:
             if int(rid) in [x.id for x in target.roles]: return False
-        
-        roles, channels = self.get_ignored_roles_channels(guild)
-        if channels == None:
-            self.db.configs.update(guild.id, "ignored_channels_automod", [])
-        else:
-            if channel.id in channels: return False
-
-        if any(x in [i.id for i in target.roles] for x in roles): return False
 
         return mod.id != target.id \
             and target.id != guild.owner.id \
@@ -320,6 +311,26 @@ class AutomodPlugin(AutoModPlugin):
                 or target.guild_permissions.kick_members == False 
                 or target.guild_permissions.manage_messages == False
             )
+    
+
+    def can_ignore(
+        self,
+        guild: discord.Guild,
+        channel: discord.TextChannel,
+        target: Union[
+            discord.Member,
+            discord.User
+        ]
+    ) -> bool:
+        roles, channels = self.get_ignored_roles_channels(guild)
+        if channels == None:
+            self.db.configs.update(guild.id, "ignored_channels_automod", [])
+        else:
+            if channel.id in channels: return True
+
+        if any(x in [i.id for i in target.roles] for x in roles): return True
+
+        return False
 
 
     def parse_filter(
@@ -512,27 +523,28 @@ class AutomodPlugin(AutoModPlugin):
         antispam = config.antispam
 
         if antispam.enabled == True:
-            if not msg.guild.id in self.spam_cache:
-                self.spam_cache.update({
-                    msg.guild.id: commands.CooldownMapping.from_cooldown(
-                        antispam.rate,
-                        float(antispam.per),
-                        commands.BucketType.user
-                    )
-                })
-            
-            mapping = self.spam_cache[msg.guild.id]
-            now = msg.created_at.timestamp()
+            if not self.can_ignore(msg.guild, msg.channel, msg.author):
+                if not msg.guild.id in self.spam_cache:
+                    self.spam_cache.update({
+                        msg.guild.id: commands.CooldownMapping.from_cooldown(
+                            antispam.rate,
+                            float(antispam.per),
+                            commands.BucketType.user
+                        )
+                    })
+                
+                mapping = self.spam_cache[msg.guild.id]
+                now = msg.created_at.timestamp()
 
-            users = mapping.get_bucket(msg)
-            if users.update_rate_limit(now):
-                return await self.delete_msg(
-                    "antispam",
-                    f"{users.rate}/{round(users.per, 0)}",
-                    msg, 
-                    antispam.warns, 
-                    f"Spam detected"
-                )
+                users = mapping.get_bucket(msg)
+                if users.update_rate_limit(now):
+                    return await self.delete_msg(
+                        "antispam",
+                        f"{users.rate}/{round(users.per, 0)}",
+                        msg, 
+                        antispam.warns, 
+                        f"Spam detected"
+                    )
 
 
         if len(filters) > 0:
@@ -569,6 +581,11 @@ class AutomodPlugin(AutoModPlugin):
                             )
         
         if len(rules) < 1: return
+        if self.can_ignore(
+            msg.guild, 
+            msg.channel, 
+            msg.author
+        ): return
 
         if hasattr(rules, "invites"):
             found = INVITE_RE.findall(content)
@@ -716,7 +733,7 @@ class AutomodPlugin(AutoModPlugin):
     ) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
-        if not self.can_act(msg.guild, msg.channel, msg.guild.me, msg.author): return
+        if not self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
 
@@ -729,7 +746,7 @@ class AutomodPlugin(AutoModPlugin):
     ) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await msg.guild.chunk(cache=True)
-        if not self.can_act(msg.guild, msg.channel, msg.guild.me, msg.author): return
+        if not self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
 

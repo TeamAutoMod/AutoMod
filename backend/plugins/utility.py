@@ -87,7 +87,7 @@ def get_help_embed(
             )
         )
 
-    e.set_footer(text="<required> | [optional]")
+    e.set_footer(text="<required> [optional]")
     return e
 
 
