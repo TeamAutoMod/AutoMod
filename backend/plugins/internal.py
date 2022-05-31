@@ -413,9 +413,13 @@ class InternalPlugin(AutoModPlugin):
         or msg.type != discord.MessageType.default:
             return
 
+        if guild.chunked == False: await guild.chunk(cache=True)
+        author = guild.get_member(msg.author.id)
+
         roles, channels = self.get_ignored_roles_channels(msg.guild)
+        if author != None:
+            if any(x in [i.id for i in msg.author.roles] for x in roles): return
         if msg.channel.id in channels: return
-        if any(x in [i.id for i in msg.author.roles] for x in roles): return
         
         content = " ".join([x.url for x in msg.attachments]) + msg.content
         if content == "": return
