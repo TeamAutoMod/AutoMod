@@ -453,7 +453,9 @@ class AutomodPlugin(AutoModPlugin):
                             },
                             {
                                 "name": "Content",
-                                "value": msg.content[:1023],
+                                "value": "```\n{}\n```".format(
+                                    msg.content[:1023]
+                                ),
                                 "inline": False
                             }
                         ]
@@ -485,7 +487,9 @@ class AutomodPlugin(AutoModPlugin):
                             "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, reason),
                             "extra_fields": [{
                                 "name": "Content",
-                                "value": msg.content[:1023],
+                                "value": "```\n{}\n```".format(
+                                    msg.content[:1023]
+                                ),
                                 "inline": False
                             }]
                         }
@@ -503,7 +507,9 @@ class AutomodPlugin(AutoModPlugin):
                             "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, reason),
                             "extra_fields": [{
                                 "name": "Content",
-                                "value": msg.content[:1023],
+                                "value": "```\n{}\n```".format(
+                                    msg.content[:1023]
+                                ),
                                 "inline": False
                             }]
                         }

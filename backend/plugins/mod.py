@@ -1,4 +1,3 @@
-from typing import Callable
 import discord
 from discord.ext import commands
 
@@ -6,12 +5,12 @@ import datetime
 import asyncio
 import logging; log = logging.getLogger()
 import datetime
-from typing import Union
+from typing import Union, Callable
 
 from .warn import WarnPlugin, ShardedBotInstance
 from .processor import LogProcessor, ActionProcessor, DMProcessor
 from ..types import DiscordUser, Duration, Embed
-from ..views import ConfirmView
+from ..views import ConfirmView, ActionedView
 from ..schemas import Mute, Tempban
 
 
@@ -724,17 +723,59 @@ class ModerationPlugin(WarnPlugin):
         await ctx.send(msg, **kwargs)
 
 
-    # @commands.command(aliases=["modnote"])
-    # @AutoModPlugin.can("manage_messages")
-    # async def note(self, ctx: commands.Context, user: DiscordUser, *, text: str = None):
-    #     """
-    #     note_help
-    #     examples:
-    #     -note @paul#0009
-    #     -note @paul#0009 Test
-    #     """
-    #     if text == None:
-    #         e = Embed()
+    async def report(
+        self,
+        i: discord.Interaction,
+        msg: discord.Message
+    ) -> None:
+        if not self.can_act(
+            msg.guild,
+            i.user,
+            msg.author
+        ): return await i.response.send_message(
+            embed=Embed(
+                i,
+                description=self.locale.t(msg.guild, "report_mod", _emote="NO")
+            ),
+            ephemeral=True
+        )
+        
+        content = msg.content + " ".join([x.url for x in msg.attachments])
+        e = Embed(
+            i,
+            color=0x2c2f33,
+            description="{} **Message reported:** {} ({}) \n\n**Reporter:** {} ({}) \n**Link:** [Here]({})".format(
+                self.bot.emotes.get("ALARM"),
+                msg.author.mention,
+                msg.author.id,
+                i.user.mention,
+                i.user.id,
+                msg.jump_url,
+            )
+        )
+        e.add_fields([
+            {
+                "name": "Channel",
+                "value": f"{msg.channel.mention} ({msg.channel.id})",
+                "inline": False
+            },
+            {
+                "name": "Content",
+                "value": "```\n{}\n```".format(
+                    "None" if len(content) < 1 else content[:1024]
+                ),
+                "inline": False
+            }
+        ])
+        e.add_view(ActionedView(self.bot))
+        await self.log_processor.execute(msg.guild, "report", **{
+            "_embed": e
+        })
+
+        await i.response.send_message(
+            self.locale.t(msg.guild, "reported", _emote="YES", user=msg.author), 
+            ephemeral=True
+        )
 
 
 async def setup(

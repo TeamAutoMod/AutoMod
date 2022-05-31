@@ -1,7 +1,7 @@
 import discord
 from discord.ui import View
 
-from .buttons import DeleteBtn
+from .buttons import DeleteBtn, ActionedBtn
 
 
 
@@ -37,3 +37,14 @@ class ChoiceView(View):
                 ) for x in opt
             ]
         ))
+
+
+class ActionedView(View):
+    def __init__(
+        self, 
+        bot,
+        *args, 
+        **kwargs
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self.add_item(ActionedBtn(bot))

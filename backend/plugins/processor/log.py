@@ -188,13 +188,6 @@ LOG_TYPES = {
         "channel": "voice_log",
     },
 
-    "used_command": {
-        "channel": "bot_log"
-    },
-    "used_custom_command": {
-        "channel": "bot_log"
-    },
-
     "automod_rule_triggered": {
         "channel": "mod_log",
         "key": "log_automod",
@@ -215,6 +208,10 @@ LOG_TYPES = {
         "color": 0x2b80b8,
         "emote": "NO_ENTRY",
         "action": "Word filter triggered"
+    },
+
+    "report": {
+        "channel": "report_log"
     }
 }
 
@@ -242,7 +239,7 @@ class LogProcessor(object):
                 "join_log": [],
                 "member_log": [],
                 "voice_log": [],
-                "bot_log": []
+                "report_log": []
             }
 
         config = Object(LOG_TYPES[log_type])

@@ -36,9 +36,9 @@ LOG_OPTIONS = {
         "db_field": "voice_log",
         "i18n_type": "voice logs"
     },
-    "bot": {
-        "db_field": "bot_log",
-        "i18n_type": "bot logs"
+    "reports": {
+        "db_field": "report_log",
+        "i18n_type": "report logs"
     }
 }
 
@@ -115,7 +115,7 @@ class ConfigPlugin(AutoModPlugin):
                 self.bot.webhook_cache.update({
                     ctx.guild.id: {
                         **{
-                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "bot_log"] if k != option
+                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "report_log"] if k != option
                         }, 
                         **{
                             option: w
@@ -230,7 +230,7 @@ class ConfigPlugin(AutoModPlugin):
             },
             {
                 "name": "📁 __**Logging**__",
-                "value": "``▶`` **Mod Log:** {} \n``▶`` **Message Log:** {}\n``▶`` **Server Log:** {}\n``▶`` **Join Log:** {} \n``▶`` **Member Log:** {} \n``▶`` **Voice Log:** {} \n``▶`` **Bot Log:** {}"\
+                "value": "``▶`` **Mod Log:** {} \n``▶`` **Message Log:** {}\n``▶`` **Server Log:** {}\n``▶`` **Join Log:** {} \n``▶`` **Member Log:** {} \n``▶`` **Voice Log:** {} \n``▶`` **Report Log:** {}"\
                 .format(
                     "disabled" if config.mod_log == "" else f"<#{config.mod_log}>",
                     "disabled" if config.message_log == "" else f"<#{config.message_log}>",
@@ -238,7 +238,7 @@ class ConfigPlugin(AutoModPlugin):
                     "disabled" if config.join_log == "" else f"<#{config.join_log}>",
                     "disabled" if config.member_log == "" else f"<#{config.member_log}>",
                     "disabled" if config.voice_log == "" else f"<#{config.voice_log}>",
-                    "disabled" if config.bot_log == "" else f"<#{config.bot_log}>"
+                    "disabled" if config.report_log == "" else f"<#{config.report_log}>"
                 ),
                 "inline": True
             },
@@ -426,7 +426,7 @@ class ConfigPlugin(AutoModPlugin):
             )
             e.add_field(
                 name="📝 __**Valid options**__",
-                value="``▶`` mod \n``▶`` server \n``▶`` messages \n``▶`` joins \n``▶`` members \n``▶`` voice \n``▶`` bot"
+                value="``▶`` mod \n``▶`` server \n``▶`` messages \n``▶`` joins \n``▶`` members \n``▶`` voice \n``▶`` reports"
             )
             return await ctx.send(embed=e)
         

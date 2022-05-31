@@ -117,3 +117,10 @@ class Embed(discord.Embed):
         self.set_footer(
             text=f"Made with ❤ by paul#0009"
         )
+
+
+    def add_view(
+        self,
+        view: discord.ui.View
+    ) -> None:
+        setattr(self, "_view", view)

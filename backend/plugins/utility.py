@@ -274,8 +274,6 @@ class UtilityPlugin(AutoModPlugin):
 
                     e.set_footer(text="<required> [optional]")
                     await i.response.edit_message(embed=e)
-            else:
-                await i.response.defer()
 
 
     @AutoModPlugin.listener()

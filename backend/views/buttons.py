@@ -10,7 +10,7 @@ class ConfirmBtn(Button):
         self, 
         bot
     ) -> None:
-        super().__init__(style=discord.ButtonStyle.green, label="Confirm", emoji=bot.emotes.get("YES"))
+        super().__init__(style=discord.ButtonStyle.grey, label="Confirm", emoji=bot.emotes.get("YES"))
     
 
     async def callback(
@@ -28,7 +28,7 @@ class CancelBtn(Button):
         self, 
         bot
     ) -> None:
-        super().__init__(style=discord.ButtonStyle.red, label="Cancel", emoji=bot.emotes.get("NO"))
+        super().__init__(style=discord.ButtonStyle.grey, label="Cancel", emoji=bot.emotes.get("NO"))
     
 
     async def callback(
@@ -77,6 +77,26 @@ class DeleteBtn(Button):
         **kwargs
     ) -> None:
         super().__init__(*args, label="", style=discord.ButtonStyle.red, emoji="🗑️", **kwargs)
+
+
+    async def callback(
+        self, 
+        interaction: discord.Interaction
+    ) -> None:
+        try:
+            await interaction.message.delete()
+        except discord.NotFound:
+            await interaction.response.defer()
+
+
+class ActionedBtn(Button):
+    def __init__(
+        self, 
+        bot,
+        *args, 
+        **kwargs
+    ) -> None:
+        super().__init__(*args, label="Actioned", style=discord.ButtonStyle.grey, emoji=bot.emotes.get("YES"), **kwargs)
 
 
     async def callback(

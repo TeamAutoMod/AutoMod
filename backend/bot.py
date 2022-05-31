@@ -146,6 +146,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             await self.load_plugins()
 
             await self.register_user_info_ctx_menu()
+            await self.register_report_ctx_menu()
             await self.tree.sync()
 
             self.loop.create_task(self._log_queue.send_logs())
@@ -315,7 +316,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     async def register_user_info_ctx_menu(
         self
-    ):
+    ) -> None:
         @self.tree.context_menu(name="Userinfo")
         @discord.app_commands.default_permissions(manage_messages=True)
         async def _(
@@ -325,6 +326,26 @@ class ShardedBotInstance(commands.AutoShardedBot):
             p = self.get_plugin("UtilityPlugin")
             try:
                 await p.whois(i, user)
+            except Exception as ex:
+                await i.response.send_message(
+                    embed=discord.Embed(
+                        color=int(self.config.embed_color, 16),
+                        description=self.locale.t(i.guild, "fail", _emote="NO", exc=ex)
+                    )
+                )
+
+
+    async def register_report_ctx_menu(
+        self
+    ) -> None:
+        @self.tree.context_menu(name="Report")
+        async def _(
+            i: discord.Interaction, 
+            msg: discord.Message
+        ) -> None:
+            p = self.get_plugin("ModerationPlugin")
+            try:
+                await p.report(i, msg)
             except Exception as ex:
                 await i.response.send_message(
                     embed=discord.Embed(

@@ -112,6 +112,7 @@
     "not_banned": "{emote} This user isn't banned",
     "not_muted": "{emote} This user isn't muted",
     "fail": "{emote} Looks like an error occured ||{exc}||",
+    "report_mod": "{emote} You can't report this user",
 
     "banned": "{emote} Banned **{user.name}#{user.discriminator}**",
     "softbanned": "{emote} Softbanned **{user.name}#{user.discriminator}**",
@@ -127,6 +128,7 @@
     "unbanned": "{emote} Unbanned **{user.name}#{user.discriminator}**",
     "mute_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
     "tempban_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
+    "reported": "{emote} Reported **{user.name}#{user.discriminator}**'s message",
 
     "name_too_long": "{emote} The command name is too long (>30 chars)",
     "content_too_long": "{emote} The command content is too long (>1900 chars)",

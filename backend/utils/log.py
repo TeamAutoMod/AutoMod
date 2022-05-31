@@ -59,7 +59,10 @@ class LogQueue(object):
     ) -> dict:
         msgs = {}
         for entry in chunk:
-            msg = await channel.send(embed=entry["embed"])
+            msg = await channel.send(
+                embed=entry["embed"],
+                view=entry["embed"]._view if hasattr(entry["embed"], "_view") else None
+            )
             if entry["has_case"] != False:
                 msgs.update(
                     {
@@ -101,7 +104,7 @@ class LogQueue(object):
                 self.bot.webhook_cache.update({
                     guild.id: {
                         **{
-                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "bot_log"] if k != channel_type
+                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "report_log"] if k != channel_type
                         }, 
                         **{
                             channel_type: w
@@ -163,7 +166,11 @@ class LogQueue(object):
                                 )
 
                         if len(without_case) > 0:
-                            await webhook.send(embeds=without_case, wait=True)
+                            with_view = [x for x in without_case if hasattr(x, "_view")]
+                            for e in with_view: await webhook.send(embed=e, wait=True, view=e._view)
+                            
+                            without_view = [x for x in without_case if not hasattr(x, "_view")]
+                            if len(without_view) > 0: await webhook.send(embeds=without_view, wait=True)
                     except Exception:
                         log_messages = await self.default_log(log_channel, chunk)
             else:

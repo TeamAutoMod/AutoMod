@@ -172,21 +172,6 @@ SERVER_LOG_EVENTS = {
         "audit_log_action": AuditLogAction.member_move,
         "text": "Switched voice channel",
         "extra_text": "**Change:** <#{before}> → <#{after}>"
-    },
-
-    "used_command": {
-        "emote": "WRENCH",
-        "color": 0x5cff9d,
-        "audit_log_action": None,
-        "text": "Used command",
-        "extra_text": "**Command:** {command} \n**Arguments:** {arguments} \n**Channel:** <#{channel}>"
-    },
-    "used_custom_command": {
-        "emote": "TEXT",
-        "color": 0x2f3136,
-        "audit_log_action": None,
-        "text": "Used custom command",
-        "extra_text": "**Command:** {command} \n**Channel:** <#{channel}>"
     }
 }
 
@@ -424,7 +409,7 @@ class InternalPlugin(AutoModPlugin):
         or str(msg.channel.id) == cfg["join_log"] \
         or str(msg.channel.id) == cfg["member_log"] \
         or str(msg.channel.id) == cfg["voice_log"] \
-        or str(msg.channel.id) == cfg["bot_log"] \
+        or str(msg.channel.id) == cfg["report_log"] \
         or msg.type != discord.MessageType.default:
             return
 
@@ -478,7 +463,7 @@ class InternalPlugin(AutoModPlugin):
         or str(msg.channel.id) == cfg["join_log"] \
         or str(msg.channel.id) == cfg["member_log"] \
         or str(msg.channel.id) == cfg["voice_log"] \
-        or str(msg.channel.id) == cfg["bot_log"] \
+        or str(msg.channel.id) == cfg["report_log"] \
         or msg.type != discord.MessageType.default:
             return
 
@@ -1058,72 +1043,6 @@ class InternalPlugin(AutoModPlugin):
                 await self.log_processor.execute(user.guild, key, **{
                     "_embed": embed
                 })
-
-
-    @AutoModPlugin.listener()
-    async def on_command_completion(
-        self, 
-        ctx: commands.Context
-    ):
-        if ctx.guild == None: return
-        if ctx.command == None: return
-
-        roles, channels = self.get_ignored_roles_channels(ctx.guild)
-        if ctx.channel.id in channels: return
-        if any(x in [i.id for i in ctx.author.roles] for x in roles): return
-
-        _args = [
-            f"``{x if not isinstance(x, discord.Message) else x.id}``" for x in [
-                *[
-                    _ for _ in ctx.args[2:] if _ != None
-                ],
-                *[
-                    v for _, v in ctx.kwargs.items() if v != None
-                ]
-            ]
-        ]
-        if len(_args) < 1:
-            args = "None"
-        else:
-            args = ", ".join(_args)
-            
-        embed = await self.server_log_embed(
-            "used_command",
-            ctx.guild,
-            ctx.author,
-            False,
-            command=ctx.command.qualified_name,
-            channel=ctx.channel.id,
-            arguments=args
-        )
-        await self.log_processor.execute(ctx.guild, "used_command", **{
-            "_embed": embed
-        })
-
-    
-    @AutoModPlugin.listener()
-    async def on_custom_command_completion(
-        self, 
-        msg: discord.Message, 
-        name: str
-    ) -> None:
-        if msg.guild == None: return
-
-        roles, channels = self.get_ignored_roles_channels(msg.guild)
-        if msg.channel.id in channels: return
-        if any(x in [i.id for i in msg.author.roles] for x in roles): return
-
-        embed = await self.server_log_embed(
-            "used_custom_command",
-            msg.guild,
-            msg.author,
-            False,
-            command=name,
-            channel=msg.channel.id,
-        )
-        await self.log_processor.execute(msg.guild, "used_custom_command", **{
-            "_embed": embed
-        })
 
 
     @AutoModPlugin.listener()
