@@ -176,7 +176,10 @@ class ActionProcessor(object):
         ], 
         _reason: str, 
         **log_kwargs
-    ) -> Union[None, Exception]:
+    ) -> Union[
+        None, 
+        Exception
+    ]:
         mod, user, reason = _mod, _user, _reason
         if msg.guild.get_member(user.id) == None: return "User not found"
         if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already banning user"

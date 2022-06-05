@@ -46,7 +46,7 @@ class CasesPlugin(AutoModPlugin):
         else:
             url=user.display_avatar
         e.set_author(
-            name=f"Infractions for {user}",
+            name=f"Infractions for {user} {f'[{opt.capitalize()}]' if opt != 'guild' else ''}",
             icon_url=url
         )
 
@@ -143,13 +143,12 @@ class CasesPlugin(AutoModPlugin):
 
         # what to search by (guild, mod, user)?
         opt = None
-        if isinstance(user, discord.Guild):
-            opt = "guild"
         if isinstance(user, (
             discord.user.User, 
             discord.User, 
-            discord.ClientUser)
-        ):
+            discord.ClientUser,
+            discord.Member
+        )):
             m = ctx.guild.get_member(user.id)
             if m == None:
                 opt = "user"
