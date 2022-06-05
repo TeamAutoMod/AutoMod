@@ -5,10 +5,14 @@ AutoMod is a Discord moderation and utility bot, made for both small and large c
 ## Features
 - Advanced automoderator, with features such as:
   - Anti-Advertising
-  - Various text restrictions
+  - Restrictions for newlines
+  - Link filtering
+  - Restrictions for emotes
+  - Anti-Repetition
   - Malicious file detection
+  - Anti-Zalgo
+  - Restrictions for mentions
   - Anti-Spam
-  - etc
 - Multiple logging options
 - Case system for moderation actions
 - Custom word filters
