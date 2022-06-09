@@ -208,6 +208,13 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 await self.load_plugin(p)
             self.plugins = self.cogs
 
+            for cmd in self.config.disabled_commands:
+                try:
+                    self.remove_command(cmd)
+                except Exception as ex:
+                    print(ex)
+                    pass
+
 
     async def register_plugin(
         self, 

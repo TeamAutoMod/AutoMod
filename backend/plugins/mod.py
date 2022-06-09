@@ -11,7 +11,7 @@ from .warn import WarnPlugin, ShardedBotInstance
 from .processor import LogProcessor, ActionProcessor, DMProcessor
 from ..types import DiscordUser, Duration, Embed
 from ..views import ConfirmView, ActionedView
-from ..schemas import Mute, Tempban
+from ..schemas import Mute, Tempban, Nuke
 
 
 
@@ -45,7 +45,7 @@ class ModerationPlugin(WarnPlugin):
         self.log_processor = LogProcessor(bot)
         self.action_processor = ActionProcessor(bot)
         self.dm_processor = DMProcessor(bot)
-        for f in ["unmutes", "unbans"]: self.bot.loop.create_task((getattr(self, f"handle_{f}"))())
+        for f in ["unmutes", "unbans", "nukes"]: self.bot.loop.create_task((getattr(self, f"handle_{f}"))())
 
 
     async def handle_unmutes(
@@ -111,6 +111,16 @@ class ModerationPlugin(WarnPlugin):
                                 "mod_id": self.bot.user.id
                             })
                         self.db.tbans.delete(ban["id"])
+    
+    async def handle_nukes(
+        self
+    ) -> None:
+        while True:
+            await asyncio.sleep(10)
+            if len(list(self.db.nukes.find({}))) > 0:
+                for nuke in self.db.nukes.find():
+                    if nuke["until"] < datetime.datetime.utcnow():
+                        self.db.nukes.delete(nuke["id"])
 
 
     async def clean_messages(
@@ -208,6 +218,24 @@ class ModerationPlugin(WarnPlugin):
                 "case": self.action_processor.new_case(action, ctx.message, ctx.author, user, reason)
             })
             await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES", user=user))
+
+
+    @WarnPlugin.listener()
+    async def on_message(
+        self,
+        msg: discord.Message
+    ) -> None:
+        if msg.guild == None or msg.channel == None: return
+        
+        until = self.db.nukes.get(f"{msg.guild.id}-{msg.channel.id}", "timeout")
+        if until != None:
+            if self.can_act(msg.guild, msg.guild.me, msg.author):
+                try:
+                    await msg.delete()
+                except Exception:
+                    pass
+                finally:
+                    self.bot.handle_timeout(True, msg.guild, msg.author, until.isoformat())
 
 
     @commands.command()
@@ -721,6 +749,67 @@ class ModerationPlugin(WarnPlugin):
             lambda m: text.lower() in m.content.lower()
         )
         await ctx.send(msg, **kwargs)
+
+
+    @commands.command()
+    @WarnPlugin.can("manage_messages")
+    async def nuke(
+        self,
+        ctx: commands.Context,
+        phrase: str,
+        past: Duration,
+        timeout: Duration,
+        future: Duration = None
+    ) -> None:
+        """
+        nuke_help
+        examples:
+        -nuke bad_word 10m 5m
+        -nuke bad_word 5m 5m 1m
+        """
+        for x in [past, timeout, future]:
+            if x != None:
+                if x.unit == None: x.unit = "m"
+
+        seconds_p = past.to_seconds(ctx)
+        if seconds_p > 600:
+            return await ctx.send(self.locale.t(ctx.guild, "max_past", _emote="NO"))
+
+        if future != None: 
+            seconds_f = future.to_seconds(ctx)
+            if seconds_f > 600:
+                return await ctx.send(self.locale.t(ctx.guild, "max_future", _emote="NO"))
+
+        seconds_t = timeout.to_seconds(ctx)
+        if seconds_t > 86400:
+            return await ctx.send(self.locale.t(ctx.guild, "max_timeout", _emote="NO"))
+        
+        past_dt = (datetime.datetime.utcnow() - datetime.timedelta(seconds=seconds_p))
+
+        d = await ctx.channel.purge(
+            limit=200,
+            check=lambda m: phrase.lower() in m.content.lower() and self.can_act(ctx.guild, ctx.author, m.author),
+            after=past_dt
+        )
+        
+        timeout_dt = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds_t))
+        timeouted = 0
+        for m in set([x.author for x in d]):
+            exc = self.bot.handle_timeout(True, ctx.guild, m, timeout_dt.isoformat())
+            if exc == "":
+                timeouted += 1
+
+
+        if future != None:
+            await ctx.send(self.locale.t(ctx.guild, "nuked_future", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s", timeouted=timeouted, future=future))
+        else:
+            if len(d) < 1:
+                return await ctx.send(self.locale.t(ctx.guild, "no_nuke", _emote="NO"))
+            await ctx.send(self.locale.t(ctx.guild, "nuked_past", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s", timeouted=timeouted))
+        
+        if future != None:
+            future_dt = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds_f))
+            self.db.nukes.insert(Nuke(ctx.guild.id, ctx.channel.id, future_dt, timeout_dt, phrase))
 
 
     async def report(

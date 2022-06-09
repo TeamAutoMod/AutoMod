@@ -19,7 +19,8 @@
         "warns",
         "cases",
         "slowmodes",
-        "tbans"
+        "tbans",
+        "nukes"
     ],
     
     "langs": [
@@ -36,6 +37,7 @@
         "automod",
         "cases"
     ],
+    "disabled_commands": [],
     "error_channel": 123456789,
     "vote_channel": 123456789
 }
