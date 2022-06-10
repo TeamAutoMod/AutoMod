@@ -4,6 +4,7 @@
     "no_reason": "Kein Grund",
     "aborting": "Abbruch",
     "updated_i18n": "{emote} ``{key}`` Key wurde aktualisiert",
+    "server_prefix": "Mein Prefix auf diesem Server ist: ``{prefix}``",
 
     "eval_help": "Evaluiert den gegebenen Python Code",
     "debug_help": "Zeigt nützliche Entwickler Infos",

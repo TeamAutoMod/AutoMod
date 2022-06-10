@@ -4,6 +4,7 @@
     "no_reason": "No reason",
     "aborting": "Aborting",
     "updated_i18n": "{emote} Updated the ``{key}`` key",
+    "server_prefix": "My prefix on this server is ``{prefix}``",
 
     "eval_help": "Evaluates a block of code",
     "debug_help": "Shows useful developer information",

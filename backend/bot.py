@@ -174,26 +174,30 @@ class ShardedBotInstance(commands.AutoShardedBot):
     ) -> None:
         if msg.author.bot or msg.guild is None:
             return
-        ctx = await self.get_context(msg, cls=Context)
-        if ctx.valid and ctx.command is not None:
-            self.used_commands += 1
-            disabled = self.db.configs.get(msg.guild.id, "disabled_commands")
-            if ctx.command.name.lower() in disabled:
-                if ctx.author.guild_permissions.manage_messages == False:
-                    try:
-                        await msg.add_reaction(
-                            self.emotes.get("LOCK")
-                        )
-                    except Exception:
-                        pass
-                    finally:
-                        return
-            
-            if self.ready:
-                if not msg.guild.chunked:
-                    await msg.guild.chunk(cache=True)
-            
-            await self.invoke(ctx)
+        else:
+            if msg.content.lower() == f"<@{self.user.id}>":
+                return await msg.channel.send(self.locale.t(msg.guild, "server_prefix", prefix="".join(prefix_callable(self, msg)[-1])))
+            else:
+                ctx = await self.get_context(msg, cls=Context)
+                if ctx.valid and ctx.command is not None:
+                    self.used_commands += 1
+                    disabled = self.db.configs.get(msg.guild.id, "disabled_commands")
+                    if ctx.command.name.lower() in disabled:
+                        if ctx.author.guild_permissions.manage_messages == False:
+                            try:
+                                await msg.add_reaction(
+                                    self.emotes.get("LOCK")
+                                )
+                            except Exception:
+                                pass
+                            finally:
+                                return
+                    
+                    if self.ready:
+                        if not msg.guild.chunked:
+                            await msg.guild.chunk(cache=True)
+                    
+                    await self.invoke(ctx)
             
     
     async def load_plugins(
