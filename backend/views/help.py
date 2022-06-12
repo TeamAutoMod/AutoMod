@@ -47,30 +47,3 @@ class HelpView(View):
         self.add_item(LinkBtn(_url=f"https://top.gg/bot/{bot.user.id}/vote", _label="Vote"))
         if show_invite == True:
             self.add_item(LinkBtn(_url=f"https://discord.com/oauth2/authorize?client_id={bot.user.id}&permissions=403041534&scope=bot+applications.commands", _label="Invite"))
-
-
-class SetupView(View):
-    def __init__(
-        self, 
-        bot, 
-        embeds: List[
-            discord.Embed
-        ],
-        *args, 
-        **kwargs
-    ) -> None:
-        self.bot = bot
-        super().__init__(*args, **kwargs)
-
-        self.add_item(
-            Select(
-                placeholder="Select a feature",
-                options=[
-                    discord.SelectOption(
-                        label=e.title,
-                        value=e.title[2:].lower()
-                    ) for e in embeds
-                ],
-                custom_id="setup-select"
-            )
-        )

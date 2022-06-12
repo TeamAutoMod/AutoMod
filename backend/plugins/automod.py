@@ -1072,7 +1072,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.group(name="filter", aliases=["filters"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPlugin.can("manage_messages")
     async def _filter(
         self, 
         ctx: commands.Context
@@ -1108,7 +1108,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @_filter.command(name="add")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPlugin.can("manage_messages")
     async def add_filter(
         self, 
         ctx: commands.Context, 
@@ -1145,7 +1145,7 @@ class AutomodPlugin(AutoModPlugin):
 
     
     @_filter.command(name="remove")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPlugin.can("manage_messages")
     async def remove_filter(
         self, 
         ctx: commands.Context, 
@@ -1169,7 +1169,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @_filter.command(aliases=["l", "list"])
-    @AutoModPlugin.can("ban_members")
+    @AutoModPlugin.can("manage_messages")
     async def show(
         self, 
         ctx: commands.Context
@@ -1284,6 +1284,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @regex.command(name="remove", aliases=["delete", "del"])
+    @AutoModPlugin.can("manage_messages")
     async def remove_regex(
         self, 
         ctx: commands.Context, 
