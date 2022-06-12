@@ -65,7 +65,7 @@ class Embed(discord.Embed):
         self._add_color()
         super().add_field(
             name=name, 
-            value=str(value)[:1060], 
+            value=str(value)[:1023], 
             inline=inline
         )
 

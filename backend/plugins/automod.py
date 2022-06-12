@@ -1082,6 +1082,7 @@ class AutomodPlugin(AutoModPlugin):
         examples:
         -filter add test_filter 1 banana, apples, grape fruit
         -filter add test_filter 0 #test-channel #other-channel banana, apples, grape fruit
+        -filter edit test_filter 2 banana, apples
         -filter remove test_filter
         -filter show
         """
@@ -1090,7 +1091,7 @@ class AutomodPlugin(AutoModPlugin):
             e = Embed(
                 ctx,
                 title="How to use filters",
-                description=f"``▶`` Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n``▶`` Deleting a filter: ``{prefix}filter remove <name>``"
+                description=f"``▶`` Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n``▶`` Deleting a filter: ``{prefix}filter remove <name>`` \n``▶`` Editing a filter: ``{prefix}filter edit <name> <warns> [channels] <words>``"
             )
             e.add_field(
                 name="__**Arguments**__",
@@ -1102,7 +1103,7 @@ class AutomodPlugin(AutoModPlugin):
             )
             e.add_field(
                 name="__**Examples**__",
-                value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*`` \n\n``{prefix}filter add test2 0 #test #other oneword, two words, wildcar*``"
+                value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*`` \n\n``{prefix}filter add test2 0 #test #other oneword, two words, wildcar*`` \n\n``{prefix}filter edit test2 1 #test #other oneword, two words, wildcar*``"
             )
             await ctx.send(embed=e)
 
@@ -1117,7 +1118,8 @@ class AutomodPlugin(AutoModPlugin):
         channels: commands.Greedy[
             discord.TextChannel
         ] = None, 
-        *, words: str
+        *, 
+        words: str
     ) -> None:
         """
         filter_add_help
@@ -1167,6 +1169,44 @@ class AutomodPlugin(AutoModPlugin):
 
         await ctx.send(self.locale.t(ctx.guild, "removed_filter", _emote="YES"))
 
+    
+    @_filter.command(name="edit")
+    @AutoModPlugin.can("manage_messages")
+    async def edit_filter(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        warns: int, 
+        channels: commands.Greedy[
+            discord.TextChannel
+        ] = None, 
+        *, 
+        words: str
+    ) -> None:
+        """
+        filter_edit_help
+        examples:
+        -filter edit test_filter 1 banana, apples, grape fruit
+        -filter edit test_filter 0 #test-channel #other-channel banana, apples, grape fruit
+        """
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
+        if not name in filters: return await ctx.send(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
+
+        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        filters[name] = {
+            "warns": warns,
+            "words": words.split(", "),
+            "channels": [] if channels == None else [x.id for x in channels if x != None]
+        }
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.send(self.locale.t(ctx.guild, "edited_filter", _emote="YES"))
+
 
     @_filter.command(aliases=["l", "list"])
     @AutoModPlugin.can("manage_messages")
@@ -1188,7 +1228,7 @@ class AutomodPlugin(AutoModPlugin):
         )
         for indx, name in enumerate(dict(itertools.islice(filters.items(), 10))):
             i = filters[name]
-            action = str(i["warns"]) + " warns" if i["warns"] == 1 else str(i["warns"]) + " warns" if i["warns"] > 0 else "delete message"
+            action = str(i["warns"]) + " warn" if i["warns"] == 1 else str(i["warns"]) + " warns" if i["warns"] > 0 else "delete message"
             channels = "all channels" if len(i["channels"]) < 1 else ", ".join([f'#{ctx.guild.get_channel(int(x))}' for x in i["channels"]])
 
             e.add_field(
@@ -1216,6 +1256,7 @@ class AutomodPlugin(AutoModPlugin):
         -regex
         -regex add test_regex \b(banana)\b 1
         -regex add test_regex \b(banana)\b 0 #test-channel #other-channel
+        -regex edit test_regex \b(banana)\b 2
         -regex remove test_regex
         """
         if ctx.invoked_subcommand == None:
@@ -1298,12 +1339,51 @@ class AutomodPlugin(AutoModPlugin):
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
 
-        if name not in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+        if not name in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
 
         del regexes[name]
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
         await ctx.send(self.locale.t(ctx.guild, "removed_regex", _emote="YES"))
+
+
+    @regex.command(name="edit")
+    @AutoModPlugin.can("manage_messages")
+    async def edit_regex(
+        self, 
+        ctx: commands.Context, 
+        name: str, 
+        regex: str, 
+        warns: int, 
+        channels: commands.Greedy[
+            discord.TextChannel
+        ] = None
+    ) -> None:
+        r"""
+        regex_edit_help
+        examples:
+        -regex edit test_regex \b(banana)\b 1
+        -regex edit test_regex \b(banana)\b 0 #test-channel #other-channel
+        """
+        regexes = self.db.configs.get(ctx.guild.id, "regexes")
+        name = name.lower()
+
+        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
+        if not name in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+
+        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        if self.validate_regex(regex) == False: return await ctx.send(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
+
+        regexes[name] = {
+            "warns": warns,
+            "regex": regex,
+            "channels": [] if channels == None else [x.id for x in channels if x != None]
+        }
+        self.db.configs.update(ctx.guild.id, "regexes", regexes)
+
+        await ctx.send(self.locale.t(ctx.guild, "edited_regex", _emote="YES"))
 
 
     @commands.command(aliases=["spam"])
