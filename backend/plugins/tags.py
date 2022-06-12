@@ -66,15 +66,18 @@ class TagsPlugin(AutoModPlugin):
         self, 
         ctx: commands.Context, 
         name: str, 
-        content: str
+        content: str,
+        del_invoke: bool
     ) -> None:
         self._tags[ctx.guild.id][name].update({
-            "content": content
+            "content": content,
+            "del_invoke": del_invoke
         })
         self.db.tags.multi_update(f"{ctx.guild.id}-{name}", {
             "content": content,
             "editor": f"{ctx.author.id}",
-            "edited": datetime.datetime.now()
+            "edited": datetime.datetime.now(),
+            "del_invoke": del_invoke
         })
 
 
@@ -174,7 +177,6 @@ class TagsPlugin(AutoModPlugin):
                 del_invoke = True
                 content = content.replace("--del-invoke", "")
 
-        print(del_invoke)
         name = name.lower()
         if ctx.guild.id in self._tags:
             if name in self._tags[ctx.guild.id]:
@@ -223,13 +225,28 @@ class TagsPlugin(AutoModPlugin):
         """
         if len(content) > 1900:
             return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
-        
+
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
                 await ctx.send(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
             else:
-                self.update_tag(ctx, name, content)
+                del_invoke = self._tags[ctx.guild.id][name].get("del_invoke", False)
+                parser = ArgumentParser(add_help=False, allow_abbrev=False)
+                parser.add_argument("--del-invoke", action="store_true")
+
+                try:
+                    args = parser.parse_args(shlex.split(content[-12:]))
+                except Exception:
+                    del_invoke = False
+                else:
+                    if args.del_invoke:
+                        del_invoke = True
+                        content = content.replace("--del-invoke", "")
+                    else:
+                        del_invoke = False
+                
+                self.update_tag(ctx, name, content, del_invoke)
                 await ctx.send(self.locale.t(ctx.guild, "tag_updated", _emote="YES"))
         else:
             await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
