@@ -197,7 +197,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                         if not msg.guild.chunked:
                             await msg.guild.chunk(cache=True)
                     
-                    await self.invoke(ctx)
+                        await self.invoke(ctx)
             
     
     async def load_plugins(

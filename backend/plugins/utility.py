@@ -226,6 +226,8 @@ class UtilityPlugin(AutoModPlugin):
             discord.User
         ]
     ) -> bool:
+        if mod.id == guild.owner_id: return True
+
         mod = guild.get_member(mod.id)
         target = guild.get_member(target.id)
 

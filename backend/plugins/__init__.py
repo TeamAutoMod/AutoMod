@@ -39,23 +39,26 @@ class AutoModPlugin(_commands.Cog):
             bool, 
             _commands.MissingPermissions
         ]: 
-            if getattr(
-                ctx.author.guild_permissions,
-                perm
-            ) == False:
-                if perm not in ["administrator", "manage_guild"]:
-                    rid = ctx.bot.db.configs.get(ctx.guild.id, "mod_role")
-                    if rid != "":
-                        r = ctx.guild.get_role(int(rid))
-                        if r != None:
-                            if r in ctx.author.roles:
-                                return True
-                    raise _commands.MissingPermissions([perm])
-                else:
-                    raise _commands.MissingPermissions([perm])
-            else:
+            if ctx.author.id == ctx.guild.owner_id:
                 return True
-        
+            else:
+                if getattr(
+                    ctx.author.guild_permissions,
+                    perm
+                ) == False:
+                    if perm not in ["administrator", "manage_guild"]:
+                        rid = ctx.bot.db.configs.get(ctx.guild.id, "mod_role")
+                        if rid != "":
+                            r = ctx.guild.get_role(int(rid))
+                            if r != None:
+                                if r in ctx.author.roles:
+                                    return True
+                        raise _commands.MissingPermissions([perm])
+                    else:
+                        raise _commands.MissingPermissions([perm])
+                else:
+                    return True
+            
         return _commands.check(predicate)
 
 
