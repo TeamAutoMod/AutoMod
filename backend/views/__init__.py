@@ -4,3 +4,4 @@ from .about import AboutView
 from .pages import MultiPageView
 from .meta import DeleteView, ChoiceView, ActionedView
 from .help import HelpView
+from .setup import SetupView

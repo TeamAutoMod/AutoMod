@@ -68,7 +68,13 @@ class ErrorPlugin(AutoModPlugin):
         elif isinstance(error, commands.CommandOnCooldown):
             e = Embed(
                 ctx,
-                description=self.locale.t(ctx.guild, "on_cooldown", _emote="NO", retry_after=round(error.retry_after), plural="" if round(error.retry_after) == 1 else "s")
+                description=self.locale.t(
+                    ctx.guild, 
+                    "on_cooldown", 
+                    _emote="NO", 
+                    retry_after=round(error.retry_after), 
+                    plural="" if round(error.retry_after) == 1 else "s"
+                )
             )
             await ctx.send(embed=e)
         
@@ -81,7 +87,21 @@ class ErrorPlugin(AutoModPlugin):
 
         elif isinstance(error, commands.MissingRequiredArgument):
             param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs) - 1, len(ctx.command.params)) - 1]
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '').replace('=None', '')}"
+            usage = f"""{
+                self.get_prefix(ctx.guild)
+            }{
+                ctx.command.qualified_name
+            } {
+                ctx.command.signature.replace(
+                    '...', 
+                    ''
+                ).replace(
+                    '=None', ''
+                ).replace(
+                    '<name> <content>', 
+                    '<name> <content> [--del-invoke]'
+                )
+            }"""
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(
@@ -101,7 +121,21 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(embed=e)
         
         elif isinstance(error, PostParseError):
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '').replace('=None', '')}"
+            usage = f"""{
+                self.get_prefix(ctx.guild)
+            }{
+                ctx.command.qualified_name
+            } {
+                ctx.command.signature.replace(
+                    '...', 
+                    ''
+                ).replace(
+                    '=None', ''
+                ).replace(
+                    '<name> <content>', 
+                    '<name> <content> [--del-invoke]'
+                )
+            }"""
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(
@@ -121,7 +155,21 @@ class ErrorPlugin(AutoModPlugin):
             await ctx.send(embed=e)
 
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.BadUnionArgument):
-            usage = f"{self.get_prefix(ctx.guild)}{ctx.command.qualified_name} {ctx.command.signature.replace('...', '').replace('=None', '')}"
+            usage = f"""{
+                self.get_prefix(ctx.guild)
+            }{
+                ctx.command.qualified_name
+            } {
+                ctx.command.signature.replace(
+                    '...', 
+                    ''
+                ).replace(
+                    '=None', ''
+                ).replace(
+                    '<name> <content>', 
+                    '<name> <content> [--del-invoke]'
+                )
+            }"""
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
 
             e = Embed(ctx)

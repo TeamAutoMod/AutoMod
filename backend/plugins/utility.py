@@ -11,7 +11,7 @@ import datetime
 from PIL import Image
 from io import BytesIO
 from toolbox import S as Object
-from typing import Union
+from typing import Union, List
 
 from . import AutoModPlugin, ShardedBotInstance
 from ..types import Embed, DiscordUser, Duration
@@ -49,14 +49,14 @@ def get_help_embed(
     else:
         cmd_name = cmd.qualified_name
     
-    name = f"{plugin.get_prefix(ctx.guild)}{cmd_name} {cmd.signature}"
+    name = f"{plugin.get_prefix(ctx.guild)}{cmd_name} {cmd.signature.replace('<name> <content>', '<name> <content> [--del-invoke]')}"
     i18n_key = cmd.help.split("\nexamples:")[0]
     help_message = plugin.locale.t(ctx.guild, f"{i18n_key}")
     if name[-1] == " ": name = name[:-1]
 
     e = Embed(
         ctx,
-        title=f"``{name.replace('...', '').replace('=None', '')}``"
+        title=f"``{name.replace('...', '').replace('=None', '').replace('=10', '')}``"
     )
     e.add_field(
         name="🔎 __**Description**__", 
@@ -246,6 +246,49 @@ class UtilityPlugin(AutoModPlugin):
             return True
 
 
+    def get_features(
+        self,
+        guild: discord.Guild
+    ) -> List[
+        Embed
+    ]:
+        _prefix = self.get_prefix(guild)
+        base = Embed(
+            None,
+            title="Setup Guide",
+            description=self.locale.t(guild, "setup_desc", inv=self.bot.config.support_invite)
+        )
+        
+        prefix = Embed(
+            None,
+            title="⚙️ Server prefix",
+            description=self.locale.t(guild, "prefix_val", prefix=_prefix)
+        )
+
+        log = Embed(
+            None,
+            title="📁 Logging",
+            description=self.locale.t(guild, "log_val", prefix=_prefix)
+        )
+
+        am = Embed(
+            None,
+            title="⚔️ Automoderator",
+            description=self.locale.t(guild, "automod_val", prefix=_prefix)
+        )
+
+        pun = Embed(
+            None,
+            title="🔨 Punishments",
+            description=self.locale.t(guild, "pun_val", prefix=_prefix)
+        )
+        
+        embeds = [base, prefix, log, am, pun]
+        for e in embeds: e.credits()
+
+        return embeds
+
+
     @AutoModPlugin.listener()
     async def on_interaction(
         self,
@@ -274,6 +317,13 @@ class UtilityPlugin(AutoModPlugin):
 
                     e.set_footer(text="<required> [optional]")
                     await i.response.edit_message(embed=e)
+
+            elif cid == "setup-select":
+                embeds = self.get_features(i.guild)
+
+                for e in embeds:
+                    if e.title[2:].lower() == i.data.get("values")[0]:
+                        await i.response.edit_message(embed=e)
 
 
     @AutoModPlugin.listener()

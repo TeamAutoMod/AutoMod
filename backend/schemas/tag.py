@@ -7,7 +7,8 @@ import datetime
 def Tag(
     ctx: commands, 
     name: str, 
-    content: str
+    content: str,
+    del_invoke: bool
 ) -> dict:
     return {
         "id": f"{ctx.guild.id}-{name}",
@@ -15,6 +16,7 @@ def Tag(
 
         "name": name,
         "content": content,
+        "del_invoke": del_invoke,
 
         "author": f"{ctx.author.id}",
         "editor": None,

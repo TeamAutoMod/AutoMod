@@ -8,6 +8,7 @@ import asyncio
 
 from . import AutoModPlugin, ShardedBotInstance
 from ..types import Embed, Duration
+from ..views import SetupView
 
 
 
@@ -816,6 +817,23 @@ class ConfigPlugin(AutoModPlugin):
         ])
 
         await ctx.send(embed=e)
+
+
+    @commands.command()
+    @AutoModPlugin.can("manage_messages")
+    async def setup(
+        self,
+        ctx: commands.Context
+    ) -> None:
+        """
+        setup_help
+        examples:
+        -setup
+        """
+        embeds = self.bot.get_plugin("UtilityPlugin").get_features(ctx.guild)
+
+        v = SetupView(self.bot, embeds)
+        await ctx.send(embed=embeds[0], view=v)
 
 
 async def setup(

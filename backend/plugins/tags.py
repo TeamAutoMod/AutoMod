@@ -3,12 +3,22 @@ from discord.ext import commands
 
 from toolbox import S as Object
 import datetime
+from argparse import ArgumentParser as BaseArgumentParser
+import shlex
 import logging; log = logging.getLogger()
 
 from . import AutoModPlugin, ShardedBotInstance
 from ..schemas import Tag
 from ..types import Embed
 
+
+
+class ArgumentParser(BaseArgumentParser):
+    def error(
+        self,
+        msg: str
+    ) -> commands.BadArgument:
+        raise commands.BadArgument(msg)
 
 
 class TagsPlugin(AutoModPlugin):
@@ -26,19 +36,21 @@ class TagsPlugin(AutoModPlugin):
         self, 
         ctx: commands.Context, 
         name: str, 
-        content: str
+        content: str,
+        del_invoke: bool
     ) -> None:
         data = {
             name: {
                 "content": content,
-                "author": ctx.author.id
+                "author": ctx.author.id,
+                "del_invoke": del_invoke
             }
         }
         if not ctx.guild.id in self._tags:
             self._tags[ctx.guild.id] = data
         else:
             self._tags[ctx.guild.id].update(data)
-        self.db.tags.insert(Tag(ctx, name, content))
+        self.db.tags.insert(Tag(ctx, name, content, del_invoke))
 
 
     def remove_tag(
@@ -75,14 +87,16 @@ class TagsPlugin(AutoModPlugin):
                 data = {
                     e["name"]: {
                         "content": e["content"],
-                        "author": int(e["author"])
+                        "author": int(e["author"]),
+                        "del_invoke": e.get("del_invoke", False)
                     }
                 }
             else: # migration bs
                 data = {
                     "-".join(e["id"].split("-")[1:]): {
                         "content": e["reply"],
-                        "author": int(e["author"])
+                        "author": int(e["author"]),
+                        "del_invoke": e.get("del_invoke", False)
                     }
                 }
             if not _id in self._tags:
@@ -140,18 +154,33 @@ class TagsPlugin(AutoModPlugin):
         addcom_help
         examples:
         -addcom test_cmd This is a test command
+        -addcom test_cmd2 This is a test command --del-invoke
         """
         if len(name) > 30:
             return await ctx.send(self.locale.t(ctx.guild, "name_too_long", _emote="NO"))
         if len(content) > 1900:
             return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
 
+        del_invoke = False
+        parser = ArgumentParser(add_help=False, allow_abbrev=False)
+        parser.add_argument("--del-invoke", action="store_true")
+
+        try:
+            args = parser.parse_args(shlex.split(content[-12:]))
+        except Exception:
+            pass
+        else:
+            if args.del_invoke:
+                del_invoke = True
+                content = content.replace("--del-invoke", "")
+
+        print(del_invoke)
         name = name.lower()
         if ctx.guild.id in self._tags:
             if name in self._tags[ctx.guild.id]:
                 return await ctx.send(self.locale.t(ctx.guild, "tag_alr_exists", _emote="NO"))
 
-        self.add_tag(ctx, name, content)
+        self.add_tag(ctx, name, content, del_invoke)
         await ctx.send(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name, prefix=self.get_prefix(ctx.guild)))
 
 
@@ -239,9 +268,14 @@ class TagsPlugin(AutoModPlugin):
                         "value": f"```\n{data.content}\n```"
                     },
                     {
+                        "name": "🗑 __**Delete Invoke**__",
+                        "value": f"``▶`` {'yes' if data.del_invoke == True else 'no'}"
+                    },
+                    {
                         "name": "📈 __**Uses**__",
                         "value": f"``▶`` {data.uses}"
                     },
+                    
                     {
                         "name": "👤 __**Creator**__",
                         "value": f"``▶`` <@{data.author}> (<t:{round(data.created.timestamp())}>)"
@@ -277,6 +311,12 @@ class TagsPlugin(AutoModPlugin):
                 if msg.content.lower() == prefix + name or (msg.content.lower().startswith(name, len(prefix)) and msg.content.lower()[len(prefix + name)] == " "):
                     tag = Object(self._tags[msg.guild.id][name])
                     self.update_uses(f"{msg.guild.id}-{name}")
+
+                    if tag.del_invoke == True:
+                        try:
+                            await msg.delete()
+                        except Exception:
+                            pass
 
                     try:
                         await msg.channel.send(f"{tag.content}")

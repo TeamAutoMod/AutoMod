@@ -144,7 +144,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         if not self.ready:
             await self.load_plugins()
-
+            
             await self.register_user_info_ctx_menu()
             await self.register_report_ctx_menu()
             await self.tree.sync()
