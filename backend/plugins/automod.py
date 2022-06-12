@@ -351,7 +351,7 @@ class AutomodPlugin(AutoModPlugin):
                 normal.append(i)
 
         try:
-            return re.compile(r"|".join([*normal, *wildcards]))
+            return re.compile(r"|".join([*normal, *wildcards]), re.IGNORECASE)
         except Exception:
             return None
 
@@ -364,7 +364,7 @@ class AutomodPlugin(AutoModPlugin):
         None
     ]:
         try:
-            parsed = re.compile(regex)
+            parsed = re.compile(regex, re.IGNORECASE)
         except Exception:
             return None
         else:
