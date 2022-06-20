@@ -1077,13 +1077,14 @@ class InternalPlugin(AutoModPluginBlueprint):
         if rid != "":
             role = user.guild.get_role(int(rid))
             if role != None:
-                try:
-                    await user.add_roles(role)
-                except (
-                    discord.Forbidden,
-                    discord.HTTPException
-                ):
-                    pass
+                if user.pending == False:
+                    try:
+                        await user.add_roles(role)
+                    except (
+                        discord.Forbidden,
+                        discord.HTTPException
+                    ):
+                        pass
 
     
     @AutoModPluginBlueprint.listener()
