@@ -10,9 +10,9 @@ from typing import TypeVar
 import logging; log = logging.getLogger()
 from typing import Union, Tuple
 
-from . import AutoModPlugin, ShardedBotInstance
-from .processor import ActionProcessor, LogProcessor, DMProcessor
-from ..types import Embed
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ..processor import ActionProcessor, LogProcessor, DMProcessor
+from ...types import Embed
 
 
 
@@ -274,7 +274,7 @@ AUTOMOD_RULES = {
 CHANNEL_OR_ROLE_T = TypeVar("CHANNEL_OR_ROLE_T", discord.Role, discord.TextChannel)
 
 
-class AutomodPlugin(AutoModPlugin):
+class AutoModPluginBlueprint(AutoModPluginBlueprint):
     """Plugin for enforcing automoderator rules"""
     def __init__(
         self, 
@@ -734,7 +734,7 @@ class AutomodPlugin(AutoModPlugin):
                         )
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_message(
         self, 
         msg: discord.Message
@@ -746,7 +746,7 @@ class AutomodPlugin(AutoModPlugin):
         await self.enforce_rules(msg)
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_message_edit(
         self, 
         _, 
@@ -760,7 +760,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def automod(
         self, 
         ctx: commands.Context, 
@@ -851,7 +851,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.group()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def allowed_invites(
         self, 
         ctx: commands.Context
@@ -878,7 +878,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @allowed_invites.command(name="add")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def add_inv(
         self, 
         ctx: commands.Context, 
@@ -901,7 +901,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @allowed_invites.command(name="remove")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def remove_inv(
         self, 
         ctx: commands.Context, 
@@ -924,7 +924,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.group(aliases=["links"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def link_blacklist(
         self, 
         ctx: commands.Context
@@ -951,7 +951,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @link_blacklist.command(name="add")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def add_link(
         self, 
         ctx: commands.Context, 
@@ -975,7 +975,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @link_blacklist.command(name="remove")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def remove_link(
         self, 
         ctx: commands.Context, 
@@ -999,7 +999,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.group()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def link_whitelist(
         self, 
         ctx: commands.Context
@@ -1026,7 +1026,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @link_whitelist.command(name="add")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def add_link2(
         self, 
         ctx: commands.Context, 
@@ -1050,7 +1050,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @link_whitelist.command(name="remove")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def remove_link_2(
         self, 
         ctx: commands.Context, 
@@ -1074,7 +1074,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.group(name="filter", aliases=["filters"])
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def _filter(
         self, 
         ctx: commands.Context
@@ -1111,7 +1111,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @_filter.command(name="add")
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def add_filter(
         self, 
         ctx: commands.Context, 
@@ -1149,7 +1149,7 @@ class AutomodPlugin(AutoModPlugin):
 
     
     @_filter.command(name="remove")
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def remove_filter(
         self, 
         ctx: commands.Context, 
@@ -1173,7 +1173,7 @@ class AutomodPlugin(AutoModPlugin):
 
     
     @_filter.command(name="edit")
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def edit_filter(
         self, 
         ctx: commands.Context, 
@@ -1211,7 +1211,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @_filter.command(aliases=["l", "list"])
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def show(
         self, 
         ctx: commands.Context
@@ -1247,7 +1247,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.group(aliases=["rgx"])
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def regex(
         self, 
         ctx: commands.Context
@@ -1288,7 +1288,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @regex.command(name="add")
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def add_regex(
         self, 
         ctx: commands.Context, 
@@ -1327,7 +1327,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @regex.command(name="remove", aliases=["delete", "del"])
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def remove_regex(
         self, 
         ctx: commands.Context, 
@@ -1350,7 +1350,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @regex.command(name="edit")
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def edit_regex(
         self, 
         ctx: commands.Context, 
@@ -1389,7 +1389,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["spam"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def antispam(
         self, 
         ctx: commands.Context, 
@@ -1490,7 +1490,7 @@ class AutomodPlugin(AutoModPlugin):
                     "warns": warns
                 })
 
-                am_plugin = self.bot.get_plugin("AutomodPlugin")
+                am_plugin = self.bot.get_plugin("AutoModPluginBlueprint")
                 am_plugin.spam_cache.update({
                     ctx.guild.id: commands.CooldownMapping.from_cooldown(
                         rate,
@@ -1503,7 +1503,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @commands.group(aliases=["automod_ignore"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def ignore_automod(
         self, 
         ctx: commands.Context
@@ -1540,7 +1540,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @ignore_automod.command()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def add(
         self, 
         ctx: commands.Context, 
@@ -1625,7 +1625,7 @@ class AutomodPlugin(AutoModPlugin):
 
 
     @ignore_automod.command()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def remove(
         self, 
         ctx: commands.Context, 
@@ -1713,4 +1713,4 @@ class AutomodPlugin(AutoModPlugin):
 
 async def setup(
     bot: ShardedBotInstance
-) -> None: await bot.register_plugin(AutomodPlugin(bot))
+) -> None: await bot.register_plugin(AutoModPluginBlueprint(bot))

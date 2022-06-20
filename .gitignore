@@ -129,11 +129,11 @@ dmypy.json
 .pyre/
 /node_modules
 
-/backend/config.json
+/packages/bot/config.json
 /dashboard
-/backend/api
-/backend/plugins/level.py
-/backend/plugins/reply.py
-/backend/plugins/processor/config.py
-/backend/schemas/level.py
-/backend/modals
+/packages/bot/api
+/packages/bot/plugins/level.py
+/packages/bot/plugins/reply.py
+/packages/bot/plugins/processor/config.py
+/packages/bot/schemas/level.py
+/packages/bot/modals

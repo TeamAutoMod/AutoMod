@@ -5,8 +5,8 @@ import logging; log = logging.getLogger()
 import traceback
 from typing import TypeVar
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..types import Embed
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...types import Embed
 
 
 
@@ -20,13 +20,13 @@ class PostParseError(commands.BadArgument):
         self.error = error
 
 
-class ErrorPlugin(AutoModPlugin):
+class ErrorPlugin(AutoModPluginBlueprint):
     """Plugin to handle command/event errors"""
     def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception) -> None:
         if isinstance(error, commands.CommandNotFound):
             return

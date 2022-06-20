@@ -6,7 +6,7 @@ import sys
 import inspect
 import logging; log = logging.getLogger(__name__)
 
-from backend import ShardedBotInstance
+from packages.bot import ShardedBotInstance
 
 
 

@@ -8,10 +8,10 @@ from toolbox import S as Object
 from typing import Callable, List, Union, Tuple, TypeVar
 import logging; log = logging.getLogger()
 
-from . import AutoModPlugin, ShardedBotInstance
-from .processor import LogProcessor
-from ..schemas import GuildConfig
-from ..types import Embed
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ..processor import LogProcessor
+from ...schemas import GuildConfig
+from ...types import Embed
 
 
 
@@ -176,7 +176,7 @@ SERVER_LOG_EVENTS = {
 }
 
 
-class InternalPlugin(AutoModPlugin):
+class InternalPlugin(AutoModPluginBlueprint):
     """Plugin for internal/log events"""
     def __init__(
         self, 
@@ -342,7 +342,7 @@ class InternalPlugin(AutoModPlugin):
             return self.bot.message_cache.get(guild, payload.message_id)
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_join(
         self, 
         guild: discord.Guild
@@ -358,7 +358,7 @@ class InternalPlugin(AutoModPlugin):
                 self.db.configs.insert(GuildConfig(guild, self.config.default_prefix))
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_remove(
         self, 
         guild: discord.Guild
@@ -370,7 +370,7 @@ class InternalPlugin(AutoModPlugin):
             self.db.configs.delete(guild.id)
 
     
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_message(
         self, 
         msg: discord.Message
@@ -380,7 +380,7 @@ class InternalPlugin(AutoModPlugin):
         self.bot.message_cache.insert(msg.guild, msg)
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_raw_message_delete(
         self, 
         payload: discord.RawMessageDeleteEvent
@@ -441,7 +441,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_raw_message_edit(
         self, 
         payload: discord.RawMessageUpdateEvent
@@ -502,7 +502,7 @@ class InternalPlugin(AutoModPlugin):
             })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_member_join(
         self, 
         user: discord.Member
@@ -523,7 +523,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_member_remove(
         self, 
         user: discord.Member
@@ -555,7 +555,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
     
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_role_create(
         self, 
         role: discord.Role
@@ -572,7 +572,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_role_delete(
         self, 
         role: discord.Role
@@ -589,7 +589,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_role_update(
         self, 
         b: discord.Role, 
@@ -635,7 +635,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_channel_create(
         self, 
         channel: discord.abc.GuildChannel
@@ -653,7 +653,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_channel_delete(
         self, 
         channel: discord.abc.GuildChannel
@@ -674,7 +674,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_channel_update(
         self, 
         b: discord.abc.GuildChannel, 
@@ -735,7 +735,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
     
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_emojis_update(
         self, 
         _, 
@@ -772,7 +772,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_guild_stickers_update(
         self, 
         _, 
@@ -809,7 +809,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_thread_create(
         self, 
         thread: discord.Thread
@@ -830,7 +830,7 @@ class InternalPlugin(AutoModPlugin):
         await self.bot.join_thread(thread)
 
     
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_thread_delete(
         self, 
         thread: discord.Thread
@@ -851,7 +851,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_thread_update(
         self, 
         b: discord.Thread, 
@@ -888,7 +888,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_member_update(
         self, 
         b: discord.Member, 
@@ -950,7 +950,7 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_user_update(
         self, 
         b: discord.User, 
@@ -984,7 +984,7 @@ class InternalPlugin(AutoModPlugin):
                 })
 
 
-    # @AutoModPlugin.listener()
+    # @AutoModPluginBlueprint.listener()
     # async def on_guild_update(self, b: discord.Guild, a: discord.Guild):
     #     change = ""
     #     if b.name != a.name:
@@ -999,7 +999,7 @@ class InternalPlugin(AutoModPlugin):
         
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_voice_state_update(
         self, 
         user: discord.Member, 
@@ -1049,7 +1049,7 @@ class InternalPlugin(AutoModPlugin):
                 })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_member_unban(
         self, 
         guild: discord.Guild, 
@@ -1065,14 +1065,14 @@ class InternalPlugin(AutoModPlugin):
         })
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_autopost_success(
         self
     ):
         log.info(f"📬 Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_dbl_vote(
         self, 
         data

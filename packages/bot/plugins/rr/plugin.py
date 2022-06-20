@@ -3,12 +3,12 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..types import Embed, Emote
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...types import Embed, Emote
 
 
 
-class ReactionRolesPlugin(AutoModPlugin):
+class ReactionRolesPlugin(AutoModPluginBlueprint):
     """Plugin for reaction roles"""
     def __init__(
         self, 
@@ -17,7 +17,7 @@ class ReactionRolesPlugin(AutoModPlugin):
         super().__init__(bot)
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_raw_reaction_add(
         self, 
         payload: discord.RawReactionActionEvent
@@ -53,7 +53,7 @@ class ReactionRolesPlugin(AutoModPlugin):
                         pass
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_raw_reaction_remove(
         self, 
         payload: discord.RawReactionActionEvent
@@ -92,7 +92,7 @@ class ReactionRolesPlugin(AutoModPlugin):
                         pass
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_raw_message_delete(
         self, 
         payload: discord.RawMessageDeleteEvent
@@ -106,7 +106,7 @@ class ReactionRolesPlugin(AutoModPlugin):
 
 
     @commands.group(aliases=["rr"])
-    @AutoModPlugin.can("manage_roles")
+    @AutoModPluginBlueprint.can("manage_roles")
     async def reaction_roles(
         self, 
         ctx: commands.Context
@@ -145,7 +145,7 @@ class ReactionRolesPlugin(AutoModPlugin):
 
 
     @reaction_roles.command()
-    @AutoModPlugin.can("manage_roles")
+    @AutoModPluginBlueprint.can("manage_roles")
     async def add(
         self, 
         ctx: commands.Context, 
@@ -200,7 +200,7 @@ class ReactionRolesPlugin(AutoModPlugin):
 
 
     @reaction_roles.command()
-    @AutoModPlugin.can("manage_roles")
+    @AutoModPluginBlueprint.can("manage_roles")
     async def remove(
         self, 
         ctx: commands.Context, 

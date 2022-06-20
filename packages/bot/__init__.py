@@ -14,7 +14,7 @@ else:
     VERSION = str(_V).replace("b'", "")[:7]
 
 
-with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
+with open("packages/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
     config = json.load(config_file)
 
 

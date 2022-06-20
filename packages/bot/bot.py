@@ -81,7 +81,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         *args, 
         **kwargs
     ) -> None:
-        with open("backend/config.json", "r", encoding="utf8", errors="ignore") as config_file:
+        with open("packages/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
         super().__init__(
             command_prefix=prefix_callable, 
@@ -232,7 +232,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         plugin: str
     ) -> None:
         try:
-            await super().load_extension(f"backend.plugins.{plugin}")
+            await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
         except Exception:
             log.error(f"❗️ Failed to load {plugin} - {traceback.format_exc()}")
         else:
@@ -253,15 +253,15 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = f"{plugin.capitalize()}Plugin"
             
         if in_plugins_name not in self.plugins:
-            try: await super().load_extension(f"backend.plugins.{plugin}")
+            try: await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
             except Exception: raise
 
         else:
-            try: await super().unload_extension(f"backend.plugins.{plugin}")
+            try: await super().unload_extension(f"packages.bot.plugins.{plugin}.plugin")
             except Exception: raise
 
             else:
-                try: await super().load_extension(f"backend.plugins.{plugin}")
+                try: await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
                 except Exception: raise
 
 

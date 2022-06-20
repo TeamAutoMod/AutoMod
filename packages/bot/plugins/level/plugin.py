@@ -5,13 +5,13 @@ from toolbox import S as Object
 from random import randint
 from typing import Union
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..schemas import UserLevel
-from ..types import Embed
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...schemas import UserLevel
+from ...types import Embed
 
 
 
-class LevelPlugin(AutoModPlugin):
+class LevelPlugin(AutoModPluginBlueprint):
     """Plugin for all level system commands"""
     def __init__(
         self, 
@@ -101,7 +101,7 @@ class LevelPlugin(AutoModPlugin):
             return f"{i}{end}"
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_message(
         self, 
         msg: discord.Message

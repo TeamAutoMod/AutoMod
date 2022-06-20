@@ -13,16 +13,16 @@ from io import BytesIO
 from toolbox import S as Object
 from typing import Union, List
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..types import Embed, DiscordUser, Duration
-from ..views import AboutView, HelpView
-from ..schemas import Slowmode
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...types import Embed, DiscordUser, Duration
+from ...views import AboutView, HelpView
+from ...schemas import Slowmode
 
 
 
 ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "⚙️ Configuration",
-    "AutomodPlugin": "⚔️ Automoderator",
+    "AutoModPluginBlueprint": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
     "UtilityPlugin": "🔧 Utility",
     "TagsPlugin": "📝 Custom Commands",
@@ -37,7 +37,7 @@ MAX_BOT_SLOWMODE = 1209600 # 14 days
 
 
 def get_help_embed(
-    plugin: AutoModPlugin, 
+    plugin: AutoModPluginBlueprint, 
     ctx: commands.Context, 
     cmd: Union[
         commands.Command, 
@@ -92,7 +92,7 @@ def get_help_embed(
 
 
 def get_command_help(
-    plugin: AutoModPlugin, 
+    plugin: AutoModPluginBlueprint, 
     ctx: commands.Context, 
     query: str
 ) -> Union[
@@ -157,7 +157,7 @@ def get_user_badges(
     badges = [x for x in badges if x != None]; return " ".join(badges) if len(badges) > 0 else ""
 
 
-class UtilityPlugin(AutoModPlugin):
+class UtilityPlugin(AutoModPluginBlueprint):
     """Plugin for all utility commands"""
     def __init__(
         self, 
@@ -291,7 +291,7 @@ class UtilityPlugin(AutoModPlugin):
         return embeds
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_interaction(
         self,
         i: discord.Interaction
@@ -328,7 +328,7 @@ class UtilityPlugin(AutoModPlugin):
                         await i.response.edit_message(embed=e)
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_message(
         self, 
         msg: discord.Message
@@ -583,7 +583,7 @@ class UtilityPlugin(AutoModPlugin):
 
     
     @commands.command(aliases=["info", "userinfo", "user"])
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def whois(
         self, 
         ctx: Union[
@@ -676,7 +676,7 @@ class UtilityPlugin(AutoModPlugin):
 
     @commands.command(aliases=["guild", "serverinfo"])
     @commands.guild_only()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def server(
         self, 
         ctx: commands.Context
@@ -745,7 +745,7 @@ class UtilityPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["slow"])
-    @AutoModPlugin.can("manage_channels")
+    @AutoModPluginBlueprint.can("manage_channels")
     async def slowmode(
         self, 
         ctx: commands.Context, 

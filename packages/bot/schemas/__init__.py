@@ -8,4 +8,4 @@ from .tempban import Tempban
 from .nuke import Nuke
 
 import os
-if os.path.exists("backend/schemas/level.py"): from .level import UserLevel # pyright: reportMissingImports=false
+if os.path.exists("packages/bot/schemas/level.py"): from .level import UserLevel # pyright: reportMissingImports=false

@@ -6,9 +6,9 @@ from toolbox import S as Object
 from typing import Union, Tuple
 import asyncio
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..types import Embed, Duration
-from ..views import SetupView
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...types import Embed, Duration
+from ...views import SetupView
 
 
 
@@ -45,7 +45,7 @@ LOG_OPTIONS = {
 
 
 PRETTY_PLUGIN_NAMES = {
-    "AutomodPlugin": "Automoderator",
+    "AutoModPluginBlueprint": "Automoderator",
     "ModerationPlugin": "Moderation",
     "UtilityPlugin": "Utility",
     "CasesPlugin": "Cases",
@@ -55,7 +55,7 @@ PRETTY_PLUGIN_NAMES = {
 }
 
 
-class ConfigPlugin(AutoModPlugin):
+class ConfigPlugin(AutoModPluginBlueprint):
     """Plugin for all configuration commands"""
     def __init__(
         self, 
@@ -184,7 +184,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["cfg", "settings"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def config(
         self, 
         ctx: commands.Context
@@ -313,7 +313,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["action"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def punishment(
         self, 
         ctx: commands.Context, 
@@ -402,7 +402,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command(name="log")
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def _log(
         self, 
         ctx: commands.Context, 
@@ -472,7 +472,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def prefix(
         self, 
         ctx: commands.Context, 
@@ -491,7 +491,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["restrict"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def disable(
         self, 
         ctx: commands.Context, 
@@ -563,7 +563,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["modrole"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def mod_role(
         self, 
         ctx: commands.Context, 
@@ -609,7 +609,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.group(aliases=["log_ignore"])
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def ignore_log(
         self, 
         ctx: commands.Context
@@ -646,7 +646,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @ignore_log.command()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def add(
         self, 
         ctx: commands.Context, 
@@ -732,7 +732,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @ignore_log.command()
-    @AutoModPlugin.can("manage_guild")
+    @AutoModPluginBlueprint.can("manage_guild")
     async def remove(
         self, 
         ctx: commands.Context, 
@@ -820,7 +820,7 @@ class ConfigPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def setup(
         self,
         ctx: commands.Context

@@ -7,14 +7,14 @@ from toolbox import S as Object
 import logging; log = logging.getLogger()
 from typing import Union
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..types import DiscordUser, Embed
-from ..views import MultiPageView
-from .processor.log import LOG_TYPES
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...types import DiscordUser, Embed
+from ...views import MultiPageView
+from ..processor.log import LOG_TYPES
 
 
 
-class CasesPlugin(AutoModPlugin):
+class CasesPlugin(AutoModPluginBlueprint):
     """Plugin for internal/log events"""
     def __init__(
         self, 
@@ -121,7 +121,7 @@ class CasesPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["history", "cases", "modlogs"])
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def infractions(
         self, 
         ctx: commands.Context, 
@@ -272,7 +272,7 @@ class CasesPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def case(
         self, 
         ctx: commands.Context, 
@@ -338,7 +338,7 @@ class CasesPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["fetch"])
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def check(
         self, 
         ctx: commands.Context, 

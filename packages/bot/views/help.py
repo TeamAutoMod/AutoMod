@@ -9,7 +9,7 @@ from .buttons import LinkBtn
 
 ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "⚙️ Configuration",
-    "AutomodPlugin": "⚔️ Automoderator",
+    "AutoModPluginBlueprint": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
     "UtilityPlugin": "🔧 Utility",
     "TagsPlugin": "📝 Custom Commands",

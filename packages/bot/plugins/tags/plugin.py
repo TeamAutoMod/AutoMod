@@ -7,9 +7,9 @@ from argparse import ArgumentParser as BaseArgumentParser
 import shlex
 import logging; log = logging.getLogger()
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..schemas import Tag
-from ..types import Embed
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...schemas import Tag
+from ...types import Embed
 
 
 
@@ -21,7 +21,7 @@ class ArgumentParser(BaseArgumentParser):
         raise commands.BadArgument(msg)
 
 
-class TagsPlugin(AutoModPlugin):
+class TagsPlugin(AutoModPluginBlueprint):
     """Plugin for tags (custom commands)"""
     def __init__(
         self, 
@@ -145,7 +145,7 @@ class TagsPlugin(AutoModPlugin):
 
     
     @commands.command()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def addcom(
         self, 
         ctx: commands.Context, 
@@ -187,7 +187,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def delcom(
         self, 
         ctx: commands.Context, 
@@ -210,7 +210,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def editcom(
         self, 
         ctx: commands.Context, 
@@ -253,7 +253,7 @@ class TagsPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def infocom(
         self, 
         ctx: commands.Context, 
@@ -310,7 +310,7 @@ class TagsPlugin(AutoModPlugin):
 
 
 
-    @AutoModPlugin.listener()
+    @AutoModPluginBlueprint.listener()
     async def on_message(
         self, 
         msg: discord.Message

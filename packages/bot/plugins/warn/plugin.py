@@ -4,12 +4,12 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 from typing import Union
 
-from . import AutoModPlugin, ShardedBotInstance
-from .processor import ActionProcessor, LogProcessor
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ..processor import ActionProcessor, LogProcessor
 
 
 
-class WarnPlugin(AutoModPlugin):
+class WarnPlugin(AutoModPluginBlueprint):
     """Plugin for warn commands. This isn't being added seperately, instead the mod plugin will subclass from this"""
     def __init__(
         self, 
@@ -52,7 +52,7 @@ class WarnPlugin(AutoModPlugin):
 
 
     @commands.command()
-    @AutoModPlugin.can("manage_messages")
+    @AutoModPluginBlueprint.can("manage_messages")
     async def warn(
         self, 
         ctx: commands.Context, 
@@ -94,7 +94,7 @@ class WarnPlugin(AutoModPlugin):
 
 
     @commands.command(aliases=["pardon"])
-    @AutoModPlugin.can("ban_members")
+    @AutoModPluginBlueprint.can("ban_members")
     async def unwarn(
         self, 
         ctx: commands.Context, 

@@ -9,13 +9,13 @@ import ast
 import psutil
 import datetime
 
-from . import AutoModPlugin, ShardedBotInstance
-from ..types import Embed
-from ..views import DeleteView
+from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...types import Embed
+from ...views import DeleteView
 
 
 
-class AdminPlugin(AutoModPlugin):
+class AdminPlugin(AutoModPluginBlueprint):
     """Plugin for all bot admin commands/events"""
     def __init__(
         self, 

@@ -7,7 +7,7 @@ from ..bot import ShardedBotInstance
 
 
 
-class AutoModPlugin(_commands.Cog):
+class AutoModPluginBlueprint(_commands.Cog):
     def __init__(
         self, 
         bot: ShardedBotInstance
