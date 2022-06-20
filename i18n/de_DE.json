@@ -72,6 +72,7 @@
     "ignore_log_help": "Base command for managing ignored roles and channels for certain logging events. When used without a subcommand, this shows all current ignored roles & channels",
     "ignore_log_add_help": "Adds the given roles & channels as ignored ones",
     "ignore_log_remove_help": "Removes the given roles & channels as ignored ones",
+    "join_role_help": "Sets a role users get when joining the server, also respecting membership screening. To remove the join role, use **off** as the role argument",
     "setup_help": "Shows a guide on how to configure a few of the bots features",
 
     "infractions_help": "Checks for recent infractions. Pass in no argument to search for all infractions or pass in a user/moderator to search for cases only affecting them",
@@ -182,7 +183,11 @@
 
     "mod_role_off": "{emote} Removed the mod role",
     "invalid_mod_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument",
-    "mod_role_on": "{emote} Set {role} as the mod role",
+    "mod_role_on": "{emote} Set **{role}** as the mod role",
+
+    "join_role_off": "{emote} Removed the join role",
+    "join_role_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument",
+    "join_role_on": "{emote} Set **{role}** as the join role",
 
     "prefix_too_long": "{emote} Prefix is too long (>20)",
     "prefix_updated": "{emote} Updated prefix to **{prefix}**",

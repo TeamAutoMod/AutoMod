@@ -1066,6 +1066,50 @@ class InternalPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
+    async def on_member_join(
+        self,
+        user: discord.Member
+    ) -> None:
+        if user.guild == None: return
+        if not user.guild.chunked: await user.guild.chunk(cache=True)
+        
+        rid = self.db.configs.get(user.guild.id, "join_role")
+        if rid != "":
+            role = user.guild.get_role(int(rid))
+            if role != None:
+                try:
+                    await user.add_roles(role)
+                except (
+                    discord.Forbidden,
+                    discord.HTTPException
+                ):
+                    pass
+
+    
+    @AutoModPluginBlueprint.listener()
+    async def on_member_update(
+        self,
+        b: discord.Member,
+        a: discord.Member
+    ) -> None:
+        if a.guild == None: return
+        if not a.guild.chunked: await a.guild.chunk(cache=True)
+        
+        if b.pending == True and a.pending == False:
+            rid = self.db.configs.get(a.guild.id, "join_role")
+            if rid != "":
+                role = a.guild.get_role(int(rid))
+                if role != None:
+                    try:
+                        await a.add_roles(role)
+                    except (
+                        discord.Forbidden,
+                        discord.HTTPException
+                    ):
+                        pass
+
+
+    @AutoModPluginBlueprint.listener()
     async def on_autopost_success(
         self
     ):

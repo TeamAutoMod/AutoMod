@@ -68,6 +68,12 @@ class MessageCache(object):
             return self.__store[guild.id].get(msg_id, None)
 
 
+    def flush(
+        self
+    ) -> None:
+        self.__store.clear()
+
+
     def __len__(
         self
     ) -> int:

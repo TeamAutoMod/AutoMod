@@ -217,15 +217,15 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "⚙️ __**General**__",
-                "value": "``▶`` **Prefix** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Total Cases:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Mod Role:** {}"\
+                "value": "``▶`` **Prefix** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Mod Role:** {} \n``▶`` **Join Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
-                    config.cases,
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
-                    "none" if config.mod_role == "" else f"<@&{config.mod_role}>"
+                    "none" if config.mod_role == "" else f"<@&{config.mod_role}>",
+                    "none" if config.join_role == "" else f"<@&{config.join_role}>"
                 ),
                 "inline": True
             },
@@ -817,6 +817,52 @@ class ConfigPlugin(AutoModPluginBlueprint):
         ])
 
         await ctx.send(embed=e)
+
+
+    @commands.command(aliases=["joinrole", "auto_role", "autorole"])
+    @AutoModPluginBlueprint.can("manage_roles")
+    async def join_role(
+        self,
+        ctx: commands.Context,
+        role: Union[
+            discord.Role, 
+            str
+        ]
+    ) -> None:
+        """
+        join_role_help
+        examples:
+        -join_role Members
+        -join_role @Members
+        -join_role 793880854367043614
+        -join_role off
+        """
+        if isinstance(role, str):
+            if role.lower() == "off":
+                self.db.configs.update(ctx.guild.id, "join_role", "")
+                return await ctx.send(self.locale.t(ctx.guild, "join_role_off", _emote="YES"))
+            else:
+                prefix = self.get_prefix(ctx.guild)
+                e = Embed(
+                    ctx,
+                    description=self.locale.t(ctx.guild, "invalid_join_role", _emote="NO")
+                )
+                e.add_fields([
+                    {
+                        "name": "__**Set the join role**__",
+                        "value": f"``{prefix}join_role @role``"
+                    },
+                    {
+                        "name": "__**Remove the join role**__",
+                        "value": f"``{prefix}join_role off``"
+                    }
+                ])
+
+                return await ctx.send(embed=e)
+
+        else:
+            self.db.configs.update(ctx.guild.id, "join_role", f"{role.id}")
+            await ctx.send(self.locale.t(ctx.guild, "join_role_on", _emote="YES", role=role.name))
 
 
     @commands.command()

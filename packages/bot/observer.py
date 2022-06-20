@@ -82,10 +82,10 @@ class Observer(object):
                         encoding="utf8", 
                         errors="ignore"
                     ) as file: content = file.read()
-
+                    
                     if content != data["content"]:
                         self.stamp_cache[f]["data"] = content
-                        if "/".join(data["file"].split("/")[:2]) == "packages/bot/plugins":
+                        if "/".join(data["file"].split("/")[:3]) == "packages/bot/plugins":
                             await self.hot_reload(
                                 f,
                                 content,
