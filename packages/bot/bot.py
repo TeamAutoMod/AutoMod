@@ -138,7 +138,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
                             type=discord.ActivityType.playing if self.config.status_type.lower() not in [
                                 "playing", "listening", "watching"
                             ] else getattr(discord.ActivityType, self.config.status_type.lower()), 
-                            name=self.config.custom_status
+                            name=str(self.config.custom_status).format(
+                                user_count=len(self.users),
+                                guild_count=len(self.guilds)
+                            )
                         )
                     )
 
