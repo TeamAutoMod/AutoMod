@@ -5,6 +5,7 @@
     "aborting": "Abbruch",
     "updated_i18n": "{emote} ``{key}`` Key wurde aktualisiert",
     "server_prefix": "Mein Prefix auf diesem Server ist ``{prefix}``",
+    "max_length": "Maximale Länge ist {max_length}s (1 Jahr)",
 
     "eval_help": "Evaluiert den gegebenen Python Code",
     "debug_help": "Zeigt nützliche Entwickler Infos",

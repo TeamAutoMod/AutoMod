@@ -5,6 +5,7 @@
     "aborting": "Aborting",
     "updated_i18n": "{emote} Updated the ``{key}`` key",
     "server_prefix": "My prefix on this server is ``{prefix}``",
+    "max_length": "Maximum length is {max_length}s (1 year)",
 
     "eval_help": "Evaluates a block of code",
     "debug_help": "Shows useful developer information",
