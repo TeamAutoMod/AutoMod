@@ -1087,8 +1087,8 @@ class InternalPlugin(AutoModPluginBlueprint):
                         pass
 
     
-    @AutoModPluginBlueprint.listener()
-    async def on_member_update(
+    @AutoModPluginBlueprint.listener(name="on_member_update")
+    async def on_membership_screening(
         self,
         b: discord.Member,
         a: discord.Member
