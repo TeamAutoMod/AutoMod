@@ -1065,8 +1065,8 @@ class InternalPlugin(AutoModPluginBlueprint):
         })
 
 
-    @AutoModPluginBlueprint.listener()
-    async def on_member_join(
+    @AutoModPluginBlueprint.listener(name="on_member_join")
+    async def on_join_role(
         self,
         user: discord.Member
     ) -> None:
