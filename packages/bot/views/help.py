@@ -22,14 +22,14 @@ class HelpView(View):
      def __init__(
         self, 
         bot, 
-        show_invite: bool = False,
+        show_buttons: bool = False,
         *args, 
         **kwargs
     ) -> None:
         self.bot = bot
         super().__init__(*args, **kwargs)
 
-        if show_invite == True:
+        if show_buttons == False:
             self.add_item(
                 Select(
                     placeholder="Select a plugin",
@@ -42,8 +42,7 @@ class HelpView(View):
                     custom_id="help-select"
                 )
             )
-
-        self.add_item(LinkBtn(_url=f"{bot.config.support_invite}", _label="Support"))
-        self.add_item(LinkBtn(_url=f"https://top.gg/bot/{bot.user.id}/vote", _label="Vote"))
-        if show_invite == True:
+        else:
+            self.add_item(LinkBtn(_url=f"{bot.config.support_invite}", _label="Support"))
+            self.add_item(LinkBtn(_url=f"https://top.gg/bot/{bot.user.id}/vote", _label="Vote"))
             self.add_item(LinkBtn(_url=f"https://discord.com/oauth2/authorize?client_id={bot.user.id}&permissions=403041534&scope=bot+applications.commands", _label="Invite"))

@@ -495,7 +495,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     )
             e.credits()
 
-            await ctx.send(embed=e, view=HelpView(self.bot, show_invite=True))
+            await ctx.send(embed=e, view=HelpView(self.bot, show_buttons=False))
         else:
             query = "".join(query.splitlines())
 
@@ -503,7 +503,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             if _help == None:
                 await ctx.send(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
             else:
-                await ctx.send(embed=_help, view=HelpView(self.bot))
+                await ctx.send(embed=_help, view=HelpView(self.bot, show_buttons=True))
 
 
     @commands.command(aliases=["av"])
