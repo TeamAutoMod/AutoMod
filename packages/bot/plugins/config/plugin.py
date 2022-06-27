@@ -217,7 +217,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "⚙️ __**General**__",
-                "value": "``▶`` **Prefix** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Mod Role:** {} \n``▶`` **Join Role:** {}"\
+                "value": "``▶`` **Prefix:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Mod Role:** {} \n``▶`` **Join Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,

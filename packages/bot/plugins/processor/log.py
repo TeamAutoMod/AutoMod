@@ -129,6 +129,9 @@ LOG_TYPES = {
     "user_left": {
         "channel": "join_log",
     },
+    "bot_added": {
+        "channel": "join_log",
+    },
 
     "role_created": {
         "channel": "server_log",

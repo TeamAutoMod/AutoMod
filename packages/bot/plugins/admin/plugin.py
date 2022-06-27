@@ -10,7 +10,7 @@ import psutil
 import datetime
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed
+from ...types import Embed, DiscordUser
 from ...views import DeleteView
 
 
@@ -102,8 +102,8 @@ class AdminPlugin(AutoModPluginBlueprint):
             await ctx.send("```py\n{}\n```".format(ex), view=view)
 
 
-    @commands.is_owner()
     @commands.command()
+    @commands.is_owner()
     async def debug(
         self, 
         ctx: commands.Context
@@ -136,6 +136,33 @@ class AdminPlugin(AutoModPluginBlueprint):
             )
         )
 
+        await ctx.send(embed=e)
+
+
+    @commands.command()
+    @commands.is_owner()
+    async def mutuals(
+        self,
+        ctx: commands.Context,
+        user: DiscordUser
+    ) -> None:
+        """
+        mutuals_help
+        examples:
+        -mutuals paul#0009
+        -mutuals 543056846601191508
+        """
+        guilds = [x for x in self.bot.guilds if x.get_member(user.id) != None]
+        e = Embed(
+            None,
+            description="```\n{}\n```".format(
+                "\n".join(
+                    [
+                        f"{x.id} | {len(x.members)} {' ' * abs(len(str(len(x.members))) - len(str(max([len(_.members) for _ in guilds]))))}| {x.name}" for x in guilds
+                    ] if len(guilds) > 0 else "None"
+                )
+            )
+        )
         await ctx.send(embed=e)
 
 

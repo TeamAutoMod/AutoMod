@@ -172,6 +172,13 @@ SERVER_LOG_EVENTS = {
         "audit_log_action": AuditLogAction.member_move,
         "text": "Switched voice channel",
         "extra_text": "**Change:** <#{before}> → <#{after}>"
+    },
+
+    "bot_added": {
+        "emote": "CREATE",
+        "color": 0x5cff9d,
+        "audit_log_action": AuditLogAction.bot_add,
+        "text": "Bot added",
     }
 }
 
@@ -507,20 +514,32 @@ class InternalPlugin(AutoModPluginBlueprint):
         self, 
         user: discord.Member
     ) -> None:
-        e = Embed(
-            None,
-            color=0x5cff9d,
-            description=self.locale.t(user.guild, "user_joined", profile=user.mention, created=round(user.created_at.timestamp()))
-        )
-        e.set_thumbnail(
-            url=user.display_avatar
-        )
-        e.set_footer(
-            text="User joined"
-        )
-        await self.log_processor.execute(user.guild, "user_joined", **{
-            "_embed": e
-        })
+        if user.bot:
+            embed = await self.server_log_embed(
+                "bot_added",
+                user.guild,
+                user,
+                lambda x: x.target.id == user.id
+            )
+
+            await self.log_processor.execute(user.guild, "bot_added", **{
+                "_embed": embed
+            })
+        else:
+            e = Embed(
+                None,
+                color=0x5cff9d,
+                description=self.locale.t(user.guild, "user_joined", profile=user.mention, created=round(user.created_at.timestamp()))
+            )
+            e.set_thumbnail(
+                url=user.display_avatar
+            )
+            e.set_footer(
+                text="User joined"
+            )
+            await self.log_processor.execute(user.guild, "user_joined", **{
+                "_embed": e
+            })
 
 
     @AutoModPluginBlueprint.listener()

@@ -9,7 +9,7 @@
 
     "eval_help": "Evaluiert den gegebenen Python Code",
     "debug_help": "Zeigt nützliche Entwickler Infos",
-    "update_i18n_help": "Aktualisiere einen bestimmten Key im der en_US Datei",
+    "mutuals_help": "Zeigt eine Liste gemeinsamer Server mit dem angegebenen User",
 
     "ban_help": "Bannt den angegebenen User vom Server",
     "softban_help": "Softbannt den angegebenen User vom Server (Bann & Entbann)",
@@ -243,7 +243,7 @@
     "no_cases": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria",
 
     "user_joined": "**Profile:** {profile} \n**Created:** <t:{created}>",
-    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}>",
+    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}> \n**Roles:** {roles}",
     "warn_help": "Adds the given amount of warns to the specified user. Default is one warn",
     "unwarn_help": "Removes the given amount of warns from the specified user. Default is one warn",
     "http_error": "{emote} There was an error while trying to fetch a bigger version of the emoji, please try again later",

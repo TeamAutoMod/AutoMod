@@ -9,7 +9,8 @@ class MessageCache(object):
         self
     ) -> None:
         self.__store = {}
-        self._MAX_SIZE = 1500
+        self._MAX_SIZE_PER_GUILD = 1500
+        self._MAX_CACHE_SIZE = 30000
 
 
     def insert(
@@ -17,6 +18,7 @@ class MessageCache(object):
         guild: discord.Guild, 
         msg: discord.Message
     ) -> None:
+        if self.__len__() > self._MAX_CACHE_SIZE: self.flush()
         if not guild.id in self.__store:
             self.__store[guild.id] = {
                 msg.id: msg
@@ -27,7 +29,7 @@ class MessageCache(object):
                     msg.id: msg
                 }
             )
-            if len(self.__store[guild.id]) > self._MAX_SIZE:
+            if len(self.__store[guild.id]) > self._MAX_SIZE_PER_GUILD:
                 self.__store[guild.id].popitem()
 
 

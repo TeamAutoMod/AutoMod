@@ -306,7 +306,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         title=ACTUAL_PLUGIN_NAMES.get(i.data.get("values")[0], i.data.get("values")[0])
                     )
 
-                    for cmd in p.get_commands():
+                    cmds = [*[x for x in p.get_commands() if not x.name in self.config.disabled_commands], *[x for x in p.__cog_app_commands__]]
+                    for cmd in cmds:
                         e.add_field(
                             name="**{}**".format(
                                 f"{self.get_prefix(i.guild)}{cmd.qualified_name} {cmd.signature}".replace('...', '').replace('=None', '')

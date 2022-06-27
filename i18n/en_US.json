@@ -9,7 +9,7 @@
 
     "eval_help": "Evaluates a block of code",
     "debug_help": "Shows useful developer information",
-    "update_i18n_help": "Update a specific key in the en_US file",
+    "mutuals_help": "Gets a list of mutual servers with the specified user",
 
     "ban_help": "Bans the specified user from the server",
     "softban_help": "Softbans the specified user from the server (ban & unban)",
@@ -245,7 +245,7 @@
     "no_cases": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria",
 
     "user_joined": "**Profile:** {profile} \n**Created:** <t:{created}>",
-    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}>",
+    "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}> \n**Roles:** {roles}",
     "warn_help": "Adds the given amount of warns to the specified user. Default is one warn",
     "unwarn_help": "Removes the given amount of warns from the specified user. Default is one warn",
     "http_error": "{emote} There was an error while trying to fetch a bigger version of the emoji, please try again later",

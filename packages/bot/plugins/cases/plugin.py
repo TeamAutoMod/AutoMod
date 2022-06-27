@@ -337,7 +337,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         await ctx.send(embed=e)
 
 
-    @commands.command(aliases=["fetch"])
+    @commands.command(aliases=["fetch", "warns"])
     @AutoModPluginBlueprint.can("manage_messages")
     async def check(
         self, 
