@@ -45,4 +45,3 @@ class HelpView(View):
         else:
             self.add_item(LinkBtn(_url=f"{bot.config.support_invite}", _label="Support"))
             self.add_item(LinkBtn(_url=f"https://top.gg/bot/{bot.user.id}/vote", _label="Vote"))
-            self.add_item(LinkBtn(_url=f"https://discord.com/oauth2/authorize?client_id={bot.user.id}&permissions=403041534&scope=bot+applications.commands", _label="Invite"))
