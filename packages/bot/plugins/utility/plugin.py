@@ -436,7 +436,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             {
                 "name": "📰 __**Stats**__",
-                "value": "``▶`` **Guilds:** {0:,} \n``▶`` **Users:** {0:,} \n``▶`` **Shards:** {0:,}"\
+                "value": "``▶`` **Guilds:** {0:,} \n``▶`` **Users:** {1:,} \n``▶`` **Shards:** {2:,}"\
                 .format(
                     len(self.bot.guilds),
                     sum([x.member_count for x in self.bot.guilds]),
