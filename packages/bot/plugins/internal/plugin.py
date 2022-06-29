@@ -410,13 +410,6 @@ class InternalPlugin(AutoModPluginBlueprint):
         if cfg["message_log"] == "" \
         or not isinstance(msg.channel, discord.TextChannel) \
         or msg.author.id == self.bot.user.id \
-        or str(msg.channel.id) == cfg["server_log"] \
-        or str(msg.channel.id) == cfg["mod_log"] \
-        or str(msg.channel.id) == cfg["message_log"] \
-        or str(msg.channel.id) == cfg["join_log"] \
-        or str(msg.channel.id) == cfg["member_log"] \
-        or str(msg.channel.id) == cfg["voice_log"] \
-        or str(msg.channel.id) == cfg["report_log"] \
         or msg.type != discord.MessageType.default:
             return
 
@@ -468,13 +461,6 @@ class InternalPlugin(AutoModPluginBlueprint):
         if cfg["message_log"] == "" \
         or not isinstance(msg.channel, discord.TextChannel) \
         or msg.author.id == self.bot.user.id \
-        or str(msg.channel.id) == cfg["server_log"] \
-        or str(msg.channel.id) == cfg["mod_log"] \
-        or str(msg.channel.id) == cfg["message_log"] \
-        or str(msg.channel.id) == cfg["join_log"] \
-        or str(msg.channel.id) == cfg["member_log"] \
-        or str(msg.channel.id) == cfg["voice_log"] \
-        or str(msg.channel.id) == cfg["report_log"] \
         or msg.type != discord.MessageType.default:
             return
 
@@ -701,6 +687,7 @@ class InternalPlugin(AutoModPluginBlueprint):
     ) -> None:
         _, channels = self.get_ignored_roles_channels(b.guild)
         if a.id in channels: return
+        if len(b.guild.roles) != len(a.guild.roles): return
 
         if a.position != b.position: return
 

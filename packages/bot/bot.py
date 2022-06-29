@@ -115,6 +115,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.log_queue = {}
         self.tasks = []
         self.auto_processing = []
+        self.event_stats = {}
 
         if self.config.watch == True:
             self.observer = Observer(self)
@@ -201,6 +202,19 @@ class ShardedBotInstance(commands.AutoShardedBot):
                             await msg.guild.chunk(cache=True)
                     
                         await self.invoke(ctx)
+
+
+    def dispatch(
+        self, 
+        event_name: str, 
+        *args, 
+        **kwargs
+    ) -> None:
+        ev = event_name.lower()
+        self.event_stats.update({
+            ev: self.event_stats.get(ev, 0) + 1
+        })
+        super().dispatch(event_name, *args, **kwargs)
             
     
     async def load_plugins(
@@ -218,8 +232,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             for cmd in self.config.disabled_commands:
                 try:
                     self.remove_command(cmd)
-                except Exception as ex:
-                    print(ex)
+                except Exception:
                     pass
 
 
