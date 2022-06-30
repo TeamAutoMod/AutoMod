@@ -1,55 +1,97 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import Logo from '../public/icon.png';
+import styles from '../styles/home.module.css'
+
+import Navbar from "../components/nav";
+
+
 
 export default function Home() {
   return (
-    <div className={styles.container}>
-        <div className={styles.text}>
-            <h1>
+    <>
+        <Navbar />
+        <div className={styles.container}>
+          <div className={styles.wrapper}>
+            <div className={styles.text}>
+              <h1>
                 AutoMod
-            </h1>
-
-            <div className={styles.desc}>
-                <p>
-                    AutoMod is a Discord moderation and utility bot, made for both small and large communities.
-                </p>
-            </div>
-
-            <div className={styles.buttons}>
-                <a href="/invite" className={styles.btn}>
+              </h1>
+              <p>
+                Advanced Discord moderation & utility bot
+              </p>
+              <ul>
+                <li>
+                  <a href="/invite">
                     Add to server
-                </a>
+                  </a>
+                </li>
+                <li>
+                  <a href="/support">
+                    Join support
+                  </a>
+                </li>
+                <li>
+                  <a href="/servers">
+                    Manage server
+                  </a>
+                </li>
+              </ul>
             </div>
-            
-            <ul className={styles.links}>
-                <li>
-                    <a href="https://discord.gg/S9BEBux " target="_blank">
-                        Support
-                    </a>
-                </li>
-                <li>
-                    <a href="https://github.com/TeamAutoMod/AutoMod" target="_blank">
-                        GitHub
-                    </a>
-                </li>
-                <li>
-                    <a href="https://top.gg/bot/697487580522086431/vote" target="_blank">
-                        Top.gg
-                    </a>
-                </li>
-                <li>
-                    <a href="https://twitter.com/AutoModBot" target="_blank">
-                        Twitter
-                    </a>
-                </li>
-            </ul>
-        </div>
 
-        <div className={styles.logo}>
-            <Image src={Logo} alt="AutoMod Icon" width={300} height={300}/>
+            <div className={styles.features}>
+              <ul>
+                <li>
+                  <div className={styles.f}>
+                    <h1>
+                      Automod
+                    </h1>
+                    <p>
+                      Keeps your server clean even when youre sleeping
+                    </p>
+                  </div>
+                  <div className={styles.f}>
+                    <h1>
+                      Automod
+                    </h1>
+                    <p>
+                      Keeps your server clean even when youre sleeping
+                    </p>
+                  </div>
+                  <div className={styles.f}>
+                    <h1>
+                      Automod
+                    </h1>
+                    <p>
+                      Keeps your server clean even when youre sleeping
+                    </p>
+                  </div>
+                  <div className={styles.f}>
+                    <h1>
+                      Automod
+                    </h1>
+                    <p>
+                      Keeps your server clean even when youre sleeping
+                    </p>
+                  </div>
+                  <div className={styles.f}>
+                    <h1>
+                      Automod
+                    </h1>
+                    <p>
+                      Keeps your server clean even when youre sleeping
+                    </p>
+                  </div>
+                  <div className={styles.f}>
+                    <h1>
+                      Automod
+                    </h1>
+                    <p>
+                      Keeps your server clean even when youre sleeping
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-    </div>
+    </>
   )
 }

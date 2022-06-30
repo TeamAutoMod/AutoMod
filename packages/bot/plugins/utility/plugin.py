@@ -306,7 +306,14 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         title=ACTUAL_PLUGIN_NAMES.get(i.data.get("values")[0], i.data.get("values")[0])
                     )
 
-                    cmds = [*[x for x in p.get_commands() if not x.name in self.config.disabled_commands], *[x for x in p.__cog_app_commands__]]
+                    cmds = [
+                        *[
+                            x for x in p.get_commands() if not x.name in self.config.disabled_commands
+                        ], 
+                        *[
+                            x for x in p.__cog_app_commands__
+                        ]
+                    ]
                     for cmd in cmds:
                         e.add_field(
                             name="**{}**".format(
@@ -482,7 +489,14 @@ class UtilityPlugin(AutoModPluginBlueprint):
             )
             for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
                 if p != None:
-                    cmds = [*[x.name for x in p.get_commands() if not x.name in self.config.disabled_commands], *[f"/{x.name}" for x in p.__cog_app_commands__]]
+                    cmds = [
+                        *[
+                            x.name for x in p.get_commands() if not x.name in self.config.disabled_commands
+                        ], 
+                        *[
+                            f"/{x.name}" for x in p.__cog_app_commands__
+                        ]
+                    ]
                     e.add_field(
                         name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} __**{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}**__",
                         value="> {}".format(
