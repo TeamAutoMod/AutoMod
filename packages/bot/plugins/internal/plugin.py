@@ -1,3 +1,4 @@
+from re import X
 import discord
 from discord.ext import commands
 from discord import AuditLogAction
@@ -538,6 +539,7 @@ class InternalPlugin(AutoModPluginBlueprint):
             return self.bot.ignore_for_events.remove(user.id)
         if user.id == self.bot.user.id: return
         
+        roles = [x.mention for x in user.roles if str(x.id) != str(user.guild.default_role.id)]
         e = Embed(
             None,
             color=0x2f3136,
@@ -546,7 +548,7 @@ class InternalPlugin(AutoModPluginBlueprint):
                 "user_left", 
                 profile=user.mention, 
                 joined=round(user.joined_at.timestamp()),
-                roles=", ".join([x.mention for x in user.roles]) if len(user.roles) < 15 and len(user.roles) > 0 else len(user.roles) if len(user.roles) > 15 else "None"
+                roles=", ".join(roles) if len(roles) < 15 and len(roles) > 0 else len(roles) if len(roles) > 15 else "None"
             )
         )
         e.set_thumbnail(
@@ -685,9 +687,9 @@ class InternalPlugin(AutoModPluginBlueprint):
         b: discord.abc.GuildChannel, 
         a: discord.abc.GuildChannel
     ) -> None:
+        await asyncio.sleep(0.3)
         _, channels = self.get_ignored_roles_channels(b.guild)
         if a.id in channels: return
-        if len(b.guild.roles) != len(a.guild.roles): return
 
         if a.position != b.position: return
 
@@ -697,14 +699,6 @@ class InternalPlugin(AutoModPluginBlueprint):
                 b.name,
                 a.name
             )
-        
-        new = ""
-        for k, v in b.overwrites.items():
-            if k in a.overwrites:
-                if a.overwrites[k] != v:
-                    new = "Permissions updated"
-            else:
-                new = "Permissions created"
 
         if hasattr(b, "slowmode_delay") and hasattr(a, "slowmode_delay"):
             if b.slowmode_delay != a.slowmode_delay:
