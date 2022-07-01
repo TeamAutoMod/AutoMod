@@ -264,7 +264,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             {
                 "name": "🔨 __**Punishments**__",
                 "value": "\n".join([
-                    f"``▶`` **{x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1]}" \
+                    f"``▶`` **{x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1][0]}" \
                     for x, y in dict(
                         sorted(
                             config.punishments.items(), 

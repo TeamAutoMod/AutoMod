@@ -1474,10 +1474,10 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             except ValueError:
                 return await ctx.send(embed=info_embed)
             else:
-                if rate < 6: return await ctx.send(self.locale.t(ctx.guild, "min_rate", _emote="NO"))
+                if rate < 3: return await ctx.send(self.locale.t(ctx.guild, "min_rate", _emote="NO"))
                 if rate > 21: return await ctx.send(self.locale.t(ctx.guild, "max_rate", _emote="NO"))
 
-                if per < 5: return await ctx.send(self.locale.t(ctx.guild, "min_per", _emote="NO"))
+                if per < 3: return await ctx.send(self.locale.t(ctx.guild, "min_per", _emote="NO"))
                 if per > 20: return await ctx.send(self.locale.t(ctx.guild, "max_per", _emote="NO"))
 
                 if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
