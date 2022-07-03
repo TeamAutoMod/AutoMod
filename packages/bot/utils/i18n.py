@@ -50,7 +50,7 @@ class Translator(object):
                 loop=self.bot.loop
             )
 
-            string = self._langs["en_US"][key]
+            string = self._langs["en_US"].get(key, "String not found (this is a code error)")
         finally:
             if "{emote}" in string:
                 return str(string).format(emote=str(self.bot.emotes.get(_emote)), **kwargs)
