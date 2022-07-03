@@ -187,9 +187,8 @@
     "mod_role_on": "{emote} Set **{role}** as the mod role",
 
     "join_role_off": "{emote} Removed the join role",
-    "join_role_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument",
+    "invalid_join_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument",
     "join_role_on": "{emote} Set **{role}** as the join role",
-    "invalid_join_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or off as the second argument",
 
     "prefix_too_long": "{emote} Prefix is too long (>20)",
     "prefix_updated": "{emote} Updated prefix to **{prefix}**",
