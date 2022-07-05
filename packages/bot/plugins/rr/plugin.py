@@ -76,7 +76,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             return
         else:
             guild = self.bot.get_guild(payload.guild_id)
-            if guild.chunked: await guild.chunk(cache=True)
+            if guild.chunked: await self.bot.chunk_guild(guild)
 
             role = guild.get_role(int(role_id[0]))
             member = guild.get_member(payload.user_id)

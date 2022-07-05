@@ -342,7 +342,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         msg: discord.Message
     ) -> None:
         if msg.guild == None: return
-        if not msg.guild.chunked: await msg.guild.chunk(cache=True)
+        if not msg.guild.chunked: await self.bot.chunk_guild(msg.guild)
         if not self.can_act(
             msg.guild, 
             msg.guild.me, 
@@ -614,7 +614,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         -whois @paul#0009
         -whois 543056846601191508
         """
-        if ctx.guild.chunked == False: await ctx.guild.chunk(cache=True)
+        if ctx.guild.chunked == False: await self.bot.chunk_guild(ctx.guild)
         if user == None:
             if ctx.message.reference == None:
                 user = member = ctx.author if isinstance(ctx, commands.Context) else ctx.user

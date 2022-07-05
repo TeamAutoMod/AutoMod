@@ -5,6 +5,7 @@ import json
 import traceback
 import requests
 import datetime
+import asyncio
 from toolbox import S as Object
 from typing import Union
 import logging; log = logging.getLogger()
@@ -154,6 +155,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             await self.tree.sync()
 
             self.loop.create_task(self._log_queue.send_logs())
+            self.loop.create_task(self.post_stats())
 
             if self.config.watch == True:
                 await self.observer.start()
@@ -199,7 +201,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     
                     if self.ready:
                         if not msg.guild.chunked:
-                            await msg.guild.chunk(cache=True)
+                            await self.chunk_guild(msg.guild)
                     
                         await self.invoke(ctx)
 
@@ -381,6 +383,41 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     )
                 )
 
+
+    async def post_stats(
+        self
+    ) -> None:
+        while True:
+            rc = self._post_stats()
+            if rc != 200:
+                log.warn(f"❗️ Failed to post stats to website ({rc})")
+            else:
+                log.info("📈 Posted stats to website")
+            
+            await asyncio.sleep(3600) # once every hour
+
+
+    def _post_stats(
+        self
+    ) -> int:
+        r = requests.post(
+            f"{self.config.web_url_base}/pstats",
+            json={
+                "guilds": len(self.guilds),
+                "users": sum([x.member_count for x in self.guilds])
+            }
+        )
+        return r.status_code
+
+
+    async def chunk_guild(
+        self,
+        guild: discord.Guild
+    ) -> None:
+        if not guild.chunked:
+            await guild.chunk(cache=True)
+            self._post_stats()
+    
 
     async def join_thread(
         self, 

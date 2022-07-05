@@ -740,7 +740,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         msg: discord.Message
     ) -> None:
         if msg.guild == None: return
-        if not msg.guild.chunked: await msg.guild.chunk(cache=True)
+        if not msg.guild.chunked: await self.bot.chunk_guild(msg.guild)
         if not self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)
@@ -753,7 +753,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         msg: discord.Message
     ) -> None:
         if msg.guild == None: return
-        if not msg.guild.chunked: await msg.guild.chunk(cache=True)
+        if not msg.guild.chunked: await self.bot.chunk_guild(msg.guild)
         if not self.can_act(msg.guild, msg.guild.me, msg.author): return
 
         await self.enforce_rules(msg)

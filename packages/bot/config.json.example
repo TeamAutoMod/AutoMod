@@ -10,6 +10,7 @@
     "sentry_dsn": "",
     "top_gg_token": "",
     "support_invite": "https://discord.gg/S9BEBux",
+    "web_url_base": "http://localhost:3001",
 
     "mongo_url": "",
     "db_name": "main",

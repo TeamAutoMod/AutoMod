@@ -174,7 +174,7 @@ class ModerationPlugin(WarnPlugin):
         reason: str, 
         **extra_kwargs
     ) -> None:
-        if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
+        if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if action != "hackban":
             if ctx.guild.get_member(user.id) == None:
@@ -369,7 +369,7 @@ class ModerationPlugin(WarnPlugin):
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
         if length.unit == None: length.unit = "m"
-        if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
+        if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if not self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
@@ -522,7 +522,7 @@ class ModerationPlugin(WarnPlugin):
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
         if length.unit == None: length.unit = "m"
-        if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
+        if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if not self.can_act(ctx.guild, ctx.author, user):
             return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))

@@ -358,7 +358,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         log.info(f"📥 Joined guild: {guild.name} ({guild.id})")
 
         try:
-            await guild.chunk(cache=True)
+            await self.bot.chunk_guild(guild)
         except Exception as ex:
             log.warn(f"❌ Failed to chunk members for guild {guild.id} upon joining - {ex}")
         finally:
@@ -414,7 +414,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         or msg.type != discord.MessageType.default:
             return
 
-        if guild.chunked == False: await guild.chunk(cache=True)
+        if guild.chunked == False: await self.bot.chunk_guild(guild)
         author = guild.get_member(msg.author.id)
 
         roles, channels = self.get_ignored_roles_channels(msg.guild)
@@ -894,7 +894,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         b: discord.Member, 
         a: discord.Member
     ) -> None:
-        if not a.guild.chunked: await a.guild.chunk(cache=True)
+        if not a.guild.chunked: await self.bot.chunk_guild(a.guild)
 
         roles, _ = self.get_ignored_roles_channels(a.guild)
         if any(x in [i.id for i in a.roles] for x in roles): return
@@ -1071,7 +1071,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         user: discord.Member
     ) -> None:
         if user.guild == None: return
-        if not user.guild.chunked: await user.guild.chunk(cache=True)
+        if not user.guild.chunked: await self.bot.chunk_guild(user.guild)
         
         rid = self.db.configs.get(user.guild.id, "join_role")
         if rid != "":
@@ -1094,7 +1094,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         a: discord.Member
     ) -> None:
         if a.guild == None: return
-        if not a.guild.chunked: await a.guild.chunk(cache=True)
+        if not a.guild.chunked: await self.bot.chunk_guild(a.guild)
         
         if b.pending == True and a.pending == False:
             rid = self.db.configs.get(a.guild.id, "join_role")

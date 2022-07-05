@@ -110,7 +110,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         if msg.author == None: return
         if msg.author.bot == True: return
         if not msg.guild.chunked:
-            await msg.guild.chunk(cache=True)
+            await self.bot.chunk_guild(msg.guild)
         
         ctx = await self.bot.get_context(msg)
         if ctx.valid and ctx.command is not None: return

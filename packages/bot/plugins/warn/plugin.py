@@ -69,7 +69,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         -warn 543056846601191508 
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
-        if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
+        if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None:
             warns = 1
@@ -112,7 +112,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         -unwarn 543056846601191508 
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
-        if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
+        if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None:
             warns = 1

@@ -320,7 +320,7 @@ class TagsPlugin(AutoModPluginBlueprint):
             or msg.author.id == self.bot.user.id: return
         if not msg.guild.id in self._tags: return
         if not msg.guild.chunked:
-            await msg.guild.chunk(cache=True)
+            await self.bot.chunk_guild(msg.guild)
 
         prefix = self.get_prefix(msg.guild)
         if msg.content.startswith(prefix, 0) and len(self._tags[msg.guild.id]) > 0:
