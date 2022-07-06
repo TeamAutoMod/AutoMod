@@ -7,6 +7,9 @@ from typing import Union
 
 
 
+MAX_LENGTH =  60 * 60 * 24 * 28
+
+
 class DurationHolder(object):
     def __init__(
         self, 
@@ -42,9 +45,8 @@ class DurationHolder(object):
             unit = 's'
         if unit != 's' and unit != 'second':
             raise BadArgument(ctx.bot.locale.t(ctx.guild, "invalid_lenth_unit"))
-        max_length = 60 * 60 * 24 * 365
-        if length > max_length:
-            raise BadArgument(ctx.bot.locale.t(ctx.guild, "max_length", max_length=max_length))
+        if length > MAX_LENGTH:
+            raise BadArgument(ctx.bot.locale.t(ctx.guild, "max_length", max_length=MAX_LENGTH))
         else:
             return length
 
