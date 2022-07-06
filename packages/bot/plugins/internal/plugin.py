@@ -176,7 +176,7 @@ SERVER_LOG_EVENTS = {
     },
 
     "bot_added": {
-        "emote": "CREATE",
+        "emote": "ROBOT",
         "color": 0x5cff9d,
         "audit_log_action": AuditLogAction.bot_add,
         "text": "Bot added",
