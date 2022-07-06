@@ -249,8 +249,8 @@
     "warn_help": "Adds the given amount of warns to the specified user. Default is one warn",
     "unwarn_help": "Removes the given amount of warns from the specified user. Default is one warn",
     "http_error": "{emote} There was an error while trying to fetch a bigger version of the emoji, please try again later",
-    "invalid_length_unit": "Valid length units are **d**, **h**, **m**, **s**, **days**, **hours**, **minutes**, **seconds**. The maximum length is 1 year",
-    "advanced_invalid_length_unit": "Valid length units are **d**, **h**, **m**, **s**, **days**, **hours**, **minutes**, **seconds**. The maximum length is 1 year",
+    "invalid_length_unit": "Valid length units are d, h, m, s, days, hours, minutes, seconds. The maximum length is 1 year",
+    "advanced_invalid_length_unit": "Valid length units are d, h, m, s, days, hours, minutes, seconds. The maximum length is 1 year",
     "no_warns": "{emote} This user doesn't have any warns",
     "alr_cleaned": "{emote} Looks like these messages have already been deleted",
 
