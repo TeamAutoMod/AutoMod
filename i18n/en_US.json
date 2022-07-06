@@ -16,7 +16,7 @@
     "tempban_help": "Temporarily bans the specified user from the server",
     "hackban_help": "Bans the specified user from the server (even if they're currently not in the server)",
     "kick_help": "Kicks the specified user from the server",
-    "mute_help": "Mutes (timeouts) the a user for the specified time or extends their mute",
+    "mute_help": "Mutes (timeouts) the user for the specified time or extends their mute",
     "unmute_help": "Unmutes a muted user (removes their timeout)",
     "clean_help": "Base command for deleting messages. Subcommands perform the actual cleaning",
     "clean_all_help": "Deletes between 1 and 300 messages from a channel",
