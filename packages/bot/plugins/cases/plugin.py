@@ -10,7 +10,7 @@ from typing import Union
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import DiscordUser, Embed
 from ...views import MultiPageView
-from ..processor.log import LOG_TYPES
+from .._processor.log import LOG_TYPES
 
 
 

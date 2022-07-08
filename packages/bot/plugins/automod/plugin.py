@@ -11,7 +11,7 @@ import logging; log = logging.getLogger()
 from typing import Union, Tuple
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ..processor import ActionProcessor, LogProcessor, DMProcessor
+from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed
 
 

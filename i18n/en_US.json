@@ -10,6 +10,7 @@
     "eval_help": "Evaluates a block of code",
     "debug_help": "Shows useful developer information",
     "mutuals_help": "Gets a list of mutual servers with the specified user",
+    "stats_help": "Shows stats about dispatched events",
 
     "ban_help": "Bans the specified user from the server",
     "softban_help": "Softbans the specified user from the server (ban & unban)",

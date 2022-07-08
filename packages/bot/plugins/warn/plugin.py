@@ -5,7 +5,7 @@ import logging; log = logging.getLogger()
 from typing import Union
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ..processor import ActionProcessor, LogProcessor
+from .._processor import ActionProcessor, LogProcessor
 
 
 

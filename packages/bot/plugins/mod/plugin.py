@@ -8,7 +8,7 @@ import datetime
 from typing import Union, Callable
 
 from ..warn.plugin import WarnPlugin, ShardedBotInstance
-from ..processor import LogProcessor, ActionProcessor, DMProcessor
+from .._processor import LogProcessor, ActionProcessor, DMProcessor
 from ...types import DiscordUser, Duration, Embed
 from ...views import ConfirmView, ActionedView
 from ...schemas import Mute, Tempban, Nuke

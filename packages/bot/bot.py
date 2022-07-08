@@ -389,10 +389,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
     ) -> None:
         while True:
             rc = self._post_stats()
-            if rc != 200:
-                log.warn(f"❗️ Failed to post stats to website ({rc})")
-            else:
-                log.info("📈 Posted stats to website")
+            if rc != 0:
+                if rc != 200:
+                    log.warn(f"❗️ Failed to post stats to website ({rc})")
+                else:
+                    log.info("📈 Posted stats to website")
             
             await asyncio.sleep(3600) # once every hour
 
@@ -400,14 +401,18 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def _post_stats(
         self
     ) -> int:
-        r = requests.post(
-            f"{self.config.web_url_base}/pstats",
-            json={
-                "guilds": len(self.guilds),
-                "users": sum([x.member_count for x in self.guilds])
-            }
-        )
-        return r.status_code
+        try:
+            r = requests.post(
+                f"{self.config.web_url_base}/pstats",
+                json={
+                    "guilds": len(self.guilds),
+                    "users": sum([x.member_count for x in self.guilds])
+                }
+            )
+        except Exception:
+            return 0
+        else:
+            return r.status_code
 
 
     async def chunk_guild(

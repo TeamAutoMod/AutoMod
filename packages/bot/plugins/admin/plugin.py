@@ -88,6 +88,7 @@ class AdminPlugin(AutoModPluginBlueprint):
                 "client": self.bot,
                 "discord": discord,
                 "commands": commands,
+                "Embed": Embed,
                 "__import__": __import__
             }
 
@@ -164,6 +165,34 @@ class AdminPlugin(AutoModPluginBlueprint):
             )
         )
         await ctx.send(embed=e)
+
+
+    @commands.command()
+    @commands.is_owner()
+    async def stats(
+        self,
+        ctx: commands.Context
+    ) -> None:
+        """
+        stats_help
+        examples:
+        -stats
+        """
+        msg = []
+        for k, v in dict(
+            sorted(
+                self.bot.event_stats.items(), 
+                key=lambda i: i[1],
+                reverse=True
+            )
+        ).items():
+            msg.append(
+                f"{k}{' ' * abs(len(k) - max([len(x) for x, _ in self.bot.event_stats.items()]))} | {v}"
+            )
+        
+        await ctx.send("```py\n{}\n```".format(
+            "\n".join(msg)
+        ))
 
 
 async def setup(

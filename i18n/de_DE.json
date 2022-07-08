@@ -10,6 +10,7 @@
     "eval_help": "Evaluiert den gegebenen Python Code",
     "debug_help": "Zeigt nützliche Entwickler Infos",
     "mutuals_help": "Zeigt eine Liste gemeinsamer Server mit dem angegebenen User",
+    "stats_help": "Zeigt Statistiken zu ausgeführten Events",
 
     "ban_help": "Bannt den angegebenen User vom Server",
     "softban_help": "Softbannt den angegebenen User vom Server (Bann & Entbann)",

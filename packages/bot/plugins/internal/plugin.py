@@ -10,7 +10,7 @@ from typing import Callable, List, Union, Tuple, TypeVar
 import logging; log = logging.getLogger()
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ..processor import LogProcessor
+from .._processor import LogProcessor
 from ...schemas import GuildConfig
 from ...types import Embed
 
@@ -712,12 +712,6 @@ class InternalPlugin(AutoModPluginBlueprint):
                         b.slowmode_delay,
                         a.slowmode_delay
                     )
-        
-        if new != "":
-            if len(change) < 1:
-                change += new
-            else:
-                change += f" & {new}"
         
         if len(change) < 1: return
 
