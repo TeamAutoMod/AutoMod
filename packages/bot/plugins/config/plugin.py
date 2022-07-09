@@ -229,7 +229,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 ),
                 "inline": True
             },
-            e.blank_field(True, 1),
+            #e.blank_field(True, 1),
             {
                 "name": "📁 __**Logging**__",
                 "value": "``▶`` **Mod Log:** {} \n``▶`` **Message Log:** {}\n``▶`` **Server Log:** {}\n``▶`` **Join Log:** {} \n``▶`` **Member Log:** {} \n``▶`` **Voice Log:** {} \n``▶`` **Report Log:** {}"\
@@ -262,7 +262,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 ),
                 "inline": True
             },
-            e.blank_field(True, 1),
+            #e.blank_field(True, 1),
             {
                 "name": "🔨 __**Punishments**__",
                 "value": "\n".join([
@@ -282,23 +282,23 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "value": "``▶`` None" if len(config.ignored_roles_automod) < 1 else "``▶`` {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
-            e.blank_field(True, 1),
             {
                 "name": "🔒 __**Ignored Channels (automod)**__",
                 "value": "``▶`` None" if len(config.ignored_channels_automod) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
+            e.blank_field(True, 1),
             {
                 "name": "🔒 __**Ignored Roles (logging)**__",
                 "value": "``▶`` None" if len(config.ignored_roles_log) < 1 else "``▶`` {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
-            e.blank_field(True, 1),
             {
                 "name": "🔒 __**Ignored Channels (logging)**__",
                 "value": "``▶`` None" if len(config.ignored_channels_log) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
+            e.blank_field(True, 1),
             e.dash_field(dash_length),
             {
                 "name": "🎭 __**Reaction Roles**__",
