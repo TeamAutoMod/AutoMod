@@ -25,7 +25,6 @@
     "clean_content_help": "Deletes up to 300 messages with the given content",
     "unban_help": "Unbans the specified user from the server",
     "slowmode_help": "Sets a slowmode in the current channel up to 14 days. Use 0 as the time argument to remove the slowmode or use no time argument to show a list of all bot-set slowmodes",
-    "nuke_help": "Deletes all messages that have been sent within the given past, with the given phrase and timeouts the authors for teh given time. Also does this process for the future, if given",
 
     "commands_help": "Shows a list of all custom commands in this guild",
     "addcom_help": "Creates a custom command with the given name and content. Add --del-invoke add the end of the content to have the invocation message deleted once the custom command is used",
@@ -138,13 +137,6 @@
     "mute_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
     "tempban_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
     "reported": "{emote} Reported **{user.name}#{user.discriminator}**'s message",
-    "nuked_past": "{emote} Deleted **{amount}** messages{plural} and timeouted **{timeouted}** users",
-    "nuked_future": "{emote} Deleted **{amount}** messages{plural}, timeouted **{timeouted}** users and will continue for another {future}",
-
-    "no_nuke": "{emote} No messages found to delete",
-    "max_past": "{emote} The maximum past length is 10 minutes",
-    "max_timeout": "{emote} The maximum timeout length is 1 day",
-    "max_future":"{emote} The maximum future length is 10 minutes",
 
     "name_too_long": "{emote} The command name is too long (>30 chars)",
     "content_too_long": "{emote} The command content is too long (>1900 chars)",

@@ -120,6 +120,5 @@ class MongoDB(Database):
         self.level = MongoCollection(bot, self, "level")
         self.slowmodes = MongoCollection(bot, self, "slowmodes")
         self.tbans = MongoCollection(bot, self, "tbans")
-        self.nukes = MongoCollection(bot, self, "nukes")
         
         log.info("📮 Database initialized")

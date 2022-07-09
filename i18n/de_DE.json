@@ -25,7 +25,6 @@
     "clean_content_help": "Löscht bis zu 300 Nachichten mit dem angegebenen Inhalt",
     "unban_help": "Entbannt den angegebenen User vom Server",
     "slowmode_help": "Setzt einen Slowmode von bis zu 14 Tagen in dem aktuellen Channel. Nutze 0 als das time argument um den Slowmode des aktuellen Channels zu löschen oder gar kein Argument, um alle aktuell Bot-verwalteten Slowmodes zu sehen",
-    "nuke_help": "Löscht alle Nachrichten mit dem angegebenen Wort innerhalb der angegebenen Zeit und timeouted die Nutzer für die angegebene Zeit. Führt diesen VOrgang auch für die, sofern angegebene, Zukunft aus",
 
     "commands_help": "Zeigt dies eine Liste aller aktuellen Custom Commands an",
     "addcom_help": "Erstellt einen neuen Custom Command mit dem gegebenen Namen und Inhalt. Um die Nachricht die den Command ausgeführt hat zu löschen, hänge --del-invoke ans Ende dieses Commands",
@@ -137,13 +136,6 @@
     "mute_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
     "tempban_extended": "{emote} Extended **{user.name}#{user.discriminator}**'s mute until {until}",
     "reported": "{emote} Reported **{user.name}#{user.discriminator}**'s message",
-    "nuked_past": "{emote} Deleted **{amount}** messages{plural} and timeouted **{timeouted}** users",
-    "nuked_future": "{emote} Deleted **{amount}** messages{plural}, timeouted **{timeouted}** users and will continue for another {future}",
-
-    "no_nuke": "{emote} No messages found to delete",
-    "max_past": "{emote} The maximum past length is 10 minutes",
-    "max_timeout": "{emote} The maximum timeout length is 1 day",
-    "max_future":"{emote} The maximum future length is 10 minutes",
 
     "name_too_long": "{emote} The command name is too long (>30 chars)",
     "content_too_long": "{emote} The command content is too long (>1900 chars)",

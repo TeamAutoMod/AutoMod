@@ -20,8 +20,7 @@
         "warns",
         "cases",
         "slowmodes",
-        "tbans",
-        "nukes"
+        "tbans"
     ],
     
     "langs": [
