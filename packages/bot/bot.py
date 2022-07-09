@@ -402,7 +402,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self
     ) -> int:
         try:
-            if self.web.wen_url_base != "":
+            if self.web.web_url_base != "":
                 r = requests.post(
                     f"{self.config.web_url_base}/pstats",
                     json={
