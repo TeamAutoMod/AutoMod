@@ -126,7 +126,7 @@ class ActionProcessor(object):
             action = list(rules.values())[-1]
             _from = list(rules.keys())[-2] if len(list(rules.keys())) > 1 else 0
             _to = list(rules.keys())[-1]
-            reason = f"[ Auto {_to} ] {reason}"
+            reason = f"{reason} (Escalation {_to})"
 
             log_kwargs.update(
                 {
