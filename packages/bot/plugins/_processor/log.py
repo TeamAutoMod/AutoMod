@@ -116,6 +116,16 @@ LOG_TYPES = {
         "action": "User manually unmuted"
     },
 
+    "automod": {
+        "color": 0x2b80b8
+    },
+    "filter": {
+        "color": 0x2b80b8
+    },
+    "regex": {
+        "color": 0x2b80b8
+    },
+
     "message_deleted": {
         "channel": "message_log",
     },
@@ -246,27 +256,82 @@ class LogProcessor(object):
             }
 
         config = Object(LOG_TYPES[log_type])
-        if log_kwargs.get("_embed") == None:
+        if log_kwargs.get("_embed", None) == None:
             log_embed = Embed(
                 None,
-                color=config.color
+                color=config.color,
+                description="{} **{}{}{}**".format(
+                    self.bot.emotes.get(config.emote),
+                    f"#{log_kwargs.get('case')} " if "case" in log_kwargs else "",
+                    config.action,
+                    f" ({log_kwargs.get('old_warns')} ➜ {log_kwargs.get('new_warns')})" if "old_warns" in log_kwargs else ""
+                )
             )
-            log_embed.description = "{} **{}{}:** {} ({}) \n\n{}".format(
-                self.bot.emotes.get(config.emote),
-                f"#{log_kwargs.get('case')} " if "case" in log_kwargs else "",
-                config.action,
-                f"<@{log_kwargs.get('user_id')}>",
-                log_kwargs.get("user_id"),
-                self.bot.locale.t(guild, config.key, _emote=config.emote, **log_kwargs)
-            )
+            log_embed.add_fields([
+                {
+                    "name": "User",
+                    "value": f"<@{log_kwargs.get('user_id')}> (``{log_kwargs.get('user_id')}``)",
+                    "inline": True
+                },
+                log_embed.blank_field(inline=True),
+                {
+                    "name": "Moderator",
+                    "value": f"<@{log_kwargs.get('mod_id')}> (``{log_kwargs.get('mod_id')}``)",
+                    "inline": True
+                }
+            ])
+            final_log_embed = self.resolve_kwargs(log_embed, **log_kwargs)
+
             fields = log_kwargs.get("extra_fields", [])
-            if len(fields) > 0: log_embed.add_fields(fields)
+            if len(fields) > 0: final_log_embed.add_fields(fields)
         else:
-            log_embed = log_kwargs.get("_embed")
+            final_log_embed = log_kwargs.get("_embed")
 
         self.bot.log_queue[guild.id][config.channel].append(
             {
-                "embed": log_embed,
+                "embed": final_log_embed,
                 "has_case": log_kwargs.get("case", False)
             }
         )
+
+
+    def resolve_kwargs(
+        self,
+        e: Embed,
+        **kwargs
+    ) -> Embed:
+        out = []
+        for k, v in {
+            x: y for x, y in kwargs.items() if y != None
+        }.items():
+            if k == "reason":
+                out.append(self.create_field("Reason", f"{v}"))
+            if k == "until":
+                out.append(self.create_field("Expiration", f"{v}"))
+            if k == "rule":
+                out.append(self.create_field("Automod Rule", f"{v}"))
+            elif k == "pattern" and v != "None":
+                out.append(self.create_field("Filter/Regex", f"{v}"))
+            if k == "found":
+                out.append(self.create_field("Found Matches", f"{v}"))
+            if k == "channel_id":
+                out.append(self.create_field("Channel", f"<#{v}> (``{v}``)"))
+            if k == "content":
+                out.append(self.create_field("Message", f"```\n{v[:2000]}\n```"))
+
+        e.add_fields(out)
+        return e
+
+
+    def create_field(
+        self,
+        name: str,
+        value: str,
+        inline: bool = False
+    ) -> dict:
+        return {
+            "name": name,
+            "value": value,
+            "inline": inline
+        }
+            

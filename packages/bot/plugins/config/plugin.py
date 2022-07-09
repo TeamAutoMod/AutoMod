@@ -247,7 +247,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": "⚔️ __**Automod Rules**__",
-                "value": "``▶`` **Max Mentions:** {} \n``▶`` **Max Newlines:** {} \n``▶`` **Max Emotes:** {} \n``▶`` **Max Repetitions:** {} \n``▶`` **Links:** {} \n``▶`` **Invites:** {} \n``▶`` **Bad Files:** {} \n``▶`` **Zalgo:** {} \n``▶`` **Spam:** {}"\
+                "value": "``▶`` **Max Mentions:** {} \n``▶`` **Max Newlines:** {} \n``▶`` **Max Emotes:** {} \n``▶`` **Max Repetitions:** {} \n``▶`` **Links:** {} \n``▶`` **Invites:** {} \n``▶`` **Bad Files:** {} \n``▶`` **Zalgo:** {}  \n``▶`` **CAPS:** {} \n``▶`` **Spam:** {}"\
                 .format(
                     "disabled" if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
                     "disabled" if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
@@ -257,6 +257,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     "disabled" if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
                     "disabled" if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
                     "disabled" if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
+                    "disabled" if not hasattr(rules, "caps") else f"{rules.caps.warns} warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "delete message",
                     "disabled" if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} warn{'' if config.antispam.warns == 1 else 's'})"
                 ),
                 "inline": True

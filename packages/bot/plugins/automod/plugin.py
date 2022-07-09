@@ -207,6 +207,9 @@ LOG_DATA = {
     },
     "antispam": {
         "rule": "Anti-Spam"
+    },
+    "caps": {
+        "rule": "Anti-CAPS"
     }
 }
 
@@ -265,6 +268,13 @@ AUTOMOD_RULES = {
         "int_field_name": "warns",
         "i18n_key": "set_zalgo",
         "i18n_type": "zalgo filtering",
+        "field_name": "warn",
+        "field_help": "warns"
+    },
+    "caps": {
+        "int_field_name": "warns",
+        "i18n_key": "set_caps",
+        "i18n_type": "CAPS filtering",
         "field_name": "warn",
         "field_help": "warns"
     }
@@ -439,6 +449,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         else:
             self.bot.ignore_for_events.append(msg.id)
         finally:
+            data = Object(LOG_DATA[rule])
             if warns > 0:
                 await self.action_processor.execute(
                     msg, 
@@ -447,25 +458,14 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     warns, 
                     reason,
                     **{
-                        "extra_fields": [
-                            {
-                                "name": "Channel",
-                                "value": f"{msg.channel.mention} ({msg.channel.id})",
-                                "inline": False
-                            },
-                            {
-                                "name": "Content",
-                                "value": "```\n{}\n```".format(
-                                    msg.content[:1023]
-                                ),
-                                "inline": False
-                            }
-                        ]
+                        "rule": data.rule if rule not in ["filter", "regex"] else None,
+                        "pattern": f"{pattern_or_filter}",
+                        "found": found,
+                        "channel_id": msg.channel.id,
+                        "content": msg.content,
                     }
                 )
             else:
-                data = Object(LOG_DATA[rule])
-
                 self.dm_processor.execute(
                     msg,
                     "automod_rule_triggered",
@@ -485,15 +485,11 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                             "found": found,
                             "user_id": msg.author.id,
                             "user": msg.author,
-                            "channel": msg.channel.mention,
-                            "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, reason),
-                            "extra_fields": [{
-                                "name": "Content",
-                                "value": "```\n{}\n```".format(
-                                    msg.content[:1023]
-                                ),
-                                "inline": False
-                            }]
+                            "mod": msg.guild.me,
+                            "mod_id": msg.guild.me.id,
+                            "channel_id": msg.channel.id,
+                            "content": msg.content,
+                            "case": self.action_processor.new_case("automod", msg, msg.guild.me, msg.author, f"{reason}, automated by AutoMod")
                         }
                     )
                 else:
@@ -505,15 +501,11 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                             "found": found,
                             "user_id": msg.author.id,
                             "user": msg.author,
-                            "channel": msg.channel.mention,
-                            "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, reason),
-                            "extra_fields": [{
-                                "name": "Content",
-                                "value": "```\n{}\n```".format(
-                                    msg.content[:1023]
-                                ),
-                                "inline": False
-                            }]
+                            "mod": msg.guild.me,
+                            "mod_id": msg.guild.me.id,
+                            "channel_id": msg.channel.id,
+                            "content": msg.content,
+                            "case": self.action_processor.new_case(rule, msg, msg.guild.me, msg.author, f"{reason}, automated by AutoMod")
                         }
                     )
 
@@ -565,10 +557,10 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                         if found:
                             return await self.delete_msg(
                                 "filter",
-                                ", ".join(found),
+                                ", ".join([f"``{x}``" for x in found]),
                                 msg, 
                                 int(f["warns"]), 
-                                f"Triggered filter '{name}' with '{', '.join(found)}'",
+                                f"Triggered word filter",
                                 name
                             )
         
@@ -581,10 +573,10 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                         if found:
                             return await self.delete_msg(
                                 "regex",
-                                ", ".join(found),
+                                ", ".join([f"``{x}``" for x in found]),
                                 msg, 
                                 int(data["warns"]), 
-                                f"Triggered regex '{name}' with '{', '.join(found)}'",
+                                f"Triggered regex filter",
                                 name
                             )
         
@@ -604,7 +596,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     except discord.NotFound:
                         return await self.delete_msg(
                             "invites",
-                            inv,
+                            f"``{inv}``",
                             msg, 
                             rules.invites.warns, 
                             f"Advertising ({inv})"
@@ -612,7 +604,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     if invite.guild == None:
                         return await self.delete_msg(
                             "invites",
-                            inv,
+                            f"``{inv}``",
                             msg, 
                             rules.invites.warns, 
                             f"Advertising ({inv})"
@@ -625,7 +617,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                             ):
                                 return await self.delete_msg(
                                     "invites",
-                                    inv,
+                                    f"``{inv}``",
                                     msg, 
                                     rules.invites.warns, 
                                     f"Advertising ({inv})"
@@ -639,7 +631,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     if url.hostname in config.black_listed_links:
                         return await self.delete_msg(
                             "links_blacklist", 
-                            url.hostname,
+                            f"``{url.hostname}``",
                             msg, 
                             rules.links.warns, 
                             f"Forbidden link ({url.hostname})"
@@ -648,7 +640,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                         if not url.hostname in config.white_listed_links:
                             return await self.delete_msg(
                                 "links", 
-                                url.hostname,
+                                f"``{url.hostname}``",
                                 msg, 
                                 rules.links.warns, 
                                 f"Forbidden link ({url.hostname})"
@@ -666,7 +658,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                 if len(forbidden) > 0:
                     return await self.delete_msg(
                         "files", 
-                        ", ".join(forbidden), 
+                        ", ".join([f"``{x}``" for x in forbidden]), 
                         msg, 
                         rules.files.warns, 
                         f"Forbidden attachment type ({', '.join(forbidden)})"
@@ -677,7 +669,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             if found:
                 return await self.delete_msg(
                     "zalgo", 
-                    found, 
+                    f"``{found.group()}``", 
                     msg, 
                     rules.zalgo.warns, 
                     f"Zalgo found"
@@ -688,7 +680,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             if found > rules.mentions.threshold:
                 return await self.delete_msg(
                     "mentions", 
-                    found, 
+                    f"``{found}``", 
                     msg, 
                     0 if (found - rules.mentions.threshold) == 1 else 1, 
                     f"Spamming mentions ({found})"
@@ -699,7 +691,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             if found > rules.lines.threshold:
                 return await self.delete_msg(
                     "lines", 
-                    found, 
+                    f"``{found}``", 
                     msg, 
                     0 if (found - rules.lines.threshold) == 1 else 1, 
                     f"Message has too many line splits ({found})"
@@ -710,7 +702,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             if found > rules.emotes.threshold:
                 return await self.delete_msg(
                     "emotes", 
-                    found, 
+                    f"``{found}``", 
                     msg, 
                     0 if (found - rules.emotes.threshold) == 1 else 1, 
                     f"Spamming emotes ({found})"
@@ -727,11 +719,23 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     if v > rules.repeat.threshold:
                         return await self.delete_msg(
                             "repeat", 
-                            f"{k} ({v}x)", 
+                            f"``{k} ({v}x)``", 
                             msg, 
                             0 if (v - rules.repeat.threshold) == 1 else 1, 
                             f"Duplicated text"
                         )
+        
+        if hasattr(rules, "caps"):
+            if len(content) > 10:
+                perc_caps = round(((len([x for x in content if x.isupper()]) / len(content)) * 100))
+                if perc_caps >= 75:
+                    return await self.delete_msg(
+                        "caps", 
+                        f"``{perc_caps}% in {len(content)} chars``", 
+                        msg, 
+                        rules.caps.warns, 
+                        f"Excessive use of CAPS"
+                    )
 
 
     @AutoModPluginBlueprint.listener()
@@ -799,7 +803,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             )
             e.add_field(
                 name="📝 __**Valid rules**__",
-                value="``▶`` mentions \n``▶`` links \n``▶`` invites \n``▶`` files \n``▶`` zalgo \n``▶`` lines \n``▶`` emotes \n``▶`` repeat"
+                value="``▶`` mentions \n``▶`` links \n``▶`` invites \n``▶`` files \n``▶`` zalgo \n``▶`` lines \n``▶`` emotes \n``▶`` repeat \n``▶`` caps"
             )
             return await ctx.send(embed=e)
         

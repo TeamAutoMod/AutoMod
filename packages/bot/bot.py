@@ -402,13 +402,16 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self
     ) -> int:
         try:
-            r = requests.post(
-                f"{self.config.web_url_base}/pstats",
-                json={
-                    "guilds": len(self.guilds),
-                    "users": sum([x.member_count for x in self.guilds])
-                }
-            )
+            if self.web.wen_url_base != "":
+                r = requests.post(
+                    f"{self.config.web_url_base}/pstats",
+                    json={
+                        "guilds": len(self.guilds),
+                        "users": sum([x.member_count for x in self.guilds])
+                    }
+                )
+            else:
+                return 0
         except Exception:
             return 0
         else:

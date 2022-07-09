@@ -72,7 +72,8 @@ class ModerationPlugin(WarnPlugin):
                                 "user": t,
                                 "user_id": int(mute["id"].split("-")[1]),
                                 "mod": guild.get_member(self.bot.user.id),
-                                "mod_id": self.bot.user.id
+                                "mod_id": self.bot.user.id,
+                                "reason": "Mute expired, automated by AutoMod"
                             })
                         self.db.mutes.delete(mute["id"])
 
@@ -98,7 +99,7 @@ class ModerationPlugin(WarnPlugin):
                                 t = "Unknown#0000"
                             else:
                                 try:
-                                    await guild.unban(user=t, reason="[ Auto ] Tempban expired")
+                                    await guild.unban(user=t, reason="Tempban expired, automated by AutoMod")
                                 except Exception:
                                     pass
                                 else:
@@ -108,7 +109,8 @@ class ModerationPlugin(WarnPlugin):
                                 "user": t,
                                 "user_id": int(ban["id"].split("-")[1]),
                                 "mod": guild.get_member(self.bot.user.id),
-                                "mod_id": self.bot.user.id
+                                "mod_id": self.bot.user.id,
+                                "reason": "Tempban expired, automated by AutoMod"
                             })
                         self.db.tbans.delete(ban["id"])
     
@@ -215,6 +217,7 @@ class ModerationPlugin(WarnPlugin):
                 "mod": ctx.author,
                 "mod_id": ctx.author.id,
                 "reason": reason,
+                "channel_id": ctx.channel.id,
                 "case": self.action_processor.new_case(action, ctx.message, ctx.author, user, reason)
             })
             await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES", user=user))
@@ -294,6 +297,7 @@ class ModerationPlugin(WarnPlugin):
                     "mod": ctx.author,
                     "mod_id": ctx.author.id,
                     "reason": reason,
+                    "channel_id": ctx.channel.id,
                     "case": self.action_processor.new_case("unban", ctx.message, ctx.author, user, reason)
                 })
 
@@ -409,6 +413,7 @@ class ModerationPlugin(WarnPlugin):
                         "user_id": user.id,
                         "until": f"<t:{round(until.timestamp())}>",
                         "reason": reason,
+                        "channel_id": ctx.channel.id,
                         "case": self.action_processor.new_case("tempban extended", ctx.message, ctx.author, user, reason, until=until)
                     })
                     return
@@ -469,6 +474,7 @@ class ModerationPlugin(WarnPlugin):
                             "user": user,
                             "user_id": user.id,
                             "until": f"<t:{round(until.timestamp())}>",
+                            "channel_id": ctx.channel.id,
                             "case": self.action_processor.new_case("tempban", ctx.message, ctx.author, user, reason, until=until),
                             "reason": reason
                         }) 
@@ -557,8 +563,9 @@ class ModerationPlugin(WarnPlugin):
                     "mod_id": ctx.author.id,
                     "user": user,
                     "user_id": user.id,
-                    "until": f"<t:{round(until.timestamp())}>",
                     "reason": reason,
+                    "until": f"<t:{round(until.timestamp())}>",
+                    "channel_id": ctx.channel.id,
                     "case": self.action_processor.new_case("mute extended", ctx.message, ctx.author, user, reason, until=until)
                 })
                 self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
@@ -614,9 +621,10 @@ class ModerationPlugin(WarnPlugin):
                         "mod_id": ctx.author.id,
                         "user": user,
                         "user_id": user.id,
+                        "reason": reason,
                         "until": f"<t:{round(until.timestamp())}>",
-                        "case": self.action_processor.new_case("mute", ctx.message, ctx.author, user, reason, until=until),
-                        "reason": reason
+                        "channel_id": ctx.channel.id,
+                        "case": self.action_processor.new_case("mute", ctx.message, ctx.author, user, reason, until=until)
                     }) 
 
                     await ctx.send(self.locale.t(ctx.guild, "muted", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"))
@@ -655,6 +663,7 @@ class ModerationPlugin(WarnPlugin):
                 "mod_id": ctx.author.id,
                 "user": user,
                 "user_id": user.id,
+                "channel_id": ctx.channel.id,
                 "case": self.action_processor.new_case("unmute", ctx.message, ctx.author, user, "Manual unmute")
             }) 
 

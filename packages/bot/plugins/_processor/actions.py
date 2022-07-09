@@ -83,6 +83,7 @@ class ActionProcessor(object):
             raw_reason = "Used one or more filtered words"
         else:
             raw_reason = reason
+
         log_kwargs = {
             "mod": mod,
             "mod_id": mod.id,
@@ -92,12 +93,17 @@ class ActionProcessor(object):
             "raw_reason": raw_reason,
             **special_log_kwargs
         }
+        if not "channel_id" in log_kwargs:
+            log_kwargs.update({
+                "channel_id": msg.channel.id
+            })
+
         warn_id = f"{msg.guild.id}-{user.id}"
 
         if mod.id == self.bot.user.id: 
             log_kwargs.update(
                 {
-                    "reason": f"[ Auto ] {reason}"
+                    "reason": f"{reason}, automated by AutoMod"
                 }
             )
 

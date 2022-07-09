@@ -148,6 +148,7 @@ class WarnPlugin(AutoModPluginBlueprint):
                     "reason": reason,
                     "old_warns": cur,
                     "new_warns": new,
+                    "channel_id": ctx.channel.id,
                     "case": self.action_processor.new_case("unwarn", ctx.message, ctx.author, user, reason, warns_added=warns)
                 })
                 await ctx.send(self.locale.t(ctx.guild, "unwarned", _emote="YES", user=user))

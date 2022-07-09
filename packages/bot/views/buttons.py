@@ -10,7 +10,7 @@ class ConfirmBtn(Button):
         self, 
         bot
     ) -> None:
-        super().__init__(style=discord.ButtonStyle.grey, label="Confirm", emoji=bot.emotes.get("YES"))
+        super().__init__(style=discord.ButtonStyle.green, label="Confirm", emoji=bot.emotes.get("YES"))
     
 
     async def callback(
@@ -28,7 +28,7 @@ class CancelBtn(Button):
         self, 
         bot
     ) -> None:
-        super().__init__(style=discord.ButtonStyle.grey, label="Cancel", emoji=bot.emotes.get("NO"))
+        super().__init__(style=discord.ButtonStyle.red, label="Cancel", emoji=bot.emotes.get("NO"))
     
 
     async def callback(
