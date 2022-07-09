@@ -119,8 +119,12 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         -reaction_roles
         """
         if ctx.invoked_subcommand is None:
-            rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
-            rrs = {k: v for k, v in rrs.items() if self.bot.get_channel(int(v['channel'])) != None}
+            rrs = {
+                k: v for k, v in self.db.configs.get(
+                    ctx.guild.id, 
+                    "reaction_roles"
+                ).items() if self.bot.get_channel(int(v['channel'])) != None
+            }
             if len(rrs) < 1:
                 return await ctx.send(self.locale.t(ctx.guild, "no_rr", _emote="NO"))
             else:
