@@ -287,7 +287,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "value": "``▶`` None" if len(config.ignored_channels_automod) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
-            e.blank_field(True, 1),
+            e.dash_field(dash_length),
             {
                 "name": "🔒 __**Ignored Roles (logging)**__",
                 "value": "``▶`` None" if len(config.ignored_roles_log) < 1 else "``▶`` {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
@@ -298,7 +298,6 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "value": "``▶`` None" if len(config.ignored_channels_log) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
-            e.blank_field(True, 1),
             e.dash_field(dash_length),
             {
                 "name": "🎭 __**Reaction Roles**__",
