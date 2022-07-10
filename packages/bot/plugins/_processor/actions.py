@@ -79,8 +79,6 @@ class ActionProcessor(object):
     ) -> None:
         if "(" in reason:
             raw_reason = reason.split("(")[0]
-        elif "Triggered filter" in reason or "Triggered regex" in reason:
-            raw_reason = "Used one or more filtered words"
         else:
             raw_reason = reason
 

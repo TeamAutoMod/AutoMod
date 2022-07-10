@@ -560,7 +560,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                                 ", ".join([f"``{x}``" for x in found]),
                                 msg, 
                                 int(f["warns"]), 
-                                f"Triggered word filter",
+                                f"Blacklisted spam",
                                 name
                             )
         
@@ -576,7 +576,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                                 ", ".join([f"``{x}``" for x in found]),
                                 msg, 
                                 int(data["warns"]), 
-                                f"Triggered regex filter",
+                                f"Blacklisted spam",
                                 name
                             )
         
