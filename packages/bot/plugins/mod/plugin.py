@@ -434,21 +434,23 @@ class ModerationPlugin(WarnPlugin):
                         await i.response.edit_message(embed=e, view=None)
 
                     async def timeout():
-                        if message is not None:
-                            e = Embed(
-                                ctx,
-                                description=self.locale.t(ctx.guild, "aborting")
-                            )
-                            await message.edit(embed=e, view=None)
+                        e = Embed(
+                            ctx,
+                            description=self.locale.t(ctx.guild, "aborting")
+                        )
+                        try:
+                            await ctx.followup.send(embed=e, view=None)
+                        except Exception:
+                            pass
 
                     def check(i):
-                        return i.user.id == ctx.user.id and i.message.id == message.id
+                        return i.user.id == ctx.user.id
 
                     e = Embed(
                         ctx,
                         description=self.locale.t(ctx.guild, "already_tempbanned_description")
                     )
-                    message = await ctx.response.send_message(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
+                    await ctx.response.send_message(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
                 else:
                     seconds = length.to_seconds(ctx)
                     if seconds >= 1:
