@@ -1075,16 +1075,15 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         examples:
         -link_whitelist
         """
-        if ctx.invoked_subcommand == None:
-            links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-            if len(links) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"))
-            
-            e = Embed(
-                ctx,
-                title="Allowed links",
-                description="> {}".format(", ".join(links))
-            )
-            await ctx.response.send_message(embed=e)
+        links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
+        if len(links) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"))
+        
+        e = Embed(
+            ctx,
+            title="Allowed links",
+            description="> {}".format(", ".join(links))
+        )
+        await ctx.response.send_message(embed=e)
 
 
     @link_whitelist.command(
@@ -1800,6 +1799,183 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         ])
 
         await ctx.response.send_message(embed=e)
+
+    
+    anti_raid = discord.app_commands.Group(
+        name="antiraid",
+        description="Configure anti-raid settings"
+    )
+    @anti_raid.command(
+        name="show",
+        description="Shows the current anti-raid settings"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def antiraid_show(
+        self,
+        ctx: discord.Interaction
+    ) -> None:
+        """
+        anti_raid_show
+        examples:
+        -antiraid show
+        """
+        cfg = Object(self.db.configs.get(ctx.guild.id, "raid_config"))
+
+        e = Embed(
+            ctx,
+            title="Anti-Raid"
+        )
+        e.add_field(
+            name="📝 __**Status**__",
+            value="Disabled" if cfg.enabled == False else "Enabled",
+            inline=False
+        )
+
+        if cfg.enabled == True:
+            e.add_fields([
+                {
+                    "name": "⚙️ __**General**__",
+                    "value": "``▶`` Score limit: **{}** \n``▶`` Action: **{}** \n``▶`` Reset after: **{}** \n``▶`` Current score: **{}**".format(
+                        cfg.score_limit,
+                        cfg.action,
+                        " ".join(cfg.reset_after.split(" ")[1:]),
+                        self.score_cache[ctx.guild.id].get("score")
+                    ),
+                    "inline": True
+                },
+                {
+                    "name": "🛡️ __**Rules**__",
+                    "value": " ``▶`` Default: **{}** \n``▶`` No avatar: **{}** \n``▶`` Account age: **{}** \n``▶`` Join row: **{}**".format(
+                        cfg.default,
+                        cfg.no_avatar,
+                        cfg.account_age,
+                        cfg.join_row
+                    ),
+                    "inline": True
+                },
+                {
+                    "name": "🔦 __**Bypass**__",
+                    "value": "``▶`` Age bypass: **{}** \n``▶`` Badge bypass: **{}**".format(
+                        {v: k for k, v in BYPASS_TO_SECONDS.items()}.get(cfg.age_bypass),
+                        "yes" if cfg.badge_bypass == "True" else "no"
+                    ),
+                    "inline": True
+                }
+            ])
+    
+        await ctx.response.send_message(embed=e)
+
+
+    @anti_raid.command(
+        name="set",
+        description="Configure anti-raid settings"
+    )
+    @discord.app_commands.describe(
+        score_limit="The amount of points at which the action will trigger",
+        default="The default amount of points users get when joining",
+        action="The action that should be taken upon violation",
+        reset_after="After what amount of time the score should be reset to 0 (e.g. 10m, 2h, 10h)",
+        no_avatar="The amount of points users should receive when having the default Discord avatar",
+        account_age="The amount of points users should receive when having a new account (< 2 weeks)",
+        join_row="The amount of points users should receive when joining instantly after the last user",
+        age_bypass="If users have this account age, they will be ignored for points",
+        badge_bypass="If set to 'True', users will be ignored for points when having one or more badges"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def antiraid_set(
+        self,
+        ctx: discord.Interaction,
+        score_limit: discord.app_commands.Range[
+            int, 
+            10, 
+            500
+        ],
+        default: discord.app_commands.Range[
+            int, 
+            0, 
+            25
+        ],
+        action: Literal[
+            "kick",
+            "ban"
+        ],
+        reset_after: str,
+        no_avatar: discord.app_commands.Range[
+            int, 
+            1, 
+            25
+        ] = 0,
+        account_age: discord.app_commands.Range[
+            int, 
+            1, 
+            25
+        ] = 0,
+        join_row: discord.app_commands.Range[
+            int, 
+            1, 
+            25
+        ] = 0,
+        age_bypass: Literal[
+            "1 Month",
+            "3 Months",
+            "6 Months",
+            "1 Year"
+        ] = None,
+        badge_bypass: Literal[
+            "True",
+            "False"
+        ] = "False"
+    ) -> None:
+        """
+        anti_raid_set
+        examples:
+        -antiraid set 
+        """
+        try:
+            reset_after = await Duration().convert(ctx, reset_after)
+        except Exception as ex:
+            return self.error(ctx, ex)
+
+        old_config = self.db.configs.get(ctx.guild.id, "raid_config")
+        data = {
+            "enabled": True,
+            "score_limit": score_limit,
+            "default": default,
+            "action": action,
+            "reset_after": f"{reset_after.to_seconds(ctx)} {str(reset_after)}",
+            "no_avatar": no_avatar,
+            "account_age": account_age,
+            "join_row": join_row,
+            "age_bypass": BYPASS_TO_SECONDS.get(age_bypass, None),
+            "badge_bypass": badge_bypass
+        }
+
+        self.db.configs.update(ctx.guild.id, "raid_config", old_config | data)
+        await ctx.response.send_message(self.locale.t(ctx.guild, "set_raid", _emote="YES"))
+
+
+    @anti_raid.command(
+        name="disable",
+        description="Disables the anti-raid system"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def antiraid_disable(
+        self,
+        ctx: discord.Interaction
+    ) -> None:
+        """
+        anti_raid_disable
+        examples:
+        -antiraid disable 
+        """
+        cfg = self.db.configs.get(ctx.guild.id, "raid_config")
+        cfg.update({
+            "enabled": False
+        })
+
+        self.db.configs.update(ctx.guild.id, "raid_config", cfg)
+        await ctx.response.send_message(self.locale.t(ctx.guild, "disabled_raid", _emote="YES"))
+
 
 
 async def setup(
