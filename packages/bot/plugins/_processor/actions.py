@@ -33,8 +33,8 @@ class ActionProcessor(object):
         self, 
         _type: str, 
         msg: Union[
-            discord.Member, 
-            discord.User
+            discord.Message, 
+            discord.Interaction
         ], 
         mod: discord.Member, 
         user: Union[

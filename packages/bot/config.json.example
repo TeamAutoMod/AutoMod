@@ -9,6 +9,7 @@
     "token": "",
     "sentry_dsn": "",
     "top_gg_token": "",
+    "discords_token": "",
     "support_invite": "https://discord.gg/S9BEBux",
     "web_url_base": "http://localhost:3001",
 
