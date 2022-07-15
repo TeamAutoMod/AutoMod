@@ -766,6 +766,9 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
                 return await ctx.response.send_message(embed=e)
             else:
+                if role.position >= ctx.guild.me.top_role.position: 
+                    return await ctx.response.send_message(self.locale.t(ctx.guild, "role_too_high", _emote="NO"))
+
                 self.db.configs.update(ctx.guild.id, "join_role", f"{role.id}")
                 await ctx.response.send_message(self.locale.t(ctx.guild, "join_role_on", _emote="YES", role=role.name))
 

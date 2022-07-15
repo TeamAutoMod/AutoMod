@@ -154,7 +154,7 @@
     "min_am_amount": "{emote} Too little {field} amount (<5)",
     "max_am_amount": "{emote} Too big {field} amount (>100)",
 
-    "role_too_high": "{emote} Mute role is above my highest role. Please put it below my highest role, so I can add it to users",
+    "role_too_high": "{emote} This role is above my highest role. Please put it below my highest role, so I can add it to users",
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
     "already_tempbanned_description": "User is already tempbanned. Do you want to extend their tempban?",
 
