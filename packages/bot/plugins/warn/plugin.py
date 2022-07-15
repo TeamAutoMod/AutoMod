@@ -75,15 +75,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
-        if warns == None:
-            warns = 1
-        else:
-            try:
-                warns = int(warns)
-            except ValueError:
-                reason = " ".join(ctx.message.content.split(" ")[2:])
-                warns = 1
-        
+        if warns == None: warns = 1
         if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
         if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
@@ -120,15 +112,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
-        if warns == None:
-            warns = 1
-        else:
-            try:
-                warns = int(warns)
-            except ValueError:
-                reason = " ".join(ctx.message.content.split(" ")[2:])
-                warns = 1
-
+        if warns == None: warns = 1
         if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
         if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 

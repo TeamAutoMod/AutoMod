@@ -33,7 +33,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         data = {
             name: {
                 "content": content,
-                "author": ctx.author.id,
+                "author": ctx.user.id,
                 "del_invoke": del_invoke
             }
         }
@@ -66,7 +66,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         })
         self.db.tags.multi_update(f"{ctx.guild.id}-{name}", {
             "content": content,
-            "editor": f"{ctx.author.id}",
+            "editor": f"{ctx.user.id}",
             "edited": datetime.datetime.now(),
             "del_invoke": del_invoke
         })

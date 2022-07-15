@@ -1,11 +1,11 @@
-from discord.ext import commands
+import discord
 
 import datetime
 
 
 
 def Tag(
-    ctx: commands, 
+    ctx: discord.Interaction, 
     name: str, 
     content: str,
     del_invoke: bool
@@ -18,7 +18,7 @@ def Tag(
         "content": content,
         "del_invoke": del_invoke,
 
-        "author": f"{ctx.author.id}",
+        "author": f"{ctx.user.id}",
         "editor": None,
 
         "created": datetime.datetime.utcnow(),
