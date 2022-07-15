@@ -604,15 +604,17 @@ class ModerationPlugin(WarnPlugin):
                     await i.response.edit_message(embed=e, view=None)
 
                 async def timeout():
-                    if message is not None:
-                        e = Embed(
-                            ctx,
-                            description=self.locale.t(ctx.guild, "aborting")
-                        )
-                        await message.edit(embed=e, view=None)
+                    e = Embed(
+                        ctx,
+                        description=self.locale.t(ctx.guild, "aborting")
+                    )
+                    try:
+                        await ctx.followup.send(embed=e, view=None)
+                    except Exception:
+                        pass
 
                 def check(i):
-                    return i.user.id == ctx.user.id and i.message.id == message.id
+                    return i.user.id == ctx.user.id
 
                 e = Embed(
                     ctx,
