@@ -93,7 +93,7 @@ class Duration(commands.Converter):
             None
         ]
     ) -> Union[
-        str, 
+        DurationHolder, 
         Exception
     ]:
         match = re.compile(r"^(\d+)").match(argument)

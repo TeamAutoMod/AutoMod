@@ -1,13 +1,17 @@
+from cmath import atan
+from ntpath import join
 import discord
 from discord.ext import commands
 
 import re
 import itertools
-from typing import Union
+from typing import ContextManager, Union
 from toolbox import S as Object
 from urllib.parse import urlparse
 from typing import TypeVar, Literal, List
-import logging; log = logging.getLogger()
+import logging
+
+from packages.bot.types.duration import Duration; log = logging.getLogger()
 from typing import Union, Tuple
 import inspect
 
@@ -282,6 +286,14 @@ AUTOMOD_RULES = {
 }
 
 
+BYPASS_TO_SECONDS = {
+    "1 Month": 2678400,
+    "3 Months": 8035200,
+    "6 Moths": 16070400,
+    "1 Year": 32140800
+}
+
+
 CHANNEL_OR_ROLE_T = TypeVar("CHANNEL_OR_ROLE_T", discord.Role, discord.TextChannel)
 
 
@@ -296,6 +308,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         self.log_processor = LogProcessor(bot)
         self.dm_processor = DMProcessor(bot)
         self.spam_cache = {}
+        self.score_cache = {}
 
 
     def can_act(

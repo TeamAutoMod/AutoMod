@@ -173,7 +173,7 @@
 
     "invalid_log_option_desc": "{emote} ``{given}`` isn't a valid log option",
     "log_off": "{emote} Disabled **{_type}**",
-    "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **off** as the second argument",
+    "invalid_log_channel": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid channel or **True** in the disable parameter as the second argument",
     "log_on": "{emote} Enabled **{_type}** and will send them to {channel}",
 
     "mod_role_off": "{emote} Removed the mod role",
@@ -235,6 +235,9 @@
     "no_filter": "{emote} A filter with that name doesn't exist",
     "removed_filter": "{emote} Filter has been deleted",
     "edited_filter": "{emote} Filter has been edited",
+
+    "set_raid": "{emote} Anti-Raid settings have been saved",
+    "disabled_raid": "{emote} Anti-Raid system has been disabled",
 
     "searching": "{emote} Looking for recent cases, this may take a bit...",
     "no_cases": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria",

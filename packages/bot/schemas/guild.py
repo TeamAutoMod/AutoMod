@@ -49,6 +49,9 @@ def GuildConfig(
             "per": 0,
             "warns": 0,
         },
+        "raid_config": {
+            "enabled": True
+        },
         
         "reaction_roles": {},
 

@@ -10,7 +10,7 @@ import psutil
 import datetime
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed, DiscordUser
+from ...types import Embed
 from ...views import DeleteView
 
 
@@ -145,7 +145,7 @@ class AdminPlugin(AutoModPluginBlueprint):
     async def mutuals(
         self,
         ctx: commands.Context,
-        user: DiscordUser
+        user_id: str
     ) -> None:
         """
         mutuals_help
@@ -153,7 +153,7 @@ class AdminPlugin(AutoModPluginBlueprint):
         -mutuals paul#0009
         -mutuals 543056846601191508
         """
-        guilds = [x for x in self.bot.guilds if x.get_member(user.id) != None]
+        guilds = [x for x in self.bot.guilds if x.get_member(int(user_id)) != None]
         e = Embed(
             None,
             description="```\n{}\n```".format(

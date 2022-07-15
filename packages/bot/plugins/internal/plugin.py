@@ -611,21 +611,30 @@ class InternalPlugin(AutoModPluginBlueprint):
                 a.name,
                 b.name
             )
-        if b.permissions != a.permissions:
-            new = "Permissions"
-            if len(change) < 1:
-                change += new
-            else:
-                change += f" & {new}"
+
         if b.color != a.color:
             new = "Color (``{}`` → ``{}``)".format(
                 b.color,
                 a.color
             )
-            if len(change) < 1:
-                change += new
-            else:
-                change += f" & {new}"
+            if len(change) < 1: change += new
+            else: change += f" & {new}"
+        
+        if b.hoist != a.hoist:
+            if b.hoist == False and a.hoist == True:
+                new = "Hoisted"
+            elif b.hoist == True and a.hoist == False:
+                new = "Unhoisted"
+            if len(change) < 1: change += new
+            else: change += f" & {new}"
+        
+        if b.mentionable != a.mentionable:
+            if b.mentionable == False and a.mentionable == True:
+                new = "Mentionable"
+            elif b.mentionable == True and a.mentionable == False:
+                new = "Unmentionable"
+            if len(change) < 1: change += new
+            else: change += f" & {new}"
         
         if len(change) < 1: return
 
@@ -712,6 +721,16 @@ class InternalPlugin(AutoModPluginBlueprint):
                         b.slowmode_delay,
                         a.slowmode_delay
                     )
+                
+        
+        if hasattr(b, "nsfw") and hasattr(a, "nsfw"):
+            if b.nsfw != a.nsfw:
+                if b.nsfw == False and a.nsfw == True:
+                    new = "NSFW enabled"
+                elif b.nsfw == True and a.nsfw == False:
+                    new = "NSFW disabled"
+                if len(change) < 1: change += new
+                else: change += f" & {new}"
         
         if len(change) < 1: return
 

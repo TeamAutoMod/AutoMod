@@ -324,7 +324,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                         commands.Command,
                                         commands.GroupMixin
                                     )
-                                ) else f"/{cmd.qualified_name} {' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if isinstance(cmd, discord.app_commands.AppCommand) else ''} {' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if isinstance(cmd, discord.app_commands.AppCommand) else ''}"
+                                ) else f"/{cmd.qualified_name} {' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''} {' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}"
                             ),
                             value="``▶`` {}".format(
                                 self.bot.locale.t(i.guild, cmd.help.split('\nexamples:')[0]) if isinstance(
