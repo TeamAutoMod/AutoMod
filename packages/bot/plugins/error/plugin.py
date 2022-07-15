@@ -14,7 +14,11 @@ T = TypeVar("T")
 
 
 class PostParseError(commands.BadArgument):
-    def __init__(self, type: T, error: Exception) -> None:
+    def __init__(
+        self, 
+        type: T, 
+        error: Exception
+    ) -> None:
         super().__init__(None)
         self.type = type
         self.error = error
@@ -22,12 +26,19 @@ class PostParseError(commands.BadArgument):
 
 class ErrorPlugin(AutoModPluginBlueprint):
     """Plugin to handle command/event errors"""
-    def __init__(self, bot: ShardedBotInstance) -> None:
+    def __init__(
+        self, 
+        bot: ShardedBotInstance
+    ) -> None:
         super().__init__(bot)
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_command_error(self, ctx: commands.Context, error: Exception) -> None:
+    async def on_command_error(
+        self, 
+        ctx: discord.Interaction, 
+        error: T
+    ) -> None:
         if isinstance(error, commands.CommandNotFound):
             return
         
@@ -45,7 +56,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
                 ctx,
                 description=self.locale.t(ctx.guild, "missing_user_perms", _emote="LOCK", perms=perms)
             )
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
         
         elif isinstance(error, commands.BotMissingPermissions):
             perms = ", ".join([f"``{x}``" for x in error.missing_permissions])
@@ -53,7 +64,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
                 ctx,
                 description=self.locale.t(ctx.guild, "missing_bot_perms", _emote="LOCK", perms=perms)
             )
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
         
         elif isinstance(error, commands.CheckFailure):
             if len(ctx.command.checks) < 1:
@@ -61,7 +72,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
                     ctx,
                     description=self.locale.t(ctx.guild, "check_fail", _emote="LOCK")
                 )
-                await ctx.send(embed=e)
+                await ctx.response.send_message(embed=e)
             else:
                 await ctx.command.checks[0](ctx) # this raises a 'commands.MissingPermissions'
         
@@ -76,30 +87,27 @@ class ErrorPlugin(AutoModPluginBlueprint):
                     plural="" if round(error.retry_after) == 1 else "s"
                 )
             )
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
         
         elif isinstance(error.__cause__, discord.Forbidden):
             e = Embed(
                 ctx,
                 description=self.locale.t(ctx.guild, "forbidden", _emote="NO", exc=error)
             )
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs) - 1, len(ctx.command.params)) - 1]
+            param = list(ctx.command._params.values())[min(len(ctx.data["options"]), len(ctx.command._params)) - 1]
             usage = f"""{
-                self.get_prefix(ctx.guild)
+                "/"
             }{
                 ctx.command.qualified_name
             } {
-                ctx.command.signature.replace(
-                    '...', 
-                    ''
-                ).replace(
-                    '=None', ''
-                ).replace(
-                    '<name> <content>', 
-                    '<name> <content> [--del-invoke]'
+                " ".join(
+                    [
+                        *[f"<{x}>" for x, y in ctx.command._params.items() if y.required],
+                        *[f"[{x}]" for x, y in ctx.command._params.items() if not y.required]
+                    ]
                 )
             }"""
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
@@ -118,22 +126,19 @@ class ErrorPlugin(AutoModPluginBlueprint):
                     "value": f"``{info}``"
                 }
             ])
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
         
         elif isinstance(error, PostParseError):
             usage = f"""{
-                self.get_prefix(ctx.guild)
+                "/"
             }{
                 ctx.command.qualified_name
             } {
-                ctx.command.signature.replace(
-                    '...', 
-                    ''
-                ).replace(
-                    '=None', ''
-                ).replace(
-                    '<name> <content>', 
-                    '<name> <content> [--del-invoke]'
+                " ".join(
+                    [
+                        *[f"<{x}>" for x, y in ctx.command._params.items() if y.required],
+                        *[f"[{x}]" for x, y in ctx.command._params.items() if not y.required]
+                    ]
                 )
             }"""
             info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
@@ -152,25 +157,22 @@ class ErrorPlugin(AutoModPluginBlueprint):
                     "value": f"``{info}``"
                 }
             ])
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
 
         elif isinstance(error, commands.BadArgument) or isinstance(error, commands.BadUnionArgument):
             usage = f"""{
-                self.get_prefix(ctx.guild)
+                "/"
             }{
                 ctx.command.qualified_name
             } {
-                ctx.command.signature.replace(
-                    '...', 
-                    ''
-                ).replace(
-                    '=None', ''
-                ).replace(
-                    '<name> <content>', 
-                    '<name> <content> [--del-invoke]'
+                " ".join(
+                    [
+                        *[f"<{x}>" for x, y in ctx.command._params.items() if y.required],
+                        *[f"[{x}]" for x, y in ctx.command._params.items() if not y.required]
+                    ]
                 )
             }"""
-            info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
+            info = f"/help {ctx.command.qualified_name}"
 
             e = Embed(ctx)
             e.add_fields([
@@ -184,13 +186,13 @@ class ErrorPlugin(AutoModPluginBlueprint):
                 }
             ])
             try:
-                param = list(ctx.command.params.values())[min(len(ctx.args) + len(ctx.kwargs), len(ctx.command.params))]
+                param = list(ctx.command._params.values())[min(len(ctx.data["options"]), len(ctx.command._params)) - 1]
             except IndexError:
                 e.description = self.locale.t(ctx.guild, "bad_arg_no_param", _emote="NO", error=error)
             else:
-                e.description = self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=param._name, error=error)
+                e.description = self.locale.t(ctx.guild, "bad_arg", _emote="NO", param=param.name, error=error)
             finally:
-                await ctx.send(embed=e)
+                await ctx.response.send_message(embed=e)
 
         else:
             log.error(f"❗️ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")

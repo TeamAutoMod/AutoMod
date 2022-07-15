@@ -80,7 +80,7 @@ class CasesPlugin(AutoModPluginBlueprint):
 
     def get_log_for_case(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         case: dict
     ) -> Union[
         None, 
@@ -103,7 +103,7 @@ class CasesPlugin(AutoModPluginBlueprint):
     
     async def ban_data(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         user: Union[
             discord.Member, 
             discord.User
@@ -120,26 +120,31 @@ class CasesPlugin(AutoModPluginBlueprint):
             return data
 
 
-    @commands.command(aliases=["history", "cases", "modlogs"])
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="infractions",
+        description="Shows recent server or user infractions"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def infractions(
         self, 
-        ctx: commands.Context, 
-        user: Union[
-            DiscordUser, 
-            discord.Member
-        ] = None
+        ctx: discord.Interaction, 
+        user_id: str = None
     ) -> None:
         """
         infractions_help
         examples:
         -infractions
-        -infractions @paul#0009
         -infractions 543056846601191508
         """
-        if user == None: user = ctx.guild
+        if user_id == None: 
+            user = ctx.guild
+        else:
+            try:
+                user = await DiscordUser().convert(ctx, user_id)
+            except Exception as ex:
+                return self.error(ctx, ex)
 
-        msg = await ctx.send(self.locale.t(ctx.guild, "searching", _emote="SEARCH"))
+        await ctx.response.defer(thinking=True, ephemeral=True if ctx.data.get("type") == 2 else False)
 
         # what to search by (guild, mod, user)?
         opt = None
@@ -170,7 +175,7 @@ class CasesPlugin(AutoModPluginBlueprint):
             key=lambda e: int(e["id"].split("-")[-1]),
             reverse=True
         )
-        if len(found) < 1: return await msg.edit(content=self.locale.t(ctx.guild, "no_cases", _emote="NO"))
+        if len(found) < 1: return await ctx.followup.send(content=self.locale.t(ctx.guild, "no_cases", _emote="NO", ephemeral=True if ctx.data.get("type") == 2 else False))
 
         out = []
 
@@ -260,22 +265,25 @@ class CasesPlugin(AutoModPluginBlueprint):
 
         if len(pages) > 1:
             self.bot.case_cmd_cache.update({
-                msg.id: {
+                f"{ctx.guild_id}-{user.id}": {
                     "pages": pages,
                     "page_number": 0
                 }
             })
-            view = MultiPageView(0, len(pages))
-            await msg.edit(content=None, embed=pages[0], view=view)
+            view = MultiPageView(0, len(pages), user.id)
+            await ctx.followup.send(content=None, embed=pages[0], view=view, ephemeral=True if ctx.data.get("type") == 2 else False)
         else:
-            await msg.edit(content=None, embed=pages[0])
+            await ctx.followup.send(content=None, embed=pages[0], ephemeral=True if ctx.data.get("type") == 2 else False)
 
 
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="case",
+        description="Shows info about a specific case"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def case(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         case: str
     ) -> None:
         """
@@ -287,7 +295,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         case = case.replace("#", "")
         
         raw = self.db.cases.get_doc(f"{ctx.guild.id}-{case}")
-        if raw == None: return await ctx.send(self.locale.t(ctx.guild, "case_not_found", _emote="NO"))
+        if raw == None: return await ctx.response.send_message(self.locale.t(ctx.guild, "case_not_found", _emote="NO"))
 
         data = Object(raw)
         log_msg_url = self.get_log_for_case(ctx, raw)
@@ -334,57 +342,64 @@ class CasesPlugin(AutoModPluginBlueprint):
                     name="⏳ __**Until**__",
                     value=f"``▶`` {data.until}"
                 )
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @commands.command(aliases=["fetch", "warns"])
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="check",
+        description="Checks the users moderation status"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def check(
         self, 
-        ctx: commands.Context, 
-        user: DiscordUser
+        ctx: discord.Interaction, 
+        user_id: str
     ) -> None:
         """
         check_help
         examples:
-        -check @paul#0009
         -check 543056846601191508
         """
-        e = Embed(
-            ctx,
-            title="Info for {0.name}#{0.discriminator}".format(
-                user
-            )
-        )
-        if hasattr(user, "display_avatar"):
-            e.set_thumbnail(
-                url=user.display_avatar
-            )
-
-        mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
-        ban_data = await self.ban_data(ctx, user)
-        warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
-        e.add_fields([
-            {
-                "name": "📝 __**Status**__",
-                "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
-                .format(
-                    "yes" if ban_data != None else "no",
-                    f" (``{ban_data.reason}``)" if ban_data != None else "",
-                    "yes" if mute_data != None else "no",
-                    f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
+        try:
+            user = await DiscordUser().convert(ctx, user_id)
+        except Exception as ex:
+            return self.error(ctx, ex)
+        else:
+            e = Embed(
+                ctx,
+                title="Info for {0.name}#{0.discriminator}".format(
+                    user
                 )
-            },
-            {
-                "name": "🚩 __**Warnings**__",
-                "value": "``▶`` **Warns:** {}"\
-                .format(
-                    0 if warns == None else warns
+            )
+            if hasattr(user, "display_avatar"):
+                e.set_thumbnail(
+                    url=user.display_avatar
                 )
-            }
-        ])
 
-        await ctx.send(embed=e)
+            mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
+            ban_data = await self.ban_data(ctx, user)
+            warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
+            e.add_fields([
+                {
+                    "name": "📝 __**Status**__",
+                    "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
+                    .format(
+                        "yes" if ban_data != None else "no",
+                        f" (``{ban_data.reason}``)" if ban_data != None else "",
+                        "yes" if mute_data != None else "no",
+                        f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
+                    )
+                },
+                {
+                    "name": "🚩 __**Warnings**__",
+                    "value": "``▶`` **Warns:** {}"\
+                    .format(
+                        0 if warns == None else warns
+                    )
+                }
+            ])
+
+            await ctx.response.send_message(embed=e)
 
 
 async def setup(

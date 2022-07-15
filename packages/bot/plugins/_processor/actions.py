@@ -32,7 +32,10 @@ class ActionProcessor(object):
     def new_case(
         self, 
         _type: str, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Member, 
+            discord.User
+        ], 
         mod: discord.Member, 
         user: Union[
             discord.Member, 
@@ -67,7 +70,10 @@ class ActionProcessor(object):
 
     async def execute(
         self, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Message,
+            discord.Interaction
+        ],
         mod: discord.Member, 
         user: Union[
             discord.Member, 
@@ -172,7 +178,10 @@ class ActionProcessor(object):
 
     async def ban(
         self, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Message, 
+            discord.Interaction
+        ], 
         _mod: discord.Member, 
         _user: Union[
             discord.Member, 
@@ -219,7 +228,10 @@ class ActionProcessor(object):
 
     async def kick(
         self, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Message, 
+            discord.Interaction
+        ], 
         _mod: discord.Member, 
         _user: Union[
             discord.Member, 
@@ -266,7 +278,10 @@ class ActionProcessor(object):
 
     async def mute(
         self, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Message, 
+            discord.Interaction
+        ], 
         _mod: discord.Member, 
         _user: Union[
             discord.Member, 
@@ -327,7 +342,10 @@ class ActionProcessor(object):
     
     async def tempban(
         self, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Message, 
+            discord.Interaction
+        ], 
         _mod: discord.Member, 
         _user: Union[
             discord.Member, 

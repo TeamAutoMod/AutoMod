@@ -29,6 +29,7 @@ class WarnPlugin(AutoModPluginBlueprint):
             discord.User
         ]
     ) -> bool:
+        if mod.id == target.id: return False
         if mod.id == guild.owner_id: return True
 
         mod = guild.get_member(mod.id)
@@ -51,13 +52,16 @@ class WarnPlugin(AutoModPluginBlueprint):
             return True
 
 
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="warn",
+        description="Warns the user"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def warn(
         self, 
-        ctx: commands.Context, 
-        user: discord.Member, warns = None, 
-        *, 
+        ctx: discord.Interaction, 
+        user: discord.Member, 
+        warns: int = 1, 
         reason: str = None
     ) -> None:
         """
@@ -80,27 +84,29 @@ class WarnPlugin(AutoModPluginBlueprint):
                 reason = " ".join(ctx.message.content.split(" ")[2:])
                 warns = 1
         
-        if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
-        if not self.can_act(ctx.guild, ctx.author, user):
-            return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
+        if not self.can_act(ctx.guild, ctx.user, user):
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
-        exc = await self.action_processor.execute(ctx.message, ctx.author, user, warns, reason)
+        exc = await self.action_processor.execute(ctx, ctx.user, user, warns, reason)
         if exc != None:
-            await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
         else:
-            await ctx.send(self.locale.t(ctx.guild, "warned", _emote="YES", user=user))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "warned", _emote="YES", user=user))
 
 
-    @commands.command(aliases=["pardon"])
-    @AutoModPluginBlueprint.can("ban_members")
+    @discord.app_commands.command(
+        name="unwarn",
+        description="Unwarns the user"
+    )
+    @discord.app_commands.default_permissions(ban_members=True)
     async def unwarn(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         user: discord.Member, 
-        warns = None, 
-        *, 
+        warns: int = 1, 
         reason: str = None
     ) -> None:
         """
@@ -123,19 +129,19 @@ class WarnPlugin(AutoModPluginBlueprint):
                 reason = " ".join(ctx.message.content.split(" ")[2:])
                 warns = 1
 
-        if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
-        if not self.can_act(ctx.guild, ctx.author, user):
-            return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
+        if not self.can_act(ctx.guild, ctx.user, user):
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
         _id = f"{ctx.guild.id}-{user.id}"
         if not self.db.warns.exists(_id):
-            await ctx.send(self.locale.t(ctx.guild, "no_warns", _emote="NO"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "no_warns", _emote="NO"))
         else:
             cur = self.db.warns.get(_id, "warns")
             if cur < 1: 
-                await ctx.send(self.locale.t(ctx.guild, "no_warns", _emote="NO"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "no_warns", _emote="NO"))
             else:
                 new = max(0, cur - warns)
                 self.db.warns.update(_id, "warns", new)
@@ -143,12 +149,12 @@ class WarnPlugin(AutoModPluginBlueprint):
                 await self.log_processor.execute(ctx.guild, "unwarn", **{
                     "user": user,
                     "user_id": user.id,
-                    "mod": ctx.author,
-                    "mod_id": ctx.author.id,
+                    "mod": ctx.user,
+                    "mod_id": ctx.user.id,
                     "reason": reason,
                     "old_warns": cur,
                     "new_warns": new,
                     "channel_id": ctx.channel.id,
-                    "case": self.action_processor.new_case("unwarn", ctx.message, ctx.author, user, reason, warns_added=warns)
+                    "case": self.action_processor.new_case("unwarn", ctx.message, ctx.user, user, reason, warns_added=warns)
                 })
-                await ctx.send(self.locale.t(ctx.guild, "unwarned", _emote="YES", user=user))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "unwarned", _emote="YES", user=user))

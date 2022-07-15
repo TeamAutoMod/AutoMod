@@ -3,7 +3,7 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 from toolbox import S as Object
-from typing import Union, Tuple
+from typing import Union, Tuple, Literal
 import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
@@ -83,7 +83,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     async def create_log_webhook(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         option: str, 
         channel: discord.TextChannel
     ) -> None:
@@ -133,7 +133,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     async def delete_webhook(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         option: str
     ) -> None:
         if ctx.guild.id in self.bot.webhook_cache:
@@ -183,11 +183,14 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 f"<:{emote.name}:{emote.id}>"
 
 
-    @commands.command(aliases=["cfg", "settings"])
-    @AutoModPluginBlueprint.can("manage_guild")
+    @discord.app_commands.command(
+        name="config",
+        description="Shows the current server config"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def config(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         config_help
@@ -217,19 +220,18 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "⚙️ __**General**__",
-                "value": "``▶`` **Prefix:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Mod Role:** {} \n``▶`` **Join Role:** {}"\
+                "value": "``▶`` **Text Prefix:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Infractions:** {} \n``▶`` **Join Role:** {}"\
                 .format(
                     config.prefix,
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
-                    "none" if config.mod_role == "" else f"<@&{config.mod_role}>",
+                    len(list(self.db.cases.find({"guild": str(ctx.guild_id)}))),
                     "none" if config.join_role == "" else f"<@&{config.join_role}>"
                 ),
                 "inline": True
             },
-            #e.blank_field(True, 1),
             {
                 "name": "📁 __**Logging**__",
                 "value": "``▶`` **Mod Log:** {} \n``▶`` **Message Log:** {}\n``▶`` **Server Log:** {}\n``▶`` **Join Log:** {} \n``▶`` **Member Log:** {} \n``▶`` **Voice Log:** {} \n``▶`` **Report Log:** {}"\
@@ -262,7 +264,6 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 ),
                 "inline": True
             },
-            #e.blank_field(True, 1),
             {
                 "name": "🔨 __**Punishments**__",
                 "value": "\n".join([
@@ -309,17 +310,30 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": False
             }
         ])
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @commands.command(aliases=["action"])
-    @AutoModPluginBlueprint.can("manage_guild")
+    @discord.app_commands.command(
+        name="punishment",
+        description="Adds or removes a punishment for a specific amount of warns"
+    )
+    @discord.app_commands.describe(
+        warns="The amount of warns the punishment is being configured for",
+        action="The action that should be taken (use 'none' to remove the punishment)",
+        time="10m, 2h, 1d (the 'mute' action requires this, while the 'ban' option can have a duration)"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def punishment(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         warns: int, 
-        action: str, 
-        time: Duration = None
+        action: Literal[
+            "kick",
+            "ban",
+            "mute",
+            "none"
+        ], 
+        time: str = None
     ) -> None:
         """
         punishment_help
@@ -331,22 +345,18 @@ class ConfigPlugin(AutoModPluginBlueprint):
         -punishment 5 none
         """
         action = action.lower()
-        if not action in ["kick", "ban", "mute", "none"]: 
-            e = Embed(
-                ctx,
-                description=self.locale.t(ctx.guild, "invalid_action_desc", _emote="NO", given=action)
-            )
-            e.add_field(
-                name="📝 __**Valid actions**__",
-                value="``▶`` kick \n``▶`` ban \n``▶`` mute \n``▶`` none"
-            )
-            return await ctx.send(embed=e)
 
-        if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        if time != None:
+            try:
+                time = await Duration().convert(ctx, time)
+            except Exception as ex:
+                return self.error(ctx, ex)
 
         current = self.db.configs.get(ctx.guild.id, "punishments")
-        prefix = self.get_prefix(ctx.guild)
+        prefix = "/"
         text = ""
 
         if action == "none":
@@ -384,7 +394,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             text = self.locale.t(ctx.guild, f"set_{key}", _emote="YES", **kwargs)
 
         else:
-            if time == None: return await ctx.send(self.locale.t(ctx.guild, "time_needed", _emote="NO"))
+            if time == None: return await ctx.response.send_message(self.locale.t(ctx.guild, "time_needed", _emote="NO"))
 
             sec = time.to_seconds(ctx)
             if sec > 0: 
@@ -395,54 +405,59 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 text = self.locale.t(ctx.guild, "set_mute", _emote="YES", warns=warns, length=length, unit=unit, prefix=prefix)
         
             else:
-                raise commands.BadArgument("number_too_small")
+                return self.error(ctx, commands.BadArgument("number_too_small"))
         
         self.db.configs.update(ctx.guild.id, "punishments", current)
-        await ctx.send(text)
+        await ctx.response.send_message(text)
 
 
-    @commands.command(name="log")
-    @AutoModPluginBlueprint.can("manage_guild")
+    @discord.app_commands.command(
+        name="log",
+        description="Configure logging"
+    )
+    @discord.app_commands.describe(
+        option="The logging option you want to configure",
+        channel="Channel where actions from the log option will be sent to",
+        disable="Wheter you want to disable the logging option"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def _log(
         self, 
-        ctx: commands.Context, 
-        option: str, 
-        channel: Union[
-            discord.TextChannel, 
-            str
-        ]
+        ctx: discord.Interaction, 
+        option: Literal[
+            "mod",
+            "server",
+            "messages",
+            "joins",
+            "members",
+            "voice",
+            "reports"
+        ], 
+        channel: discord.TextChannel = None,
+        disable: Literal[
+            "True"
+        ] = None
     ) -> None:
         """
         log_help
         examples:
         -log mod #mod-log
         -log joins 960832535867306044
-        -log server off
+        -log server True
         """
         option = option.lower()
-        if not option in LOG_OPTIONS:
-            e = Embed(
-                ctx,
-                description=self.locale.t(ctx.guild, "invalid_log_option_desc", _emote="NO", given=option)
-            )
-            e.add_field(
-                name="📝 __**Valid options**__",
-                value="``▶`` mod \n``▶`` server \n``▶`` messages \n``▶`` joins \n``▶`` members \n``▶`` voice \n``▶`` reports"
-            )
-            return await ctx.send(embed=e)
-        
         data = Object(LOG_OPTIONS[option])
-        if isinstance(channel, str):
-            if channel.lower() == "off":
-                self.db.configs.update(ctx.guild.id, data.db_field, "")
-                await self.delete_webhook(
-                    ctx,
-                    data.db_field
-                )
+        if disable == "True":
+            self.db.configs.update(ctx.guild.id, data.db_field, "")
+            await self.delete_webhook(
+                ctx,
+                data.db_field
+            )
 
-                return await ctx.send(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type))
-            else:
-                prefix = self.get_prefix(ctx.guild)
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type))
+        else:
+            if channel == None:
+                prefix = "/"
                 e = Embed(
                     ctx,
                     description=self.locale.t(ctx.guild, "invalid_log_channel", _emote="NO", prefix=prefix, option=option)
@@ -454,28 +469,29 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     },
                     {
                         "name": "__**Disable this option**__",
-                        "value": f"``{prefix}log {option} off``"
+                        "value": f"``{prefix}log {option} disable:True``"
                     }
                 ])
+                return await ctx.response.send_message(embed=e)
+            else:
+                self.db.configs.update(ctx.guild.id, data.db_field, f"{channel.id}")
+                self.webhook_queue.append({
+                    "ctx": ctx,
+                    "option": data.db_field,
+                    "channel": channel
+                })
 
-                return await ctx.send(embed=e)
-
-        else:
-            self.db.configs.update(ctx.guild.id, data.db_field, f"{channel.id}")
-            self.webhook_queue.append({
-                "ctx": ctx,
-                "option": data.db_field,
-                "channel": channel
-            })
-
-            await ctx.send(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention))
 
 
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_guild")
+    @discord.app_commands.command(
+        name="prefix",
+        description="Sets the prefix for text & custom commands"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def prefix(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         prefix: str
     ) -> None:
         """
@@ -484,191 +500,78 @@ class ConfigPlugin(AutoModPluginBlueprint):
         -prefix !
         """
         if len(prefix) > 20: 
-            return await ctx.send(self.locale.t(ctx.guild, "prefix_too_long", _emote="NO"))
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "prefix_too_long", _emote="NO"))
 
         self.db.configs.update(ctx.guild.id, "prefix", prefix)
-        await ctx.send(self.locale.t(ctx.guild, "prefix_updated", _emote="YES", prefix=prefix))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "prefix_updated", _emote="YES", prefix=prefix))
 
 
-    @commands.command(aliases=["restrict"])
-    @AutoModPluginBlueprint.can("manage_guild")
-    async def disable(
+    ignore_log = discord.app_commands.Group(
+        name="ignore_log",
+        description="Manage ignored roles & channels for logging",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @ignore_log.command(
+        name="show",
+        description="Shows the current list of ignored roles & channels for logging"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def show(
         self, 
-        ctx: commands.Context, 
-        *, 
-        commands: str = None
-    ) -> None:
-        """
-        disable_help
-        examples:
-        -disable ping
-        -disable ping help about
-        """
-        _disabled = self.db.configs.get(ctx.guild.id, "disabled_commands")
-
-        if commands == None:
-            if len(_disabled) < 1:
-                return await ctx.send(self.locale.t(ctx.guild, "no_disabled_commands", _emote="NO"))
-            else:
-                e = Embed(
-                    ctx,
-                    title="Disabled commands (mod-only)",
-                    description="> {}".format(", ".join([f"``{x}``" for x in _disabled]))
-                )
-                return await ctx.send(embed=e)
-
-        commands = commands.split(" ")
-        enabled = []
-        disabled = []
-        failed = []
-        for cmd in commands:
-            cmd = cmd.lower()
-            if cmd in self.bot.all_commands:
-                if not cmd in _disabled:
-                    if len((self.bot.get_command(cmd)).checks) < 1:
-                        _disabled.append(cmd); disabled.append(cmd)
-                    else:
-                        failed.append(cmd)
-                else:
-                    enabled.append(cmd)
-                    _disabled.remove(cmd)
-            else:
-                failed.append(cmd)
-        
-        if (len(enabled) + len(disabled)) < 1: 
-            return await ctx.send(self.locale.t(ctx.guild, "no_changes", _emote="NO"))
-        
-        self.db.configs.update(ctx.guild.id, "disabled_commands", disabled)
-        e = Embed(
-            ctx,
-            title="Command config changes"
-        )
-        if len(disabled) > 0:
-            e.add_field(
-                name="__**Disabled the following commands**__", 
-                value="``▶`` {}".format(", ".join([f"``{x}``" for x in disabled]))
-            )
-        if len(enabled) > 0:
-            e.add_field(
-                name="__**Re-enabled the following commands**__",
-                value="``▶`` {}".format(", ".join([f"``{x}``" for x in enabled])),
-            )
-        if len(failed) > 0:
-            e.add_field(
-                name="__**Following commands are unknown or mod-commands**__",
-                value="``▶`` {}".format(", ".join([f"``{x}``" for x in failed])),
-            )
-        
-        await ctx.send(embed=e)
-
-
-    @commands.command(aliases=["modrole"])
-    @AutoModPluginBlueprint.can("manage_guild")
-    async def mod_role(
-        self, 
-        ctx: commands.Context, 
-        role: Union[
-            discord.Role, 
-            str
-        ]
-    ) -> None:
-        """
-        mod_role_help
-        examples:
-        -mod_role Moderators
-        -mod_role @Moderators
-        -mod_role 793880854367043614
-        -mod_role off
-        """
-        if isinstance(role, str):
-            if role.lower() == "off":
-                self.db.configs.update(ctx.guild.id, "mod_role", "")
-                return await ctx.send(self.locale.t(ctx.guild, "mod_role_off", _emote="YES"))
-            else:
-                prefix = self.get_prefix(ctx.guild)
-                e = Embed(
-                    ctx,
-                    description=self.locale.t(ctx.guild, "invalid_mod_role", _emote="NO")
-                )
-                e.add_fields([
-                    {
-                        "name": "__**Set the mod role**__",
-                        "value": f"``{prefix}mod_role @role``"
-                    },
-                    {
-                        "name": "__**Remove the mod role**__",
-                        "value": f"``{prefix}mod_role off``"
-                    }
-                ])
-
-                return await ctx.send(embed=e)
-
-        else:
-            self.db.configs.update(ctx.guild.id, "mod_role", f"{role.id}")
-            await ctx.send(self.locale.t(ctx.guild, "mod_role_on", _emote="YES", role=role.name))
-
-
-    @commands.group(aliases=["log_ignore"])
-    @AutoModPluginBlueprint.can("manage_guild")
-    async def ignore_log(
-        self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         ignore_log_help
         examples:
-        -ignore_log add @test  #test
-        -ignore_log remove @test
-        -ignore_log
+        -ignore_log show
         """
-        if ctx.invoked_subcommand == None:
-            roles, channels = self.get_ignored_roles_channels(ctx.guild)
+        roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
-            if (len(roles) + len(channels)) < 1:
-                return await ctx.send(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"))
-            else:
-                e = Embed(
-                    ctx,
-                    title="Ignored roles & channels for logging"
-                )
-                e.add_fields([
-                    {
-                        "name": "🎭 __**Roles**__",
-                        "value": "``▶`` {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "``▶`` None"
-                    },
-                    {
-                        "name": "💬 __**Channels**__",
-                        "value": "``▶`` {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "``▶`` None"
-                    }
-                ])
+        if (len(roles) + len(channels)) < 1:
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"))
+        else:
+            e = Embed(
+                ctx,
+                title="Ignored roles & channels for logging"
+            )
+            e.add_fields([
+                {
+                    "name": "🎭 __**Roles**__",
+                    "value": "``▶`` {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "``▶`` None"
+                },
+                {
+                    "name": "💬 __**Channels**__",
+                    "value": "``▶`` {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "``▶`` None"
+                }
+            ])
 
-                await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
 
 
-    @ignore_log.command()
-    @AutoModPluginBlueprint.can("manage_guild")
+    @ignore_log.command(
+        name="add",
+        description="Adds the given role and/or channel as ignored for logging"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
         self, 
-        ctx: commands.Context, 
-        roles_or_channels: commands.Greedy[
-            Union[
-                discord.Role, 
-                discord.TextChannel, 
-                discord.VoiceChannel
-            ]
-        ]
+        ctx: discord.Interaction, 
+        role: discord.Role = None,
+        channel: discord.TextChannel = None
     ) -> None:
         """
         ignore_log_add_help
         examples:
-        -ignore_log add @test  #test
+        -ignore_log add @test
+        -ignore_log add #test
         """
-        if len(roles_or_channels) < 1: raise commands.BadArgument("At least one role or channel required")
+        if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
+        role_or_channel = [role, channel]
 
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         added, ignored = [], []
-        for e in roles_or_channels:
+        for e in role_or_channel:
             if isinstance(e, discord.Role):
                 if not e.id in roles:
                     roles.append(e.id); added.append(e)
@@ -728,33 +631,33 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
         ])
 
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @ignore_log.command()
-    @AutoModPluginBlueprint.can("manage_guild")
+    @ignore_log.command(
+        name="remove",
+        description="Removes the given role and/or channel as ignored for logging"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def remove(
         self, 
-        ctx: commands.Context, 
-        roles_or_channels: commands.Greedy[
-            Union[
-                discord.Role, 
-                discord.TextChannel, 
-                discord.VoiceChannel
-            ]
-        ]
+        ctx: discord.Interaction, 
+        role: discord.Role = None,
+        channel: discord.TextChannel = None
     ) -> None:
         """
         ignore_log_remove_help
         examples:
-        -ignore_log remove @test  #test
+        -ignore_log remove @test 
+        -ignore_log remove #test
         """
-        if len(roles_or_channels) < 1: raise commands.BadArgument("At least one role or channel required")
+        if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
+        role_or_channel = [role, channel]
 
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         removed, ignored = [], []
-        for e in roles_or_channels:
+        for e in role_or_channel:
             if isinstance(e, discord.Role):
                 if e.id in roles:
                     roles.remove(e.id); removed.append(e)
@@ -816,18 +719,21 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
         ])
 
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @commands.command(aliases=["joinrole", "auto_role", "autorole"])
-    @AutoModPluginBlueprint.can("manage_roles")
+    @discord.app_commands.command(
+        name="join_role",
+        description="Configure the join role (role users automatically get when joining the server)"
+    )
+    @discord.app_commands.default_permissions(manage_roles=True)
     async def join_role(
         self,
-        ctx: commands.Context,
-        role: Union[
-            discord.Role, 
-            str
-        ]
+        ctx: discord.Interaction,
+        role: discord.Role = None,
+        disable: Literal[
+            "True"
+        ] = None
     ) -> None:
         """
         join_role_help
@@ -835,14 +741,14 @@ class ConfigPlugin(AutoModPluginBlueprint):
         -join_role Members
         -join_role @Members
         -join_role 793880854367043614
-        -join_role off
+        -join_role disable:True
         """
-        if isinstance(role, str):
-            if role.lower() == "off":
-                self.db.configs.update(ctx.guild.id, "join_role", "")
-                return await ctx.send(self.locale.t(ctx.guild, "join_role_off", _emote="YES"))
-            else:
-                prefix = self.get_prefix(ctx.guild)
+        if disable == "True":
+            self.db.configs.update(ctx.guild.id, "join_role", "")
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "join_role_off", _emote="YES"))
+        else:
+            if role == None:
+                prefix = "/"
                 e = Embed(
                     ctx,
                     description=self.locale.t(ctx.guild, "invalid_join_role", _emote="NO")
@@ -854,22 +760,24 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     },
                     {
                         "name": "__**Remove the join role**__",
-                        "value": f"``{prefix}join_role off``"
+                        "value": f"``{prefix}join_role disable:True``"
                     }
                 ])
 
-                return await ctx.send(embed=e)
+                return await ctx.response.send_message(embed=e)
+            else:
+                self.db.configs.update(ctx.guild.id, "join_role", f"{role.id}")
+                await ctx.response.send_message(self.locale.t(ctx.guild, "join_role_on", _emote="YES", role=role.name))
 
-        else:
-            self.db.configs.update(ctx.guild.id, "join_role", f"{role.id}")
-            await ctx.send(self.locale.t(ctx.guild, "join_role_on", _emote="YES", role=role.name))
 
-
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="setup",
+        description="Guide for setting up the bot"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def setup(
         self,
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         setup_help
@@ -879,7 +787,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         embeds = self.bot.get_plugin("UtilityPlugin").get_features(ctx.guild)
 
         v = SetupView(self.bot, embeds)
-        await ctx.send(embed=embeds[0], view=v)
+        await ctx.response.send_message(embed=embeds[0], view=v)
 
 
 async def setup(

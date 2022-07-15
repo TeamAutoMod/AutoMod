@@ -6,9 +6,10 @@ import itertools
 from typing import Union
 from toolbox import S as Object
 from urllib.parse import urlparse
-from typing import TypeVar
+from typing import TypeVar, Literal, List
 import logging; log = logging.getLogger()
 from typing import Union, Tuple
+import inspect
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
@@ -306,6 +307,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             discord.User
         ]
     ) -> bool:
+        if mod.id == target.id: return False
         if mod.id == guild.owner_id: return True
 
         mod = guild.get_member(mod.id)
@@ -414,6 +416,19 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         else:
             url = urlparse(url).hostname
         return url
+
+
+    def parse_channels(
+        self,
+        channels: str
+    ) -> List[
+        int
+    ]:
+        final = []
+        for s in channels.split(", "):
+            if s.isdigit():
+                final.append(int(s))
+        return final
 
 
     def get_ignored_roles_channels(
@@ -763,16 +778,30 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         await self.enforce_rules(msg)
 
 
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_guild")
+    @discord.app_commands.command(
+        name="automod", 
+        description="Configure the automoderator"
+    )
+    @discord.app_commands.describe(
+        rule="The rule you want to configure", 
+        amount="Either the amount for the rule or 'off' to disable it"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def automod(
         self, 
-        ctx: commands.Context, 
-        rule = None, 
-        amount: Union[
-            int, 
-            str
-        ] = None
+        ctx: discord.Interaction, 
+        rule: Literal[
+            "invites",
+            "links",
+            "files",
+            "mentions",
+            "lines",
+            "emotes",
+            "repeat",
+            "zalgo",
+            "caps"
+        ] = None,
+        amount: str = None
     ) -> None:
         """
         automod_help
@@ -782,18 +811,17 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -automod files 0
         -automod links off
         """
-        prefix = self.get_prefix(ctx.guild)
         if rule == None or amount == None:
             e = Embed(
                 ctx,
                 title="Automoderator Configuration",
-                description=self.locale.t(ctx.guild, "automod_description", prefix=prefix)
+                description=self.locale.t(ctx.guild, "automod_description", prefix="/")
             )
             e.add_field(
                 name="__**Command usage**__",
-                value=self.locale.t(ctx.guild, "automod_commands", prefix=prefix)
+                value=self.locale.t(ctx.guild, "automod_commands", prefix="/")
             )
-            return await ctx.send(embed=e)
+            return await ctx.response.send_message(embed=e)
         
         rule = rule.lower()
         if not rule in AUTOMOD_RULES:
@@ -805,38 +833,39 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                 name="📝 __**Valid rules**__",
                 value="``▶`` mentions \n``▶`` links \n``▶`` invites \n``▶`` files \n``▶`` zalgo \n``▶`` lines \n``▶`` emotes \n``▶`` repeat \n``▶`` caps"
             )
-            return await ctx.send(embed=e)
+            return await ctx.response.send_message(embed=e)
         
         current = self.db.configs.get(ctx.guild.id, "automod")
         data = Object(AUTOMOD_RULES[rule])
 
-        if isinstance(amount, str):
+        if not amount.isdigit():
             if amount.lower() == "off":
                 self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
-                return await ctx.send(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
             else:
                 e = Embed(
                     ctx,
-                    description=self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix=prefix, rule=rule, field_name=data.field_name)
+                    description=self.locale.t(ctx.guild, "invalid_automod_amount", _emote="NO", prefix="/", rule=rule, field_name=data.field_name)
                 )
                 e.add_fields([
                     {
                         "name": "__**Enable this rule**__",
-                        "value": f"``{prefix}automod {rule} <{'max_amount' if data.field_name in ['mentions', 'lines', 'emotes', 'repeat'] else 'warns'}>``"
+                        "value": f"``/automod {rule} <{'max_amount' if data.field_name in ['mentions', 'lines', 'emotes', 'repeat'] else 'warns'}>``"
                     },
                     {
                         "name": "__**Disable this rule**__",
-                        "value": f"``{prefix}automod {rule} off``"
+                        "value": f"``/automod {rule} off``"
                     }
                 ])
-                return await ctx.send(embed=e)
+                return await ctx.response.send_message(embed=e)
         else:
+            amount = round(int(amount))
             if rule in ["mentions", "lines", "emotes", "repeat"]:
-                if amount < 5: return await ctx.send(self.locale.t(ctx.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")))
-                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")))
+                if amount < 5: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")))
+                if amount > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")))
             else:
-                if amount < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-                if amount > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+                if amount < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+                if amount > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
             current.update({
                 rule: {
@@ -851,42 +880,48 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             else:
                 text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
 
-            await ctx.send(text)
+            await ctx.response.send_message(text)
 
 
-    @commands.group()
-    @AutoModPluginBlueprint.can("manage_guild")
-    async def allowed_invites(
+    allowed_invites = discord.app_commands.Group(
+        name="allowed_invites",
+        description="Configure allowed invite links",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @allowed_invites.command(
+        name="show",
+        description="Adds a guild to the allowed invite list"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def show_inv(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction,
     ) -> None:
         """
         allowed_invites_help
         examples:
-        -allowed_invites
-        -allowed_invites add 701507539589660793
-        -allowed_invites remove 701507539589660793
+        -allowed_invites show
         """
-        if ctx.invoked_subcommand == None:
-            allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-            if len(allowed) < 1:
-                prefix = self.get_prefix(ctx.guild)
-                return await ctx.send(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix=prefix))
-            
-            e = Embed(
-                ctx,
-                title="Allowed invites (by server ID)",
-                description="> {}".format(", ".join(allowed))
-            )
-            await ctx.send(embed=e)
+        allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
+        if len(allowed) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix="/"))
+        
+        e = Embed(
+            ctx,
+            title="Allowed invites (by server ID)",
+            description="> {}".format(", ".join(allowed))
+        )
+        await ctx.response.send_message(embed=e)
 
 
-    @allowed_invites.command(name="add")
-    @AutoModPluginBlueprint.can("manage_guild")
+    @allowed_invites.command(
+        name="add",
+        description="Adds a guild to the allowed invite list"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def add_inv(
         self, 
-        ctx: commands.Context, 
-        guild_id: int
+        ctx: discord.Interaction, 
+        guild_id: str
     ) -> None:
         """
         allowed_invites_add_help
@@ -894,22 +929,23 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -allowed_invites add 701507539589660793
         """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-
-        if str(guild_id) in allowed:
-            return await ctx.send(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"))
+        if str(guild_id) in allowed: return await ctx.response.send_message(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"))
         
         allowed.append(str(guild_id))
         self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
 
-        await ctx.send(self.locale.t(ctx.guild, "allowed_inv", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "allowed_inv", _emote="YES"))
 
 
-    @allowed_invites.command(name="remove")
-    @AutoModPluginBlueprint.can("manage_guild")
+    @allowed_invites.command(
+        name="remove",
+        description="Removes a guild from the allowed invite list"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def remove_inv(
         self, 
-        ctx: commands.Context, 
-        guild_id: int
+        ctx: discord.Interaction, 
+        guild_id: str
     ) -> None:
         """
         allowed_invites_remove_help
@@ -917,48 +953,52 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -allowed_invites remove 701507539589660793
         """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-
-        if not str(guild_id) in allowed:
-            return await ctx.send(self.locale.t(ctx.guild, "not_allowed", _emote="NO"))
+        if not str(guild_id) in allowed: return await ctx.response.send_message(self.locale.t(ctx.guild, "not_allowed", _emote="NO"))
         
         allowed.remove(str(guild_id))
         self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
 
-        await ctx.send(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"))
 
 
-    @commands.group(aliases=["links"])
-    @AutoModPluginBlueprint.can("manage_guild")
-    async def link_blacklist(
+    link_blacklist = discord.app_commands.Group(
+        name="link_blacklist",
+        description="Configure the link blacklist",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @link_blacklist.command(
+        name="show",
+        description="Shows the current link blacklist"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def show_link(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         link_blacklist_help
         examples:
-        -link_blacklist
-        -link_blacklist add google.com
-        -link_blacklist remove google.com
+        -link_blacklist show
         """
-        if ctx.invoked_subcommand == None:
-            links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-            if len(links) < 1:
-                prefix = self.get_prefix(ctx.guild)
-                return await ctx.send(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix=prefix))
-            
-            e = Embed(
-                ctx,
-                title="Blacklisted links",
-                description="> {}".format(", ".join(links))
-            )
-            await ctx.send(embed=e)
+        links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+        if len(links) < 1: return await ctx.response.send_messag(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"))
+        
+        e = Embed(
+            ctx,
+            title="Blacklisted links",
+            description="> {}".format(", ".join(links))
+        )
+        await ctx.response.send_message(embed=e)
 
 
-    @link_blacklist.command(name="add")
-    @AutoModPluginBlueprint.can("manage_guild")
+    @link_blacklist.command(
+        name="add",
+        description="Adds a link to the blacklist"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def add_link(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         url: str
     ) -> None:
         """
@@ -967,22 +1007,24 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -link_blacklist add google.com
         """
         url = self.safe_parse_url(url)
-        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
 
-        if str(url) in links:
-            return await ctx.send(self.locale.t(ctx.guild, "alr_link", _emote="NO"))
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+        if str(url) in links: return await ctx.response.send_messag(self.locale.t(ctx.guild, "alr_link", _emote="NO"))
         
         links.append(url)
         self.db.configs.update(ctx.guild.id, "black_listed_links", links)
 
-        await ctx.send(self.locale.t(ctx.guild, "allowed_link", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "allowed_link", _emote="YES"))
 
 
-    @link_blacklist.command(name="remove")
-    @AutoModPluginBlueprint.can("manage_guild")
+    @link_blacklist.command(
+        name="remove",
+        description="Removes the link from the blacklist"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def remove_link(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         url: str
     ) -> None:
         """
@@ -991,49 +1033,55 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -link_blacklist remove google.com
         """
         url = self.safe_parse_url(url)
-        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
 
-        if not str(url) in links:
-            return await ctx.send(self.locale.t(ctx.guild, "not_link", _emote="NO"))
+        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+        if not str(url) in links: return await ctx.response.send_messag(self.locale.t(ctx.guild, "not_link", _emote="NO"))
         
         links.remove(url)
         self.db.configs.update(ctx.guild.id, "black_listed_links", links)
 
-        await ctx.send(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"))
 
 
-    @commands.group()
-    @AutoModPluginBlueprint.can("manage_guild")
-    async def link_whitelist(
+    link_whitelist = discord.app_commands.Group(
+        name="link_whitelist",
+        description="Configure the link whitelist",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @link_whitelist.command(
+        name="show",
+        description="Shows the current link whitelist"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def show_link2(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         link_whitelist_help
         examples:
         -link_whitelist
-        -link_whitelist add google.com
-        -link_whitelist remove google.com
         """
         if ctx.invoked_subcommand == None:
             links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-            if len(links) < 1:
-                prefix = self.get_prefix(ctx.guild)
-                return await ctx.send(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix=prefix))
+            if len(links) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"))
             
             e = Embed(
                 ctx,
                 title="Allowed links",
                 description="> {}".format(", ".join(links))
             )
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
 
 
-    @link_whitelist.command(name="add")
-    @AutoModPluginBlueprint.can("manage_guild")
+    @link_whitelist.command(
+        name="add",
+        description="Adds a link to the whitelist"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def add_link2(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         url: str
     ) -> None:
         """
@@ -1044,20 +1092,22 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
 
-        if str(url) in links:
-            return await ctx.send(self.locale.t(ctx.guild, "alr_link2", _emote="NO"))
+        if str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "alr_link2", _emote="NO"))
         
         links.append(url)
         self.db.configs.update(ctx.guild.id, "white_listed_links", links)
 
-        await ctx.send(self.locale.t(ctx.guild, "allowed_link2", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "allowed_link2", _emote="YES"))
 
 
-    @link_whitelist.command(name="remove")
-    @AutoModPluginBlueprint.can("manage_guild")
+    @link_whitelist.command(
+        name="remove",
+        description="Removes the link from the whitelist"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def remove_link_2(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         url: str
     ) -> None:
         """
@@ -1068,157 +1118,27 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
 
-        if not str(url) in links:
-            return await ctx.send(self.locale.t(ctx.guild, "not_link2", _emote="NO"))
+        if not str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "not_link2", _emote="NO"))
         
         links.remove(url)
         self.db.configs.update(ctx.guild.id, "white_listed_links", links)
 
-        await ctx.send(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"))
 
 
-    @commands.group(name="filter", aliases=["filters"])
-    @AutoModPluginBlueprint.can("manage_messages")
-    async def _filter(
+    _filter = discord.app_commands.Group(
+        name="filter",
+        description="Configure word filters",
+        default_permissions=discord.Permissions(manage_messages=True)
+    )
+    @_filter.command(
+        name="show",
+        description="Shows all active word filters"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def show_filter(
         self, 
-        ctx: commands.Context
-    ) -> None:
-        """
-        filter_help
-        examples:
-        -filter add test_filter 1 banana, apples, grape fruit
-        -filter add test_filter 0 #test-channel #other-channel banana, apples, grape fruit
-        -filter edit test_filter 2 banana, apples
-        -filter remove test_filter
-        -filter show
-        """
-        if ctx.invoked_subcommand == None:
-            prefix = self.get_prefix(ctx.guild)
-            e = Embed(
-                ctx,
-                title="How to use filters",
-                description=f"``▶`` Adding a filter: ``{prefix}filter add <name> <warns> [channels] <words>`` \n``▶`` Deleting a filter: ``{prefix}filter remove <name>`` \n``▶`` Editing a filter: ``{prefix}filter edit <name> <warns> [channels] <words>``"
-            )
-            e.add_field(
-                name="__**Arguments**__",
-                value="``<name>`` - *Name of the filter* \n``<warns>`` - *Warns users get when flagged. Use 0 if you want the message to be deleted* \n``[channels]`` - *Channels in which this filter should be enforced. Don't pass any to have it enabled in all channels* \n``<words>`` - *Words contained in the filter, seperated by commas*"
-            )
-            e.add_field(
-                name="__**Wildcard**__",
-                value="You can also use an astrix (``*``) as a wildcard. E.g. \nIf you set one of the words to be ``tes*``, then things like ``test`` or ``testtt`` would all be filtered."
-            )
-            e.add_field(
-                name="__**Examples**__",
-                value=f"``{prefix}filter add test_filter 1 oneword, two words, wildcar*`` \n\n``{prefix}filter add test2 0 #test #other oneword, two words, wildcar*`` \n\n``{prefix}filter edit test2 1 #test #other oneword, two words, wildcar*``"
-            )
-            await ctx.send(embed=e)
-
-
-    @_filter.command(name="add")
-    @AutoModPluginBlueprint.can("manage_messages")
-    async def add_filter(
-        self, 
-        ctx: commands.Context, 
-        name: str, 
-        warns: int, 
-        channels: commands.Greedy[
-            discord.TextChannel
-        ] = None, 
-        *, 
-        words: str
-    ) -> None:
-        """
-        filter_add_help
-        examples:
-        -filter add test_filter 1 banana, apples, grape fruit
-        -filter add test_filter 0 #test-channel #other-channel banana, apples, grape fruit
-        """
-        name = name.lower()
-        filters = self.db.configs.get(ctx.guild.id, "filters")
-
-        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
-        if name in filters: return await ctx.send(self.locale.t(ctx.guild, "filter_exists", _emote="NO"))
-
-        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
-
-        filters[name] = {
-            "warns": warns,
-            "words": words.split(", "),
-            "channels": [] if channels == None else [x.id for x in channels if x != None]
-        }
-        self.db.configs.update(ctx.guild.id, "filters", filters)
-
-        await ctx.send(self.locale.t(ctx.guild, "added_filter", _emote="YES"))
-
-    
-    @_filter.command(name="remove")
-    @AutoModPluginBlueprint.can("manage_messages")
-    async def remove_filter(
-        self, 
-        ctx: commands.Context, 
-        name: str
-    ) -> None:
-        """
-        filter_remove_help
-        examples:
-        -filter remove test_filter
-        """
-        name = name.lower()
-        filters = self.db.configs.get(ctx.guild.id, "filters")
-
-        if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
-        if not name in filters: return await ctx.send(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
-
-        del filters[name]
-        self.db.configs.update(ctx.guild.id, "filters", filters)
-
-        await ctx.send(self.locale.t(ctx.guild, "removed_filter", _emote="YES"))
-
-    
-    @_filter.command(name="edit")
-    @AutoModPluginBlueprint.can("manage_messages")
-    async def edit_filter(
-        self, 
-        ctx: commands.Context, 
-        name: str, 
-        warns: int, 
-        channels: commands.Greedy[
-            discord.TextChannel
-        ] = None, 
-        *, 
-        words: str
-    ) -> None:
-        """
-        filter_edit_help
-        examples:
-        -filter edit test_filter 1 banana, apples, grape fruit
-        -filter edit test_filter 0 #test-channel #other-channel banana, apples, grape fruit
-        """
-        name = name.lower()
-        filters = self.db.configs.get(ctx.guild.id, "filters")
-
-        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
-        if not name in filters: return await ctx.send(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
-
-        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
-
-        filters[name] = {
-            "warns": warns,
-            "words": words.split(", "),
-            "channels": [] if channels == None else [x.id for x in channels if x != None]
-        }
-        self.db.configs.update(ctx.guild.id, "filters", filters)
-
-        await ctx.send(self.locale.t(ctx.guild, "edited_filter", _emote="YES"))
-
-
-    @_filter.command(aliases=["l", "list"])
-    @AutoModPluginBlueprint.can("manage_messages")
-    async def show(
-        self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         filter_show_help
@@ -1226,7 +1146,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -filter show
         """
         filters = self.db.configs.get(ctx.guild.id, "filters")
-        if len(filters) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
+        if len(filters) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
 
         e = Embed(
             ctx,
@@ -1247,94 +1167,228 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
             if footer != None: e.set_footer(text=footer)
 
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
+    
 
 
-    @commands.group(aliases=["rgx"])
-    @AutoModPluginBlueprint.can("manage_messages")
-    async def regex(
+    @_filter.command(
+        name="add",
+        description="Creates a new word filter"
+    )
+    @discord.app_commands.describe(
+        name="Name of the filter",
+        warns="How many warns users should receive (use 0 to just delete the message)",
+        words="Words within the filter, seperated by commas (word 1, word2, word 3)",
+        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas)"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def add_filter(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction, 
+        name: str, 
+        warns: int, 
+        words: str,
+        channels: str = None, 
+    ) -> None:
+        """
+        filter_add_help
+        examples:
+        -filter add test_filter 1 banana, apples, grape fruit
+        -filter add test_filter 0 banana, apples, grape fruit #test-channel #other-channel
+        """
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
+        if name in filters: return await ctx.response.send_message(self.locale.t(ctx.guild, "filter_exists", _emote="NO"))
+
+        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        filters[name] = {
+            "warns": warns,
+            "words": words.split(", "),
+            "channels": [] if channels == None else self.parse_channels(channels)
+        }
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.response.send_message(self.locale.t(ctx.guild, "added_filter", _emote="YES"))
+
+    
+    @_filter.command(
+        name="remove",
+        description="Deletes an exisiting word filter"
+    )
+    @discord.app_commands.describe(
+        name="Name of the filter",
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def remove_filter(
+        self, 
+        ctx: discord.Interaction, 
+        name: str
+    ) -> None:
+        """
+        filter_remove_help
+        examples:
+        -filter remove test_filter
+        """
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(filters) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
+        if not name in filters: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
+
+        del filters[name]
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.response.send_message(self.locale.t(ctx.guild, "removed_filter", _emote="YES"))
+
+    
+    @_filter.command(
+        name="edit",
+        description="Edits an exisiting word filter"
+    )
+    @discord.app_commands.describe(
+        name="Name of the filter",
+        warns="How many warns users should receive (use 0 to just delete the message)",
+        words="Words within the filter, seperated by commas (word 1, word2, word 3)",
+        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas)"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def edit_filter(
+        self, 
+        ctx: discord.Interaction, 
+        name: str, 
+        warns: int,  
+        words: str,
+        channels: str = None
+    ) -> None:
+        """
+        filter_edit_help
+        examples:
+        -filter edit test_filter 1 banana, apples, grape fruit
+        -filter edit test_filter 0 banana, apples, grape fruit id_1, id_2
+        """
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
+        if not name in filters: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
+
+        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+
+        filters[name] = {
+            "warns": warns,
+            "words": words.split(", "),
+            "channels": [] if channels == None else self.parse_channels(channels)
+        }
+        self.db.configs.update(ctx.guild.id, "filters", filters)
+
+        await ctx.response.send_message(self.locale.t(ctx.guild, "edited_filter", _emote="YES"))
+
+    
+    regex = discord.app_commands.Group(
+        name="regex",
+        description="Configure regex filters",
+        default_permissions=discord.Permissions(manage_messages=True)
+    )
+    @regex.command(
+        name="show",
+        description="Shows a list of active regex filters"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def show_regex(
+        self, 
+        ctx: discord.Interaction
     ) -> None:
         r"""
         regex_help
         examples:
-        -regex
-        -regex add test_regex \b(banana)\b 1
-        -regex add test_regex \b(banana)\b 0 #test-channel #other-channel
-        -regex edit test_regex \b(banana)\b 2
-        -regex remove test_regex
+        -regex show
         """
-        if ctx.invoked_subcommand == None:
-            regexes = self.db.configs.get(ctx.guild.id, "regexes")
-            if len(regexes) < 1: return await ctx.send(self.locale.t(ctx.guild, "no_regexes", _emote="NO"))
+        regexes = self.db.configs.get(ctx.guild.id, "regexes")
+        if len(regexes) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_regexes", _emote="NO"))
 
-            e = Embed(
-                ctx,
-                title="Regexes"
+        e = Embed(
+            ctx,
+            title="Regexes"
+        )
+        for indx, name in enumerate(dict(itertools.islice(regexes.items(), 10))):
+            data = regexes[name]
+            action = str(data["warns"]) + " warn" if data["warns"] == 1 else str(data["warns"]) + " warns" if data["warns"] > 0 else "delete message"
+            channels = "all channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
+
+            e.add_field(
+                name=f"__**{name}**__",
+                value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Pattern:** \n```\n{data['regex']}\n```",
+                inline=True
             )
-            for indx, name in enumerate(dict(itertools.islice(regexes.items(), 10))):
-                data = regexes[name]
-                action = str(data["warns"]) + " warn" if data["warns"] == 1 else str(data["warns"]) + " warns" if data["warns"] > 0 else "delete message"
-                channels = "all channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
+            if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
 
-                e.add_field(
-                    name=f"__**{name}**__",
-                    value=f"``▶`` **Action:** {action} \n``▶`` **Channels:** {channels} \n``▶`` **Pattern:** \n```\n{data['regex']}\n```",
-                    inline=True
-                )
-                if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
-
-                footer = f"And {len(regexes)-len(dict(itertools.islice(regexes.items(), 10)))} more filters" if len(regexes) > 10 else None
-            if footer != None: e.set_footer(text=footer)
-            
-            await ctx.send(embed=e)
+            footer = f"And {len(regexes)-len(dict(itertools.islice(regexes.items(), 10)))} more filters" if len(regexes) > 10 else None
+        if footer != None: e.set_footer(text=footer)
+        
+        await ctx.response.send_message(embed=e)
 
 
-    @regex.command(name="add")
-    @AutoModPluginBlueprint.can("manage_messages")
+    @regex.command(
+        name="add"
+    )
+    @discord.app_commands.describe(
+        name="Name of the filter",
+        warns="How many warns users should receive (use 0 to just delete the message)",
+        regex_pattern="The regex pattern that should be used (e.g. \b(banana)\b)",
+        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas, e.g. 1234, 1234)"
+    )
     async def add_regex(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str, 
-        regex: str, 
         warns: int, 
-        channels: commands.Greedy[
-            discord.TextChannel
-        ] = None
+        regex_pattern: str, 
+        channels: str = None
     ) -> None:
         r"""
         regex_add_help
         examples:
-        -regex add test_regex \b(banana)\b 1
-        -regex add test_regex \b(banana)\b 0 #test-channel #other-channel
+        -regex add test_regex 1 \b(banana)\b 
+        -regex add test_regex 1 \b(banana)\b id_1, id_2
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
+        regex = regex_pattern
 
-        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
-        if name in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_exists", _emote="NO"))
+        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
+        if name in regexes: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_exists", _emote="NO"))
 
-        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
         if self.validate_regex(regex) == False: return await ctx.send(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
 
         regexes[name] = {
             "warns": warns,
             "regex": regex,
-            "channels": [] if channels == None else [x.id for x in channels if x != None]
+            "channels": [] if channels == None else self.parse_channels(channels)
         }
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
-        await ctx.send(self.locale.t(ctx.guild, "added_regex", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "added_regex", _emote="YES"))
 
 
-    @regex.command(name="remove", aliases=["delete", "del"])
-    @AutoModPluginBlueprint.can("manage_messages")
+    @regex.command(
+        name="remove",
+        description="Deletes an exisiting regex filter"
+    )
+    @discord.app_commands.describe(
+        name="Name of the filter",
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def remove_regex(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str
     ) -> None:
         """
@@ -1345,25 +1399,32 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
 
-        if not name in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+        if not name in regexes: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
 
         del regexes[name]
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
-        await ctx.send(self.locale.t(ctx.guild, "removed_regex", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "removed_regex", _emote="YES"))
 
 
-    @regex.command(name="edit")
-    @AutoModPluginBlueprint.can("manage_messages")
+    @regex.command(
+        name="edit",
+        description="Edits an existing regex filter"
+    )
+    @discord.app_commands.describe(
+        name="Name of the filter",
+        warns="How many warns users should receive (use 0 to just delete the message)",
+        regex_pattern="Words within the filter, seperated by commas (word 1, word2, word 3)",
+        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas, e.g. 1234, 1234)"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def edit_regex(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str, 
-        regex: str, 
         warns: int, 
-        channels: commands.Greedy[
-            discord.TextChannel
-        ] = None
+        regex_pattern: str, 
+        channels: str = None
     ) -> None:
         r"""
         regex_edit_help
@@ -1373,34 +1434,40 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
+        regex = regex_pattern
 
-        if len(name) > 30: return await ctx.send(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
-        if not name in regexes: return await ctx.send(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
+        if not name in regexes: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
 
-        if warns < 0: return await ctx.send(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
+        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
 
-        if self.validate_regex(regex) == False: return await ctx.send(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
+        if self.validate_regex(regex) == False: return await ctx.response.send_message(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
 
         regexes[name] = {
             "warns": warns,
             "regex": regex,
-            "channels": [] if channels == None else [x.id for x in channels if x != None]
+            "channels": [] if channels == None else self.parse_channels(channels)
         }
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
-        await ctx.send(self.locale.t(ctx.guild, "edited_regex", _emote="YES"))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "edited_regex", _emote="YES"))
 
 
-    @commands.command(aliases=["spam"])
-    @AutoModPluginBlueprint.can("manage_guild")
+    @discord.app_commands.command(
+        name="antispam",
+        description="Configure the antispam filter"
+    )
+    @discord.app_commands.describe(
+        rate="Allowed amount of messages (put 'off' here to disable the antispam filter)",
+        per="Timeframe the amount messages are allowed to be sent in",
+        warns="Amount of warns users should receive when spam is detected"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def antispam(
         self, 
-        ctx: commands.Context, 
-        rate: Union[
-            str, 
-            int
-        ] = None, 
+        ctx: discord.Interaction, 
+        rate: str = None,
         per: int = None, 
         warns: int = None
     ) -> None:
@@ -1408,12 +1475,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         antispam_help
         examples:
         -antispam
-        -antispam 12 10 3
+        -antispam 12 per:10 3
         -antispam off
         """
         config = self.db.configs.get(ctx.guild.id, "antispam")
 
-        prefix = self.get_prefix(ctx.guild)
+        prefix = "/"
         info_embed = Embed(
             ctx,
             description=self.locale.t(ctx.guild, "antispam_info", _emote="NO")
@@ -1429,7 +1496,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             },
             {
                 "name": "__**Disable antispam**__",
-                "value": f"``{prefix}antispam off``"
+                "value": f"``{prefix}antispam rate:off``"
             }
         ])
 
@@ -1456,36 +1523,36 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                 }
             ])
 
-            await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
         elif per == None and warns == None:
-            if isinstance(rate, str):
+            if not rate.isdigit():
                 if rate.lower() == "off":
                     config.update({
                         "enabled": False
                     })
                     self.db.configs.update(ctx.guild.id, "antispam", config)
-                    await ctx.send(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"))
+                    await ctx.response.send_message(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"))
                 else:
-                    await ctx.send(embed=info_embed)
+                    await ctx.response.send_message(embed=info_embed)
             else:
-                await ctx.send(embed=info_embed)
+                await ctx.response.send_message(embed=info_embed)
         elif warns == None:
-            await ctx.send(embed=info_embed)
+            await ctx.response.send_message(embed=info_embed)
         else:
             try:
                 rate = int(rate)
                 per = int(per)
             except ValueError:
-                return await ctx.send(embed=info_embed)
+                return await ctx.response.send_message(embed=info_embed)
             else:
-                if rate < 3: return await ctx.send(self.locale.t(ctx.guild, "min_rate", _emote="NO"))
-                if rate > 21: return await ctx.send(self.locale.t(ctx.guild, "max_rate", _emote="NO"))
+                if rate < 3: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_rate", _emote="NO"))
+                if rate > 21: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_rate", _emote="NO"))
 
-                if per < 3: return await ctx.send(self.locale.t(ctx.guild, "min_per", _emote="NO"))
-                if per > 20: return await ctx.send(self.locale.t(ctx.guild, "max_per", _emote="NO"))
+                if per < 3: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_per", _emote="NO"))
+                if per > 20: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_per", _emote="NO"))
 
-                if warns < 1: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-                if warns > 100: return await ctx.send(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+                if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+                if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
 
                 config.update({
                     "enabled": True,
@@ -1503,69 +1570,75 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     )
                 })
                 self.db.configs.update(ctx.guild.id, "antispam", config)
-                await ctx.send(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns))
 
 
-    @commands.group(aliases=["automod_ignore"])
-    @AutoModPluginBlueprint.can("manage_guild")
-    async def ignore_automod(
+    ignore_automod = discord.app_commands.Group(
+        name="ignore_automod",
+        description="Manage ignored roles & channels for the automoderator",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @ignore_automod.command(
+        name="show",
+        description="Shows the current list of ignored roles & channels for the automoderator"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def show(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         ignore_automod_help
         examples:
-        -ignore_automod add @test #test
-        -ignore_automod remove @test
-        -ignore_automod
+        -ignore_automod show
         """
-        if ctx.invoked_subcommand == None:
-            roles, channels = self.get_ignored_roles_channels(ctx.guild)
+        roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
-            if (len(roles) + len(channels)) < 1:
-                return await ctx.send(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"))
-            else:
-                e = Embed(
-                    ctx,
-                    title="Ignored roles & channels for the automoderator"
-                )
-                e.add_fields([
-                    {
-                        "name": "🎭 __**Roles**__",
-                        "value": "``▶`` {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "``▶`` None"
-                    },
-                    {
-                        "name": "💬 __**Channels**__",
-                        "value": "``▶`` {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "``▶`` None"
-                    }
-                ])
+        if (len(roles) + len(channels)) < 1:
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"))
+        else:
+            e = Embed(
+                ctx,
+                title="Ignored roles & channels for the automoderator"
+            )
+            e.add_fields([
+                {
+                    "name": "🎭 __**Roles**__",
+                    "value": "``▶`` {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "``▶`` None"
+                },
+                {
+                    "name": "💬 __**Channels**__",
+                    "value": "``▶`` {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "``▶`` None"
+                }
+            ])
 
-                await ctx.send(embed=e)
+            await ctx.response.send_message(embed=e)
 
 
-    @ignore_automod.command()
-    @AutoModPluginBlueprint.can("manage_guild")
+    @ignore_automod.command(
+        name="add",
+        description="Adds the given role or channel as ignored for the automoderator"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
         self, 
-        ctx: commands.Context, 
-        roles_or_channels: commands.Greedy[
-            Union[
-                discord.Role, 
-                discord.TextChannel
-            ]
-        ]
+        ctx: discord.Interaction, 
+        role: discord.Role = None,
+        channel: discord.TextChannel = None
     ) -> None:
         """
         ignore_automod_add_help
         examples:
-        -ignore_automod add @test #test
+        -ignore_automod add @test
+        -ignore_automod add #test
         """
-        if len(roles_or_channels) < 1: raise commands.BadArgument("At least one role or channel required")
+        if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
+        role_or_channel = [role, channel]
 
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         added, ignored = [], []
-        for e in roles_or_channels:
+        for e in role_or_channel:
             if isinstance(e, discord.Role):
                 if not e.id in roles:
                     roles.append(e.id); added.append(e)
@@ -1625,32 +1698,33 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             },
         ])
 
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @ignore_automod.command()
-    @AutoModPluginBlueprint.can("manage_guild")
+    @ignore_automod.command(
+        name="remove",
+        description="Removes the given role or channel as ignored for the automoderator"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
     async def remove(
         self, 
-        ctx: commands.Context, 
-        roles_or_channels: commands.Greedy[
-            Union[
-                discord.Role, 
-                discord.TextChannel
-            ]
-        ]
+        ctx: discord.Interaction, 
+        role: discord.Role = None,
+        channel: discord.TextChannel = None
     ) -> None:
         """
         ignore_automod_remove_help
         examples:
-        -ignore_automod remove @test #test
+        -ignore_automod remove @test
+        -ignore_automod remove #test
         """
-        if len(roles_or_channels) < 1: raise commands.BadArgument("At least one role or channel required")
-
+        if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
+        role_or_channel = [role, channel]
+        
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         removed, ignored = [], []
-        for e in roles_or_channels:
+        for e in role_or_channel:
             if isinstance(e, discord.Role):
                 if e.id in roles:
                     roles.remove(e.id); removed.append(e)
@@ -1712,7 +1786,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             },
         ])
 
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
 async def setup(

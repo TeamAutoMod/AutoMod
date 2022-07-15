@@ -4,7 +4,7 @@ import datetime
 
 def Tempban(
     guild_id: int, 
-    user_id: int, 
+    user_id: str, 
     until: datetime.datetime
 ) -> dict:
     return {

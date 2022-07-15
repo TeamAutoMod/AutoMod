@@ -174,7 +174,7 @@ class LevelPlugin(AutoModPluginBlueprint):
     @commands.command(aliases=["level", "lvl"])
     async def rank(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         user: discord.Member = None
     ) -> None:
         """rank_help"""
@@ -219,7 +219,7 @@ class LevelPlugin(AutoModPluginBlueprint):
     @commands.cooldown(rate=1, per=30.0, type=commands.BucketType.user)
     async def leaderboard(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """leaderboard_help"""
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))

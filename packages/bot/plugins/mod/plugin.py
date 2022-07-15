@@ -1,3 +1,4 @@
+from multiprocessing import managers
 import discord
 from discord.ext import commands
 
@@ -117,7 +118,7 @@ class ModerationPlugin(WarnPlugin):
 
     async def clean_messages(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         amount: int, 
         check: Callable, 
         before: Union[
@@ -139,8 +140,8 @@ class ModerationPlugin(WarnPlugin):
                 before=before if before != None else ctx.message,
                 after=after
             )
-        except discord.Forbidden:
-            raise
+        except discord.Forbidden as ex:
+            return self.error(ctx, ex)
         except discord.NotFound:
             await asyncio.sleep(1); return self.locale.t(ctx.guild, "alr_cleaned", _emote="NO"), {}
         else:
@@ -152,13 +153,13 @@ class ModerationPlugin(WarnPlugin):
                 except discord.NotFound:
                     pass
                 finally:
-                    return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {"delete_after": 5}
+                    return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {}
 
 
     async def kick_or_ban(
         self, 
         action: str, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         user: Union[
             discord.Member, 
             discord.User
@@ -170,16 +171,16 @@ class ModerationPlugin(WarnPlugin):
 
         if action != "hackban":
             if ctx.guild.get_member(user.id) == None:
-                return await ctx.send(self.locale.t(ctx.guild, "not_in_server", _emote="NO"))
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "not_in_server", _emote="NO"))
 
-        if not self.can_act(ctx.guild, ctx.author, user):
-            return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
+        if not self.can_act(ctx.guild, ctx.user, user):
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
         try:
             func = getattr(ctx.guild, ACTIONS[action]["action"])
             await func(user=user, reason=reason)
         except Exception as ex:
-            await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
         else:
             self.bot.ignore_for_events.append(user.id)
             self.dm_processor.execute(
@@ -196,29 +197,32 @@ class ModerationPlugin(WarnPlugin):
                 try:
                     await ctx.guild.unban(user=user)
                 except Exception as ex:
-                    await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                    await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
                 else:
                     self.bot.ignore_for_events.append(user.id)
-                    await ctx.send(self.locale.t(ctx.guild, "softbanned", _emote="YES", user=user))
+                    await ctx.response.send_message(self.locale.t(ctx.guild, "softbanned", _emote="YES", user=user))
             
             await self.log_processor.execute(ctx.guild, action, **{
                 "user": user,
                 "user_id": user.id,
-                "mod": ctx.author,
-                "mod_id": ctx.author.id,
+                "mod": ctx.user,
+                "mod_id": ctx.user.id,
                 "reason": reason,
                 "channel_id": ctx.channel.id,
-                "case": self.action_processor.new_case(action, ctx.message, ctx.author, user, reason)
+                "case": self.action_processor.new_case(action, ctx.message, ctx.user, user, reason)
             })
-            await ctx.send(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES", user=user))
+            await ctx.response.send_message(self.locale.t(ctx.guild, ACTIONS[action]["log"], _emote="YES", user=user))
 
 
-    @commands.command()
-    @WarnPlugin.can("ban_members")
+    @discord.app_commands.command(
+        name="ban",
+        description="Bans the user from the server"
+    )
+    @discord.app_commands.default_permissions(ban_members=True)
     async def ban(
         self, 
-        ctx: commands.Context,
-        user: DiscordUser, 
+        ctx: discord.Interaction,
+        user: discord.Member, 
         *, 
         reason: str = None
     ) -> None:
@@ -234,15 +238,18 @@ class ModerationPlugin(WarnPlugin):
         except discord.NotFound:
             await self.kick_or_ban("ban", ctx, user, reason, delete_message_days=1)
         else:
-            await ctx.send(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
 
     
-    @commands.command()
-    @WarnPlugin.can("ban_members")
+    @discord.app_commands.command(
+        name="unban",
+        description="Unbans the user from the server"
+    )
+    @discord.app_commands.default_permissions(ban_members=True)
     async def unban(
         self,
-        ctx: commands.Context, 
-        user: DiscordUser, 
+        ctx: discord.Interaction, 
+        user_id: str, 
         *, 
         reason: str = None
     ) -> None:
@@ -252,39 +259,48 @@ class ModerationPlugin(WarnPlugin):
         -unban 543056846601191508
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+
         try:
-            await ctx.guild.fetch_ban(user)
-        except discord.NotFound:
-            await ctx.send(self.locale.t(ctx.guild, "not_banned", _emote="WARN"))
+            user = await DiscordUser().convert(ctx, user_id)
+        except Exception as ex:
+            return self.error(ctx, ex)
         else:
             try:
-                await ctx.guild.unban(user=user, reason=reason)
-            except Exception as ex:
-                await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                await ctx.guild.fetch_ban(user)
+            except discord.NotFound:
+                await ctx.response.send_message(self.locale.t(ctx.guild, "not_banned", _emote="WARN"))
             else:
-                self.bot.ignore_for_events.append(user.id)
-                await self.log_processor.execute(ctx.guild, "unban", **{
-                    "user": user,
-                    "user_id": user.id,
-                    "mod": ctx.author,
-                    "mod_id": ctx.author.id,
-                    "reason": reason,
-                    "channel_id": ctx.channel.id,
-                    "case": self.action_processor.new_case("unban", ctx.message, ctx.author, user, reason)
-                })
+                try:
+                    await ctx.guild.unban(user=user, reason=reason)
+                except Exception as ex:
+                    await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                else:
+                    self.bot.ignore_for_events.append(user.id)
+                    await self.log_processor.execute(ctx.guild, "unban", **{
+                        "user": user,
+                        "user_id": user.id,
+                        "mod": ctx.user,
+                        "mod_id": ctx.user.id,
+                        "reason": reason,
+                        "channel_id": ctx.channel.id,
+                        "case": self.action_processor.new_case("unban", ctx.message, ctx.user, user, reason)
+                    })
 
-                await ctx.send(self.locale.t(ctx.guild, "unbanned", _emote="YES", user=user))
-            finally:
-                if self.db.tbans.exists(f"{ctx.guild.id}-{user.id}"):
-                    self.db.tbans.delete(f"{ctx.guild.id}-{user.id}")
+                    await ctx.response.send_message(self.locale.t(ctx.guild, "unbanned", _emote="YES", user=user))
+                finally:
+                    if self.db.tbans.exists(f"{ctx.guild.id}-{user.id}"):
+                        self.db.tbans.delete(f"{ctx.guild.id}-{user.id}")
 
 
-    @commands.command()
-    @WarnPlugin.can("ban_members")
+    @discord.app_commands.command(
+        name="softban",
+        description="Softbans the user from the server (ban & unban)"
+    )
+    @discord.app_commands.default_permissions(ban_members=True)
     async def softban(
         self, 
-        ctx: commands.Context, 
-        user: DiscordUser, 
+        ctx: discord.Interaction, 
+        user: discord.Member, 
         *, 
         reason: str = None
     ) -> None:
@@ -300,15 +316,18 @@ class ModerationPlugin(WarnPlugin):
         except discord.NotFound:
             await self.kick_or_ban("softban", ctx, user, reason, delete_message_days=1)
         else:
-            await ctx.send(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
 
 
-    @commands.command(aliases=["forceban"])
-    @WarnPlugin.can("ban_members")
+    @discord.app_commands.command(
+        name="forceban",
+        description="Bans the user from the server (even if they aaren't in the server)"
+    )
+    @discord.app_commands.default_permissions(ban_members=True)
     async def hackban(
         self, 
-        ctx: commands.Context, 
-        user: DiscordUser, 
+        ctx: discord.Interaction, 
+        user_id: str, 
         *, 
         reason: str = None
     ) -> None:
@@ -318,22 +337,33 @@ class ModerationPlugin(WarnPlugin):
         -hackban @paul#0009 test
         -hackban 543056846601191508
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
         try:
-            await ctx.guild.fetch_ban(user)
-        except discord.NotFound:
-            await self.kick_or_ban("hackban", ctx, user, reason, delete_message_days=1)
+            user = await DiscordUser().convert(ctx, user_id)
+        except Exception as ex:
+            return self.error(ctx, ex)
         else:
-            await ctx.send(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
+            if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+            try:
+                await ctx.guild.fetch_ban(user)
+            except discord.NotFound:
+                await self.kick_or_ban("hackban", ctx, user, reason, delete_message_days=1)
+            else:
+                await ctx.response.send_message(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
 
 
-    @commands.command()
-    @WarnPlugin.can("ban_members")
+    @discord.app_commands.command(
+        name="tempban",
+        description="Temporarily bans the user from the server"
+    )
+    @discord.app_commands.describe(
+        length="10m, 2h, 1d"
+    )
+    @discord.app_commands.default_permissions(ban_members=True)
     async def tempban(
         self, 
-        ctx: commands.Context, 
-        user: DiscordUser, 
-        length: Duration, 
+        ctx: discord.Interaction, 
+        user: discord.Member, 
+        length: str, 
         *, 
         reason: str = None
     ) -> None:
@@ -344,89 +374,33 @@ class ModerationPlugin(WarnPlugin):
         -tempban 543056846601191508 7d
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
-        if length.unit == None: length.unit = "m"
-        if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
-
-        if not self.can_act(ctx.guild, ctx.author, user):
-            return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
         try:
-            await ctx.guild.fetch_ban(user)
-        except discord.NotFound:
-            _id = f"{ctx.guild.id}-{user.id}"
-            if self.db.tbans.exists(_id):
+            length = await Duration().convert(ctx, length)
+        except Exception as ex:
+            return self.error(ctx, ex)
+        else:
+            if length.unit == None: length.unit = "m"
+            if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
-                async def confirm(i):
-                    until = (self.db.tbans.get(_id, "until") + datetime.timedelta(seconds=length.to_seconds(ctx)))
-                    self.db.tbans.update(_id, "until", until)
+            if not self.can_act(ctx.guild, ctx.user, user):
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
-                    await i.response.edit_message(
-                        content=self.locale.t(ctx.guild, "tempban_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"), 
-                        embed=None, 
-                        view=None
-                    )
+            try:
+                await ctx.guild.fetch_ban(user)
+            except discord.NotFound:
+                _id = f"{ctx.guild.id}-{user.id}"
+                if self.db.tbans.exists(_id):
 
-                    self.dm_processor.execute(
-                        ctx.message,
-                        "tempban",
-                        user,
-                        **{
-                            "guild_name": ctx.guild.name,
-                            "until": f"<t:{round(until.timestamp())}>",
-                            "reason": reason,
-                            "_emote": "HAMMER"
-                        }
-                    )
+                    async def confirm(i):
+                        until = (self.db.tbans.get(_id, "until") + datetime.timedelta(seconds=length.to_seconds(ctx)))
+                        self.db.tbans.update(_id, "until", until)
 
-                    await self.log_processor.execute(ctx.guild, "tempban_extended", **{
-                        "mod": ctx.author, 
-                        "mod_id": ctx.author.id,
-                        "user": user,
-                        "user_id": user.id,
-                        "until": f"<t:{round(until.timestamp())}>",
-                        "reason": reason,
-                        "channel_id": ctx.channel.id,
-                        "case": self.action_processor.new_case("tempban extended", ctx.message, ctx.author, user, reason, until=until)
-                    })
-                    return
-
-                async def cancel(i):
-                    e = Embed(
-                        ctx,
-                        description=self.locale.t(ctx.guild, "aborting")
-                    )
-                    await i.response.edit_message(embed=e, view=None)
-
-                async def timeout():
-                    if message is not None:
-                        e = Embed(
-                            ctx,
-                            description=self.locale.t(ctx.guild, "aborting")
+                        await i.response.edit_message(
+                            content=self.locale.t(ctx.guild, "tempban_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"), 
+                            embed=None, 
+                            view=None
                         )
-                        await message.edit(embed=e, view=None)
-
-                def check(i):
-                    return i.user.id == ctx.author.id and i.message.id == message.id
-
-                e = Embed(
-                    ctx,
-                    description=self.locale.t(ctx.guild, "already_tempbanned_description")
-                )
-                message = await ctx.send(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
-            else:
-                seconds = length.to_seconds(ctx)
-                if seconds >= 1:
-                    try:
-                        await ctx.guild.ban(
-                            user=user, 
-                            reason=f"{reason} | {length}{length.unit}"
-                        )
-                    except Exception as ex:
-                        await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
-                    else:
-                        self.bot.ignore_for_events.append(user.id)
-                        until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
-                        self.db.tbans.insert(Tempban(ctx.guild.id, user.id, until))
 
                         self.dm_processor.execute(
                             ctx.message,
@@ -440,30 +414,95 @@ class ModerationPlugin(WarnPlugin):
                             }
                         )
 
-                        await self.log_processor.execute(ctx.guild, "tempban", **{
-                            "mod": ctx.author, 
-                            "mod_id": ctx.author.id,
+                        await self.log_processor.execute(ctx.guild, "tempban_extended", **{
+                            "mod": ctx.user, 
+                            "mod_id": ctx.user.id,
                             "user": user,
                             "user_id": user.id,
                             "until": f"<t:{round(until.timestamp())}>",
+                            "reason": reason,
                             "channel_id": ctx.channel.id,
-                            "case": self.action_processor.new_case("tempban", ctx.message, ctx.author, user, reason, until=until),
-                            "reason": reason
-                        }) 
+                            "case": self.action_processor.new_case("tempban extended", ctx.message, ctx.user, user, reason, until=until)
+                        })
+                        return
 
-                        await ctx.send(self.locale.t(ctx.guild, "tempbanned", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"))
+                    async def cancel(i):
+                        e = Embed(
+                            ctx,
+                            description=self.locale.t(ctx.guild, "aborting")
+                        )
+                        await i.response.edit_message(embed=e, view=None)
+
+                    async def timeout():
+                        if message is not None:
+                            e = Embed(
+                                ctx,
+                                description=self.locale.t(ctx.guild, "aborting")
+                            )
+                            await message.edit(embed=e, view=None)
+
+                    def check(i):
+                        return i.user.id == ctx.user.id and i.message.id == message.id
+
+                    e = Embed(
+                        ctx,
+                        description=self.locale.t(ctx.guild, "already_tempbanned_description")
+                    )
+                    message = await ctx.response.send_message(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
                 else:
-                    raise commands.BadArgument("Number too small")
-        else:
-            await ctx.send(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
+                    seconds = length.to_seconds(ctx)
+                    if seconds >= 1:
+                        try:
+                            await ctx.guild.ban(
+                                user=user, 
+                                reason=f"{reason} | {length}{length.unit}"
+                            )
+                        except Exception as ex:
+                            await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                        else:
+                            self.bot.ignore_for_events.append(user.id)
+                            until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
+                            self.db.tbans.insert(Tempban(ctx.guild.id, user.id, until))
+
+                            self.dm_processor.execute(
+                                ctx.message,
+                                "tempban",
+                                user,
+                                **{
+                                    "guild_name": ctx.guild.name,
+                                    "until": f"<t:{round(until.timestamp())}>",
+                                    "reason": reason,
+                                    "_emote": "HAMMER"
+                                }
+                            )
+
+                            await self.log_processor.execute(ctx.guild, "tempban", **{
+                                "mod": ctx.user, 
+                                "mod_id": ctx.user.id,
+                                "user": user,
+                                "user_id": user.id,
+                                "until": f"<t:{round(until.timestamp())}>",
+                                "channel_id": ctx.channel.id,
+                                "case": self.action_processor.new_case("tempban", ctx.message, ctx.user, user, reason, until=until),
+                                "reason": reason
+                            }) 
+
+                            await ctx.response.send_message(self.locale.t(ctx.guild, "tempbanned", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"))
+                    else:
+                        return self.error(ctx, commands.BadArgument("Number too small"))
+            else:
+                await ctx.response.send_message(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
 
 
-    @commands.command()
-    @WarnPlugin.can("kick_members")
+    @discord.app_commands.command(
+        name="kick",
+        description="Kicks the user from the server"
+    )
+    @discord.app_commands.default_permissions(kick_members=True)
     async def kick(
         self, 
-        ctx: commands.Context, 
-        user: DiscordUser, 
+        ctx: discord.Interaction, 
+        user: discord.Member, 
         *, 
         reason: str = None
     ) -> None:
@@ -479,16 +518,22 @@ class ModerationPlugin(WarnPlugin):
         except discord.NotFound:
             await self.kick_or_ban("kick", ctx, user, reason, delete_message_days=1)
         else:
-            await ctx.send(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
 
 
-    @commands.command(aliases=["timeout"])
-    @WarnPlugin.can("moderate_members")
+    @discord.app_commands.command(
+        name="mute",
+        description="Temporarily mutes the user"
+    )
+    @discord.app_commands.describe(
+        length="10m, 2h, 1d"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def mute(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         user: discord.Member, 
-        length: Duration, 
+        length: str, 
         *, 
         reason: str = None
     ) -> None:
@@ -499,82 +544,30 @@ class ModerationPlugin(WarnPlugin):
         -mute 543056846601191508 1h
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
-        if length.unit == None: length.unit = "m"
-        if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
-        if not self.can_act(ctx.guild, ctx.author, user):
-            return await ctx.send(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
-
-        _id = f"{ctx.guild.id}-{user.id}"
-        if self.db.mutes.exists(_id):
-
-            async def confirm(i):
-                until = (self.db.mutes.get(_id, "until") + datetime.timedelta(seconds=length.to_seconds(ctx)))
-                self.db.mutes.update(_id, "until", until)
-
-                await i.response.edit_message(
-                    content=self.locale.t(ctx.guild, "mute_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"), 
-                    embed=None, 
-                    view=None
-                )
-
-                self.dm_processor.execute(
-                    ctx.message,
-                    "mute",
-                    user,
-                    **{
-                        "guild_name": ctx.guild.name,
-                        "until": f"<t:{round(until.timestamp())}>",
-                        "reason": reason,
-                        "_emote": "MUTE"
-                    }
-                )
-
-                await self.log_processor.execute(ctx.guild, "mute_extended", **{
-                    "mod": ctx.author, 
-                    "mod_id": ctx.author.id,
-                    "user": user,
-                    "user_id": user.id,
-                    "reason": reason,
-                    "until": f"<t:{round(until.timestamp())}>",
-                    "channel_id": ctx.channel.id,
-                    "case": self.action_processor.new_case("mute extended", ctx.message, ctx.author, user, reason, until=until)
-                })
-                self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
-                return
-
-            async def cancel(i):
-                e = Embed(
-                ctx,
-                    description=self.locale.t(ctx.guild, "aborting")
-                )
-                await i.response.edit_message(embed=e, view=None)
-
-            async def timeout():
-                if message is not None:
-                    e = Embed(
-                        ctx,
-                        description=self.locale.t(ctx.guild, "aborting")
-                    )
-                    await message.edit(embed=e, view=None)
-
-            def check(i):
-                return i.user.id == ctx.author.id and i.message.id == message.id
-
-            e = Embed(
-                ctx,
-                description=self.locale.t(ctx.guild, "already_muted_description")
-            )
-            message = await ctx.send(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
+        try:
+            length = await Duration().convert(ctx, length)
+        except Exception as ex:
+            return self.error(ctx, ex)
         else:
-            seconds = length.to_seconds(ctx)
-            if seconds >= 1:
-                until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
-                exc = self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
-                if exc != "":
-                    await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
-                else:
-                    self.db.mutes.insert(Mute(ctx.guild.id, user.id, until))
+            if length.unit == None: length.unit = "m"
+            if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
+
+            if not self.can_act(ctx.guild, ctx.user, user):
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
+
+            _id = f"{ctx.guild.id}-{user.id}"
+            if self.db.mutes.exists(_id):
+
+                async def confirm(i):
+                    until = (self.db.mutes.get(_id, "until") + datetime.timedelta(seconds=length.to_seconds(ctx)))
+                    self.db.mutes.update(_id, "until", until)
+
+                    await i.response.edit_message(
+                        content=self.locale.t(ctx.guild, "mute_extended", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"), 
+                        embed=None, 
+                        view=None
+                    )
 
                     self.dm_processor.execute(
                         ctx.message,
@@ -588,27 +581,88 @@ class ModerationPlugin(WarnPlugin):
                         }
                     )
 
-                    await self.log_processor.execute(ctx.guild, "mute", **{
-                        "mod": ctx.author, 
-                        "mod_id": ctx.author.id,
+                    await self.log_processor.execute(ctx.guild, "mute_extended", **{
+                        "mod": ctx.user, 
+                        "mod_id": ctx.user.id,
                         "user": user,
                         "user_id": user.id,
                         "reason": reason,
                         "until": f"<t:{round(until.timestamp())}>",
                         "channel_id": ctx.channel.id,
-                        "case": self.action_processor.new_case("mute", ctx.message, ctx.author, user, reason, until=until)
-                    }) 
+                        "case": self.action_processor.new_case("mute extended", ctx.message, ctx.user, user, reason, until=until)
+                    })
+                    self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
+                    return
 
-                    await ctx.send(self.locale.t(ctx.guild, "muted", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"))
+                async def cancel(i):
+                    e = Embed(
+                    ctx,
+                        description=self.locale.t(ctx.guild, "aborting")
+                    )
+                    await i.response.edit_message(embed=e, view=None)
+
+                async def timeout():
+                    if message is not None:
+                        e = Embed(
+                            ctx,
+                            description=self.locale.t(ctx.guild, "aborting")
+                        )
+                        await message.edit(embed=e, view=None)
+
+                def check(i):
+                    return i.user.id == ctx.user.id and i.message.id == message.id
+
+                e = Embed(
+                    ctx,
+                    description=self.locale.t(ctx.guild, "already_muted_description")
+                )
+                message = await ctx.response.send_message(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
             else:
-                raise commands.BadArgument("Number too small")
+                seconds = length.to_seconds(ctx)
+                if seconds >= 1:
+                    until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
+                    exc = self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
+                    if exc != "":
+                        await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
+                    else:
+                        self.db.mutes.insert(Mute(ctx.guild.id, user.id, until))
+
+                        self.dm_processor.execute(
+                            ctx.message,
+                            "mute",
+                            user,
+                            **{
+                                "guild_name": ctx.guild.name,
+                                "until": f"<t:{round(until.timestamp())}>",
+                                "reason": reason,
+                                "_emote": "MUTE"
+                            }
+                        )
+
+                        await self.log_processor.execute(ctx.guild, "mute", **{
+                            "mod": ctx.user, 
+                            "mod_id": ctx.user.id,
+                            "user": user,
+                            "user_id": user.id,
+                            "reason": reason,
+                            "until": f"<t:{round(until.timestamp())}>",
+                            "channel_id": ctx.channel.id,
+                            "case": self.action_processor.new_case("mute", ctx.message, ctx.user, user, reason, until=until)
+                        }) 
+
+                        await ctx.response.send_message(self.locale.t(ctx.guild, "muted", _emote="YES", user=user, until=f"<t:{round(until.timestamp())}>"))
+                else:
+                    return self.error(ctx, commands.BadArgument("Number too small"))
 
 
-    @commands.command()
-    @WarnPlugin.can("kick_members")
+    @discord.app_commands.command(
+        name="unmute",
+        description="Unmutes the user"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def unmute(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         user: discord.Member
     ) -> None:
         """
@@ -619,55 +673,41 @@ class ModerationPlugin(WarnPlugin):
         """
         _id = f"{ctx.guild.id}-{user.id}"
         if not self.db.mutes.exists(_id):
-            return await ctx.send(self.locale.t(ctx.guild, "not_muted", _emote="NO"))
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "not_muted", _emote="NO"))
 
         if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
             if ctx.guild.me.guild_permissions.administrator == False: 
-                return await ctx.send(self.locale.t(ctx.guild, "no_timeout_perms", _emote="NO"))
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "no_timeout_perms", _emote="NO"))
 
         exc = self.bot.handle_timeout(False, ctx.guild, user, None)
         if exc != "":
-            await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
         else:
             self.db.mutes.delete(_id)
             await self.log_processor.execute(ctx.guild, "manual_unmute", **{
-                "mod": ctx.author, 
-                "mod_id": ctx.author.id,
+                "mod": ctx.user, 
+                "mod_id": ctx.user.id,
                 "user": user,
                 "user_id": user.id,
                 "channel_id": ctx.channel.id,
-                "case": self.action_processor.new_case("unmute", ctx.message, ctx.author, user, "Manual unmute")
+                "case": self.action_processor.new_case("unmute", ctx.message, ctx.user, user, "Manual unmute")
             }) 
 
-            await ctx.send(self.locale.t(ctx.guild, "unmuted", _emote="YES", user=user))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "unmuted", _emote="YES", user=user))
 
 
-    @commands.group(aliases=["clear", "purge"])
-    @WarnPlugin.can("manage_messages")
-    async def clean(
-        self, 
-        ctx: commands.Context
-    ) -> None:
-        """
-        clean_help
-        examples:
-        -clean all 25
-        -clean user @paul#0009 25
-        -clean user 543056846601191508
-        """
-        if ctx.invoked_subcommand == None:
-            cmd = self.bot.get_command("help")
-            await cmd.__call__(
-                ctx,
-                query="clean"
-            )
-
-
-    @clean.command()
-    @WarnPlugin.can("manage_messages")
+    clean = discord.app_commands.Group(
+        name="clean",
+        description="Purge deletes messages from the channel",
+        default_permissions=discord.Permissions(manage_messages=True)
+    )
+    @clean.command(
+        name="all",
+        description="Deletes the specified amount of messages"
+    )
     async def all(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         amount: int = 10
     ) -> None:
         """
@@ -675,22 +715,24 @@ class ModerationPlugin(WarnPlugin):
         examples:
         -clean all 25
         """
-        if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
-        if amount > 300: return await ctx.send(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
+        if amount < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
+        if amount > 300: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
 
         msg, kwargs = await self.clean_messages(
             ctx,
             amount,
             lambda _: True
         )
-        await ctx.send(msg, **kwargs)
+        await ctx.response.send_message(msg, **kwargs)
 
 
-    @clean.command()
-    @WarnPlugin.can("manage_messages")
+    @clean.command(
+        name="user",
+        description="Deletes the specified amount of messages from the user"
+    )
     async def user(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         user: discord.Member, 
         amount: int = 10
     ) -> None:
@@ -700,22 +742,24 @@ class ModerationPlugin(WarnPlugin):
         -clean user @paul#0009 25
         -clean user 543056846601191508
         """
-        if amount < 1: return await ctx.send(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
-        if amount > 300: return await ctx.send(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
+        if amount < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
+        if amount > 300: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
 
         msg, kwargs = await self.clean_messages(
             ctx,
             amount,
             lambda m: m.author.id == user.id
         )
-        await ctx.send(msg, **kwargs)
+        await ctx.response.send_message(msg, **kwargs)
 
 
-    @clean.command()
-    @WarnPlugin.can("manage_messages")
+    @clean.command(
+        name="content",
+        description="Deletes the specified amount of messages containing the given content"
+    )
     async def content(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         *, 
         text: str
     ) -> None:
@@ -729,7 +773,7 @@ class ModerationPlugin(WarnPlugin):
             300,
             lambda m: text.lower() in m.content.lower()
         )
-        await ctx.send(msg, **kwargs)
+        await ctx.response.send_message(msg, **kwargs)
 
 
     async def report(

@@ -18,7 +18,7 @@ class Embed(discord.Embed):
         self, 
         _: Union[
             commands.Context, 
-            None
+            discord.Interaction
         ], 
         color: int = None, 
         **kwargs

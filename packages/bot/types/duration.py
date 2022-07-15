@@ -23,7 +23,7 @@ class DurationHolder(object):
 
     def to_seconds(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         if self.unit is None:
             self.unit = "seconds"
@@ -44,9 +44,9 @@ class DurationHolder(object):
             length = length * 60
             unit = 's'
         if unit != 's' and unit != 'second':
-            raise BadArgument(ctx.bot.locale.t(ctx.guild, "invalid_length_unit"))
+            raise BadArgument(ctx._client.locale.t(ctx.guild, "invalid_length_unit"))
         if length > MAX_LENGTH:
-            raise BadArgument(ctx.bot.locale.t(ctx.guild, "max_length", max_length=MAX_LENGTH))
+            raise BadArgument(ctx._client.locale.t(ctx.guild, "max_length", max_length=MAX_LENGTH))
         else:
             return length
 
@@ -63,7 +63,7 @@ class DurationHolder(object):
 class DurationIdentifier(commands.Converter):
     async def convert(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         argument: Union[
             str, 
             None
@@ -79,7 +79,7 @@ class DurationIdentifier(commands.Converter):
                 "week", "weeks", "day", "days", "hour", "hours", "minute", 
                 "minutes", "second","seconds", "w", "d", "h", "m", "s"
             ]:
-            raise BadArgument(ctx.bot.locale.t(ctx.guild, "advanced_invalid_length_unit"))
+            raise BadArgument(ctx._client.locale.t(ctx.guild, "advanced_invalid_length_unit"))
         return argument
 
 
@@ -87,7 +87,7 @@ class DurationIdentifier(commands.Converter):
 class Duration(commands.Converter):
     async def convert(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         argument: Union[
             str, 
             None

@@ -9,7 +9,10 @@ from typing import Union
 def Case(
     case: int, 
     _type: str, 
-    msg: discord.Message, 
+    msg: Union[
+        discord.Message,
+        discord.Interaction
+    ], 
     mod: discord.Member, 
     user: Union[
         discord.Member, 

@@ -4,7 +4,7 @@
     "no_reason": "No reason",
     "aborting": "Aborting",
     "updated_i18n": "{emote} Updated the ``{key}`` key",
-    "server_prefix": "My prefix on this server is ``{prefix}``",
+    "server_prefix": "My text & custom command prefix on this server is ``{prefix}``. All regular commands are slash commands and can be used by typing ``/``",
     "max_length": "Maximum length is {max_length}s (28 days)",
 
     "eval_help": "Evaluates a block of code",
@@ -44,7 +44,7 @@
 
     "config_help": "Shows the current server config",
     "punishment_help": "Sets a punishment for a specific amount of warns. Valid actions are ``kick``, ``ban``, ``mute``, ``none``. To disable/remove a set punishment, specify the warn amount and use **none** as the action",
-    "log_help": "Base command for configuring logging. Either use a channel as the second argument to enable the log option or use **off** to disable it. Valid options are ``mod``, ``server``, ``messages``, ``joins``, ``members``, ``voice``, ``reports``",
+    "log_help": "Base command for configuring logging. Either use a channel as the second argument to enable the log option or use **True** for the 'disable' parameter to disable it. Valid options are ``mod``, ``server``, ``messages``, ``joins``, ``members``, ``voice``, ``reports``",
     "prefix_help": "Sets a new server prefix for the bot",
     "automod_help": "Base command for configuring the automoderator. You can use off as the argument in all subcommands to disable the respective feature. Valid rules are ``invites``, ``links``, ``files``, ``mentions``, ``lines``, ``emotes``, ``repeat``, ``zalgo``",
     "allowed_invites_help": "Base command for managing the invite whitelist. When used without a subcommand, this shows the current invite whitelist",
@@ -164,11 +164,11 @@
     "about_description": "AutoMod is a moderation bot with multiple, customizable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
 
     "invalid_action_desc": "{emote} ``{given}`` isn't a valid action",
-    "set_none": "{emote} Removed the action for {warns} warns. To view all current actions, use ``{prefix}config``",
-    "set_kick": "{emote} Users will now be kicked when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
-    "set_ban": "{emote} Users will now be banned when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
-    "set_mute": "{emote} Users will now be muted for {length}{unit} when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
-    "set_tempban": "{emote} Users will now be banned for {length}{unit} when reaching {warns} warns. To view all current actions, use ``{prefix}config``",
+    "set_none": "{emote} Removed the action for **{warns}** warns. To view all current actions, use ``{prefix}config``",
+    "set_kick": "{emote} Users will now be **kicked** when reaching **{warns}** warns. To view all current actions, use ``{prefix}config``",
+    "set_ban": "{emote} Users will now be **banned** when reaching **{warns}** warns. To view all current actions, use ``{prefix}config``",
+    "set_mute": "{emote} Users will now be **muted** for **{length}{unit}** when reaching **{warns}** warns. To view all current actions, use ``{prefix}config``",
+    "set_tempban": "{emote} Users will now be **banned** for **{length}{unit}** when reaching **{warns}** warns. To view all current actions, use ``{prefix}config``",
     "time_needed": "{emote} The mute option needs an additional time, for example **10m** which would mean 10 minutes.",
 
     "invalid_log_option_desc": "{emote} ``{given}`` isn't a valid log option",
@@ -181,7 +181,7 @@
     "mod_role_on": "{emote} Set **{role}** as the mod role",
 
     "join_role_off": "{emote} Removed the join role",
-    "invalid_join_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument",
+    "invalid_join_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **True** for the disable parameter as the second argument",
     "join_role_on": "{emote} Set **{role}** as the join role",
 
     "prefix_too_long": "{emote} Prefix is too long (>20)",
@@ -312,8 +312,8 @@
     "removed_reply": "{emote} Automated reply has been removed",
 
     "setup_desc": "This is a small guide for setting up the bot. If you need any further help, don't hesitate to join the support server: {inv}",
-    "prefix_val": "You can configure the bots prefix for this server using the ``{prefix}prefix`` command. For example, if you want the prefix to be ``!!``, you'd use ``{prefix}prefix !!``",
-    "log_val": "Logging allows you to keep track of what is happening in your server. Everything related to logging is configured using the ``{prefix}log`` command. The first command argument is always the option you want to configure, for example ``mod`` for mod logs. \n\nThe following are the available log options: \n``▶`` ``mod`` → For (auto-)mod logs like bans etc. \n``▶`` ``server`` → For server logs like channel & emoji events \n``▶`` ``messages`` → For message deletion/edit logs \n``▶`` ``joins`` → For member join/leave logs \n``▶`` ``voice`` → For voice join/leave/switch events \n``▶`` ``reports`` → For logging of reports via right-clicking on a message \n \nThe second command argument is either the channel you want the logs to be sent to, or ``off`` to disable the option. \n\nTwo examples would be: \n``▶`` ``{prefix}log mod #mod-logs`` → Enables mod logging and sends them to #mod-logs \n``▶`` ``{prefix}log mod off`` → Disables mod logs",
+    "prefix_val": "You can configure the bots prefix for text & custom commands using the ``{prefix}prefix`` command. For example, if you want the prefix to be ``!!``, you'd use ``{prefix}prefix !!``",
+    "log_val": "Logging allows you to keep track of what is happening in your server. Everything related to logging is configured using the ``{prefix}log`` command. The first command argument is always the option you want to configure, for example ``mod`` for mod logs. \n\nThe following are the available log options: \n``▶`` ``mod`` → For (auto-)mod logs like bans etc. \n``▶`` ``server`` → For server logs like channel & emoji events \n``▶`` ``messages`` → For message deletion/edit logs \n``▶`` ``joins`` → For member join/leave logs \n``▶`` ``voice`` → For voice join/leave/switch events \n``▶`` ``reports`` → For logging of reports via right-clicking on a message \n \nThe second command argument is either the channel you want the logs to be sent to, or ``True`` for the 'disable' parameter to disable the option. \n\nTwo examples would be: \n``▶`` ``{prefix}log mod #mod-logs`` → Enables mod logging and sends them to #mod-logs \n``▶`` ``{prefix}log mod disable:True`` → Disables mod logs",
     "automod_val": "You can configure rules, and how the bot should behave upon violation. This is done using the ``{prefix}automod`` command. The first command argument is always the rule you want to configure, for example ``invites``. \n\nAll available rules are: \n``▶`` ``invites`` → Server invites \n``▶`` ``links`` → Web links other than invites \n``▶`` ``files`` → Uncommon file types \n``▶`` ``mentions`` → Max allowed mentions\n``▶`` ``lines`` → Max allowed line splits \n``▶`` ``emotes`` → Max allowed emotes  \n``▶`` ``repeat`` → Max allowed repetition of words  \n``▶`` ``zalgo`` → Zalgo characters \n``▶`` ``caps`` → Excessive CAPS usage \n\nThe second argument is either the warn amount users should receive or a threshold for the rule. Only ``mentions``, ``lines``, ``emotes`` & ``repeat`` require a threshold. Set the warn amount to 0 if you just want the message to be deleted. To disable a rule, use ``off`` as the second argument. \nExamples would be: \n``▶`` ``{prefix}automod invites 1`` → Flags users with 1 warn for invites \n``▶`` ``{prefix}automod repeat off`` → Disables the repeat rule",
     "pun_val": "You can easily set punishments for a specific amount of warns. This is configured using the ``{prefix}punishment`` command. The first command argument is always the warn amount the action should be enforced at. The second argument is the action itself. \n\nThese are all available actions: \n``▶`` ``kick`` → Kicks the user \n``▶`` ``ban`` → Bans the user (can be temporary) \n``▶`` ``mute`` → Temporarily mutes the user \n``▶`` ``none`` → Removes the configured action for the warn amount \n\nThe third argument is a duration for the action. The ``mute`` action has to have this given, while the ``ban`` action can take this if you want a user to be temp banned. Durations are formatted like ``2m`` for 2 minutes or ``1h`` for 1 hour. \n\nExamples would be: \n``▶`` ``{prefix}punishment 1 kick`` → Will kick users upon reaching 1 warn \n``▶`` ``{prefix}punishment 2 mute 10m`` → Will mute users upon reaching 2 warns \n``▶`` ``{prefix}punishment 3 none`` → Will remove the action configured for 3 warns"
 }

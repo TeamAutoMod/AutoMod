@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 from typing import Union
@@ -16,7 +17,7 @@ class IntegerConverter(commands.Converter):
 
     async def convert(
         self, 
-        _: commands.Context, 
+        _: discord.Interaction, 
         argument: Union[
             int, 
             str, 

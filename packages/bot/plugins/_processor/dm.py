@@ -39,7 +39,10 @@ class DMProcessor(object):
     
     def execute(
         self, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Message,
+            discord.Interaction
+        ], 
         _type: str, 
         _user: Union[
             discord.Member, 
@@ -59,7 +62,10 @@ class DMProcessor(object):
     
     async def actual_execute(
         self, 
-        msg: discord.Message, 
+        msg: Union[
+            discord.Member, 
+            discord.User
+        ],  
         _type: str, 
         _user: Union[
             discord.Member, 

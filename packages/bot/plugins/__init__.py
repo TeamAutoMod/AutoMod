@@ -1,10 +1,13 @@
 import discord
 from discord.ext import commands as _commands
 
-from typing import Union
+from typing import Union, TypeVar
 
 from ..bot import ShardedBotInstance
 
+
+
+T = TypeVar("T")
 
 
 class AutoModPluginBlueprint(_commands.Cog):
@@ -24,42 +27,14 @@ class AutoModPluginBlueprint(_commands.Cog):
     ) -> str:
         p = self.db.configs.get(guild.id, "prefix")
         return p if p != None else self.bot.config.default_prefix
+    
 
-
-    @staticmethod
-    def can(
-        perm: str
-    ) -> Union[
-        bool, 
-        _commands.MissingPermissions
-    ]:
-        def predicate(
-            ctx: _commands.Context
-        ) -> Union[
-            bool, 
-            _commands.MissingPermissions
-        ]: 
-            if ctx.author.id == ctx.guild.owner_id:
-                return True
-            else:
-                if getattr(
-                    ctx.author.guild_permissions,
-                    perm
-                ) == False:
-                    if perm not in ["administrator", "manage_guild"]:
-                        rid = ctx.bot.db.configs.get(ctx.guild.id, "mod_role")
-                        if rid != "":
-                            r = ctx.guild.get_role(int(rid))
-                            if r != None:
-                                if r in ctx.author.roles:
-                                    return True
-                        raise _commands.MissingPermissions([perm])
-                    else:
-                        raise _commands.MissingPermissions([perm])
-                else:
-                    return True
-            
-        return _commands.check(predicate)
+    def error(
+        self,
+        ctx: discord.Interaction,
+        error: T
+    ) -> None:
+        self.bot.dispatch("command_error", ctx, error)
 
 
     def before_load(

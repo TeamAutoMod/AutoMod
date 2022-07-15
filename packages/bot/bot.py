@@ -152,6 +152,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             
             await self.register_user_info_ctx_menu()
             await self.register_report_ctx_menu()
+            await self.register_infractions_ctx_menu()
             await self.tree.sync()
 
             self.loop.create_task(self._log_queue.send_logs())
@@ -187,23 +188,22 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 ctx = await self.get_context(msg, cls=Context)
                 if ctx.valid and ctx.command is not None:
                     self.used_commands += 1
-                    disabled = self.db.configs.get(msg.guild.id, "disabled_commands")
-                    if ctx.command.name.lower() in disabled:
-                        if ctx.author.guild_permissions.manage_messages == False:
-                            try:
-                                await msg.add_reaction(
-                                    self.emotes.get("LOCK")
-                                )
-                            except Exception:
-                                pass
-                            finally:
-                                return
                     
                     if self.ready:
                         if not msg.guild.chunked:
                             await self.chunk_guild(msg.guild)
                     
                         await self.invoke(ctx)
+
+
+    async def on_interaction(
+        self,
+        i: discord.Interaction
+    ) -> None:
+        if i.type == discord.InteractionType.application_command:
+            self.used_commands += 1
+            if not i.guild.chunked:
+                await self.chunk_guild(i.guild)
 
 
     def dispatch(
@@ -267,6 +267,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = "ReactionRolesPlugin"
         elif plugin == "reply":
             in_plugins_name = "AutoReplyPlugin"
+        elif plugin == "automod":
+            in_plugins_name = "AutoModPlugin"
         else:
             in_plugins_name = f"{plugin.capitalize()}Plugin"
             
@@ -354,7 +356,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         ) -> None:
             p = self.get_plugin("UtilityPlugin")
             try:
-                await p.whois(i, user)
+                await p.whois._callback(p, i, user)
             except Exception as ex:
                 await i.response.send_message(
                     embed=discord.Embed(
@@ -382,6 +384,28 @@ class ShardedBotInstance(commands.AutoShardedBot):
                         description=self.locale.t(i.guild, "fail", _emote="NO", exc=ex)
                     )
                 )
+
+
+    async def register_infractions_ctx_menu(
+        self
+    ) -> None:
+        @self.tree.context_menu(name="Infractions")
+        @discord.app_commands.default_permissions(manage_messages=True)
+        async def _(
+            i: discord.Interaction, 
+            user: discord.Member
+        ) -> None:
+            p = self.get_plugin("CasesPlugin")
+            try:
+                await p.infractions._callback(p, i, str(user.id))
+            except Exception as ex:
+                await i.response.send_message(
+                    embed=discord.Embed(
+                        color=int(self.config.embed_color, 16),
+                        description=self.locale.t(i.guild, "fail", _emote="NO", exc=ex)
+                    )
+                )
+
 
 
     async def post_stats(

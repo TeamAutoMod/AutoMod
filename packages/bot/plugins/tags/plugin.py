@@ -3,22 +3,13 @@ from discord.ext import commands
 
 from toolbox import S as Object
 import datetime
-from argparse import ArgumentParser as BaseArgumentParser
-import shlex
+from typing import Literal
 import logging; log = logging.getLogger()
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import Tag
 from ...types import Embed
 
-
-
-class ArgumentParser(BaseArgumentParser):
-    def error(
-        self,
-        msg: str
-    ) -> commands.BadArgument:
-        raise commands.BadArgument(msg)
 
 
 class TagsPlugin(AutoModPluginBlueprint):
@@ -34,7 +25,7 @@ class TagsPlugin(AutoModPluginBlueprint):
 
     def add_tag(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str, 
         content: str,
         del_invoke: bool
@@ -64,7 +55,7 @@ class TagsPlugin(AutoModPluginBlueprint):
 
     def update_tag(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str, 
         content: str,
         del_invoke: bool
@@ -117,10 +108,13 @@ class TagsPlugin(AutoModPluginBlueprint):
         self.db.tags.update(_id, "uses", cur+1)
 
 
-    @commands.command(name="commands", aliases=["tags"])
+    @discord.app_commands.command(
+        name="commands",
+        description="Shows a list of all custom commands"
+    )
     async def custom_commands(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         commands_help
@@ -137,60 +131,68 @@ class TagsPlugin(AutoModPluginBlueprint):
                     description="> {}".format(", ".join([f"``{x}``" for x in tags]))
                 )
                 e.set_footer(text=f"Use these as commands (e.g. {prefix}{list(tags.keys())[0]})")
-                await ctx.send(embed=e)
+                await ctx.response.send_message(embed=e)
             else:
-                await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
         else:
-            await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
     
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="addcom",
+        description="Creates a new custom command"
+    )
+    @discord.app_commands.describe(
+        name="Name of the custom command",
+        content="Content of the output",
+        del_invoke="Whether to delete the invocation message"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def addcom(
         self, 
-        ctx: commands.Context, 
-        name: str, 
-        *, 
-        content: str
+        ctx: discord.Interaction, 
+        name: str,  
+        content: str,
+        del_invoke: Literal[
+            "True"
+        ] = None
     ) -> None:
         """
         addcom_help
         examples:
         -addcom test_cmd This is a test command
-        -addcom test_cmd2 This is a test command --del-invoke
+        -addcom test_cmd2 This is a test command del_invoke:True
         """
         if len(name) > 30:
-            return await ctx.send(self.locale.t(ctx.guild, "name_too_long", _emote="NO"))
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "name_too_long", _emote="NO"))
         if len(content) > 1900:
-            return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
 
-        del_invoke = False
-        parser = ArgumentParser(add_help=False, allow_abbrev=False)
-        parser.add_argument("--del-invoke", action="store_true")
-
-        try:
-            args = parser.parse_args(shlex.split(content[-12:]))
-        except Exception:
-            pass
+        if del_invoke == None:
+            del_invoke = False
         else:
-            if args.del_invoke:
-                del_invoke = True
-                content = content.replace("--del-invoke", "")
+            del_invoke = True
 
         name = name.lower()
         if ctx.guild.id in self._tags:
             if name in self._tags[ctx.guild.id]:
-                return await ctx.send(self.locale.t(ctx.guild, "tag_alr_exists", _emote="NO"))
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "tag_alr_exists", _emote="NO"))
 
         self.add_tag(ctx, name, content, del_invoke)
-        await ctx.send(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name, prefix=self.get_prefix(ctx.guild)))
+        await ctx.response.send_message(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name, prefix=self.get_prefix(ctx.guild)))
 
 
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="delcom",
+        description="Deletes the given custom command"
+    )
+    @discord.app_commands.describe(
+        name="Name of the custom command",
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def delcom(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str
     ) -> None:
         """
@@ -201,22 +203,33 @@ class TagsPlugin(AutoModPluginBlueprint):
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
-                await ctx.send(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
             else:
                 self.remove_tag(ctx.guild, name)
-                await ctx.send(self.locale.t(ctx.guild, "tag_removed", _emote="YES"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_removed", _emote="YES"))
         else:
-            await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
 
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="editcom",
+        description="Edits an existing custom command"
+    )
+    @discord.app_commands.describe(
+        name="Name of the custom command",
+        content="Content of the output",
+        del_invoke="Whether to delete the invocation message"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def editcom(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str, 
-        *, 
-        content: str
+        content: str,
+        del_invoke: Literal[
+            "True",
+            "False"
+        ] = None
     ) -> None:
         """
         editcom_help
@@ -224,39 +237,38 @@ class TagsPlugin(AutoModPluginBlueprint):
         -editcom test_cmd This is the new content
         """
         if len(content) > 1900:
-            return await ctx.send(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
+            return await ctx.response.send_message(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
 
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
-                await ctx.send(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
             else:
-                del_invoke = self._tags[ctx.guild.id][name].get("del_invoke", False)
-                parser = ArgumentParser(add_help=False, allow_abbrev=False)
-                parser.add_argument("--del-invoke", action="store_true")
-
-                try:
-                    args = parser.parse_args(shlex.split(content[-12:]))
-                except Exception:
-                    del_invoke = False
+                if del_invoke == None:
+                    del_invoke = self._tags[ctx.guild.id][name].get("del_invoke", False)
                 else:
-                    if args.del_invoke:
+                    if del_invoke == "True":
                         del_invoke = True
-                        content = content.replace("--del-invoke", "")
                     else:
                         del_invoke = False
                 
                 self.update_tag(ctx, name, content, del_invoke)
-                await ctx.send(self.locale.t(ctx.guild, "tag_updated", _emote="YES"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_updated", _emote="YES"))
         else:
-            await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
 
-    @commands.command()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="infocom",
+        description="Shows some info about a custom command"
+    )
+    @discord.app_commands.describe(
+        name="Name of the custom command",
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def infocom(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         name: str
     ) -> None:
         """
@@ -267,7 +279,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
-                await ctx.send(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
             else:
                 data = Object(self.db.tags.get_doc(f"{ctx.guild.id}-{name}"))
 
@@ -304,9 +316,9 @@ class TagsPlugin(AutoModPluginBlueprint):
                         value=f"``▶`` <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
                     )
 
-                await ctx.send(embed=e)
+                await ctx.response.send_message(embed=e)
         else:
-            await ctx.send(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
 
 
 

@@ -1,4 +1,5 @@
 from email.mime import application
+from http import server
 import unicodedata
 import discord
 from discord.ext import commands
@@ -11,10 +12,10 @@ import datetime
 from PIL import Image
 from io import BytesIO
 from toolbox import S as Object
-from typing import Union, List
+from typing import Union, List, Literal
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed, DiscordUser, Duration
+from ...types import Embed, Duration
 from ...views import AboutView, HelpView
 from ...schemas import Slowmode
 
@@ -38,53 +39,60 @@ MAX_BOT_SLOWMODE = 1209600 # 14 days
 
 def get_help_embed(
     plugin: AutoModPluginBlueprint, 
-    ctx: commands.Context, 
+    ctx: discord.Interaction, 
     cmd: Union[
-        commands.Command, 
-        commands.GroupMixin
+        discord.app_commands.AppCommand,
+        discord.app_commands.Group
     ]
 ) -> Embed:
-    if len(cmd.aliases) > 0:
-        cmd_name = f"{cmd.qualified_name}{'|{}'.format('|'.join(cmd.aliases)) if len(cmd.aliases) > 1 else f'|{cmd.aliases[0]}'}"
+    if isinstance(cmd, discord.app_commands.Group): 
+        # help_message = plugin.locale.t(ctx.guild, f"{cmd.name}_help")
+        help_message = cmd.description
+        usage = f"/{cmd.name}"
     else:
-        cmd_name = cmd.qualified_name
-    
-    name = f"{plugin.get_prefix(ctx.guild)}{cmd_name} {cmd.signature.replace('<name> <content>', '<name> <content> [--del-invoke]')}"
-    i18n_key = cmd.help.split("\nexamples:")[0]
-    help_message = plugin.locale.t(ctx.guild, f"{i18n_key}")
-    if name[-1] == " ": name = name[:-1]
+        usage = f"""{
+            "/"
+        }{
+            cmd.qualified_name
+        } {
+            " ".join(
+                [
+                    *[f"<{x}>" for x, y in cmd._params.items() if y.required],
+                    *[f"[{x}]" for x, y in cmd._params.items() if not y.required]
+                ]
+            )
+        }"""
+
+        # i18n_key = cmd._callback.__doc__.replace("        ", "").split("\nexamples:")[0].split("\n")[1]
+        # help_message = plugin.locale.t(ctx.guild, f"{i18n_key}")
+        help_message = cmd.description
+        if usage[-1] == " ": usage = usage[:-1]
 
     e = Embed(
         ctx,
-        title=f"``{name.replace('...', '').replace('=None', '').replace('=10', '')}``"
+        title=f"``{usage}``"
     )
     e.add_field(
         name="🔎 __**Description**__", 
         value=f"``▶`` {help_message}"
     )
-
-    if isinstance(cmd, commands.GroupMixin) and hasattr(cmd, "all_commands"):
-        actual_subcommands = {}
-        for k, v in cmd.all_commands.items():
-            if not v in actual_subcommands.values():
-                actual_subcommands[k] = v
-
-        if len(actual_subcommands.keys()) > 0:
-            e.add_field(
-                name="🔗 __**Subcommands**__", 
-                value="``▶`` {}".format(", ".join([f"``{x}``" for x in actual_subcommands.keys()]))
-            )
     
-    examples = cmd.help.split("\nexamples:")[1].split("\n-")[1:]
-    if len(examples) > 0:
-        prefix = plugin.get_prefix(ctx.guild)
-        e.add_field(
-            name="✏️ __**Examples**__",
-            value="\n".join(
-                [
-                    f"``▶`` {prefix}{exmp}" for exmp in examples
-                ]
+    if not isinstance(cmd, discord.app_commands.Group):
+        examples = cmd._callback.__doc__.replace("        ", "").split("\nexamples:")[1].split("\n-")[1:]
+        if len(examples) > 0:
+            prefix = "/"
+            e.add_field(
+                name="✏️ __**Examples**__",
+                value="\n".join(
+                    [
+                        f"``▶`` {prefix}{exmp}" for exmp in examples
+                    ]
+                )
             )
+    else:
+        e.add_field(
+            name="🔗 __**Subcommands**__", 
+            value="{}".format("\n".join([f"``▶`` /{x.qualified_name}" for x in cmd.commands]))
         )
 
     e.set_footer(text="<required> [optional]")
@@ -93,26 +101,18 @@ def get_help_embed(
 
 def get_command_help(
     plugin: AutoModPluginBlueprint, 
-    ctx: commands.Context, 
+    ctx: discord.Interaction, 
     query: str
 ) -> Union[
     Embed, 
     None
 ]:
-    cmd = plugin.bot
-    layers = query.split(" ")
-
-    while len(layers) > 0:
-        layer = layers.pop(0)
-        if hasattr(cmd, "all_commands") and layer in cmd.all_commands.keys():
-            cmd = cmd.all_commands[layer]
-        else:
-            cmd = None; break
-    
-    if cmd != None and cmd != plugin.bot.all_commands:
-        return get_help_embed(plugin, ctx, cmd)
-    else:
-        return None
+    for p in [plugin.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
+        if p != None:
+            cmds = {x.name.lower(): x for x in p.__cog_app_commands__ if x.name not in plugin.bot.config.disabled_commands}
+            if query.lower() in cmds:
+                return get_help_embed(plugin, ctx, cmds.get(query.lower()))
+    return None
 
 
 def get_version() -> str:
@@ -168,7 +168,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     def get_log_for_case(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         case: dict
     ) -> Union[
         str, 
@@ -226,6 +226,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             discord.User
         ]
     ) -> bool:
+        if mod.id == target.id: return False
         if mod.id == guild.owner_id: return True
 
         mod = guild.get_member(mod.id)
@@ -254,7 +255,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     ) -> List[
         Embed
     ]:
-        _prefix = self.get_prefix(guild)
+        _prefix = "/"
         base = Embed(
             None,
             title="Setup Guide",
@@ -314,13 +315,24 @@ class UtilityPlugin(AutoModPluginBlueprint):
                             x for x in p.__cog_app_commands__
                         ]
                     ]
+                    old_prefix = self.get_prefix(i.guild)
                     for cmd in cmds:
                         e.add_field(
                             name="**{}**".format(
-                                f"{self.get_prefix(i.guild)}{cmd.qualified_name} {cmd.signature}".replace('...', '').replace('=None', '')
+                                f"{old_prefix}{cmd.qualified_name} {cmd.signature}".replace('...', '').replace('=None', '') if isinstance(
+                                    cmd, (
+                                        commands.Command,
+                                        commands.GroupMixin
+                                    )
+                                ) else f"/{cmd.qualified_name} {' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if isinstance(cmd, discord.app_commands.AppCommand) else ''} {' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if isinstance(cmd, discord.app_commands.AppCommand) else ''}"
                             ),
                             value="``▶`` {}".format(
-                                self.bot.locale.t(i.guild, cmd.help.split('\nexamples:')[0])
+                                self.bot.locale.t(i.guild, cmd.help.split('\nexamples:')[0]) if isinstance(
+                                    cmd, (
+                                        commands.Command,
+                                        commands.GroupMixin
+                                    )
+                                ) else cmd.description
                             ),
                             inline=False
                         )
@@ -383,10 +395,13 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 self.db.slowmodes.update(_id, "users", data.users)
 
 
-    @commands.command()
+    @discord.app_commands.command(
+        name="ping", 
+        description="Shows the bot's latencies"
+    )
     async def ping(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         ping_help
@@ -395,7 +410,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         """
         # REST API
         msg_t1 = time.perf_counter()
-        msg = await ctx.send("Pinging...")
+        await ctx.response.defer(thinking=True)
         msg_t2 = time.perf_counter()
 
         # Database
@@ -406,7 +421,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         # Shard
         shard = self.bot.get_shard(ctx.guild.shard_id)
         
-        await msg.edit(content="``▶`` **Rest:** {}ms \n``▶`` **Client:** {}ms \n``▶`` **Shard:** {}ms \n``▶`` **Database:** {}ms".format(
+        await ctx.followup.send(content="``▶`` **Rest:** {}ms \n``▶`` **Client:** {}ms \n``▶`` **Shard:** {}ms \n``▶`` **Database:** {}ms".format(
             round((msg_t2 - msg_t1) * 1000),
             round(self.bot.latency * 1000),
             round(shard.latency * 1000),
@@ -414,10 +429,13 @@ class UtilityPlugin(AutoModPluginBlueprint):
         ))
 
 
-    @commands.command()
+    @discord.app_commands.command(
+        name="about", 
+        description="Shows some information about the bot"
+    )
     async def about(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """
         about_help
@@ -462,15 +480,18 @@ class UtilityPlugin(AutoModPluginBlueprint):
             }
         ])
         e.credits()
-        await ctx.send(embed=e, view=AboutView(self.bot))
+        await ctx.response.send_message(embed=e, view=AboutView(self.bot))
 
 
-    @commands.command()
+    @discord.app_commands.command(
+        name="help", 
+        description="Shows help for a specific command or a full list of commands when used without any arguments"
+    )
     async def help(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         *, 
-        query: str = None
+        command: str = None
     ) -> None:
         """
         help_help
@@ -479,22 +500,24 @@ class UtilityPlugin(AutoModPluginBlueprint):
         -help ban
         -help commands add
         """
+        query = command
         if query == None:
             prefix = self.get_prefix(ctx.guild)
 
             e = Embed(
                 ctx,
                 title="Command List",
-                description=self.locale.t(ctx.guild, "help_desc", prefix=prefix)
+                description=self.locale.t(ctx.guild, "help_desc", prefix="/")
             )
             for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
+                old_prefix = self.get_prefix(ctx.guild)
                 if p != None:
                     cmds = [
                         *[
-                            x.name for x in p.get_commands() if not x.name in self.config.disabled_commands
+                            f"{old_prefix}{x.qualified_name}" for x in p.get_commands() if not x.name in self.config.disabled_commands
                         ], 
                         *[
-                            f"/{x.name}" for x in p.__cog_app_commands__
+                            f"/{x.qualified_name}" for x in p.__cog_app_commands__ if not x.name in self.config.disabled_commands
                         ]
                     ]
                     e.add_field(
@@ -509,22 +532,32 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     )
             e.credits()
 
-            await ctx.send(embed=e, view=HelpView(self.bot, show_buttons=False))
+            await ctx.response.send_message(embed=e, view=HelpView(self.bot, show_buttons=False))
         else:
             query = "".join(query.splitlines())
 
             _help = get_command_help(self, ctx, query)
             if _help == None:
-                await ctx.send(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
+                await ctx.response.send_message(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
             else:
-                await ctx.send(embed=_help, view=HelpView(self.bot, show_buttons=True))
+                await ctx.response.send_message(embed=_help, view=HelpView(self.bot, show_buttons=True))
 
 
-    @commands.command(aliases=["av"])
+    @discord.app_commands.command(
+        name="avatar", 
+        description="Shows a bigger version of a users avatar"
+    )
+    @discord.app_commands.describe(
+        server_avatar="Whether to show the server avatar (if set) or the regular avatar"
+    )
     async def avatar(
         self, 
-        ctx: commands.Context, 
-        user: DiscordUser = None
+        ctx: discord.Interaction, 
+        user: discord.Member = None,
+        server_avatar: Literal[
+            "True",
+            "False"
+        ] = None
     ) -> None:
         """
         avatar_help
@@ -533,24 +566,36 @@ class UtilityPlugin(AutoModPluginBlueprint):
         -avatar @paul#0009
         -avatar 543056846601191508
         """
-        if user == None: user = ctx.author
+        if user == None: user = ctx.user
 
         e = Embed(
             ctx,
             title="{0.name}#{0.discriminator}'s Avatar".format(user)
         )
+
+        url = None
+        if server_avatar == None:
+            url = user.display_avatar
+        else:
+            if server_avatar == "True":
+                url = user.display_avatar
+            else:
+                url = user.avatar.url if user.avatar != None else user.display_avatar
+
         e.set_image(
-            url=user.display_avatar
+            url=url
         )
 
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @commands.command()
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @discord.app_commands.command(
+        name="jumbo", 
+        description="Shows a bigger version of the provided emotes"
+    )
     async def jumbo(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         *, 
         emotes: str
     ) -> None:
@@ -578,7 +623,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             try:
                 r.raise_for_status()
             except requests.HTTPError:
-                return await ctx.send(self.locale.t(ctx.guild, "http_error", _emote="NO"))
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "http_error", _emote="NO"))
 
             img = Image.open(BytesIO(r.content))
             height = img.height if img.height > height else height
@@ -594,18 +639,18 @@ class UtilityPlugin(AutoModPluginBlueprint):
         combined = BytesIO()
         image.save(combined, "png", quality=55)
         combined.seek(0)
-        await ctx.send(file=discord.File(combined, filename="emoji.png"))
+        await ctx.response.send_message(file=discord.File(combined, filename="emoji.png"))
 
     
-    @commands.command(aliases=["info", "userinfo", "user"])
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="whois", 
+        description="Shows some information about the user"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def whois(
         self, 
-        ctx: Union[
-            commands.Context, 
-            discord.Interaction
-        ], 
-        user: DiscordUser = None
+        ctx: discord.Interaction,
+        user: discord.Member = None
     ) -> None:
         """
         whois_help
@@ -616,10 +661,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         """
         if ctx.guild.chunked == False: await self.bot.chunk_guild(ctx.guild)
         if user == None:
-            if ctx.message.reference == None:
-                user = member = ctx.author if isinstance(ctx, commands.Context) else ctx.user
-            else:
-                user = member = ctx.message.reference.resolved.author
+            user = member = ctx.user
         else:
             member: discord.Member = ctx.guild.get_member(user.id) or None
 
@@ -683,18 +725,17 @@ class UtilityPlugin(AutoModPluginBlueprint):
             )
         )
 
-        if isinstance(ctx, commands.Context):
-            await ctx.send(embed=e)
-        else:
-            await ctx.response.send_message(embed=e, ephemeral=True)
+        await ctx.response.send_message(embed=e)
 
 
-    @commands.command(aliases=["guild", "serverinfo"])
-    @commands.guild_only()
-    @AutoModPluginBlueprint.can("manage_messages")
+    @discord.app_commands.command(
+        name="server", 
+        description="Shows some information about the server"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def server(
         self, 
-        ctx: commands.Context
+        ctx: discord.Interaction
     ) -> None:
         """ 
         server_help
@@ -756,15 +797,18 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             }
         ])
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @commands.command(aliases=["slow"])
-    @AutoModPluginBlueprint.can("manage_channels")
+    @discord.app_commands.command(
+        name="slowmode", 
+        description="Edits the channel's slowmode or shows all active bot-set slowmodes"
+    )
+    @discord.app_commands.default_permissions(manage_channels=True)
     async def slowmode(
         self, 
-        ctx: commands.Context, 
-        time: Duration = None
+        ctx: discord.Interaction, 
+        time: str = None
     ) -> None:
         """
         slowmode_help
@@ -777,7 +821,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if time == None:
             slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
             if len(slowmodes) < 1:
-                return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
+                return await ctx.response.send_message(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
             else:
                 e = Embed(
                     ctx,
@@ -796,66 +840,75 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 )
                         )
                 if len(e._fields) < 1:
-                    return await ctx.send(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
+                    return await ctx.response.send_message(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
                 else:
-                    return await ctx.send(embed=e)
+                    return await ctx.response.send_message(embed=e)
         else:
-            if time.unit == None: time.unit = "m"
-            _id = f"{ctx.guild.id}-{ctx.channel.id}"
-            
-            seconds = time.to_seconds(ctx)
-            if seconds > 0:
-                if seconds <= MAX_NATIVE_SLOWMODE:
-                    if self.db.slowmodes.exists(_id):
-                        self.db.slowmodes.delete(_id)
-                    try:
-                        await ctx.channel.edit(
-                            slowmode_delay=seconds
-                        )
-                    except Exception as ex:
-                        return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
-                    else:
-                        self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.author, seconds, f"{time}", "native"))
-                        return await ctx.send(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="native slowmode"))
-                else:
-                    if seconds <= MAX_BOT_SLOWMODE:
+            try:
+                time = await Duration().convert(ctx, time)
+            except Exception as ex:
+                return self.error(ctx, ex)
+            else:
+                if time.unit == None: time.unit = "m"
+                _id = f"{ctx.guild.id}-{ctx.channel.id}"
+                
+                seconds = time.to_seconds(ctx)
+                if seconds > 0:
+                    if seconds <= MAX_NATIVE_SLOWMODE:
+                        if self.db.slowmodes.exists(_id):
+                            self.db.slowmodes.delete(_id)
                         try:
                             await ctx.channel.edit(
-                                slowmode_delay=MAX_NATIVE_SLOWMODE
+                                slowmode_delay=seconds
                             )
                         except Exception as ex:
-                            return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                            return await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
                         else:
-                            if self.db.slowmodes.exists(_id):
-                                self.db.slowmodes.multi_update(_id, {
-                                    "time": seconds,
-                                    "pretty": f"{time}"
-                                })
-                            else:
-                                self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.author, seconds, f"{time}", "bot-maintained"))
-                            
-                            return await ctx.send(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="bot-maintained slowmode"))
+                            self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "native"))
+                            return await ctx.response.send_message(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="native slowmode"))
                     else:
-                        return await ctx.send(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"))
-            else:
-                if ctx.channel.slowmode_delay > 0:
-                    try:
-                        await ctx.channel.edit(
-                            slowmode_delay=0
-                        )
-                    except Exception as ex:
-                        return await ctx.send(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                        if seconds <= MAX_BOT_SLOWMODE:
+                            try:
+                                await ctx.channel.edit(
+                                    slowmode_delay=MAX_NATIVE_SLOWMODE
+                                )
+                            except Exception as ex:
+                                return await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                            else:
+                                if self.db.slowmodes.exists(_id):
+                                    self.db.slowmodes.multi_update(_id, {
+                                        "time": seconds,
+                                        "pretty": f"{time}"
+                                    })
+                                else:
+                                    self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "bot-maintained"))
+                                
+                                return await ctx.response.send_message(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="bot-maintained slowmode"))
+                        else:
+                            return await ctx.response.send_message(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"))
+                else:
+                    if ctx.channel.slowmode_delay > 0:
+                        try:
+                            await ctx.channel.edit(
+                                slowmode_delay=0
+                            )
+                        except Exception as ex:
+                            return self.error(ctx, ex)
 
-                if self.db.slowmodes.exists(_id):
-                    self.db.slowmodes.delete(_id)
-                
-                return await ctx.send(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
+                    if self.db.slowmodes.exists(_id):
+                        self.db.slowmodes.delete(_id)
+                    
+                    return await ctx.response.send_message(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
 
 
-    @commands.command()
+    @discord.app_commands.command(
+        name="charinfo", 
+        description="Shows some information about the characters in the given string"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
     async def charinfo(
         self, 
-        ctx: commands.Context, 
+        ctx: discord.Interaction, 
         *, 
         chars: str
     ) -> None:
@@ -867,7 +920,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         -charinfo <= x
         """
         msg = "```\n{}\n```".format("\n".join(map(to_string, chars)))
-        await ctx.send(msg[:2000])
+        await ctx.response.send_message(msg[:2000])
 
 
 async def setup(

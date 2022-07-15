@@ -702,13 +702,13 @@ class InternalPlugin(AutoModPluginBlueprint):
 
         if hasattr(b, "slowmode_delay") and hasattr(a, "slowmode_delay"):
             if b.slowmode_delay != a.slowmode_delay:
-                if len(new) < 1:
-                    new = "Slowmode (``{}s`` → ``{}s``)".format(
+                if len(change) < 1:
+                    change = "Slowmode (``{}s`` → ``{}s``)".format(
                         b.slowmode_delay,
                         a.slowmode_delay
                     )
                 else:
-                    new += " & Slowmode (``{}s`` → ``{}s``)".format(
+                    change += " & Slowmode (``{}s`` → ``{}s``)".format(
                         b.slowmode_delay,
                         a.slowmode_delay
                     )
