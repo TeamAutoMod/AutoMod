@@ -387,13 +387,18 @@ class ModerationPlugin(WarnPlugin):
                 return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
             try:
+                seconds = length.to_seconds(ctx)
+            except Exception as ex:
+                return self.error(ctx, ex)
+
+            try:
                 await ctx.guild.fetch_ban(user)
             except discord.NotFound:
                 _id = f"{ctx.guild.id}-{user.id}"
                 if self.db.tbans.exists(_id):
 
                     async def confirm(i):
-                        until = (self.db.tbans.get(_id, "until") + datetime.timedelta(seconds=length.to_seconds(ctx)))
+                        until = (self.db.tbans.get(_id, "until") + datetime.timedelta(seconds=seconds))
                         self.db.tbans.update(_id, "until", until)
 
                         await i.response.edit_message(
@@ -452,7 +457,6 @@ class ModerationPlugin(WarnPlugin):
                     )
                     await ctx.response.send_message(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
                 else:
-                    seconds = length.to_seconds(ctx)
                     if seconds >= 1:
                         try:
                             await ctx.guild.ban(
@@ -558,11 +562,16 @@ class ModerationPlugin(WarnPlugin):
             if not self.can_act(ctx.guild, ctx.user, user):
                 return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
 
+            try:
+                seconds = length.to_seconds(ctx)
+            except Exception as ex:
+                return self.error(ctx, ex)
+
             _id = f"{ctx.guild.id}-{user.id}"
             if self.db.mutes.exists(_id):
 
                 async def confirm(i):
-                    until = (self.db.mutes.get(_id, "until") + datetime.timedelta(seconds=length.to_seconds(ctx)))
+                    until = (self.db.mutes.get(_id, "until") + datetime.timedelta(seconds=seconds))
                     self.db.mutes.update(_id, "until", until)
 
                     await i.response.edit_message(
@@ -622,7 +631,6 @@ class ModerationPlugin(WarnPlugin):
                 )
                 message = await ctx.response.send_message(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
             else:
-                seconds = length.to_seconds(ctx)
                 if seconds >= 1:
                     until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
                     exc = self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())

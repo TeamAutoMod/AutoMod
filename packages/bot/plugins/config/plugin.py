@@ -373,7 +373,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
             if action == "ban":
                 if time != None:
-                    sec = time.to_seconds(ctx)
+                    try:
+                        sec = length.to_seconds(ctx)
+                    except Exception as ex:
+                        return self.error(ctx, ex)
+
                     if sec > 0:
                         new = f"ban {sec} {time.length} {time.unit}"
                         key = "tempban"
@@ -396,7 +400,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
         else:
             if time == None: return await ctx.response.send_message(self.locale.t(ctx.guild, "time_needed", _emote="NO"))
 
-            sec = time.to_seconds(ctx)
+            try:
+                sec = length.to_seconds(ctx)
+            except Exception as ex:
+                return self.error(ctx, ex)
+
             if sec > 0: 
                 length, unit = time.length, time.unit
                 current.update({

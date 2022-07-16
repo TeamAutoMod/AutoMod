@@ -852,7 +852,11 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 if time.unit == None: time.unit = "m"
                 _id = f"{ctx.guild.id}-{ctx.channel.id}"
                 
-                seconds = time.to_seconds(ctx)
+                try:
+                    seconds = time.to_seconds(ctx)
+                except Exception as ex:
+                    return self.error(ctx, ex)
+
                 if seconds > 0:
                     if seconds <= MAX_NATIVE_SLOWMODE:
                         if self.db.slowmodes.exists(_id):
