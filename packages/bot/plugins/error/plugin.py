@@ -110,7 +110,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
                     ]
                 )
             }"""
-            info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
+            info = f"/help {ctx.command.qualified_name}"
 
             e = Embed(
                 ctx,
@@ -141,7 +141,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
                     ]
                 )
             }"""
-            info = f"{self.get_prefix(ctx.guild)}help {ctx.command.qualified_name}"
+            info = f"/help {ctx.command.qualified_name}"
 
             e = Embed(
                 ctx,

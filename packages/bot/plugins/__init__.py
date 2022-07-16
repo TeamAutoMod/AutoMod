@@ -25,8 +25,11 @@ class AutoModPluginBlueprint(_commands.Cog):
         self, 
         guild: discord.Guild
     ) -> str:
-        p = self.db.configs.get(guild.id, "prefix")
-        return p if p != None else self.bot.config.default_prefix
+        if guild == None:
+            return self.bot.config.default_prefix
+        else:
+            p = self.db.configs.get(guild.id, "prefix")
+            return p if p != None else self.bot.config.default_prefix
     
 
     def error(

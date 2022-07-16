@@ -185,15 +185,26 @@ class ShardedBotInstance(commands.AutoShardedBot):
             if msg.content.lower() == f"<@{self.user.id}>":
                 return await msg.channel.send(self.locale.t(msg.guild, "server_prefix", prefix="".join(prefix_callable(self, msg)[-1])))
             else:
-                ctx = await self.get_context(msg, cls=Context)
-                if ctx.valid and ctx.command is not None:
-                    self.used_commands += 1
-                    
-                    if self.ready:
-                        if not msg.guild.chunked:
-                            await self.chunk_guild(msg.guild)
-                    
-                        await self.invoke(ctx)
+                if msg.guild != None:
+                    p = self.db.configs.get(msg.guild.id, "prefix")
+                    if msg.content.startswith(p, 0):
+                        for cmd in self.tree.walk_commands():
+                            if msg.content.lower() == p + cmd.qualified_name or (msg.content.lower().startswith(cmd.qualified_name, len(p)) and msg.content.lower()[len(p + cmd.qualified_name)] == " "):
+                                e = discord.Embed(
+                                    color=int(self.config.embed_color, 16),
+                                    description=self.locale.t(msg.guild, "now_slash", _emote="WARN", cmd=cmd.qualified_name)
+                                )
+                                return await msg.channel.send(embed=e)
+
+                    ctx = await self.get_context(msg, cls=Context)
+                    if ctx.valid and ctx.command is not None:
+                        self.used_commands += 1
+                        
+                        if self.ready:
+                            if not msg.guild.chunked:
+                                await self.chunk_guild(msg.guild)
+                        
+                            await self.invoke(ctx)
 
 
     async def on_interaction(
@@ -202,8 +213,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
     ) -> None:
         if i.type == discord.InteractionType.application_command:
             self.used_commands += 1
-            if not i.guild.chunked:
-                await self.chunk_guild(i.guild)
+            if i.guild != None:
+                if not i.guild.chunked:
+                    await self.chunk_guild(i.guild)
 
 
     def dispatch(
