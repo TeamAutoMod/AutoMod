@@ -374,7 +374,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             if action == "ban":
                 if time != None:
                     try:
-                        sec = length.to_seconds(ctx)
+                        sec = time.to_seconds(ctx)
                     except Exception as ex:
                         return self.error(ctx, ex)
 
@@ -401,7 +401,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             if time == None: return await ctx.response.send_message(self.locale.t(ctx.guild, "time_needed", _emote="NO"))
 
             try:
-                sec = length.to_seconds(ctx)
+                sec = time.to_seconds(ctx)
             except Exception as ex:
                 return self.error(ctx, ex)
 
