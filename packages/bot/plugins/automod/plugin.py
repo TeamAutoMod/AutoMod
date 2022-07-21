@@ -994,7 +994,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -link_blacklist show
         """
         links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if len(links) < 1: return await ctx.response.send_messag(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"))
+        if len(links) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"))
         
         e = Embed(
             ctx,
@@ -1022,7 +1022,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
 
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if str(url) in links: return await ctx.response.send_messag(self.locale.t(ctx.guild, "alr_link", _emote="NO"))
+        if str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "alr_link", _emote="NO"))
         
         links.append(url)
         self.db.configs.update(ctx.guild.id, "black_listed_links", links)
@@ -1048,7 +1048,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
 
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if not str(url) in links: return await ctx.response.send_messag(self.locale.t(ctx.guild, "not_link", _emote="NO"))
+        if not str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "not_link", _emote="NO"))
         
         links.remove(url)
         self.db.configs.update(ctx.guild.id, "black_listed_links", links)
