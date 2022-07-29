@@ -128,7 +128,7 @@ class CasesPlugin(AutoModPluginBlueprint):
     async def infractions(
         self, 
         ctx: discord.Interaction, 
-        user_id: str = None
+        user: discord.User = None
     ) -> None:
         """
         infractions_help
@@ -136,13 +136,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         -infractions
         -infractions 543056846601191508
         """
-        if user_id == None: 
-            user = ctx.guild
-        else:
-            try:
-                user = await DiscordUser().convert(ctx, user_id)
-            except Exception as ex:
-                return self.error(ctx, ex)
+        if user == None: user = ctx.guild
 
         await ctx.response.defer(thinking=True, ephemeral=True if ctx.data.get("type") == 2 else False)
 
@@ -353,53 +347,48 @@ class CasesPlugin(AutoModPluginBlueprint):
     async def check(
         self, 
         ctx: discord.Interaction, 
-        user_id: str
+        user: discord.User
     ) -> None:
         """
         check_help
         examples:
         -check 543056846601191508
         """
-        try:
-            user = await DiscordUser().convert(ctx, user_id)
-        except Exception as ex:
-            return self.error(ctx, ex)
-        else:
-            e = Embed(
-                ctx,
-                title="Info for {0.name}#{0.discriminator}".format(
-                    user
-                )
+        e = Embed(
+            ctx,
+            title="Info for {0.name}#{0.discriminator}".format(
+                user
             )
-            if hasattr(user, "display_avatar"):
-                e.set_thumbnail(
-                    url=user.display_avatar
+        )
+        if hasattr(user, "display_avatar"):
+            e.set_thumbnail(
+                url=user.display_avatar
+            )
+
+        mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
+        ban_data = await self.ban_data(ctx, user)
+        warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
+        e.add_fields([
+            {
+                "name": "📝 __**Status**__",
+                "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
+                .format(
+                    "yes" if ban_data != None else "no",
+                    f" (``{ban_data.reason}``)" if ban_data != None else "",
+                    "yes" if mute_data != None else "no",
+                    f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
                 )
+            },
+            {
+                "name": "🚩 __**Warnings**__",
+                "value": "``▶`` **Warns:** {}"\
+                .format(
+                    0 if warns == None else warns
+                )
+            }
+        ])
 
-            mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
-            ban_data = await self.ban_data(ctx, user)
-            warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
-            e.add_fields([
-                {
-                    "name": "📝 __**Status**__",
-                    "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
-                    .format(
-                        "yes" if ban_data != None else "no",
-                        f" (``{ban_data.reason}``)" if ban_data != None else "",
-                        "yes" if mute_data != None else "no",
-                        f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
-                    )
-                },
-                {
-                    "name": "🚩 __**Warnings**__",
-                    "value": "``▶`` **Warns:** {}"\
-                    .format(
-                        0 if warns == None else warns
-                    )
-                }
-            ])
-
-            await ctx.response.send_message(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
 async def setup(

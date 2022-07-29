@@ -145,7 +145,7 @@ class AdminPlugin(AutoModPluginBlueprint):
     async def mutuals(
         self,
         ctx: commands.Context,
-        user_id: str
+        user: discord.User
     ) -> None:
         """
         mutuals_help
@@ -153,7 +153,7 @@ class AdminPlugin(AutoModPluginBlueprint):
         -mutuals paul#0009
         -mutuals 543056846601191508
         """
-        guilds = [x for x in self.bot.guilds if x.get_member(int(user_id)) != None]
+        guilds = [x for x in self.bot.guilds if x.get_member(user.id) != None]
         e = Embed(
             None,
             description="```\n{}\n```".format(

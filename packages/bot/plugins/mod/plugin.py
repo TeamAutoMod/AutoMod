@@ -249,7 +249,7 @@ class ModerationPlugin(WarnPlugin):
     async def unban(
         self,
         ctx: discord.Interaction, 
-        user_id: str, 
+        user: discord.User, 
         *, 
         reason: str = None
     ) -> None:
@@ -259,37 +259,32 @@ class ModerationPlugin(WarnPlugin):
         -unban 543056846601191508
         """
         if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
-
+    
         try:
-            user = await DiscordUser().convert(ctx, user_id)
-        except Exception as ex:
-            return self.error(ctx, ex)
+            await ctx.guild.fetch_ban(user)
+        except discord.NotFound:
+            await ctx.response.send_message(self.locale.t(ctx.guild, "not_banned", _emote="WARN"))
         else:
             try:
-                await ctx.guild.fetch_ban(user)
-            except discord.NotFound:
-                await ctx.response.send_message(self.locale.t(ctx.guild, "not_banned", _emote="WARN"))
+                await ctx.guild.unban(user=user, reason=reason)
+            except Exception as ex:
+                await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
             else:
-                try:
-                    await ctx.guild.unban(user=user, reason=reason)
-                except Exception as ex:
-                    await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
-                else:
-                    self.bot.ignore_for_events.append(user.id)
-                    await self.log_processor.execute(ctx.guild, "unban", **{
-                        "user": user,
-                        "user_id": user.id,
-                        "mod": ctx.user,
-                        "mod_id": ctx.user.id,
-                        "reason": reason,
-                        "channel_id": ctx.channel.id,
-                        "case": self.action_processor.new_case("unban", ctx, ctx.user, user, reason)
-                    })
+                self.bot.ignore_for_events.append(user.id)
+                await self.log_processor.execute(ctx.guild, "unban", **{
+                    "user": user,
+                    "user_id": user.id,
+                    "mod": ctx.user,
+                    "mod_id": ctx.user.id,
+                    "reason": reason,
+                    "channel_id": ctx.channel.id,
+                    "case": self.action_processor.new_case("unban", ctx, ctx.user, user, reason)
+                })
 
-                    await ctx.response.send_message(self.locale.t(ctx.guild, "unbanned", _emote="YES", user=user))
-                finally:
-                    if self.db.tbans.exists(f"{ctx.guild.id}-{user.id}"):
-                        self.db.tbans.delete(f"{ctx.guild.id}-{user.id}")
+                await ctx.response.send_message(self.locale.t(ctx.guild, "unbanned", _emote="YES", user=user))
+            finally:
+                if self.db.tbans.exists(f"{ctx.guild.id}-{user.id}"):
+                    self.db.tbans.delete(f"{ctx.guild.id}-{user.id}")
 
 
     @discord.app_commands.command(
@@ -321,13 +316,13 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="forceban",
-        description="Bans the user from the server (even if they aaren't in the server)"
+        description="Bans the user from the server (even if they aren't in the server)"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def hackban(
         self, 
         ctx: discord.Interaction, 
-        user_id: str, 
+        user: discord.User,
         *, 
         reason: str = None
     ) -> None:
@@ -337,18 +332,13 @@ class ModerationPlugin(WarnPlugin):
         -hackban @paul#0009 test
         -hackban 543056846601191508
         """
+        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
         try:
-            user = await DiscordUser().convert(ctx, user_id)
-        except Exception as ex:
-            return self.error(ctx, ex)
+            await ctx.guild.fetch_ban(user)
+        except discord.NotFound:
+            await self.kick_or_ban("hackban", ctx, user, reason, delete_message_days=1)
         else:
-            if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
-            try:
-                await ctx.guild.fetch_ban(user)
-            except discord.NotFound:
-                await self.kick_or_ban("hackban", ctx, user, reason, delete_message_days=1)
-            else:
-                await ctx.response.send_message(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
+            await ctx.response.send_message(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"))
 
 
     @discord.app_commands.command(

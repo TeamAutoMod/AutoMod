@@ -553,7 +553,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     async def avatar(
         self, 
         ctx: discord.Interaction, 
-        user: discord.Member = None,
+        user: discord.User = None,
         server_avatar: Literal[
             "True",
             "False"
@@ -650,7 +650,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     async def whois(
         self, 
         ctx: discord.Interaction,
-        user: discord.Member = None
+        user: discord.User = None
     ) -> None:
         """
         whois_help
