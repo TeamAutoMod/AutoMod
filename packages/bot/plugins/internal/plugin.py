@@ -273,15 +273,15 @@ class InternalPlugin(AutoModPluginBlueprint):
             color=data.color
         )
         if check_for_audit != False:
-            entry = await self.find_in_audit_log(
+            mod = await self.find_in_audit_log(
                 guild,
                 data.audit_log_action,
                 check_for_audit
             )
             
             by_field = ""
-            if entry != None:
-                mod = guild.get_member(entry.user.id)
+            if mod != None:
+                mod = guild.get_member(mod.user.id)
                 if mod != None:
                     if mod.guild_permissions.manage_messages == True:
                         by_field = "Moderator"

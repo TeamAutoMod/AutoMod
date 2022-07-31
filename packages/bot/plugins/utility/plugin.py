@@ -397,7 +397,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="ping", 
-        description="Shows the bot's latencies"
+        description="⏳ Shows the bot's latencies"
     )
     async def ping(
         self, 
@@ -431,7 +431,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="about", 
-        description="Shows some information about the bot"
+        description="📈 Shows some information about the bot"
     )
     async def about(
         self, 
@@ -485,7 +485,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="help", 
-        description="Shows help for a specific command or a full list of commands when used without any arguments"
+        description="🔎 Shows help for a specific command or a full list of commands when used without any arguments"
     )
     async def help(
         self, 
@@ -545,7 +545,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="avatar", 
-        description="Shows a bigger version of a users avatar"
+        description="🖼 Shows a bigger version of a users avatar"
     )
     @discord.app_commands.describe(
         server_avatar="Whether to show the server avatar (if set) or the regular avatar"
@@ -591,7 +591,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="jumbo", 
-        description="Shows a bigger version of the provided emotes"
+        description="😀 Shows a bigger version of the provided emotes"
     )
     async def jumbo(
         self, 
@@ -644,7 +644,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     
     @discord.app_commands.command(
         name="whois", 
-        description="Shows some information about the user"
+        description="📌 Shows some information about the user"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def whois(
@@ -671,13 +671,12 @@ class UtilityPlugin(AutoModPluginBlueprint):
         )
         e.add_field(
             name="👤 __**User Information**__",
-            value="``▶`` **ID:** {} \n``▶`` **Profile:** {} \n``▶`` **Badges:** {} \n``▶`` **Created at:** <t:{}> \n``▶`` **Banner:** {}"\
+            value="``▶`` **ID:** {} \n``▶`` **Profile:** {} \n``▶`` **Badges:** {} \n``▶`` **Created at:** <t:{}>"\
             .format(
                 user.id,
                 user.mention,
                 get_user_badges(self.bot, user.public_flags),
-                round(user.created_at.timestamp()),
-                f"[Here]({user.banner.url})" if user.banner != None else "None"
+                round(user.created_at.timestamp())
             )
         )
         if member is not None:
@@ -730,7 +729,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="server", 
-        description="Shows some information about the server"
+        description="📚 Shows some information about the server"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def server(
@@ -802,7 +801,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="slowmode", 
-        description="Edits the channel's slowmode or shows all active bot-set slowmodes"
+        description="🕒 Edits the channel's slowmode or shows all active bot-set slowmodes"
     )
     @discord.app_commands.default_permissions(manage_channels=True)
     async def slowmode(
@@ -907,7 +906,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="charinfo", 
-        description="Shows some information about the characters in the given string"
+        description="💬 Shows some information about the characters in the given string"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def charinfo(

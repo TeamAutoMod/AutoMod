@@ -793,7 +793,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="automod", 
-        description="Configure the automoderator"
+        description="⚔️ Configure the automoderator"
     )
     @discord.app_commands.describe(
         rule="The rule you want to configure", 
@@ -898,12 +898,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     allowed_invites = discord.app_commands.Group(
         name="allowed_invites",
-        description="Configure allowed invite links",
+        description="✏️ Configure allowed invite links",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @allowed_invites.command(
         name="show",
-        description="Adds a guild to the allowed invite list"
+        description="🔗 Shows all currently allowed invite links"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def show_inv(
@@ -928,7 +928,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @allowed_invites.command(
         name="add",
-        description="Adds a guild to the allowed invite list"
+        description="✅ Adds a guild to the allowed invite list"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add_inv(
@@ -952,7 +952,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @allowed_invites.command(
         name="remove",
-        description="Removes a guild from the allowed invite list"
+        description="❌ Removes a guild from the allowed invite list"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def remove_inv(
@@ -976,12 +976,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     link_blacklist = discord.app_commands.Group(
         name="link_blacklist",
-        description="Configure the link blacklist",
+        description="✏️ Configure the link blacklist",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @link_blacklist.command(
         name="show",
-        description="Shows the current link blacklist"
+        description="🔗 Shows the current link blacklist"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def show_link(
@@ -1006,7 +1006,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @link_blacklist.command(
         name="add",
-        description="Adds a link to the blacklist"
+        description="✅ Adds a link to the blacklist"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add_link(
@@ -1032,7 +1032,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @link_blacklist.command(
         name="remove",
-        description="Removes the link from the blacklist"
+        description="❌ Removes the link from the blacklist"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def remove_link(
@@ -1058,12 +1058,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     link_whitelist = discord.app_commands.Group(
         name="link_whitelist",
-        description="Configure the link whitelist",
+        description="✏️ Configure the link whitelist",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @link_whitelist.command(
         name="show",
-        description="Shows the current link whitelist"
+        description="🔗 Shows the current link whitelist"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def show_link2(
@@ -1088,7 +1088,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @link_whitelist.command(
         name="add",
-        description="Adds a link to the whitelist"
+        description="✅ Adds a link to the whitelist"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add_link2(
@@ -1114,7 +1114,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @link_whitelist.command(
         name="remove",
-        description="Removes the link from the whitelist"
+        description="❌ Removes the link from the whitelist"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def remove_link_2(
@@ -1140,12 +1140,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     _filter = discord.app_commands.Group(
         name="filter",
-        description="Configure word filters",
+        description="✏️ Configure word filters",
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @_filter.command(
         name="show",
-        description="Shows all active word filters"
+        description="⛔️ Shows all active word filters"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def show_filter(
@@ -1185,7 +1185,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @_filter.command(
         name="add",
-        description="Creates a new word filter"
+        description="✅ Creates a new word filter"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1229,7 +1229,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     
     @_filter.command(
         name="remove",
-        description="Deletes an exisiting word filter"
+        description="❌ Deletes an exisiting word filter"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1259,7 +1259,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     
     @_filter.command(
         name="edit",
-        description="Edits an exisiting word filter"
+        description="✏️ Edits an exisiting word filter"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1303,12 +1303,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     
     regex = discord.app_commands.Group(
         name="regex",
-        description="Configure regex filters",
+        description="✏️ Configure regex filters",
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @regex.command(
         name="show",
-        description="Shows a list of active regex filters"
+        description="⛔️ Shows a list of active regex filters"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def show_regex(
@@ -1346,7 +1346,8 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
 
     @regex.command(
-        name="add"
+        name="add",
+        description="✅ Adds a new regex filter with the given name, warns, pattern and channels"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1392,7 +1393,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @regex.command(
         name="remove",
-        description="Deletes an exisiting regex filter"
+        description="❌ Deletes an exisiting regex filter"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1421,7 +1422,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @regex.command(
         name="edit",
-        description="Edits an existing regex filter"
+        description="✏️ Edits an existing regex filter"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1468,7 +1469,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="antispam",
-        description="Configure the antispam filter"
+        description="🔄 Configure the antispam filter"
     )
     @discord.app_commands.describe(
         rate="Allowed amount of messages (put 'off' here to disable the antispam filter)",
@@ -1587,12 +1588,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     ignore_automod = discord.app_commands.Group(
         name="ignore_automod",
-        description="Manage ignored roles & channels for the automoderator",
+        description="✏️ Manage ignored roles & channels for the automoderator",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @ignore_automod.command(
         name="show",
-        description="Shows the current list of ignored roles & channels for the automoderator"
+        description="🔒 Shows the current list of ignored roles & channels for the automoderator"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def show(
@@ -1629,7 +1630,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @ignore_automod.command(
         name="add",
-        description="Adds the given role or channel as ignored for the automoderator"
+        description="✅ Adds the given role or channel as ignored for the automoderator"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
@@ -1715,7 +1716,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @ignore_automod.command(
         name="remove",
-        description="Removes the given role or channel as ignored for the automoderator"
+        description="❌ Removes the given role or channel as ignored for the automoderator"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def remove(
