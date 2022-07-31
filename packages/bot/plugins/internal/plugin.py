@@ -207,8 +207,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         action: discord.AuditLogAction, 
         check: Callable
     ) -> Union[
-        discord.Member, 
-        discord.User, 
+        discord.AuditLogEntry,
         None
     ]:
         try:
@@ -228,7 +227,7 @@ class InternalPlugin(AutoModPluginBlueprint):
                     pass
             
             if e != None:
-                return e.user
+                return e
             else:
                 return None
         except (
@@ -243,8 +242,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         action: discord.AuditLogAction, 
         check: Callable
     ) -> Union[
-        discord.Member, 
-        discord.User, 
+        discord.AuditLogEntry,
         None
     ]:
         try:
@@ -275,15 +273,15 @@ class InternalPlugin(AutoModPluginBlueprint):
             color=data.color
         )
         if check_for_audit != False:
-            mod = await self.find_in_audit_log(
+            entry = await self.find_in_audit_log(
                 guild,
                 data.audit_log_action,
                 check_for_audit
             )
             
             by_field = ""
-            if mod != None:
-                mod = guild.get_member(mod.id)
+            if entry != None:
+                mod = guild.get_member(entry.user.id)
                 if mod != None:
                     if mod.guild_permissions.manage_messages == True:
                         by_field = "Moderator"
@@ -1072,9 +1070,45 @@ class InternalPlugin(AutoModPluginBlueprint):
         if user.id in self.bot.ignore_for_events:
             return self.bot.ignore_for_events.remove(user.id)
 
+        entry = await self.find_in_audit_log(
+            guild,
+            discord.AuditLogAction.unban,
+            lambda x: x.target.id == user.id
+        )
+
         await self.log_processor.execute(guild, "manual_unban", **{
             "user": user,
-            "user_id": user.id
+            "user_id": user.id,
+            "mod": entry.user if entry != None else "Unknown#0000",
+            "mod_id": entry.user.id if entry != None else 0
+        })
+
+
+    @AutoModPluginBlueprint.listener()
+    async def on_member_ban(
+        self,
+        guild: discord.Guild,
+        user: Union[
+            discord.Member,
+            discord.User
+        ]
+    ) -> None:
+        await asyncio.sleep(0.3)
+        if user.id in self.bot.ignore_for_events:
+            return self.bot.ignore_for_events.remove(user.id)
+
+        entry = await self.find_in_audit_log(
+            guild,
+            discord.AuditLogAction.ban,
+            lambda x: x.target.id == user.id
+        )
+
+        await self.log_processor.execute(guild, "manual_ban", **{
+            "user": user,
+            "user_id": user.id,
+            "mod": entry.user if entry != None else "Unknown#0000",
+            "mod_id": entry.user.id if entry != None else 0,
+            "reason": entry.reason if entry != None else "No reason"
         })
 
 

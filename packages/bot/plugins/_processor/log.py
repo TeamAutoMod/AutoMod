@@ -64,6 +64,13 @@ LOG_TYPES = {
         "emote": "UNLOCK",
         "action": "User manually unbanned"
     },
+    "manual_ban": {
+        "channel": "mod_log",
+        "key": "log_manual_ban",
+        "color": 0xff5c5c,
+        "emote": "HAMMER",
+        "action": "User manually banned"
+    },
 
     "mute": {
         "channel": "mod_log",
