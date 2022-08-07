@@ -47,7 +47,7 @@ def get_help_embed(
 ) -> Embed:
     if isinstance(cmd, discord.app_commands.Group): 
         # help_message = plugin.locale.t(ctx.guild, f"{cmd.name}_help")
-        help_message = cmd.description
+        help_message = cmd.description[2:]
         usage = f"/{cmd.name}"
     else:
         usage = f"""{
@@ -65,7 +65,7 @@ def get_help_embed(
 
         # i18n_key = cmd._callback.__doc__.replace("        ", "").split("\nexamples:")[0].split("\n")[1]
         # help_message = plugin.locale.t(ctx.guild, f"{i18n_key}")
-        help_message = cmd.description
+        help_message = cmd.description[2:]
         if usage[-1] == " ": usage = usage[:-1]
 
     e = Embed(
@@ -326,7 +326,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                         commands.Command,
                                         commands.GroupMixin
                                     )
-                                ) else cmd.description
+                                ) else cmd.description[2:]
                             ),
                             inline=False
                         )
