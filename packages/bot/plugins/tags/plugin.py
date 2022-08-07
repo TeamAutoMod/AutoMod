@@ -144,29 +144,31 @@ class TagsPlugin(AutoModPluginBlueprint):
                             "description": e["description"]
                         }
                     }
-                if not _id in self._tags:
-                    self._tags[_id] = data
-                else:
-                    self._tags[_id].update(data)
                 
-                try:
-                    self.bot.tree.add_command(
-                        discord.app_commands.Command(
-                            name=e["name"] if "name" in e else "-".join(e["id"].split("-")[1:]),
-                            description=e["description"],
-                            callback=self.custom_callback,
-                            guild_ids=[int(e["id"].split("-")[0])]
+                if self.validate_name(list(data.keys())[0]):
+                    if not _id in self._tags:
+                        self._tags[_id] = data
+                    else:
+                        self._tags[_id].update(data)
+                    
+                    try:
+                        self.bot.tree.add_command(
+                            discord.app_commands.Command(
+                                name=e["name"] if "name" in e else "-".join(e["id"].split("-")[1:]),
+                                description=e["description"],
+                                callback=self.custom_callback,
+                                guild_ids=[int(e["id"].split("-")[0])]
+                            )
                         )
-                    )
-                except Exception:
-                    pass
-                else:
-                    g = self.bot.get_guild(int(e["id"].split("-")[0]))
-                    if g != None:
-                        if g.id not in needs_sync:
-                            needs_sync.update({
-                                g.id: g
-                            })
+                    except Exception:
+                        pass
+                    else:
+                        g = self.bot.get_guild(int(e["id"].split("-")[0]))
+                        if g != None:
+                            if g.id not in needs_sync:
+                                needs_sync.update({
+                                    g.id: g
+                                })
 
             for _, v in needs_sync.items():
                 try: await self.bot.tree.sync(guild=v)
