@@ -627,7 +627,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                             f"``{inv}``",
                             msg, 
                             rules.invites.warns, 
-                            f"Advertising ({inv})"
+                            f"Sending Discord invite link or equivalent redirect"
                         )
                     if invite.guild == None:
                         return await self.delete_msg(
@@ -635,7 +635,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                             f"``{inv}``",
                             msg, 
                             rules.invites.warns, 
-                            f"Advertising ({inv})"
+                            f"Sending Discord invite link or equivalent redirect"
                         )
                     else:
                         if invite.guild == None \
@@ -648,7 +648,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                                     f"``{inv}``",
                                     msg, 
                                     rules.invites.warns, 
-                                    f"Advertising ({inv})"
+                                    f"Sending Discord invite link or equivalent redirect"
                                 )
         
         if hasattr(rules, "links"):
@@ -662,7 +662,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                             f"``{url.hostname}``",
                             msg, 
                             rules.links.warns, 
-                            f"Forbidden link ({url.hostname})"
+                            f"Posting a link without permission"
                         )
                     else:
                         if not url.hostname in config.white_listed_links:
@@ -671,7 +671,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                                 f"``{url.hostname}``",
                                 msg, 
                                 rules.links.warns, 
-                                f"Forbidden link ({url.hostname})"
+                                f"Posting a link without permission"
                             )
 
         if hasattr(rules, "files"):
@@ -689,7 +689,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                         ", ".join([f"``{x}``" for x in forbidden]), 
                         msg, 
                         rules.files.warns, 
-                        f"Forbidden attachment type ({', '.join(forbidden)})"
+                        f"Posting forbidden attachment type"
                     )
 
         if hasattr(rules, "zalgo"):
@@ -700,7 +700,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     f"``{found.group()}``", 
                     msg, 
                     rules.zalgo.warns, 
-                    f"Zalgo found"
+                    f"Excessive or/and unwanted use of symbols"
                 )
 
         if hasattr(rules, "mentions"):
@@ -711,7 +711,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     f"``{found}``", 
                     msg, 
                     0 if (found - rules.mentions.threshold) == 1 else 1, 
-                    f"Spamming mentions ({found})"
+                    f"Excessive use of mentions"
                 )
 
         if hasattr(rules, "lines"):
@@ -722,7 +722,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     f"``{found}``", 
                     msg, 
                     0 if (found - rules.lines.threshold) == 1 else 1, 
-                    f"Message has too many line splits ({found})"
+                    f"Message too long"
                 )
 
         if hasattr(rules, "emotes"):
@@ -733,7 +733,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     f"``{found}``", 
                     msg, 
                     0 if (found - rules.emotes.threshold) == 1 else 1, 
-                    f"Spamming emotes ({found})"
+                    f"Excessive use of emotes"
                 )
 
         if hasattr(rules, "repeat"):
