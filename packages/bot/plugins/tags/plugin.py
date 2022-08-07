@@ -123,8 +123,6 @@ class TagsPlugin(AutoModPluginBlueprint):
         _ = True
         while _:
             _ = False
-            print("hi")
-
             needs_sync = {}
             for e in self.db.tags.find({}):
                 _id = int(e["id"].split("-")[0])
