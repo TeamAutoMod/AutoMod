@@ -511,6 +511,7 @@ class InternalPlugin(AutoModPluginBlueprint):
                 "_embed": embed
             })
         else:
+            self.bot.dispatch("join_role", user)
             e = Embed(
                 None,
                 color=0x5cff9d,
@@ -1112,7 +1113,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         })
 
 
-    @AutoModPluginBlueprint.listener(name="on_member_join")
+    @AutoModPluginBlueprint.listener()
     async def on_join_role(
         self,
         user: discord.Member
