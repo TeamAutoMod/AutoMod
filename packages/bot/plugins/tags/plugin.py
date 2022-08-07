@@ -1,3 +1,4 @@
+from http import client
 import discord
 from discord.ext import commands
 
@@ -21,7 +22,7 @@ class TagsPlugin(AutoModPluginBlueprint):
     ) -> None:
         super().__init__(bot)
         self._tags = {}
-        self.cache_tags()
+        self.bot.loop.create_task(self.cache_tags())
 
 
     async def custom_callback(
@@ -116,33 +117,62 @@ class TagsPlugin(AutoModPluginBlueprint):
         })
 
 
-    def cache_tags(
+    async def cache_tags(
         self
     ) -> None:
-        for e in self.db.tags.find({}):
-            _id = int(e["id"].split("-")[0])
-            if "name" in e:
-                data = {
-                    e["name"]: {
-                        "content": e["content"],
-                        "author": int(e["author"]),
-                        "ephemeral": e.get("ephemeral", False),
-                        "description": e["description"]
+        _ = True
+        while _:
+            _ = False
+            print("hi")
+
+            needs_sync = {}
+            for e in self.db.tags.find({}):
+                _id = int(e["id"].split("-")[0])
+                if "name" in e:
+                    data = {
+                        e["name"]: {
+                            "content": e["content"],
+                            "author": int(e["author"]),
+                            "ephemeral": e.get("ephemeral", False),
+                            "description": e["description"]
+                        }
                     }
-                }
-            else: # migration bs
-                data = {
-                    "-".join(e["id"].split("-")[1:]): {
-                        "content": e["reply"],
-                        "author": int(e["author"]),
-                        "ephemeral": e.get("ephemeral", False),
-                        "description": e["description"]
+                else: # migration bs
+                    data = {
+                        "-".join(e["id"].split("-")[1:]): {
+                            "content": e["reply"],
+                            "author": int(e["author"]),
+                            "ephemeral": e.get("ephemeral", False),
+                            "description": e["description"]
+                        }
                     }
-                }
-            if not _id in self._tags:
-                self._tags[_id] = data
-            else:
-                self._tags[_id].update(data)
+                if not _id in self._tags:
+                    self._tags[_id] = data
+                else:
+                    self._tags[_id].update(data)
+                
+                try:
+                    self.bot.tree.add_command(
+                        discord.app_commands.Command(
+                            name=e["name"] if "name" in e else "-".join(e["id"].split("-")[1:]),
+                            description=e["description"],
+                            callback=self.custom_callback,
+                            guild_ids=[int(e["id"].split("-")[0])]
+                        )
+                    )
+                except Exception:
+                    pass
+                else:
+                    g = self.bot.get_guild(int(e["id"].split("-")[0]))
+                    if g != None:
+                        if g.id not in needs_sync:
+                            needs_sync.update({
+                                g.id: g
+                            })
+
+            for _, v in needs_sync.items():
+                try: await self.bot.tree.sync(guild=v)
+                except Exception: pass
 
 
     def update_uses(
@@ -151,7 +181,10 @@ class TagsPlugin(AutoModPluginBlueprint):
     ) -> None:
         self.bot.used_tags += 1
         cur = self.db.tags.get(_id, "uses")
-        self.db.tags.update(_id, "uses", cur+1)
+        if cur == None:
+            self.db.tags.update(_id, "uses", 1)
+        else:
+            self.db.tags.update(_id, "uses", cur+1)
 
 
     def validate_name(

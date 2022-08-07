@@ -261,12 +261,6 @@ class UtilityPlugin(AutoModPluginBlueprint):
             title="Setup Guide",
             description=self.locale.t(guild, "setup_desc", inv=self.bot.config.support_invite)
         )
-        
-        prefix = Embed(
-            None,
-            title="⚙️ Server prefix",
-            description=self.locale.t(guild, "prefix_val", prefix=_prefix)
-        )
 
         log = Embed(
             None,
@@ -286,7 +280,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             description=self.locale.t(guild, "pun_val", prefix=_prefix)
         )
         
-        embeds = [base, prefix, log, am, pun]
+        embeds = [base, log, am, pun]
         for e in embeds: e.credits()
 
         return embeds
