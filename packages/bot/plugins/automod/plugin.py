@@ -793,7 +793,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="automod", 
-        description="⚔️ Configure the automoderator"
+        description="🔰 Configure the automoderator"
     )
     @discord.app_commands.describe(
         rule="The rule you want to configure", 
@@ -898,7 +898,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     allowed_invites = discord.app_commands.Group(
         name="allowed_invites",
-        description="✏️ Configure allowed invite links",
+        description="🔀 Configure allowed invite links",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @allowed_invites.command(
@@ -976,7 +976,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     link_blacklist = discord.app_commands.Group(
         name="link_blacklist",
-        description="✏️ Configure the link blacklist",
+        description="🔀 Configure the link blacklist",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @link_blacklist.command(
@@ -1058,7 +1058,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     link_whitelist = discord.app_commands.Group(
         name="link_whitelist",
-        description="✏️ Configure the link whitelist",
+        description="🔀 Configure the link whitelist",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @link_whitelist.command(
@@ -1140,7 +1140,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     _filter = discord.app_commands.Group(
         name="filter",
-        description="✏️ Configure word filters",
+        description="🔀 Configure word filters",
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @_filter.command(
@@ -1259,7 +1259,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     
     @_filter.command(
         name="edit",
-        description="✏️ Edits an exisiting word filter"
+        description="🔀 Edits an exisiting word filter"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1303,7 +1303,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     
     regex = discord.app_commands.Group(
         name="regex",
-        description="✏️ Configure regex filters",
+        description="🔀 Configure regex filters",
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @regex.command(
@@ -1422,7 +1422,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     @regex.command(
         name="edit",
-        description="✏️ Edits an existing regex filter"
+        description="🔀 Edits an existing regex filter"
     )
     @discord.app_commands.describe(
         name="Name of the filter",
@@ -1588,7 +1588,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
     ignore_automod = discord.app_commands.Group(
         name="ignore_automod",
-        description="✏️ Manage ignored roles & channels for the automoderator",
+        description="🔀 Manage ignored roles & channels for the automoderator",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @ignore_automod.command(

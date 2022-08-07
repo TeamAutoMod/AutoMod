@@ -186,16 +186,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 return await msg.channel.send(self.locale.t(msg.guild, "server_prefix", prefix="".join(prefix_callable(self, msg)[-1])))
             else:
                 if msg.guild != None:
-                    p = self.db.configs.get(msg.guild.id, "prefix")
-                    if msg.content.startswith(p, 0):
-                        for cmd in self.tree.walk_commands():
-                            if msg.content.lower() == p + cmd.qualified_name or (msg.content.lower().startswith(cmd.qualified_name, len(p)) and msg.content.lower()[len(p + cmd.qualified_name)] == " "):
-                                e = discord.Embed(
-                                    color=int(self.config.embed_color, 16),
-                                    description=self.locale.t(msg.guild, "now_slash", _emote="WARN", cmd=cmd.qualified_name)
-                                )
-                                return await msg.channel.send(embed=e)
-
                     ctx = await self.get_context(msg, cls=Context)
                     if ctx.valid and ctx.command is not None:
                         self.used_commands += 1

@@ -107,12 +107,12 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
     reaction_roles = discord.app_commands.Group(
         name="reaction_roles",
-        description="Configure reaction roles",
+        description="🎭 Configure reaction roles",
         default_permissions=discord.Permissions(manage_roles=True)
     )
     @reaction_roles.command(
         name="show",
-        description="Shows a list of active reaction roles"
+        description="🎭 Shows a list of active reaction roles"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
     async def show(
@@ -155,7 +155,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
     @reaction_roles.command(
         name="add",
-        description="Adds a new reaction role"
+        description="✅ Adds a new reaction role"
     )
     @discord.app_commands.describe(
         message_id="The message the reaction should be added to",
@@ -229,7 +229,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
     @reaction_roles.command(
         name="remove",
-        description="Removes an exisitng reaction role"
+        description="❌ Removes an exisitng reaction role"
     )
     @discord.app_commands.describe(
         message_id="The message of the reaction role",

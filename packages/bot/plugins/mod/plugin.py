@@ -216,7 +216,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="ban",
-        description="Bans the user from the server"
+        description="🔨 Bans the user from the server"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def ban(
@@ -243,7 +243,7 @@ class ModerationPlugin(WarnPlugin):
     
     @discord.app_commands.command(
         name="unban",
-        description="Unbans the user from the server"
+        description="🔓 Unbans the user from the server"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def unban(
@@ -289,7 +289,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="softban",
-        description="Softbans the user from the server (ban & unban)"
+        description="🔨 Softbans the user from the server (ban & unban)"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def softban(
@@ -316,7 +316,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="forceban",
-        description="Bans the user from the server (even if they aren't in the server)"
+        description="🔨 Bans the user from the server (even if they aren't in the server)"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def hackban(
@@ -343,7 +343,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="tempban",
-        description="Temporarily bans the user from the server"
+        description="🔨 Temporarily bans the user from the server"
     )
     @discord.app_commands.describe(
         length="10m, 2h, 1d"
@@ -492,7 +492,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="kick",
-        description="Kicks the user from the server"
+        description="👢 Kicks the user from the server"
     )
     @discord.app_commands.default_permissions(kick_members=True)
     async def kick(
@@ -519,7 +519,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="mute",
-        description="Temporarily mutes the user"
+        description="🔇 Temporarily mutes the user"
     )
     @discord.app_commands.describe(
         length="10m, 2h, 1d"
@@ -659,7 +659,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="unmute",
-        description="Unmutes the user"
+        description="🔊 Unmutes the user"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def unmute(
@@ -700,12 +700,12 @@ class ModerationPlugin(WarnPlugin):
 
     clean = discord.app_commands.Group(
         name="clean",
-        description="Purge deletes messages from the channel",
+        description="🧹 Purge deletes messages from the channel",
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @clean.command(
         name="all",
-        description="Deletes the specified amount of messages"
+        description="🧹 Deletes the specified amount of messages"
     )
     async def all(
         self, 
@@ -730,7 +730,7 @@ class ModerationPlugin(WarnPlugin):
 
     @clean.command(
         name="user",
-        description="Deletes the specified amount of messages from the user"
+        description="🧹 Deletes the specified amount of messages from the user"
     )
     async def user(
         self, 
@@ -757,7 +757,7 @@ class ModerationPlugin(WarnPlugin):
 
     @clean.command(
         name="content",
-        description="Deletes the specified amount of messages containing the given content"
+        description="🧹 Deletes the specified amount of messages containing the given content"
     )
     async def content(
         self, 

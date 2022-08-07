@@ -54,7 +54,7 @@ class WarnPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="warn",
-        description="Warns the user"
+        description="🚩 Warns the user"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def warn(
@@ -91,7 +91,7 @@ class WarnPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="unwarn",
-        description="Unwarns the user"
+        description="😇 Unwarns the user"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def unwarn(

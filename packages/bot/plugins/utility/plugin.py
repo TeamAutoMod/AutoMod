@@ -545,7 +545,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="avatar", 
-        description="🖼 Shows a bigger version of a users avatar"
+        description="👻 Shows a bigger version of a users avatar"
     )
     @discord.app_commands.describe(
         server_avatar="Whether to show the server avatar (if set) or the regular avatar"

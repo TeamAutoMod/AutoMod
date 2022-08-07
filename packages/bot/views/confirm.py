@@ -71,4 +71,4 @@ class ConfirmView(View):
         self, 
         interaction: discord.Interaction
     ) -> None:
-        interaction.response.send_message("Invalid interaction", ephermal=True)
+        interaction.response.send_message("Invalid interaction", ephemeral=True)

@@ -185,7 +185,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="config",
-        description="Shows the current server config"
+        description="🌐 Shows the current server config"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def config(
@@ -220,9 +220,9 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "⚙️ __**General**__",
-                "value": "``▶`` **Text Prefix:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Infractions:** {} \n``▶`` **Join Role:** {}"\
+                "value": "``▶`` **Prefix:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Infractions:** {} \n``▶`` **Join Role:** {}"\
                 .format(
-                    config.prefix,
+                    "/",
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
@@ -315,7 +315,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="punishment",
-        description="Adds or removes a punishment for a specific amount of warns"
+        description="💣 Adds or removes a punishment for a specific amount of warns"
     )
     @discord.app_commands.describe(
         warns="The amount of warns the punishment is being configured for",
@@ -421,7 +421,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="log",
-        description="Configure logging"
+        description="🚸 Configure logging"
     )
     @discord.app_commands.describe(
         option="The logging option you want to configure",
@@ -492,36 +492,14 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_message(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention))
 
 
-    @discord.app_commands.command(
-        name="prefix",
-        description="Sets the prefix for text & custom commands"
-    )
-    @discord.app_commands.default_permissions(manage_guild=True)
-    async def prefix(
-        self, 
-        ctx: discord.Interaction, 
-        prefix: str
-    ) -> None:
-        """
-        prefix_help
-        examples:
-        -prefix !
-        """
-        if len(prefix) > 20: 
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "prefix_too_long", _emote="NO"))
-
-        self.db.configs.update(ctx.guild.id, "prefix", prefix)
-        await ctx.response.send_message(self.locale.t(ctx.guild, "prefix_updated", _emote="YES", prefix=prefix))
-
-
     ignore_log = discord.app_commands.Group(
         name="ignore_log",
-        description="Manage ignored roles & channels for logging",
+        description="🔀 Manage ignored roles & channels for logging",
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @ignore_log.command(
         name="show",
-        description="Shows the current list of ignored roles & channels for logging"
+        description="🔒 Shows the current list of ignored roles & channels for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def show(
@@ -558,7 +536,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @ignore_log.command(
         name="add",
-        description="Adds the given role and/or channel as ignored for logging"
+        description="✅ Adds the given role and/or channel as ignored for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
@@ -644,7 +622,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @ignore_log.command(
         name="remove",
-        description="Removes the given role and/or channel as ignored for logging"
+        description="❌ Removes the given role and/or channel as ignored for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def remove(
@@ -732,7 +710,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="join_role",
-        description="Configure the join role (role users automatically get when joining the server)"
+        description="🚪 Configure the join role (role users automatically get when joining the server)"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
     async def join_role(
@@ -783,7 +761,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="setup",
-        description="Guide for setting up the bot"
+        description="📐 Guide for setting up the bot"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def setup(

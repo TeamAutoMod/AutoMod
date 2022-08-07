@@ -122,7 +122,7 @@ class CasesPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="infractions",
-        description="Shows recent server or user infractions"
+        description="🛅 Shows recent server or user infractions"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def infractions(
@@ -272,7 +272,7 @@ class CasesPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="case",
-        description="Shows info about a specific case"
+        description="📂 Shows info about a specific case"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def case(
@@ -341,7 +341,7 @@ class CasesPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="check",
-        description="Checks the users moderation status"
+        description="🩺 Checks the users moderation status"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def check(

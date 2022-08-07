@@ -8,7 +8,8 @@ def Tag(
     ctx: discord.Interaction, 
     name: str, 
     content: str,
-    del_invoke: bool
+    ephemeral: bool,
+    description: str
 ) -> dict:
     return {
         "id": f"{ctx.guild.id}-{name}",
@@ -16,7 +17,8 @@ def Tag(
 
         "name": name,
         "content": content,
-        "del_invoke": del_invoke,
+        "description": description,
+        "ephemeral": ephemeral,
 
         "author": f"{ctx.user.id}",
         "editor": None,
