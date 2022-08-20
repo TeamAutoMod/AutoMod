@@ -356,7 +356,6 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             if channel.id in channels: return True
 
         if any(x in [i.id for i in target.roles] for x in roles): return True
-
         return False
 
 

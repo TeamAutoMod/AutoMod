@@ -172,7 +172,6 @@ class CasesPlugin(AutoModPluginBlueprint):
         if len(found) < 1: return await ctx.followup.send(content=self.locale.t(ctx.guild, "no_cases", _emote="NO", ephemeral=True if ctx.data.get("type") == 2 else False))
 
         out = []
-
         for case in found:
             case_nr = case["id"].split("-")[-1]
 

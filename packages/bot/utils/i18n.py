@@ -40,6 +40,8 @@ class Translator(object):
             self._lang_cache[guild.id] = lang
         else:
             lang = self._lang_cache[guild.id]
+
+        if lang == None: lang = "en_US"
         global string
         try:
             string = self._langs[lang][key]
