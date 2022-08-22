@@ -44,7 +44,6 @@ def get_help_embed(
     ]
 ) -> Embed:
     if isinstance(cmd, discord.app_commands.Group): 
-        # help_message = plugin.locale.t(ctx.guild, f"{cmd.name}_help")
         help_message = cmd.description[2:]
         usage = f"/{cmd.name}"
     else:
@@ -781,7 +780,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 .format(
                     len(g.roles), 
                     len(g.emojis), 
-                    ", ".join(g.features) if len(g.features) > 0 else "None"
+                    ", ".join([f"{x.replace('_', ' ').title()}" for x in g.features]) if len(g.features) > 0 else "None"
                 ),
                 "inline": True
             }
