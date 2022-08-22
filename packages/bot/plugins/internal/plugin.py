@@ -994,22 +994,7 @@ class InternalPlugin(AutoModPluginBlueprint):
                 await self.log_processor.execute(guild, "member_updated", **{
                     "_embed": embed
                 })
-
-
-    # @AutoModPluginBlueprint.listener()
-    # async def on_guild_update(self, b: discord.Guild, a: discord.Guild):
-    #     change = ""
-    #     if b.name != a.name:
-    #         change += "Name (``{}`` → ``{}``)".format()
         
-    #     if b.verification_level != a.verification_level:
-    #         new = f"Verification Level (``{b.verification_level}`` → ``{a.verification_level}``)"
-    #         if len(change) < 1:
-    #             change += new
-    #         else:
-    #             change += f" & {new}"
-        
-
 
     @AutoModPluginBlueprint.listener()
     async def on_voice_state_update(

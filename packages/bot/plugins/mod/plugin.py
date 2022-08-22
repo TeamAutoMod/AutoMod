@@ -140,10 +140,8 @@ class ModerationPlugin(WarnPlugin):
                 before=before if before != None else ctx.message,
                 after=after
             )
-        except discord.Forbidden as ex:
+        except Exception as ex:
             return self.error(ctx, ex)
-        except discord.NotFound:
-            await asyncio.sleep(1); return self.locale.t(ctx.guild, "alr_cleaned", _emote="NO"), {}
         else:
             if len(d) < 1:
                 return self.locale.t(ctx.guild, "no_messages_found", _emote="NO"), {}
