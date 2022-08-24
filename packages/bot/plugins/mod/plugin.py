@@ -220,7 +220,7 @@ class ModerationPlugin(WarnPlugin):
     async def ban(
         self, 
         ctx: discord.Interaction,
-        user: discord.Member, 
+        user: discord.User, 
         *, 
         reason: str = None
     ) -> None:
@@ -293,7 +293,7 @@ class ModerationPlugin(WarnPlugin):
     async def softban(
         self, 
         ctx: discord.Interaction, 
-        user: discord.Member, 
+        user: discord.User, 
         *, 
         reason: str = None
     ) -> None:
@@ -350,7 +350,7 @@ class ModerationPlugin(WarnPlugin):
     async def tempban(
         self, 
         ctx: discord.Interaction, 
-        user: discord.Member, 
+        user: discord.User, 
         length: str, 
         *, 
         reason: str = None
@@ -496,7 +496,7 @@ class ModerationPlugin(WarnPlugin):
     async def kick(
         self, 
         ctx: discord.Interaction, 
-        user: discord.Member, 
+        user: discord.User, 
         *, 
         reason: str = None
     ) -> None:
