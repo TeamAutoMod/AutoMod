@@ -148,7 +148,7 @@ class ModerationPlugin(WarnPlugin):
             else:
                 try:
                     await ctx.message.delete()
-                except discord.NotFound:
+                except Exception:
                     pass
                 finally:
                     return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {}
@@ -717,13 +717,14 @@ class ModerationPlugin(WarnPlugin):
         """
         if amount < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
         if amount > 300: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
-
+        
+        await ctx.response.defer(thinking=True)
         msg, kwargs = await self.clean_messages(
             ctx,
             amount,
             lambda _: True
         )
-        await ctx.response.send_message(msg, **kwargs)
+        await ctx.followup.send(msg, **kwargs)
 
 
     @clean.command(
@@ -745,12 +746,13 @@ class ModerationPlugin(WarnPlugin):
         if amount < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"))
         if amount > 300: return await ctx.response.send_message(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"))
 
+        await ctx.response.defer(thinking=True)
         msg, kwargs = await self.clean_messages(
             ctx,
             amount,
             lambda m: m.author.id == user.id
         )
-        await ctx.response.send_message(msg, **kwargs)
+        await ctx.followup.send(msg, **kwargs)
 
 
     @clean.command(
@@ -768,12 +770,13 @@ class ModerationPlugin(WarnPlugin):
         examples:
         -clean content bad words
         """
+        await ctx.response.defer(thinking=True)
         msg, kwargs = await self.clean_messages(
             ctx,
             300,
             lambda m: text.lower() in m.content.lower()
         )
-        await ctx.response.send_message(msg, **kwargs)
+        await ctx.followup.send(msg, **kwargs)
 
 
     async def report(
