@@ -1,5 +1,3 @@
-from cmath import atan
-from ntpath import join
 import discord
 from discord.ext import commands
 

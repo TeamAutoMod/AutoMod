@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import copy
 import discord
 from discord.ext import commands
 

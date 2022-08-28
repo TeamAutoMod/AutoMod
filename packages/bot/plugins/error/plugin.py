@@ -197,51 +197,56 @@ class ErrorPlugin(AutoModPluginBlueprint):
         else:
             log.error(f"❗️ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
-            e = Embed(
-                ctx,
-                color=0xff5c5c,
-                title="Uncaught error",
-                description="```py\n{}\n```".format(("".join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__)))[:4000])
-            )
-            e.add_fields([
-                {
-                    "name": "✏️ __**Command**__",
-                    "value": f"``▶`` {ctx.command.qualified_name}" if ctx.command != None else "Unknown",
-                    "inline": True
-                },
-                {
-                    "name": "🔎 __**Location**__",
-                    "value": f"``▶`` {ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
-                    "inline": True
-                }
-            ])
+            try:
+                await ctx.response.send_message(self.bot.locale.t(ctx.guild, "fail", _emote="NO", exc=error))
+            except Exception:
+                pass
+            finally:
+                e = Embed(
+                    ctx,
+                    color=0xff5c5c,
+                    title="Uncaught error",
+                    description="```py\n{}\n```".format(("".join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__)))[:4000])
+                )
+                e.add_fields([
+                    {
+                        "name": "✏️ __**Command**__",
+                        "value": f"``▶`` {ctx.command.qualified_name}" if ctx.command != None else "Unknown",
+                        "inline": True
+                    },
+                    {
+                        "name": "🔎 __**Location**__",
+                        "value": f"``▶`` {ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
+                        "inline": True
+                    }
+                ])
 
-            if self.bot.error_log == None:
-                try:
-                    cid = int(self.bot.config.error_channel)
-                except (
-                    AttributeError, 
-                    ValueError
-                ):
-                    return
-                else:
+                if self.bot.error_log == None:
                     try:
-                        clog = await self.bot.fetch_channel(cid)
-                    except discord.NotFound:
+                        cid = int(self.bot.config.error_channel)
+                    except (
+                        AttributeError, 
+                        ValueError
+                    ):
                         return
                     else:
-                        if clog != None:
-                            try:
-                                await clog.send(embed=e)
-                            except Exception:
-                                return
-                            else:
-                                self.bot.error_log = clog
-            else:
-                try:
-                    await self.bot.error_log.send(embed=e)
-                except Exception:
-                    self.bot.error_log = None
+                        try:
+                            clog = await self.bot.fetch_channel(cid)
+                        except discord.NotFound:
+                            return
+                        else:
+                            if clog != None:
+                                try:
+                                    await clog.send(embed=e)
+                                except Exception:
+                                    return
+                                else:
+                                    self.bot.error_log = clog
+                else:
+                    try:
+                        await self.bot.error_log.send(embed=e)
+                    except Exception:
+                        self.bot.error_log = None
 
 
 async def setup(

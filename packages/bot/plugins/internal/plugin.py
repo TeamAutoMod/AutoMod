@@ -1,4 +1,3 @@
-from re import X
 import discord
 from discord.ext import commands
 from discord import AuditLogAction
