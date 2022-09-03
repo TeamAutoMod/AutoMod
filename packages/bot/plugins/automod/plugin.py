@@ -3,19 +3,15 @@ from discord.ext import commands
 
 import re
 import itertools
-from typing import ContextManager, Union
 from toolbox import S as Object
 from urllib.parse import urlparse
 from typing import TypeVar, Literal, List
-import logging
-
-from packages.bot.types.duration import Duration; log = logging.getLogger()
+import logging; log = logging.getLogger()
 from typing import Union, Tuple
-import inspect
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
-from ...types import Embed
+from ...types import Embed, E
 
 
 
@@ -794,24 +790,24 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     )
     @discord.app_commands.describe(
         rule="The rule you want to configure", 
-        amount="Either the amount for the rule or 'off' to disable it"
+        amount_or_off="Warn amount/threshold OR 'off' to disable it (use 0 warns to just delete the message)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def automod(
         self, 
         ctx: discord.Interaction, 
         rule: Literal[
-            "invites",
-            "links",
-            "files",
-            "mentions",
-            "lines",
-            "emotes",
-            "repeat",
-            "zalgo",
-            "caps"
+            "Invites",
+            "Links",
+            "Files",
+            "Mentions",
+            "Lines",
+            "Emotes",
+            "Repeat",
+            "Zalgo",
+            "Caps"
         ] = None,
-        amount: str = None
+        amount_or_off: str = None
     ) -> None:
         """
         automod_help
@@ -821,6 +817,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -automod files 0
         -automod links off
         """
+        amount = amount_or_off
         if rule == None or amount == None:
             e = Embed(
                 ctx,
@@ -851,7 +848,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         if not amount.isdigit():
             if amount.lower() == "off":
                 self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
-                return await ctx.response.send_message(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type), 1))
             else:
                 e = Embed(
                     ctx,
@@ -871,11 +868,11 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         else:
             amount = round(int(amount))
             if rule in ["mentions", "lines", "emotes", "repeat"]:
-                if amount < 5: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")))
-                if amount > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")))
+                if amount < 5: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
+                if amount > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
             else:
-                if amount < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-                if amount > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+                if amount < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
+                if amount > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
             current.update({
                 rule: {
@@ -913,7 +910,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -allowed_invites show
         """
         allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-        if len(allowed) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix="/"))
+        if len(allowed) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix="/"), 0))
         
         e = Embed(
             ctx,
@@ -939,12 +936,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -allowed_invites add 701507539589660793
         """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-        if str(guild_id) in allowed: return await ctx.response.send_message(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"))
+        if str(guild_id) in allowed: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"), 0))
         
         allowed.append(str(guild_id))
         self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "allowed_inv", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_inv", _emote="YES"), 1))
 
 
     @allowed_invites.command(
@@ -963,12 +960,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -allowed_invites remove 701507539589660793
         """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-        if not str(guild_id) in allowed: return await ctx.response.send_message(self.locale.t(ctx.guild, "not_allowed", _emote="NO"))
+        if not str(guild_id) in allowed: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_allowed", _emote="NO"), 0))
         
         allowed.remove(str(guild_id))
         self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"), 1))
 
 
     link_blacklist = discord.app_commands.Group(
@@ -991,7 +988,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -link_blacklist show
         """
         links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if len(links) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"))
+        if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"), 0))
         
         e = Embed(
             ctx,
@@ -1019,12 +1016,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
 
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "alr_link", _emote="NO"))
+        if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link", _emote="NO"), 0))
         
         links.append(url)
         self.db.configs.update(ctx.guild.id, "black_listed_links", links)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "allowed_link", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_link", _emote="YES"), 1))
 
 
     @link_blacklist.command(
@@ -1045,12 +1042,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
 
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if not str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "not_link", _emote="NO"))
+        if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link", _emote="NO"), 0))
         
         links.remove(url)
         self.db.configs.update(ctx.guild.id, "black_listed_links", links)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"), 1))
 
 
     link_whitelist = discord.app_commands.Group(
@@ -1073,7 +1070,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -link_whitelist
         """
         links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-        if len(links) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"))
+        if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"), 0))
         
         e = Embed(
             ctx,
@@ -1101,12 +1098,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
 
-        if str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "alr_link2", _emote="NO"))
+        if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link2", _emote="NO"), 0))
         
         links.append(url)
         self.db.configs.update(ctx.guild.id, "white_listed_links", links)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "allowed_link2", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_link2", _emote="YES"), 1))
 
 
     @link_whitelist.command(
@@ -1127,12 +1124,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
         links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
 
-        if not str(url) in links: return await ctx.response.send_message(self.locale.t(ctx.guild, "not_link2", _emote="NO"))
+        if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link2", _emote="NO"), 0))
         
         links.remove(url)
         self.db.configs.update(ctx.guild.id, "white_listed_links", links)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"), 1))
 
 
     _filter = discord.app_commands.Group(
@@ -1155,7 +1152,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -filter show
         """
         filters = self.db.configs.get(ctx.guild.id, "filters")
-        if len(filters) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="NO"), 0))
 
         e = Embed(
             ctx,
@@ -1208,11 +1205,11 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
 
-        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
-        if name in filters: return await ctx.response.send_message(self.locale.t(ctx.guild, "filter_exists", _emote="NO"))
+        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"), 0))
+        if name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_exists", _emote="NO"), 0))
 
-        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
         filters[name] = {
             "warns": warns,
@@ -1221,7 +1218,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         }
         self.db.configs.update(ctx.guild.id, "filters", filters)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "added_filter", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "added_filter", _emote="YES"), 1))
 
     
     @_filter.command(
@@ -1245,13 +1242,13 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
 
-        if len(filters) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filters", _emote="NO"))
-        if not name in filters: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="NO"), 0))
+        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
 
         del filters[name]
         self.db.configs.update(ctx.guild.id, "filters", filters)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "removed_filter", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_filter", _emote="YES"), 1))
 
     
     @_filter.command(
@@ -1282,11 +1279,11 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
 
-        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"))
-        if not name in filters: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_filter", _emote="NO"))
+        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"), 0))
+        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
 
-        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
         filters[name] = {
             "warns": warns,
@@ -1295,7 +1292,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         }
         self.db.configs.update(ctx.guild.id, "filters", filters)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "edited_filter", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "edited_filter", _emote="YES"), 1))
 
     
     regex = discord.app_commands.Group(
@@ -1318,7 +1315,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         -regex show
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
-        if len(regexes) < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "no_regexes", _emote="NO"))
+        if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO"), 0))
 
         e = Embed(
             ctx,
@@ -1370,13 +1367,13 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         name = name.lower()
         regex = regex_pattern
 
-        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
-        if name in regexes: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_exists", _emote="NO"))
+        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"), 0))
+        if name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_exists", _emote="NO"), 0))
 
-        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
-        if self.validate_regex(regex) == False: return await ctx.send(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
+        if self.validate_regex(regex) == False: return await ctx.send(embed=E(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"), 0))
 
         regexes[name] = {
             "warns": warns,
@@ -1385,7 +1382,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         }
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "added_regex", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "added_regex", _emote="YES"), 1))
 
 
     @regex.command(
@@ -1409,12 +1406,12 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
 
-        if not name in regexes: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0))
 
         del regexes[name]
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "removed_regex", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_regex", _emote="YES"), 1))
 
 
     @regex.command(
@@ -1446,13 +1443,13 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         name = name.lower()
         regex = regex_pattern
 
-        if len(name) > 30: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"))
-        if not name in regexes: return await ctx.response.send_message(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"))
+        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"), 0))
+        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0))
 
-        if warns < 0: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"))
-        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
-        if self.validate_regex(regex) == False: return await ctx.response.send_message(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"))
+        if self.validate_regex(regex) == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"), 0))
 
         regexes[name] = {
             "warns": warns,
@@ -1461,7 +1458,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         }
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
 
-        await ctx.response.send_message(self.locale.t(ctx.guild, "edited_regex", _emote="YES"))
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "edited_regex", _emote="YES"), 1))
 
 
     @discord.app_commands.command(
@@ -1541,7 +1538,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                         "enabled": False
                     })
                     self.db.configs.update(ctx.guild.id, "antispam", config)
-                    await ctx.response.send_message(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"))
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"), 1))
                 else:
                     await ctx.response.send_message(embed=info_embed)
             else:
@@ -1555,14 +1552,14 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             except ValueError:
                 return await ctx.response.send_message(embed=info_embed)
             else:
-                if rate < 3: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_rate", _emote="NO"))
-                if rate > 21: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_rate", _emote="NO"))
+                if rate < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_rate", _emote="NO"), 0))
+                if rate > 21: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rate", _emote="NO"), 0))
 
-                if per < 3: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_per", _emote="NO"))
-                if per > 20: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_per", _emote="NO"))
+                if per < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_per", _emote="NO"), 0))
+                if per > 20: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_per", _emote="NO"), 0))
 
-                if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-                if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
+                if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
+                if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
 
                 config.update({
                     "enabled": True,
@@ -1580,7 +1577,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
                     )
                 })
                 self.db.configs.update(ctx.guild.id, "antispam", config)
-                await ctx.response.send_message(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns), 0))
 
 
     ignore_automod = discord.app_commands.Group(
@@ -1605,7 +1602,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         if (len(roles) + len(channels)) < 1:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"), 0))
         else:
             e = Embed(
                 ctx,
@@ -1629,10 +1626,14 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         name="add",
         description="✅ Adds the given role or channel as ignored for the automoderator"
     )
+    @discord.app_commands.describe(
+        role="Users with this role will be ignored by the automod",
+        channel="Messages within this channel will be ignored by the automod"
+    )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
         self, 
-        ctx: discord.Interaction, 
+        ctx: discord.Interaction,
         role: discord.Role = None,
         channel: discord.TextChannel = None
     ) -> None:
@@ -1646,7 +1647,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         role_or_channel = [role, channel]
 
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
-
+        
         added, ignored = [], []
         for e in role_or_channel:
             if isinstance(e, discord.Role):

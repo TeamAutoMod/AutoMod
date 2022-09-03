@@ -8,7 +8,7 @@ import logging; log = logging.getLogger()
 from typing import Union
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import DiscordUser, Embed
+from ...types import Embed, E
 from ...views import MultiPageView
 from .._processor.log import LOG_TYPES
 
@@ -169,7 +169,7 @@ class CasesPlugin(AutoModPluginBlueprint):
             key=lambda e: int(e["id"].split("-")[-1]),
             reverse=True
         )
-        if len(found) < 1: return await ctx.followup.send(content=self.locale.t(ctx.guild, "no_cases", _emote="NO", ephemeral=True if ctx.data.get("type") == 2 else False))
+        if len(found) < 1: return await ctx.followup.send(embed=E(self.locale.t(ctx.guild, "no_cases", _emote="NO"), 0), ephemeral=True if ctx.data.get("type") == 2 else False)
 
         out = []
         for case in found:
@@ -288,7 +288,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         case = case.replace("#", "")
         
         raw = self.db.cases.get_doc(f"{ctx.guild.id}-{case}")
-        if raw == None: return await ctx.response.send_message(self.locale.t(ctx.guild, "case_not_found", _emote="NO"))
+        if raw == None: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "case_not_found", _emote="NO"), 0))
 
         data = Object(raw)
         log_msg_url = self.get_log_for_case(ctx, raw)

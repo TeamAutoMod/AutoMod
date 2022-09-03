@@ -28,7 +28,7 @@ class AutoReplyPlugin(AutoModPlugin):
         ar = self.db.configs.get(i.guild.id, "replies")
 
         if option == "show":
-            if len(ar) < 1: return await i.response.send_message(self.locale.t(i.guild, "no_replies", _emote="NO"))
+            if len(ar) < 1: return await i.response.send_message(embed=E(self.locale.t(i.guild, "no_replies", _emote="NO"), 0))
 
             e = Embed(
                 None,
@@ -50,7 +50,7 @@ class AutoReplyPlugin(AutoModPlugin):
                 reply: str = _i.data["components"][2]["components"][0]["value"]
 
                 if name.lower() in [x.lower() for x in ar.keys()]:
-                    await _i.response.send_message(self.locale.t(_i.guild, "reply_exists", _emote="NO"))
+                    await _i.response.send_message(embed=E(self.locale.t(_i.guild, "reply_exists", _emote="NO"), 0))
                 else:
                     ar.update({
                         name: {
@@ -60,11 +60,11 @@ class AutoReplyPlugin(AutoModPlugin):
                     })
                     self.db.configs.update(_i.guild.id, "replies", ar)
 
-                    await _i.response.send_message(self.locale.t(_i.guild, "added_reply", _emote="YES"))
+                    await _i.response.send_message(embed=E(self.locale.t(_i.guild, "added_reply", _emote="YES"), 1))
 
             await i.response.send_modal(AutoReplyModal(self.bot, on_submit))
         elif option == "remove":
-            if len(ar) < 1: return await i.response.send_message(self.locale.t(i.guild, "no_replies", _emote="NO"))
+            if len(ar) < 1: return await i.response.send_message(embed=E(self.locale.t(i.guild, "no_replies", _emote="NO"), 0))
 
             view = ChoiceView(
                 "Select the reply you want to delete",

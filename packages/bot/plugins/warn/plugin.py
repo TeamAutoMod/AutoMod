@@ -6,6 +6,7 @@ from typing import Union
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor
+from ...types import E
 
 
 
@@ -76,17 +77,17 @@ class WarnPlugin(AutoModPluginBlueprint):
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None: warns = 1
-        if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
         if not self.can_act(ctx.guild, ctx.user, user):
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_act", _emote="NO"), 0))
 
         exc = await self.action_processor.execute(ctx, ctx.user, user, warns, reason)
         if exc != None:
-            await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc), 0))
         else:
-            await ctx.response.send_message(self.locale.t(ctx.guild, "warned", _emote="YES", user=user))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "warned", _emote="YES", user=user, reason=reason), 1))
 
 
     @discord.app_commands.command(
@@ -113,19 +114,19 @@ class WarnPlugin(AutoModPluginBlueprint):
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None: warns = 1
-        if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
         if not self.can_act(ctx.guild, ctx.user, user):
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "cant_act", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_act", _emote="NO"), 0))
 
         _id = f"{ctx.guild.id}-{user.id}"
         if not self.db.warns.exists(_id):
-            await ctx.response.send_message(self.locale.t(ctx.guild, "no_warns", _emote="NO"))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_warns", _emote="NO"), 0))
         else:
             cur = self.db.warns.get(_id, "warns")
             if cur < 1: 
-                await ctx.response.send_message(self.locale.t(ctx.guild, "no_warns", _emote="NO"))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_warns", _emote="NO"), 0))
             else:
                 new = max(0, cur - warns)
                 self.db.warns.update(_id, "warns", new)
@@ -141,4 +142,4 @@ class WarnPlugin(AutoModPluginBlueprint):
                     "channel_id": ctx.channel.id,
                     "case": self.action_processor.new_case("unwarn", ctx, ctx.user, user, reason, warns_added=warns)
                 })
-                await ctx.response.send_message(self.locale.t(ctx.guild, "unwarned", _emote="YES", user=user))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unwarned", _emote="YES", user=user, reason=reason ), 1))

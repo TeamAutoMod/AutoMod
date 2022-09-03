@@ -10,7 +10,7 @@ import logging; log = logging.getLogger()
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import Tag
-from ...types import Embed
+from ...types import Embed, E
 
 
 
@@ -226,9 +226,9 @@ class TagsPlugin(AutoModPluginBlueprint):
                 )
                 await ctx.response.send_message(embed=e)
             else:
-                await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
         else:
-            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
 
     
     @discord.app_commands.command(
@@ -259,17 +259,17 @@ class TagsPlugin(AutoModPluginBlueprint):
         -addcom test_cmd2 This is a test command description:A cool test command ephemeral:True
         """
         if len(name) > 30:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "name_too_long", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "name_too_long", _emote="NO"), 0))
         if len(content) > 1900:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
         if len(description) > 50:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "description_too_long", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "description_too_long", _emote="NO"), 0))
 
         if self.validate_name(name.lower()) == False:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "invalid_name", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "invalid_name", _emote="NO"), 0))
 
         if len(self._tags.get(ctx.guild_id, [])) > 40:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "max_commands", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_commands", _emote="NO"), 0))
 
         if ephemeral == None:
             ephemeral = False
@@ -291,18 +291,18 @@ class TagsPlugin(AutoModPluginBlueprint):
             if p != None:
                 for cmd in p.__cog_app_commands__:
                     if cmd.qualified_name.lower() == name:
-                        return await ctx.response.send_message(self.locale.t(ctx.guild, "tag_has_cmd_name", _emote="NO"))
+                        return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_has_cmd_name", _emote="NO"), 0))
 
         if ctx.guild.id in self._tags:
             if name in self._tags[ctx.guild.id]:
-                return await ctx.response.send_message(self.locale.t(ctx.guild, "tag_alr_exists", _emote="NO"))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_alr_exists", _emote="NO"), 0))
 
         r = self.add_tag(ctx, name, content, description, ephemeral)
         if r != None:
-            await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r), 0))
         else:
             await self.bot.tree.sync(guild=ctx.guild)
-            await ctx.response.send_message(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name), 1))
 
 
     @discord.app_commands.command(
@@ -326,16 +326,16 @@ class TagsPlugin(AutoModPluginBlueprint):
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
-                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
                 r = self.remove_tag(ctx.guild, name)
                 if r != None:
-                    await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r))
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r), 0))
                 else:
                     await self.bot.tree.sync(guild=ctx.guild)
-                    await ctx.response.send_message(self.locale.t(ctx.guild, "tag_removed", _emote="YES"))
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_removed", _emote="YES"), 1))
         else:
-            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
 
 
     @discord.app_commands.command(
@@ -364,12 +364,12 @@ class TagsPlugin(AutoModPluginBlueprint):
         -editcom test_cmd This is the new content
         """
         if len(content) > 1900:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "content_too_long", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
 
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
-                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
                 if ephemeral == None:
                     ephemeral = self._tags[ctx.guild.id][name].get("ephemeral", False)
@@ -380,9 +380,9 @@ class TagsPlugin(AutoModPluginBlueprint):
                         ephemeral = False
                 
                 self.update_tag(ctx, name, content, ephemeral)
-                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_updated", _emote="YES"))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_updated", _emote="YES"), 1))
         else:
-            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
 
 
     @discord.app_commands.command(
@@ -406,7 +406,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         name = name.lower()
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
-                await ctx.response.send_message(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
                 data = Object(self.db.tags.get_doc(f"{ctx.guild.id}-{name}"))
 
@@ -449,7 +449,7 @@ class TagsPlugin(AutoModPluginBlueprint):
 
                 await ctx.response.send_message(embed=e)
         else:
-            await ctx.response.send_message(self.locale.t(ctx.guild, "no_tags", _emote="NO"))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
 
 
 async def setup(

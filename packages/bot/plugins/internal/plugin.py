@@ -21,13 +21,13 @@ T = TypeVar("T")
 SERVER_LOG_EVENTS = {
     "role_created": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.role_create,
         "text": "Role created"
     },
     "role_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.role_delete,
         "text": "Role deleted"
     },
@@ -41,14 +41,14 @@ SERVER_LOG_EVENTS = {
 
     "channel_created": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.channel_create,
         "text": "Channel created",
         "extra_text": "**Type:** {_type}"
     },
     "channel_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.channel_delete,
         "text": "Channel deleted",
         "extra_text": "**Type:** {_type}"
@@ -63,13 +63,13 @@ SERVER_LOG_EVENTS = {
 
     "thread_created": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.thread_create,
         "text": "Thread created"
     },
     "thread_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.thread_delete,
         "text": "Thread deleted"
     },
@@ -83,42 +83,42 @@ SERVER_LOG_EVENTS = {
 
     "emoji_created": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.emoji_create,
         "text": "Emoji created",
         "extra_text": "**Showcase:** {showcase}"
     },
     "emoji_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.emoji_delete,
         "text": "Emoji deleted"
     },
 
     "sticker_created": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.sticker_create,
         "text": "Sticker created",
         "extra_text": "**Showcase:** {showcase}"
     },
     "sticker_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.sticker_delete,
         "text": "Sticker deleted"
     },
 
     "nick_added": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.member_update,
         "text": "Nickname added",
         "extra_text": "**New:** {change}"
     },
     "nick_removed": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.member_update,
         "text": "Nickname removed",
         "extra_text": "**Old:** {change}"
@@ -132,14 +132,14 @@ SERVER_LOG_EVENTS = {
     },
     "added_role": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.member_role_update,
         "text": "Role added",
         "extra_text": "**Role:** {change}"
     },
     "removed_role": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.member_role_update,
         "text": "Role removed",
         "extra_text": "**Role:** {change}"
@@ -154,14 +154,14 @@ SERVER_LOG_EVENTS = {
 
     "joined_voice": {
         "emote": "CREATE",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.member_move,
         "text": "Joined voice channel",
         "extra_text": "**Channel:** <#{channel}>"
     },
     "left_voice": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.member_move,
         "text": "Left voice channel",
         "extra_text": "**Channel:** <#{channel}>"
@@ -176,7 +176,7 @@ SERVER_LOG_EVENTS = {
 
     "bot_added": {
         "emote": "ROBOT",
-        "color": 0x5cff9d,
+        "color": 0x43b582,
         "audit_log_action": AuditLogAction.bot_add,
         "text": "Bot added",
     }
@@ -423,7 +423,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         if content == "": return
         e = Embed(
             None,
-            color=0xff5c5c,
+            color=0xf04a47,
             description=content[:2000] # idk the limits tbh
         )
         e.set_author(
@@ -513,7 +513,7 @@ class InternalPlugin(AutoModPluginBlueprint):
             self.bot.dispatch("join_role", user)
             e = Embed(
                 None,
-                color=0x5cff9d,
+                color=0x43b582,
                 description=self.locale.t(user.guild, "user_joined", profile=user.mention, created=round(user.created_at.timestamp()))
             )
             e.set_thumbnail(

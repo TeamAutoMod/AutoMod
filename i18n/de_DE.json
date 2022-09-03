@@ -235,7 +235,7 @@
     "edited_filter": "{emote} Filter has been edited",
 
     "searching": "{emote} Looking for recent cases, this may take a bit...",
-    "no_cases": "{emote} I looked everywhere, but I couldn't find any cases matching your criteria",
+    "no_cases": "{emote} I looked everywhere, but I couldn't find any cases",
 
     "user_joined": "**Profile:** {profile} \n**Created:** <t:{created}>",
     "user_left": "**Profile:** {profile} \n**Joined:** <t:{joined}> \n**Roles:** {roles}",

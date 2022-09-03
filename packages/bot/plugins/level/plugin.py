@@ -7,7 +7,7 @@ from typing import Union
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import UserLevel
-from ...types import Embed
+from ...types import Embed, E
 
 
 
@@ -143,23 +143,23 @@ class LevelPlugin(AutoModPluginBlueprint):
                 (data.lvl + 1)
             )
             if config.notif_mode == "channel":
-                await msg.channel.send(self.locale.t(
+                await msg.channel.send(embed=E(self.locale.t(
                     msg.guild, 
                     "lvl_up_channel", 
                     _emote="PARTY", 
                     mention=msg.author.mention,
                     lvl=(data.lvl + 1)
-                ))
+                ), 2))
             elif config.notif_mode == "dm":
                 try:
-                    await msg.author.send(self.locale.t(
+                    await msg.author.send(embed=E(self.locale.t(
                         msg.guild, 
                         "lvl_up_dm", 
                         _emote="PARTY", 
                         mention=msg.author.mention,
                         lvl=(data.lvl + 1),
                         guild=msg.guild.name
-                    ))
+                    ), 2))
                 except discord.Forbidden:
                     pass
         else:
@@ -182,14 +182,14 @@ class LevelPlugin(AutoModPluginBlueprint):
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
         if config.enabled == False: 
-            return await ctx.send(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+            return await ctx.send(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)), 0))
 
         if not self.exists(
             config, 
             ctx.guild, 
             user,
             insert=False
-        ): return await ctx.send(self.locale.t(ctx.guild, "not_ranked", _emote="NO"))
+        ): return await ctx.send(embed=E(self.locale.t(ctx.guild, "not_ranked", _emote="NO"), 0))
 
         data = self.get_user_data(
             ctx.guild, 
@@ -224,9 +224,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         """leaderboard_help"""
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
         if config.enabled == False: 
-            return await ctx.send(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)))
+            return await ctx.send(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)), 0))
         if len(config.users) < 1: 
-            return await ctx.send(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"))
+            return await ctx.send(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0))
 
         users = [Object(x) for x in self.db.level.find({"guild": f"{ctx.guild.id}"})]
         data = sorted(users, key=lambda e: e.xp, reverse=True)

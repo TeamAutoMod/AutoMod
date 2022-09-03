@@ -13,7 +13,7 @@ from toolbox import S as Object
 from typing import Union, List, Literal
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed, Duration
+from ...types import Embed, Duration, E
 from ...views import AboutView, HelpView
 from ...schemas import Slowmode
 
@@ -410,12 +410,12 @@ class UtilityPlugin(AutoModPluginBlueprint):
         # Shard
         shard = self.bot.get_shard(ctx.guild.shard_id)
         
-        await ctx.followup.send(content="``▶`` **Rest:** {}ms \n``▶`` **Client:** {}ms \n``▶`` **Shard:** {}ms \n``▶`` **Database:** {}ms".format(
+        await ctx.followup.send(embed=E("``▶`` **Rest:** {}ms \n``▶`` **Client:** {}ms \n``▶`` **Shard:** {}ms \n``▶`` **Database:** {}ms".format(
             round((msg_t2 - msg_t1) * 1000),
             round(self.bot.latency * 1000),
             round(shard.latency * 1000),
             round((db_t2 - db_t1) * 1000)
-        ))
+        ), 2))
 
 
     @discord.app_commands.command(
@@ -527,7 +527,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
             _help = get_command_help(self, ctx, query)
             if _help == None:
-                await ctx.response.send_message(self.locale.t(ctx.guild, "invalid_command", _emote="NO"))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "invalid_command", _emote="NO"), 0))
             else:
                 await ctx.response.send_message(embed=_help, view=HelpView(self.bot, show_buttons=True))
 
@@ -559,6 +559,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
         e = Embed(
             ctx,
+            color=user.color if user.color != None else None,
             title="{0.name}#{0.discriminator}'s Avatar".format(user)
         )
 
@@ -612,7 +613,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             try:
                 r.raise_for_status()
             except requests.HTTPError:
-                return await ctx.response.send_message(self.locale.t(ctx.guild, "http_error", _emote="NO"))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "http_error", _emote="NO"), 0))
 
             img = Image.open(BytesIO(r.content))
             height = img.height if img.height > height else height
@@ -654,7 +655,10 @@ class UtilityPlugin(AutoModPluginBlueprint):
         else:
             member: discord.Member = ctx.guild.get_member(user.id) or None
 
-        e = Embed(ctx)
+        e = Embed(
+            ctx,
+            color=user.color if user.color != None else None
+        )
         e.set_thumbnail(
             url=user.display_avatar
         )
@@ -713,7 +717,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             )
         )
 
-        await ctx.response.send_message(embed=e)
+        await ctx.response.send_message(embed=e, ephemeral=True if ctx.data.get("type") == 2 else False)
 
 
     @discord.app_commands.command(
@@ -809,7 +813,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if time == None:
             slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
             if len(slowmodes) < 1:
-                return await ctx.response.send_message(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"), 0))
             else:
                 e = Embed(
                     ctx,
@@ -828,7 +832,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 )
                         )
                 if len(e._fields) < 1:
-                    return await ctx.response.send_message(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"), 0))
                 else:
                     return await ctx.response.send_message(embed=e)
         else:
@@ -854,10 +858,10 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 slowmode_delay=seconds
                             )
                         except Exception as ex:
-                            return await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
                         else:
                             self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "native"))
-                            return await ctx.response.send_message(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="native slowmode"))
+                            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="native slowmode"), 1))
                     else:
                         if seconds <= MAX_BOT_SLOWMODE:
                             try:
@@ -865,7 +869,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                     slowmode_delay=MAX_NATIVE_SLOWMODE
                                 )
                             except Exception as ex:
-                                return await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
                             else:
                                 if self.db.slowmodes.exists(_id):
                                     self.db.slowmodes.multi_update(_id, {
@@ -875,9 +879,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 else:
                                     self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "bot-maintained"))
                                 
-                                return await ctx.response.send_message(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="bot-maintained slowmode"))
+                                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="bot-maintained slowmode"), 1))
                         else:
-                            return await ctx.response.send_message(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"))
+                            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"), 1))
                 else:
                     if ctx.channel.slowmode_delay > 0:
                         try:
@@ -890,7 +894,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     if self.db.slowmodes.exists(_id):
                         self.db.slowmodes.delete(_id)
                     
-                    return await ctx.response.send_message(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_slowmode", _emote="YES"), 1))
 
 
     @discord.app_commands.command(

@@ -6,7 +6,7 @@ import traceback
 from typing import TypeVar
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed
+from ...types import Embed, E
 
 
 
@@ -198,13 +198,13 @@ class ErrorPlugin(AutoModPluginBlueprint):
             log.error(f"❗️ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
             try:
-                await ctx.response.send_message(self.bot.locale.t(ctx.guild, "fail", _emote="NO", exc=error))
+                await ctx.response.send_message(E(self.bot.locale.t(ctx.guild, "fail", _emote="NO", exc=error), 0))
             except Exception:
                 pass
             finally:
                 e = Embed(
                     ctx,
-                    color=0xff5c5c,
+                    color=0xf04a47,
                     title="Uncaught error",
                     description="```py\n{}\n```".format(("".join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__)))[:4000])
                 )

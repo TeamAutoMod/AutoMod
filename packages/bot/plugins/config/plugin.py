@@ -3,11 +3,11 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 from toolbox import S as Object
-from typing import Union, Tuple, Literal
+from typing import Tuple, Literal
 import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed, Duration
+from ...types import Embed, Duration, E
 from ...views import SetupView
 
 
@@ -346,8 +346,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         action = action.lower()
 
-        if warns < 1: return await ctx.response.send_message(self.locale.t(ctx.guild, "min_warns", _emote="NO"))
-        if warns > 100: return await ctx.response.send_message(self.locale.t(ctx.guild, "max_warns", _emote="NO"))
+        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
 
         if time != None:
             try:
@@ -398,7 +398,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             text = self.locale.t(ctx.guild, f"set_{key}", _emote="YES", **kwargs)
 
         else:
-            if time == None: return await ctx.response.send_message(self.locale.t(ctx.guild, "time_needed", _emote="NO"))
+            if time == None: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "time_needed", _emote="NO"), 0))
 
             try:
                 sec = time.to_seconds(ctx)
@@ -462,7 +462,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 data.db_field
             )
 
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type), 1))
         else:
             if channel == None:
                 prefix = "/"
@@ -489,7 +489,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     "channel": channel
                 })
 
-                await ctx.response.send_message(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention), 1))
 
 
     ignore_log = discord.app_commands.Group(
@@ -514,7 +514,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         if (len(roles) + len(channels)) < 1:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"), 0))
         else:
             e = Embed(
                 ctx,
@@ -537,6 +537,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
     @ignore_log.command(
         name="add",
         description="✅ Adds the given role and/or channel as ignored for logging"
+    )
+    @discord.app_commands.describe(
+        role="Users with this role will be ignored for logging",
+        channel="Messages within this channel will be ignored for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
@@ -731,7 +735,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         if disable == "True":
             self.db.configs.update(ctx.guild.id, "join_role", "")
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "join_role_off", _emote="YES"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "join_role_off", _emote="YES"), 1))
         else:
             if role == None:
                 prefix = "/"
@@ -753,10 +757,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 return await ctx.response.send_message(embed=e)
             else:
                 if role.position >= ctx.guild.me.top_role.position: 
-                    return await ctx.response.send_message(self.locale.t(ctx.guild, "role_too_high", _emote="NO"))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "role_too_high", _emote="NO"), 0))
 
                 self.db.configs.update(ctx.guild.id, "join_role", f"{role.id}")
-                await ctx.response.send_message(self.locale.t(ctx.guild, "join_role_on", _emote="YES", role=role.name))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "join_role_on", _emote="YES", role=role.name), 1))
 
 
     @discord.app_commands.command(

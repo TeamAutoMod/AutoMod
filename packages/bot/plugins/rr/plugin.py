@@ -131,7 +131,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             ).items() if self.bot.get_channel(int(v['channel'])) != None
         }
         if len(rrs) < 1:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "no_rr", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="NO"), 0))
         else:
             e = Embed(
                 ctx,
@@ -196,24 +196,24 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                 "pairs": []
             }
         if len(data["pairs"]) > 10:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "max_rr", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr", _emote="NO"), 0))
         else:
             if len(message.reactions) > 10:
-                return await ctx.response.send_message(self.locale.t(ctx.guild, "max_rr_reactions", _emote="NO"))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr_reactions", _emote="NO"), 0))
             else:
                 if role.position >= ctx.guild.me.top_role.position:
-                    return await ctx.response.send_message(self.locale.t(ctx.guild, "rr_role_too_high", _emote="NO"))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_too_high", _emote="NO"), 0))
                 elif f"{emote}" in [list(x.values())[0] for x in data["pairs"]]:
-                    return await ctx.response.send_message(self.locale.t(ctx.guild, "rr_emoji_alr_bound", _emote="NO"))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_emoji_alr_bound", _emote="NO"), 0))
                 elif f"{role.id}" in [list(x.values())[1] for x in data["pairs"]]:
-                    return await ctx.response.send_message(self.locale.t(ctx.guild, "rr_role_alr_bound", _emote="NO"))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_alr_bound", _emote="NO"), 0))
                 else:
                     try:
                         await message.add_reaction(
                             emote
                         )
                     except Exception as ex:
-                        return await ctx.response.send_message(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex))
+                        return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
                     else:
                         data["pairs"].append({
                             "emote": f"{emote}",
@@ -224,7 +224,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                         })
                         self.db.configs.update(ctx.guild.id, "reaction_roles", rrs)
 
-                        await ctx.response.send_message(self.locale.t(ctx.guild, "set_rr", _emote="YES"))
+                        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_rr", _emote="YES"), 1))
 
 
     @reaction_roles.command(
@@ -249,14 +249,14 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if len(rrs) < 1:
-            return await ctx.response.send_message(self.locale.t(ctx.guild, "no_rr", _emote="NO"))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="NO"), 0))
         else:
             if not f"{message_id}" in rrs:
-                return await ctx.response.send_message(self.locale.t(ctx.guild, "not_rr_msg", _emote="NO"))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_rr_msg", _emote="NO"), 0))
             else:
                 data = rrs[f"{message_id}"]
                 if len([x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"]) < 1:
-                    return await ctx.response.send_message(self.locale.t(ctx.guild, "no_rr_role", _emote="NO"))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr_role", _emote="NO"), 0))
                 else:
                     data["pairs"] = [x for x in data["pairs"] if list(x.values())[1] != f"{role.id}"]
                     if len(data["pairs"]) > 0:
@@ -265,7 +265,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                         del rrs[f"{message_id}"]
                     self.db.configs.update(ctx.guild.id, "reaction_roles", rrs)
 
-                    await ctx.response.send_message(self.locale.t(ctx.guild, "removed_rr", _emote="YES"))
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_rr", _emote="YES"), 1))
 
 
 async def setup(

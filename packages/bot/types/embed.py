@@ -124,3 +124,21 @@ class Embed(discord.Embed):
         view: discord.ui.View
     ) -> None:
         setattr(self, "_view", view)
+
+
+
+def E(
+    desc: str,
+    color: int = 2
+) -> Embed:
+    colors = {
+        0: 0xf04a47,
+        1: 0x43b582,
+        2: int(bot_obj.config.embed_color, 16)
+    }
+
+    return Embed(
+        None,
+        color=colors.get(color, 2),
+        description=desc
+    )
