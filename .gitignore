@@ -130,10 +130,10 @@ dmypy.json
 /node_modules
 
 /packages/bot/config.json
-/dashboard
+/packages/dashboard
 /packages/bot/api
-/packages/bot/plugins/level.py
-/packages/bot/plugins/reply.py
-/packages/bot/plugins/processor/config.py
+/packages/bot/plugins/level
+/packages/bot/plugins/_processor/config.py
 /packages/bot/schemas/level.py
 /packages/bot/modals
+/packages/bot/plugins/reply

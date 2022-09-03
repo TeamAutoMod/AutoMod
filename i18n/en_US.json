@@ -7,6 +7,7 @@
     "server_prefix": "All commands are slash commands and can be used by typing ``/``",
     "max_length": "Maximum length is {max_length}s (28 days)",
     "now_slash": "{emote} AutoMod has switched to slash commands! You can now use this command with ``/{cmd}``. To get a list of all commands, use ``/help``",
+    "must_be_int": "{emote} The **{arg}** argument must be a valid number",
 
     "eval_help": "Evaluates a block of code",
     "debug_help": "Shows useful developer information",

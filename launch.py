@@ -1,4 +1,3 @@
-import discord.http; discord.http.Route.BASE = "https://discordapp.com/api/v9"
 import discord
 from discord.ext import commands
 

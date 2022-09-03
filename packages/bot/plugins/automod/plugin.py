@@ -12,6 +12,7 @@ from typing import Union, Tuple
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed, E
+from ...modals import FilterModal
 
 
 
@@ -446,6 +447,18 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     ]:
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_automod"), self.db.configs.get(guild.id, "ignored_channels_automod")
         return roles, channels
+
+
+    def extract_args(
+        self,
+        i: discord.Interaction,
+        *args
+    ) -> tuple:
+        return (
+            i.data["components"][i.data["components"].index(
+                [_ for _ in i.data["components"] if _["components"][0]["custom_id"] == x][0]
+            )]["components"][0].get("value", None) for x in args
+        )
 
 
     async def delete_msg(
@@ -1176,49 +1189,47 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=e)
     
 
-
     @_filter.command(
         name="add",
         description="✅ Creates a new word filter"
     )
-    @discord.app_commands.describe(
-        name="Name of the filter",
-        warns="How many warns users should receive (use 0 to just delete the message)",
-        words="Words within the filter, seperated by commas (word 1, word2, word 3)",
-        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas)"
-    )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def add_filter(
         self, 
-        ctx: discord.Interaction, 
-        name: str, 
-        warns: int, 
-        words: str,
-        channels: str = None, 
+        ctx: discord.Interaction
     ) -> None:
         """
         filter_add_help
         examples:
-        -filter add test_filter 1 banana, apples, grape fruit
-        -filter add test_filter 0 banana, apples, grape fruit #test-channel #other-channel
+        -filter add
         """
-        name = name.lower()
-        filters = self.db.configs.get(ctx.guild.id, "filters")
+        async def callback(
+            i: discord.Interaction
+        ) -> None:
+            name, warns, words, channels = self.extract_args(i, "name", "warns", "words", "channels")
 
-        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"), 0))
-        if name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_exists", _emote="NO"), 0))
+            name = name.lower()
+            filters = self.db.configs.get(i.guild.id, "filters")
 
-        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
-        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_name_too_long", _emote="NO"), 0))
+            if name in filters: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_exists", _emote="NO"), 0))
+            
+            try: warns = int(warns)
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
 
-        filters[name] = {
-            "warns": warns,
-            "words": words.split(", "),
-            "channels": [] if channels == None else self.parse_channels(channels)
-        }
-        self.db.configs.update(ctx.guild.id, "filters", filters)
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
 
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "added_filter", _emote="YES"), 1))
+            filters[name] = {
+                "warns": warns,
+                "words": words.split(", "),
+                "channels": [] if channels == None else self.parse_channels(channels)
+            }
+            self.db.configs.update(i.guild.id, "filters", filters)
+            await i.response.send_message(embed=E(self.locale.t(i.guild, "added_filter", _emote="YES"), 1))
+
+        modal = FilterModal(self.bot, "Create Filter", callback)
+        await ctx.response.send_modal(modal)
 
     
     @_filter.command(
