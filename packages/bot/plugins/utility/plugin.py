@@ -861,7 +861,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
                         else:
                             self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "native"))
-                            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="native slowmode"), 1))
+                            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", time=str(time), mode="native slowmode"), 1))
                     else:
                         if seconds <= MAX_BOT_SLOWMODE:
                             try:
@@ -879,7 +879,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 else:
                                     self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "bot-maintained"))
                                 
-                                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", mode="bot-maintained slowmode"), 1))
+                                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", time=str(time),mode="bot-maintained slowmode"), 1))
                         else:
                             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"), 1))
                 else:

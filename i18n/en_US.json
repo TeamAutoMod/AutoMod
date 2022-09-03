@@ -284,7 +284,7 @@
     "removed_regex": "{emote} Regex has been removed",
     "edited_regex": "{emote} Regex has been edited",
 
-    "set_slowmode": "{emote} Set slowmode ({mode})",
+    "set_slowmode": "{emote} Set slowmode to **{time}** ({mode})",
     "max_slowmode": "{emote} The max slowmode time is 14 days",
     "removed_slowmode": "{emote} Removed slowmode",
     "no_slowmodes": "{emote} This server doesn't have any bot-set slowmodes",
