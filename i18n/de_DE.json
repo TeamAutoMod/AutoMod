@@ -251,7 +251,7 @@
     "lvl_up_channel": "{emote} {mention}, congratulations on reaching **Level {lvl}**!",
     "lvl_up_dm": "{emote} {mention}, congratulations on reaching **Level {lvl}** in {guild}!",
     "not_ranked": "{emote} User is not ranked yet",
-    "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using ``{prefix}lvl_sys``",
+    "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using ``{prefix}lvlsys``",
     "no_one_ranked": "{emote} No users are currently ranked",
     "lvl_sys_status": "The level system on this server is currently **{status}**",
     "changed_lvl_sys_status": "{emote} Successfully {status} the level system and set the notification mode to **{notifs}**",
