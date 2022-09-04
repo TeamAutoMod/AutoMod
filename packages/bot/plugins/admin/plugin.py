@@ -254,7 +254,7 @@ class AdminPlugin(AutoModPluginBlueprint):
         if self.db.configs.get(guild_id, "premium") == True:
             return await ctx.send(embed=E(self.locale.t(ctx.guild, "premium_alr_enabled", _emote="NO"), 0))
         else:
-            self.db.configs.multi_update(ctx.guild.id, {
+            self.db.configs.multi_update(guild_id, {
                 "premium": True,
                 "premium_type": "lifetime"
             })
@@ -276,7 +276,7 @@ class AdminPlugin(AutoModPluginBlueprint):
         if self.db.configs.get(guild_id, "premium") == False:
             return await ctx.send(embed=E(self.locale.t(ctx.guild, "premium_not_enabled", _emote="NO"), 0))
         else:
-            self.db.configs.multi_update(ctx.guild.id, {
+            self.db.configs.multi_update(guild_id, {
                 "premium": False,
                 "premium_type": ""
             })
