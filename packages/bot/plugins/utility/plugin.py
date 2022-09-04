@@ -302,9 +302,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         if cmd.qualified_name not in self.bot.config.disabled_commands:
                             if cmd.default_permissions != None:
                                 if i.user.guild_permissions >= cmd.default_permissions:
-                                    cmds.append(f"/{cmd.qualified_name}")
+                                    cmds.append(cmd)
                             else:
-                                cmds.append(f"/{cmd.qualified_name}")
+                                cmds.append(cmd)
 
                     for cmd in cmds:
                         e.add_field(
