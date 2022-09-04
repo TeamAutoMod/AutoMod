@@ -57,7 +57,7 @@ class FilterModal(TextModalBase):
     warns = discord.ui.TextInput(
         custom_id="warns",
         label="Warns",
-        style=discord.TextStyle.short,
+        style=discord.TextStyle.long,
         placeholder="Warns given upon violation. Use 0 to just have the message deleted",
         required=True,
         max_length=2
