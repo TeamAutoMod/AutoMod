@@ -214,6 +214,8 @@ class LevelPlugin(AutoModPluginBlueprint):
             
             if notifications != None:
                 config["notif_mode"] = notifications.lower()
+            else:
+                notifications = config["notif_mode"].title()
 
             self.db.configs.update(ctx.guild.id, "lvl_sys", config)
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "changed_lvl_sys_status", _emote="YES", status="enabled" if config["enabled"] == True else "disabled", notifs=notifications), 1))
