@@ -13,12 +13,14 @@ T = TypeVar("T")
 class AutoModPluginBlueprint(_commands.Cog):
     def __init__(
         self, 
-        bot: ShardedBotInstance
+        bot: ShardedBotInstance,
+        requires_premium: bool = False
     ):
         self.bot = bot
         self.db = bot.db
         self.config = bot.config
         self.locale = bot.locale
+        self._requires_premium = requires_premium
 
 
     def get_prefix(

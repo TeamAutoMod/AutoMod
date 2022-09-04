@@ -1,8 +1,6 @@
 import discord
 from discord.ui import View, Select # pyright: reportMissingImports=false
 
-from typing import List
-
 from .buttons import LinkBtn
 
 
@@ -15,6 +13,7 @@ ACTUAL_PLUGIN_NAMES = {
     "TagsPlugin": "📝 Custom Commands",
     "CasesPlugin": "📦 Cases",
     "ReactionRolesPlugin": "🎭 Reaction Roles",
+    "LevelPlugin": "🏆 Level System"
 }
 
 
@@ -23,6 +22,7 @@ class HelpView(View):
         self, 
         bot, 
         show_buttons: bool = False,
+        viewable_plugins: list = [],
         *args, 
         **kwargs
     ) -> None:
@@ -37,7 +37,7 @@ class HelpView(View):
                         discord.SelectOption(
                             label=v,
                             value=k
-                        ) for k, v in ACTUAL_PLUGIN_NAMES.items()
+                        ) for k, v in ACTUAL_PLUGIN_NAMES.items() if k in viewable_plugins
                     ],
                     custom_id="help-select"
                 )

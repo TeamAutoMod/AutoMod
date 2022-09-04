@@ -8,6 +8,8 @@ def GuildConfig(
 ) -> dict:
     return {
         "id": f"{guild.id}", 
+        "premium": False,
+        "premium_type": "",
         "prefix": "{}".format(prefix if prefix != "" or prefix != None else "+"), 
         "mute_role": "",
         "mod_role": "",

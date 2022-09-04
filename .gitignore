@@ -134,6 +134,5 @@ dmypy.json
 /packages/bot/api
 /packages/bot/plugins/level
 /packages/bot/plugins/_processor/config.py
-/packages/bot/schemas/level.py
 /packages/bot/modals
 /packages/bot/plugins/reply

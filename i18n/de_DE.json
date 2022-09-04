@@ -6,6 +6,7 @@
     "updated_i18n": "{emote} ``{key}`` Key wurde aktualisiert",
     "server_prefix": "Alle Commands sind Slash Commands und haben ``/`` als Prefix",
     "max_length": "Maximale Länge ist {max_length}s (1 Jahr)",
+    "need_premium": "{emote} To use this feature, you need premium. For more information, check out https://patreon.com/xez",
 
     "eval_help": "Evaluiert den gegebenen Python Code",
     "debug_help": "Zeigt nützliche Entwickler Infos",
@@ -252,6 +253,8 @@
     "not_ranked": "{emote} User is not ranked yet",
     "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using ``{prefix}lvl_sys``",
     "no_one_ranked": "{emote} No users are currently ranked",
+    "lvl_sys_status": "The level system on this server is currently **{status}**",
+    "changed_lvl_sys_status": "{emote} Successfully {status} the level system and set the notification mode to **{notifs}**",
 
     "no_disabled_commands": "{emote} Currently all commands are enabled",
     "no_changes": "{emote} This wouldn't change the current command config",

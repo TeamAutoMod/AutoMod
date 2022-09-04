@@ -1,12 +1,15 @@
 import discord
 from discord.ext import commands
 
-import logging; log = logging.getLogger()
+import logging
+
+from packages.bot.types.embed import E; log = logging.getLogger()
 import time
 import traceback
 import ast
 import psutil
 import datetime
+from toolbox import S as Object
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed
@@ -49,6 +52,18 @@ class AdminPlugin(AutoModPluginBlueprint):
         else:
             text = "- {}: DISCONNECTED ~ {} guilds".format(shard.id, guilds)
         return text
+
+    
+    @AutoModPluginBlueprint.listener()
+    async def on_member_udpate(
+        self,
+        b: discord.Member,
+        a: discord.Member
+    ) -> None:
+        if a.roles != b.roles:
+            r = b.guild.get_role(self.config.premium_role)
+            if not r in b.roles and r in a.roles:
+                print("PREMIUM")
 
 
     @commands.command()
@@ -192,6 +207,80 @@ class AdminPlugin(AutoModPluginBlueprint):
         await ctx.send("```py\n{}\n```".format(
             "\n".join(msg)
         ))
+
+    
+    @commands.group()
+    @commands.is_owner()
+    async def premium(
+        self,
+        ctx: commands.Context
+    ) -> None:
+        """
+        premium_help
+        examples:
+        -premium
+        -premium add 123456789
+        -premium remove 123456789
+        """
+        if ctx.invoked_subcommand == None:
+            if len(list(self.db.configs.find({"premium": True}))) < 1:
+                await ctx.send(embed=E(self.locale.t(ctx.guild, "no_premiums", _emote="NO"), 0))
+            else:
+                e = Embed(
+                    ctx,
+                    title="Active premium servers"
+                )
+                for x in self.db.configs.find({"premium": True}):
+                    data = Object(x)
+                    e.add_field(
+                        name=f"**{self.bot.get_guild(int(data.id))} ({data.id})**",
+                        value=f"> ``{data.premium_type}``"
+                    )
+                await ctx.send(embed=e)
+
+
+    @premium.command()
+    @commands.is_owner()
+    async def add(
+        self,
+        ctx: commands.Context,
+        guild_id: int
+    ) -> None:
+        """
+        premium_add_help
+        examples:
+        -premium add 123456789
+        """
+        if self.db.configs.get(guild_id, "premium") == True:
+            return await ctx.send(embed=E(self.locale.t(ctx.guild, "premium_alr_enabled", _emote="NO"), 0))
+        else:
+            self.db.configs.multi_update(ctx.guild.id, {
+                "premium": True,
+                "premium_type": "lifetime"
+            })
+            await ctx.send(embed=E(self.locale.t(ctx.guild, "enabled_premium", _emote="YES"), 1))
+
+
+    @premium.command()
+    @commands.is_owner()
+    async def remove(
+        self,
+        ctx: commands.Context,
+        guild_id: int
+    ) -> None:
+        """
+        premium_remove_help
+        examples:
+        -premium remove 123456789
+        """
+        if self.db.configs.get(guild_id, "premium") == False:
+            return await ctx.send(embed=E(self.locale.t(ctx.guild, "premium_not_enabled", _emote="NO"), 0))
+        else:
+            self.db.configs.multi_update(ctx.guild.id, {
+                "premium": False,
+                "premium_type": ""
+            })
+            await ctx.send(embed=E(self.locale.t(ctx.guild, "disabled_premium", _emote="YES"), 1))
 
 
 async def setup(

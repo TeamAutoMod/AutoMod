@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from toolbox import S as Object
 from random import randint
-from typing import Union
+from typing import Union, Literal
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import UserLevel
@@ -15,9 +15,9 @@ class LevelPlugin(AutoModPluginBlueprint):
     """Plugin for all level system commands"""
     def __init__(
         self, 
-        bot: ShardedBotInstance
+        bot: ShardedBotInstance,
     ) -> None:
-        super().__init__(bot)
+        super().__init__(bot, requires_premium=True)
 
 
     def exists(
@@ -101,6 +101,13 @@ class LevelPlugin(AutoModPluginBlueprint):
             return f"{i}{end}"
 
 
+    def has_premium(
+        self,
+        guild: discord.Guild
+    ) -> None:
+        return self.db.configs.get(guild.id, "premium")
+
+
     @AutoModPluginBlueprint.listener()
     async def on_message(
         self, 
@@ -109,6 +116,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         if msg.guild == None: return
         if msg.author == None: return
         if msg.author.bot == True: return
+        if not self.has_premium(msg.guild): return
         if not msg.guild.chunked:
             await self.bot.chunk_guild(msg.guild)
         
@@ -171,25 +179,73 @@ class LevelPlugin(AutoModPluginBlueprint):
             )
 
 
-    @commands.command(aliases=["level", "lvl"])
+    @discord.app_commands.command(
+        name="lvlsys",
+        description="🏆 Configure the level system"
+    )
+    @discord.app_commands.describe(
+        enabled="Whether the level system should be enabled or disabled",
+        notifications="Where users should be notified when leveling up"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def lvlsys(
+        self,
+        ctx: discord.Interaction,
+        enabled: Literal[
+            "True",
+            "False"
+        ] = None,
+        notifications: Literal[
+            "Channel",
+            "DM"
+        ] = None
+    ) -> None:
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+
+        config = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        if enabled == None and notifications == None:
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_status", status="enabled" if config["enabled"] == True else "disabled"), 2))
+        else:
+            if enabled != None:
+                if enabled.lower() == "true":
+                    config["enabled"] = True
+                else:
+                    config["enabled"] = False
+            
+            if notifications != None:
+                config["notif_mode"] = notifications.lower()
+
+            self.db.configs.update(ctx.guild.id, "lvl_sys", config)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "changed_lvl_sys_status", _emote="YES", status="enabled" if config["enabled"] == True else "disabled", notifs=notifications), 1))
+
+
+    @discord.app_commands.command(
+        name="rank",
+        description="⭐ View your server rank"
+    )
     async def rank(
         self, 
         ctx: discord.Interaction, 
         user: discord.Member = None
     ) -> None:
-        """rank_help"""
-        if user == None: user = ctx.message.author
+        """
+        rank_help
+        examples:
+        -rank
+        -rank paul#0009
+        """
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        if user == None: user = ctx.user
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-        if config.enabled == False: 
-            return await ctx.send(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)), 0))
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
 
         if not self.exists(
             config, 
             ctx.guild, 
             user,
             insert=False
-        ): return await ctx.send(embed=E(self.locale.t(ctx.guild, "not_ranked", _emote="NO"), 0))
+        ): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_ranked", _emote="NO"), 0))
 
         data = self.get_user_data(
             ctx.guild, 
@@ -200,6 +256,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         for_last_lvl = 3 * ((data.lvl - 2) ** 2) + 30
 
         e = Embed(
+            ctx,
             title=f"{user.name}#{user.discriminator}",
             description="**Level:** {} \n**Progress:** {} / {} \n**Total XP:** {}"\
                 .format(
@@ -212,26 +269,33 @@ class LevelPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(
             url=user.display_avatar
         )
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
-    @commands.command(aliases=["lb"])
-    @commands.cooldown(rate=1, per=30.0, type=commands.BucketType.user)
+    @discord.app_commands.command(
+        name="leaderboard",
+        description="📜 View the server's leaderboard"
+    )
     async def leaderboard(
         self, 
         ctx: discord.Interaction
     ) -> None:
-        """leaderboard_help"""
+        """
+        leaderboard_help
+        examples:
+        -leaderboard
+        """
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-        if config.enabled == False: 
-            return await ctx.send(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix=self.get_prefix(ctx.guild)), 0))
-        if len(config.users) < 1: 
-            return await ctx.send(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0))
+
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        if len(config.users) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0))
 
         users = [Object(x) for x in self.db.level.find({"guild": f"{ctx.guild.id}"})]
         data = sorted(users, key=lambda e: e.xp, reverse=True)
 
         e = Embed(
+            ctx,
             title="Leaderboard"
         )
         e.set_thumbnail(
@@ -254,7 +318,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                     )
             )
         
-        await ctx.send(embed=e)
+        await ctx.response.send_message(embed=e)
 
 
 async def setup(

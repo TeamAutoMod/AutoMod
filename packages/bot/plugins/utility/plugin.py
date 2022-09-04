@@ -27,6 +27,7 @@ ACTUAL_PLUGIN_NAMES = {
     "TagsPlugin": "📝 Custom Commands",
     "CasesPlugin": "📦 Cases",
     "ReactionRolesPlugin": "🎭 Reaction Roles",
+    "LevelPlugin": "🏆 Level System"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
@@ -296,24 +297,19 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         title=ACTUAL_PLUGIN_NAMES.get(i.data.get("values")[0], i.data.get("values")[0])
                     )
 
-                    cmds = [
-                        *[
-                            x for x in p.get_commands() if not x.name in self.config.disabled_commands
-                        ], 
-                        *[
-                            x for x in p.__cog_app_commands__
-                        ]
-                    ]
-                    old_prefix = self.get_prefix(i.guild)
+                    cmds = []
+                    for cmd in p.__cog_app_commands__:
+                        if cmd.qualified_name not in self.bot.config.disabled_commands:
+                            if cmd.default_permissions != None:
+                                if i.user.guild_permissions >= cmd.default_permissions:
+                                    cmds.append(f"/{cmd.qualified_name}")
+                            else:
+                                cmds.append(f"/{cmd.qualified_name}")
+
                     for cmd in cmds:
                         e.add_field(
                             name="**{}**".format(
-                                f"{old_prefix}{cmd.qualified_name} {cmd.signature}".replace('...', '').replace('=None', '') if isinstance(
-                                    cmd, (
-                                        commands.Command,
-                                        commands.GroupMixin
-                                    )
-                                ) else f"/{cmd.qualified_name} {' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''} {' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}"
+                                f"/{cmd.qualified_name} {' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''} {' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}"
                             ),
                             value="``▶`` {}".format(
                                 self.bot.locale.t(i.guild, cmd.help.split('\nexamples:')[0]) if isinstance(
@@ -491,37 +487,44 @@ class UtilityPlugin(AutoModPluginBlueprint):
         """
         query = command
         if query == None:
-            prefix = self.get_prefix(ctx.guild)
-
             e = Embed(
                 ctx,
                 title="Command List",
                 description=self.locale.t(ctx.guild, "help_desc", prefix="/")
             )
+            viewable_plugins = []
             for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
-                old_prefix = self.get_prefix(ctx.guild)
                 if p != None:
-                    cmds = [
-                        *[
-                            f"{old_prefix}{x.qualified_name}" for x in p.get_commands() if not x.name in self.config.disabled_commands
-                        ], 
-                        *[
-                            f"/{x.qualified_name}" for x in p.__cog_app_commands__ if not x.name in self.config.disabled_commands
-                        ]
-                    ]
-                    e.add_field(
-                        name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} __**{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}**__",
-                        value="> {}".format(
-                            ", ".join(
-                                [
-                                    f"``{x}``" for x in cmds
-                                ]
+                    if p._requires_premium:
+                        if self.db.configs.get(ctx.guild.id, "premium") == False:
+                            continue
+                    cmds = []
+                    for cmd in p.__cog_app_commands__:
+                        if cmd.qualified_name not in self.bot.config.disabled_commands:
+                            if cmd.default_permissions != None:
+                                if ctx.user.guild_permissions >= cmd.default_permissions:
+                                    cmds.append(f"/{cmd.qualified_name}")
+                            else:
+                                cmds.append(f"/{cmd.qualified_name}")
+                    
+                    if len(cmds) > 0:
+                        viewable_plugins.append(p.qualified_name)
+                        e.add_field(
+                            name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} __**{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}**__",
+                            value="> {}".format(
+                                ", ".join(
+                                    [
+                                        f"``{x}``" for x in cmds
+                                    ]
+                                )
                             )
                         )
-                    )
             e.credits()
 
-            await ctx.response.send_message(embed=e, view=HelpView(self.bot, show_buttons=False))
+            await ctx.response.send_message(
+                embed=e, 
+                view=HelpView(self.bot, show_buttons=False, viewable_plugins=viewable_plugins) if len(viewable_plugins) > 0 else None
+            )
         else:
             query = "".join(query.splitlines())
 
