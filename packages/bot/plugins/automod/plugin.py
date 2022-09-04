@@ -12,7 +12,7 @@ from typing import Union, Tuple
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed, E
-from ...modals import FilterModal
+from ...modals import FilterCreateModal, RegexCreateModal, FilterEditModal, RegexEditModal
 
 
 
@@ -1228,7 +1228,7 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
             self.db.configs.update(i.guild.id, "filters", filters)
             await i.response.send_message(embed=E(self.locale.t(i.guild, "added_filter", _emote="YES"), 1))
 
-        modal = FilterModal(self.bot, "Create Filter", callback)
+        modal = FilterCreateModal(self.bot, "Create Filter", callback)
         await ctx.response.send_modal(modal)
 
     
@@ -1268,24 +1268,17 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
     )
     @discord.app_commands.describe(
         name="Name of the filter",
-        warns="How many warns users should receive (use 0 to just delete the message)",
-        words="Words within the filter, seperated by commas (word 1, word2, word 3)",
-        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas)"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def edit_filter(
         self, 
         ctx: discord.Interaction, 
         name: str, 
-        warns: int,  
-        words: str,
-        channels: str = None
     ) -> None:
         """
         filter_edit_help
         examples:
-        -filter edit test_filter 1 banana, apples, grape fruit
-        -filter edit test_filter 0 banana, apples, grape fruit id_1, id_2
+        -filter edit test_filter
         """
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
@@ -1293,17 +1286,35 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"), 0))
         if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
 
-        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
-        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+        async def callback(
+            i: discord.Interaction
+        ) -> None:
+            warns, words, channels = self.extract_args(i, "warns", "words", "channels")
 
-        filters[name] = {
-            "warns": warns,
-            "words": words.split(", "),
-            "channels": [] if channels == None else self.parse_channels(channels)
-        }
-        self.db.configs.update(ctx.guild.id, "filters", filters)
+            try: warns = int(warns)
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
 
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "edited_filter", _emote="YES"), 1))
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
+
+            filters[name] = {
+                "warns": warns,
+                "words": words.split(", "),
+                "channels": [] if channels == None else self.parse_channels(channels)
+            }
+            self.db.configs.update(i.guild.id, "filters", filters)
+
+            await i.response.send_message(embed=E(self.locale.t(i.guild, "edited_filter", _emote="YES"), 1))
+        
+        modal = FilterEditModal(
+            self.bot, 
+            f"Edit Filter {name}", 
+            filters[name].get("warns"),
+            ", ".join(filters[name].get("words")),
+            ", ".join(filters[name].get("channels")),
+            callback
+        )
+        await ctx.response.send_modal(modal)
 
     
     regex = discord.app_commands.Group(
@@ -1354,46 +1365,44 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         name="add",
         description="✅ Adds a new regex filter with the given name, warns, pattern and channels"
     )
-    @discord.app_commands.describe(
-        name="Name of the filter",
-        warns="How many warns users should receive (use 0 to just delete the message)",
-        regex_pattern="The regex pattern that should be used (e.g. \b(banana)\b)",
-        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas, e.g. 1234, 1234)"
-    )
     async def add_regex(
         self, 
         ctx: discord.Interaction, 
-        name: str, 
-        warns: int, 
-        regex_pattern: str, 
-        channels: str = None
     ) -> None:
         r"""
         regex_add_help
         examples:
-        -regex add test_regex 1 \b(banana)\b 
-        -regex add test_regex 1 \b(banana)\b id_1, id_2
+        -regex add
         """
-        regexes = self.db.configs.get(ctx.guild.id, "regexes")
-        name = name.lower()
-        regex = regex_pattern
+        async def callback(
+            i: discord.Interaction
+        ) -> None:
+            name, warns, regex, channels = self.extract_args(i, "name", "warns", "pattern", "channels")
+            regexes = self.db.configs.get(i.guild.id, "regexes")
+            name = name.lower()
 
-        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"), 0))
-        if name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_exists", _emote="NO"), 0))
+            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_name_too_long", _emote="NO"), 0))
+            if name in regexes: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_exists", _emote="NO"), 0))
 
-        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
-        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+            try: warns = int(warns)
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
 
-        if self.validate_regex(regex) == False: return await ctx.send(embed=E(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"), 0))
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
 
-        regexes[name] = {
-            "warns": warns,
-            "regex": regex,
-            "channels": [] if channels == None else self.parse_channels(channels)
-        }
-        self.db.configs.update(ctx.guild.id, "regexes", regexes)
+            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0))
 
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "added_regex", _emote="YES"), 1))
+            regexes[name] = {
+                "warns": warns,
+                "regex": regex,
+                "channels": [] if channels == None else self.parse_channels(channels)
+            }
+            self.db.configs.update(i.guild.id, "regexes", regexes)
+
+            await i.response.send_message(embed=E(self.locale.t(i.guild, "added_regex", _emote="YES"), 1))
+        
+        modal = RegexCreateModal(self.bot, "Create Regex Filter", callback)
+        await ctx.response.send_modal(modal)
 
 
     @regex.command(
@@ -1430,46 +1439,56 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
         description="🔀 Edits an existing regex filter"
     )
     @discord.app_commands.describe(
-        name="Name of the filter",
-        warns="How many warns users should receive (use 0 to just delete the message)",
-        regex_pattern="Words within the filter, seperated by commas (word 1, word2, word 3)",
-        channels="Channels this filter should be enforced in, leave blank to have it enabled server-wide (channel IDs seperated by commas, e.g. 1234, 1234)"
+        name="Name of the regex filter you want to edit",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def edit_regex(
         self, 
         ctx: discord.Interaction, 
-        name: str, 
-        warns: int, 
-        regex_pattern: str, 
-        channels: str = None
+        name: str
     ) -> None:
         r"""
         regex_edit_help
         examples:
-        -regex edit test_regex \b(banana)\b 1
-        -regex edit test_regex \b(banana)\b 0 #test-channel #other-channel
+        -regex edit test_regex
         """
-        regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
-        regex = regex_pattern
+        regexes = self.db.configs.get(ctx.guild.id, "regexes")
 
         if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"), 0))
         if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0))
 
-        if warns < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
-        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+        async def callback(
+            i: discord.Interaction
+        ) -> None:
+            warns, regex, channels = self.extract_args(i, "warns", "pattern", "channels")
 
-        if self.validate_regex(regex) == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "invalid_regex", _emote="NO"), 0))
+            try: warns = int(warns)
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
 
-        regexes[name] = {
-            "warns": warns,
-            "regex": regex,
-            "channels": [] if channels == None else self.parse_channels(channels)
-        }
-        self.db.configs.update(ctx.guild.id, "regexes", regexes)
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
 
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "edited_regex", _emote="YES"), 1))
+            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0))
+
+            regexes[name] = {
+                "warns": warns,
+                "regex": regex,
+                "channels": [] if channels == None else self.parse_channels(channels)
+            }
+            self.db.configs.update(i.guild.id, "regexes", regexes)
+
+            await i.response.send_message(embed=E(self.locale.t(i.guild, "edited_regex", _emote="YES"), 1))
+
+        modal = RegexEditModal(
+            self.bot, 
+            f"Edit Regex {name}", 
+            regexes[name].get("warns"),
+            regexes[name].get("regex"),
+            ", ".join(regexes[name].get("channels")),
+            callback
+        )
+        await ctx.response.send_modal(modal)
 
 
     @discord.app_commands.command(

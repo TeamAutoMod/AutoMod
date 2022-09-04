@@ -1,4 +1,3 @@
-from http import client
 import discord
 from discord.ext import commands
 
@@ -11,6 +10,7 @@ import logging; log = logging.getLogger()
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import Tag
 from ...types import Embed, E
+from ...modals import CommandCreateModal
 
 
 
@@ -202,8 +202,24 @@ class TagsPlugin(AutoModPluginBlueprint):
         return True
 
 
-    @discord.app_commands.command(
+    def extract_args(
+        self,
+        i: discord.Interaction,
+        *args
+    ) -> tuple:
+        return (
+            i.data["components"][i.data["components"].index(
+                [_ for _ in i.data["components"] if _["components"][0]["custom_id"] == x][0]
+            )]["components"][0].get("value", None) for x in args
+        )
+
+    
+    _commands = discord.app_commands.Group(
         name="commands",
+        description="📝 Manage custom slash commands",
+    )
+    @_commands.command(
+        name="show",
         description="📝 Shows a list of all custom commands"
     )
     async def custom_commands(
@@ -211,9 +227,9 @@ class TagsPlugin(AutoModPluginBlueprint):
         ctx: discord.Interaction
     ) -> None:
         """
-        commands_help
+        commands_show_help
         examples:
-        -commands
+        -commands show
         """
         if ctx.guild.id in self._tags:
             tags = self._tags[ctx.guild.id]
@@ -231,82 +247,69 @@ class TagsPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
 
     
-    @discord.app_commands.command(
-        name="addcom",
+    @_commands.command(
+        name="add",
         description="✅ Creates a new custom slash command"
-    )
-    @discord.app_commands.describe(
-        name="Name of the custom command",
-        content="Content of the output",
-        description="The command description that should be displayed",
-        ephemeral="Whether the response should be ephemeral, meaning only the user can see it"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def addcom(
         self, 
-        ctx: discord.Interaction, 
-        name: str,  
-        content: str,
-        description: str,
-        ephemeral: Literal[
-            "True"
-        ] = None
+        ctx: discord.Interaction
     ) -> None:
         """
-        addcom_help
+        commands_add_help
         examples:
-        -addcom test_cmd This is a test command description:A cool test command
-        -addcom test_cmd2 This is a test command description:A cool test command ephemeral:True
+        -commands add
         """
-        if len(name) > 30:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "name_too_long", _emote="NO"), 0))
-        if len(content) > 1900:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
-        if len(description) > 50:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "description_too_long", _emote="NO"), 0))
+        async def callback(
+            i: discord.Interaction
+        ) -> None:
+            name, content, description = self.extract_args(i, "name", "content", "description")
 
-        if self.validate_name(name.lower()) == False:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "invalid_name", _emote="NO"), 0))
+            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "name_too_long", _emote="NO"), 0))
+            if len(content) > 1900: return await i.response.send_message(embed=E(self.locale.t(i.guild, "content_too_long", _emote="NO"), 0))
+            if len(description) > 50: return await i.response.send_message(embed=E(self.locale.t(i.guild, "description_too_long", _emote="NO"), 0))
 
-        if len(self._tags.get(ctx.guild_id, [])) > 40:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_commands", _emote="NO"), 0))
+            if self.validate_name(name.lower()) == False:
+                return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_name", _emote="NO"), 0))
 
-        if ephemeral == None:
-            ephemeral = False
-        else:
-            ephemeral = True
+            if len(self._tags.get(i.guild_id, [])) > 40:
+                return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_commands", _emote="NO"), 0))
 
-        name = name.lower()
-        for p in [
-            self.bot.get_plugin(x) for x in [
-                "ConfigPlugin",
-                "AutoModPluginBlueprint",
-                "ModerationPlugin",
-                "UtilityPlugin",
-                "TagsPlugin",
-                "CasesPlugin",
-                "ReactionRolesPlugin",
-            ]
-        ]:
-            if p != None:
-                for cmd in p.__cog_app_commands__:
-                    if cmd.qualified_name.lower() == name:
-                        return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_has_cmd_name", _emote="NO"), 0))
+            name = name.lower()
+            for p in [
+                self.bot.get_plugin(x) for x in [
+                    "ConfigPlugin",
+                    "AutoModPluginBlueprint",
+                    "ModerationPlugin",
+                    "UtilityPlugin",
+                    "TagsPlugin",
+                    "CasesPlugin",
+                    "ReactionRolesPlugin",
+                ]
+            ]:
+                if p != None:
+                    for cmd in p.__cog_app_commands__:
+                        if cmd.qualified_name.lower() == name:
+                            return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_has_cmd_name", _emote="NO"), 0))
 
-        if ctx.guild.id in self._tags:
-            if name in self._tags[ctx.guild.id]:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_alr_exists", _emote="NO"), 0))
+            if i.guild.id in self._tags:
+                if name in self._tags[i.guild.id]:
+                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_alr_exists", _emote="NO"), 0))
 
-        r = self.add_tag(ctx, name, content, description, ephemeral)
-        if r != None:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r), 0))
-        else:
-            await self.bot.tree.sync(guild=ctx.guild)
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_added", _emote="YES", tag=name), 1))
+            r = self.add_tag(i, name, content, description, False)
+            if r != None:
+                await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=r), 0))
+            else:
+                await self.bot.tree.sync(guild=i.guild)
+                await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_added", _emote="YES", tag=name), 1))
+
+        modal = CommandCreateModal(self.bot, "Create Slash Command", callback)
+        await ctx.response.send_modal(modal)
 
 
-    @discord.app_commands.command(
-        name="delcom",
+    @_commands.command(
+        name="delete",
         description="❌ Deletes the given custom slash command"
     )
     @discord.app_commands.describe(
@@ -319,9 +322,9 @@ class TagsPlugin(AutoModPluginBlueprint):
         name: str
     ) -> None:
         """
-        delcom_help
+        commands_delete_help
         examples:
-        -delcom test_command
+        -commands delete test_command
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
@@ -338,8 +341,8 @@ class TagsPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
 
 
-    @discord.app_commands.command(
-        name="editcom",
+    @_commands.command(
+        name="edit",
         description="🔀 Edits an existing custom slash command"
     )
     @discord.app_commands.describe(
@@ -359,9 +362,9 @@ class TagsPlugin(AutoModPluginBlueprint):
         ] = None
     ) -> None:
         """
-        editcom_help
+        commands_edit_help
         examples:
-        -editcom test_cmd This is the new content
+        -commands edit test_cmd This is the new content
         """
         if len(content) > 1900:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
@@ -385,8 +388,8 @@ class TagsPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
 
 
-    @discord.app_commands.command(
-        name="infocom",
+    @_commands.command(
+        name="info",
         description="📌 Shows some info about a custom slash command"
     )
     @discord.app_commands.describe(
@@ -399,9 +402,9 @@ class TagsPlugin(AutoModPluginBlueprint):
         name: str
     ) -> None:
         """
-        infocom_help
+        commands_info_help
         examples:
-        -infocom test_cmd
+        -commands info test_cmd
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
