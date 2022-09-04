@@ -220,14 +220,14 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "⚙️ __**General**__",
-                "value": "``▶`` **Prefix:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Infractions:** {} \n``▶`` **Join Role:** {}"\
+                "value": "``▶`` **Prefix:** {} \n``▶`` **Premium:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Join Role:** {}"\
                 .format(
                     "/",
+                    "yes" if config.premium == True else "no",
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
-                    len(list(self.db.cases.find({"guild": str(ctx.guild_id)}))),
                     "none" if config.join_role == "" else f"<@&{config.join_role}>"
                 ),
                 "inline": True
@@ -328,10 +328,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
         ctx: discord.Interaction, 
         warns: int, 
         action: Literal[
-            "kick",
-            "ban",
-            "mute",
-            "none"
+            "Kick",
+            "Ban",
+            "Mute",
+            "None"
         ], 
         time: str = None
     ) -> None:
@@ -433,13 +433,13 @@ class ConfigPlugin(AutoModPluginBlueprint):
         self, 
         ctx: discord.Interaction, 
         option: Literal[
-            "mod",
-            "server",
-            "messages",
-            "joins",
-            "members",
-            "voice",
-            "reports"
+            "Mod",
+            "Server",
+            "Messages",
+            "Joins",
+            "Members",
+            "Voice",
+            "Reports"
         ], 
         channel: discord.TextChannel = None,
         disable: Literal[
