@@ -130,7 +130,6 @@ dmypy.json
 /node_modules
 
 /packages/bot/config.json
-/packages/dashboard
 /packages/bot/api
 /packages/bot/plugins/level
 /packages/bot/plugins/_processor/config.py

@@ -4,7 +4,7 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed, Emote, Message
+from ...types import Embed, Emote, Message, E
 
 
 
