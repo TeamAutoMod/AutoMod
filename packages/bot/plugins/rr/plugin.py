@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+from typing import Union
 import logging; log = logging.getLogger()
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
@@ -15,6 +16,29 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         bot: ShardedBotInstance
     ) -> None:
         super().__init__(bot)
+        self.msg_cache = {}
+
+
+    async def get_message(
+        self,
+        channel_id: int,
+        msg_id: int
+    ) -> Union[
+        discord.Message,
+        None
+    ]:
+        if msg_id in self.msg_cache:
+            return self.msg_cache[msg_id]
+        else:
+            try:
+                channel = self.bot.get_channel(channel_id)
+                msg = await channel.fetch_message(msg_id)
+            except Exception:
+                msg = None
+            else:
+                self.msg_cache[msg_id] = msg
+            finally:
+                return msg
 
 
     @AutoModPluginBlueprint.listener()
@@ -186,6 +210,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             return self.error(ctx, ex)
         else:
             if message == None: return self.error(ctx, commands.BadArgument("Message not found"))
+            if not message.id in self.msg_cache: self.msg_cache[message_id] = message
 
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if f"{message.id}" in rrs:
@@ -258,6 +283,13 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                 if len([x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"]) < 1:
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr_role", _emote="NO"), 0))
                 else:
+                    msg = await self.get_message(data["channel"], message_id)
+                    if msg != None:
+                        try:
+                            await msg.remove_reaction([x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"][0].get("emote"), ctx.guild.me)
+                        except Exception:
+                            pass
+
                     data["pairs"] = [x for x in data["pairs"] if list(x.values())[1] != f"{role.id}"]
                     if len(data["pairs"]) > 0:
                         rrs[f"{message_id}"] = data
