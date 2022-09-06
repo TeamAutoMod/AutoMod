@@ -255,6 +255,7 @@
     "no_one_ranked": "{emote} No users are currently ranked",
     "lvl_sys_status": "The level system on this server is currently **{status}**",
     "changed_lvl_sys_status": "{emote} Successfully {status} the level system and set the notification mode to **{notifs}**",
+    "reset_user": "{emote} User has been reset",
 
     "no_disabled_commands": "{emote} Currently all commands are enabled",
     "no_changes": "{emote} This wouldn't change the current command config",

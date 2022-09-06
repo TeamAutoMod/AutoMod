@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from toolbox import S as Object
 from random import randint
-from typing import Union, Literal
+from typing import OrderedDict, Union, Literal
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import UserLevel
@@ -108,6 +108,36 @@ class LevelPlugin(AutoModPluginBlueprint):
         return self.db.configs.get(guild.id, "premium")
 
 
+    async def add_reward(
+        self,
+        guild: discord.Guild,
+        user: discord.Member,
+        level: int,
+        config: Object
+    ) -> None:
+        if len(config.rewards) < 1: return
+
+        rewards = OrderedDict(
+            sorted({
+                k: v for k, v in config.rewards.items() if int(k) <= int(level)
+            }.items())
+        )
+        if len(rewards) > 0:
+            role = guild.get_role(int(list(rewards.values())[-1]))
+            print(role)
+            if role != None:
+                try:
+                    await user.add_roles(role)
+                except Exception:
+                    pass
+                else:
+                    try:
+                        await user.send(embed=E(self.locale.t(guild, "new_reward", _emote="PARTY", role=role.name, lvl=level, server=guild.name), 2))
+                    except Exception as ex:
+                        print(ex)
+                        pass
+
+
     @AutoModPluginBlueprint.listener()
     async def on_message(
         self, 
@@ -144,6 +174,12 @@ class LevelPlugin(AutoModPluginBlueprint):
         new_xp = (data.xp + xp)
 
         if new_xp >= for_nxt_lvl:
+            await self.add_reward(
+                msg.guild, 
+                msg.author, 
+                (data.lvl + 1), 
+                config
+            )
             self.update_user_data(
                 msg.guild,
                 msg.author,
@@ -222,6 +258,174 @@ class LevelPlugin(AutoModPluginBlueprint):
 
 
     @discord.app_commands.command(
+        name="reset",
+        description="🔮 Resets a user back to level one"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def reset(
+        self,
+        ctx: discord.Interaction,
+        user: discord.Member
+    ) -> None:
+        """
+        reset_help
+        examples:
+        -reset @paul#0009
+        """
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+
+        config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+
+        if self.exists(config, ctx.guild, user):
+            self.update_user_data(
+                ctx.guild,
+                user,
+                1,
+                1
+            )
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "reset_user", _emote="YES"), 1))
+
+
+    role_reward = discord.app_commands.Group(
+        name="rewards",
+        description="🌱 Manage role rewards"
+    )
+    @role_reward.command(
+        name="show",
+        description="🌱 Shows the current role rewards"
+    )
+    async def role_reward_show(
+        self,
+        ctx: discord.Interaction
+    ) -> None:
+        """
+        role_reward_show_help
+        examples:
+        -rewards show
+        """
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+
+        config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+
+        if len(config.rewards) < 1:
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rewards", _emote="NO"), 0))
+        else:
+            e = Embed(
+                ctx,
+                title="Role Rewards"
+            )
+            for lvl, role in dict(sorted(config.rewards.items(), key=lambda e: int(e[0]))).items():
+                e.add_field(
+                    name=f"__**Level {lvl}**__",
+                    value=f"> <@&{role}>"
+                )
+            await ctx.response.send_message(embed=e)
+
+
+    @role_reward.command(
+        name="add",
+        description="✅ Adds a new role reward for the specified level"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def role_reward_add(
+        self,
+        ctx: discord.Interaction,
+        level: discord.app_commands.Range[
+            int,
+            1,
+            100
+        ],
+        role: discord.Role
+    ) -> None:
+        """
+        role_reward_add_help
+        examples:
+        -rewards add 5 @Level5
+        -rewards add 10 @Advanced
+        """
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+
+        config = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+
+        if len(config["rewards"]) >= 15: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rewards", _emote="NO"), 0))
+
+        if str(role.id) in list(config["rewards"].values()):
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_reward", _emote="NO"), 0))
+        else:
+            config["rewards"].update({
+                str(level): str(role.id)
+            })
+            self.db.configs.update(ctx.guild.id, "lvl_sys", config)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "added_reward", _emote="YES", role=role.mention, lvl=level), 1))
+
+
+    @role_reward.command(
+        name="remove",
+        description="❌ Removes the reward for the specified level"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def role_reward_remove(
+        self,
+        ctx: discord.Interaction,
+        level: discord.app_commands.Range[
+            int,
+            1,
+            100
+        ]
+    ) -> None:
+        """
+        role_reward_remove_help
+        examples:
+        -rewards remove 5
+        """
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+
+        config = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+
+        if not str(level) in list(config["rewards"].keys()):
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_reward", _emote="NO"), 0))
+        else:
+            del config["rewards"][str(level)]
+            self.db.configs.update(ctx.guild.id, "lvl_sys", config)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_reward", _emote="YES", lvl=level), 1))
+
+
+    @role_reward.command(
+        name="mode",
+        description="🎉 Configure whether to stack role rewards, or only always have the highest role reward"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def role_reward_mode(
+        self,
+        ctx: discord.Interaction,
+        mode: Literal[
+            "Stack",
+            "Single"
+        ] = None
+    ) -> None:
+        """
+        role_reward_mode_help
+        examples:
+        -rewards mode Stack
+        """
+        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+
+        config = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        
+        if mode == None:
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "current_mode", mode=config["reward_mode"]), 2))
+        else:
+            config["reward_mode"] = mode.lower()
+            self.db.configs.update(ctx.guild.id, "lvl_sys", config)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_mode", _emote="YES", mode=config["reward_mode"]), 1))
+
+
+    @discord.app_commands.command(
         name="rank",
         description="⭐ View your server rank"
     )
@@ -293,23 +497,24 @@ class LevelPlugin(AutoModPluginBlueprint):
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
         if len(config.users) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0))
 
-        users = [Object(x) for x in self.db.level.find({"guild": f"{ctx.guild.id}"})]
+        users = [Object(x) for x in self.db.level.find({"guild": f"{ctx.guild.id}"})][:25]
         data = sorted(users, key=lambda e: e.xp, reverse=True)
 
         e = Embed(
             ctx,
-            title="Leaderboard"
+            title=f"Leaderboard  for {ctx.guild.name}"
         )
         e.set_thumbnail(
             url=ctx.guild.icon.url
         )
-        for i, entry in enumerate(data):
+        for i, entry in enumerate(data[:11]):
             user = ctx.guild.get_member(int(entry.id.split("-")[-1]))
             if user == None: 
                 user = "Unknown#0000"
             else:
                 user = f"{user.name}#{user.discriminator}"
 
+            if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 5)])
             e.add_field(
                 name=f"❯ {self.lb_pos(i)}",
                 value="> **• User:** {} \n> **• Level:** {} \n> **• Total XP:** {}"\
@@ -317,9 +522,15 @@ class LevelPlugin(AutoModPluginBlueprint):
                         user,
                         entry.lvl,
                         entry.xp
-                    )
+                    ),
+                inline=True
             )
         
+        e.set_footer(
+            text="Your rank: #{}".format(
+                data.index([x for x in data if int(x.id.split("-")[-1]) == ctx.user.id][0]) + 1
+            )
+        )
         await ctx.response.send_message(embed=e)
 
 

@@ -165,12 +165,12 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                 channel = ctx.guild.get_channel(int(data["channel"]))
                 e.add_field(
                     name=f"__**{msg}{f' (#{channel.name})' if channel != None else ''}**__",
-                    value=f"{f'``▶`` [Jump to message](https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg})' if channel != None else ''}" + 
+                    value=f"{f'> [Jump to message](https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg})' if channel != None else ''}" + 
                     "{}".format(
                         "\n" if channel != None else ""
                     ) +
                     "\n".join(
-                        [f"``▶`` {self.bot.get_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
+                        [f"> {self.bot.get_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
                     )
                 )
 
@@ -286,7 +286,10 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                     msg = await self.get_message(data["channel"], message_id)
                     if msg != None:
                         try:
-                            await msg.remove_reaction([x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"][0].get("emote"), ctx.guild.me)
+                            await msg.remove_reaction(
+                                [x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"][0].get("emote"), 
+                                ctx.guild.me
+                            )
                         except Exception:
                             pass
 
