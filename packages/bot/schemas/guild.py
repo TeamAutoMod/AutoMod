@@ -64,7 +64,9 @@ def GuildConfig(
         "lvl_sys": {
             "enabled": False,
             "notif_mode": "channel",
-            "users": []
+            "users": [],
+            "rewards": {},
+            "reward_mode": "stack"
         },
         "disabled_commands": [],
 

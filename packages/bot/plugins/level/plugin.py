@@ -287,12 +287,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "reset_user", _emote="YES"), 1))
 
 
-    role_reward = discord.app_commands.Group(
+    @discord.app_commands.command(
         name="rewards",
-        description="🌱 Manage role rewards"
-    )
-    @role_reward.command(
-        name="show",
         description="🌱 Shows the current role rewards"
     )
     async def role_reward_show(
@@ -302,7 +298,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         """
         role_reward_show_help
         examples:
-        -rewards show
+        -rewards
         """
         if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
@@ -324,6 +320,11 @@ class LevelPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=e)
 
 
+    role_reward = discord.app_commands.Group(
+        name="reward",
+        description="🌱 Manage role rewards",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
     @role_reward.command(
         name="add",
         description="✅ Adds a new role reward for the specified level"
@@ -340,10 +341,10 @@ class LevelPlugin(AutoModPluginBlueprint):
         role: discord.Role
     ) -> None:
         """
-        role_reward_add_help
+        rol_reward_add_help
         examples:
-        -rewards add 5 @Level5
-        -rewards add 10 @Advanced
+        -reward add 5 @Level5
+        -reward add 10 @Advanced
         """
         if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
@@ -379,7 +380,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         """
         role_reward_remove_help
         examples:
-        -rewards remove 5
+        -reward remove 5
         """
         if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
@@ -410,7 +411,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         """
         role_reward_mode_help
         examples:
-        -rewards mode Stack
+        -reward mode Stack
         """
         if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 

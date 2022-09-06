@@ -217,6 +217,7 @@ class TagsPlugin(AutoModPluginBlueprint):
     _commands = discord.app_commands.Group(
         name="commands",
         description="📝 Manage custom slash commands",
+        default_permissions=discord.Permissions(manage_messages=True)
     )
     @_commands.command(
         name="show",
