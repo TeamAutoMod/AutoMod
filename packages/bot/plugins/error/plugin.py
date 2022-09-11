@@ -118,11 +118,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "__**Usage**__",
+                    "name": "**❯ Usage**",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "__**Info**__",
+                    "name": "**❯ Info**",
                     "value": f"``{info}``"
                 }
             ])
@@ -149,11 +149,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "__**Usage**__",
+                    "name": "**❯ Usage**",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "__**Info**__",
+                    "name": "**❯ Info**",
                     "value": f"``{info}``"
                 }
             ])
@@ -177,11 +177,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             e = Embed(ctx)
             e.add_fields([
                 {
-                    "name": "__**Usage**__",
+                    "name": "**❯ Usage**",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "__**Info**__",
+                    "name": "**❯ Info**",
                     "value": f"``{info}``"
                 }
             ])
@@ -210,13 +210,13 @@ class ErrorPlugin(AutoModPluginBlueprint):
                 )
                 e.add_fields([
                     {
-                        "name": "✏️ __**Command**__",
-                        "value": f"``▶`` {ctx.command.qualified_name}" if ctx.command != None else "Unknown",
+                        "name": "**❯ Command**",
+                        "value": f">  {ctx.command.qualified_name}" if ctx.command != None else "Unknown",
                         "inline": True
                     },
                     {
-                        "name": "🔎 __**Location**__",
-                        "value": f"``▶`` {ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
+                        "name": "**❯ Location**",
+                        "value": f">  {ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
                         "inline": True
                     }
                 ])

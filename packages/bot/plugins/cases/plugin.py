@@ -201,7 +201,7 @@ class CasesPlugin(AutoModPluginBlueprint):
             log_url = self.get_log_for_case(ctx, case)
 
             out.append(
-                "``▶`` {} ``{}`` {} {}"\
+                ">  {} ``{}`` {} {}"\
                 .format(
                     timestamp,
                     case["type"].upper(),
@@ -305,35 +305,35 @@ class CasesPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "👤 __**User**__",
-                "value": f"``▶`` <@{data.user_id}> ({data.user_id})"
+                "name": "**❯ User**",
+                "value": f">  <@{data.user_id}> ({data.user_id})"
             },
             {
-                "name": "🔨 __**Moderator**__",
-                "value": f"``▶`` <@{data.mod_id}> ({data.mod_id})"
+                "name": "❯ Moderator**",
+                "value": f">  <@{data.mod_id}> ({data.mod_id})"
             },
             {
-                "name": "⌚ __**Timestamp**__",
-                "value": f"``▶`` <t:{round(data.timestamp.timestamp())}>"
+                "name": "**❯ Timestamp**",
+                "value": f">  <t:{round(data.timestamp.timestamp())}>"
             },
             {
-                "name": "📝 __**Reason**__",
-                "value": f"``▶`` {data.reason}"
+                "name": "**❯ Reason**",
+                "value": f">  {data.reason}"
             },
         ])
 
         if hasattr(data, "warns_added"):
             if int(data.warns_added) > 0: 
                 e.add_field(
-                    name=f"🚩 __**Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}**__",
-                    value=f"``▶`` {data.warns_added}"
+                    name=f"**❯ Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}**",
+                    value=f">  {data.warns_added}"
                 )
         
         if hasattr(data, "until"):
             if data.until != "": 
                 e.add_field(
-                    name="⏳ __**Until**__",
-                    value=f"``▶`` {data.until}"
+                    name="**❯ Until**",
+                    value=f">  {data.until}"
                 )
         await ctx.response.send_message(embed=e)
 
@@ -369,8 +369,8 @@ class CasesPlugin(AutoModPluginBlueprint):
         warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
         e.add_fields([
             {
-                "name": "📝 __**Status**__",
-                "value": "``▶`` **Banned:** {}{} \n``▶`` **Muted:** {} \n``▶`` **Muted until:** {}"\
+                "name": "**❯ Status**",
+                "value": ">  **Banned:** {}{} \n>  **Muted:** {} \n>  **Muted until:** {}"\
                 .format(
                     "yes" if ban_data != None else "no",
                     f" (``{ban_data.reason}``)" if ban_data != None else "",
@@ -379,8 +379,8 @@ class CasesPlugin(AutoModPluginBlueprint):
                 )
             },
             {
-                "name": "🚩 __**Warnings**__",
-                "value": "``▶`` **Warns:** {}"\
+                "name": "**❯ Warnings**",
+                "value": ">  **Warns:** {}"\
                 .format(
                     0 if warns == None else warns
                 )

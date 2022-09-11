@@ -27,7 +27,7 @@ LOG_OPTIONS = {
     },
     "joins": {
         "db_field": "join_log",
-        "i18n_type": "join logs"
+        "i18n_type": "join & leave logs"
     },
     "members": {
         "db_field": "member_log",
@@ -204,13 +204,14 @@ class ConfigPlugin(AutoModPluginBlueprint):
         role = "role"
         emote = "emote"
         tags = self.bot.get_plugin("TagsPlugin")._tags
+        no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
 
         mute_perm = "no"
         if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
             if ctx.guild.me.guild_permissions.administrator == True: 
-                mute_perm = "yes"
+                mute_perm = yes
         else:
-            mute_perm = "yes"
+            mute_perm = yes
 
         dash_length = 34
         e = Embed(
@@ -219,94 +220,100 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "⚙️ __**General**__",
-                "value": "``▶`` **Prefix:** {} \n``▶`` **Premium:** {} \n``▶`` **Can mute:** {} \n``▶`` **Filters:** {} \n``▶`` **Regexes:** {} \n``▶`` **Custom Commands:** {} \n``▶`` **Join Role:** {}"\
+                "name": "**❯ General**",
+                "value": ">  **Prefix:** {} \n>  **Premium:** {} \n>  **Can mute:** {} \n>  **Filters:** {} \n>  **Regexes:** {} \n>  **Custom Commands:** {} \n>  **Join Role:** {}"\
                 .format(
                     "/",
-                    "yes" if config.premium == True else "no",
+                    yes if config.premium == True else no,
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
-                    "none" if config.join_role == "" else f"<@&{config.join_role}>"
+                    no if config.join_role == "" else f"<@&{config.join_role}>"
                 ),
                 "inline": True
             },
             {
-                "name": "📁 __**Logging**__",
-                "value": "``▶`` **Mod Log:** {} \n``▶`` **Message Log:** {}\n``▶`` **Server Log:** {}\n``▶`` **Join Log:** {} \n``▶`` **Member Log:** {} \n``▶`` **Voice Log:** {} \n``▶`` **Report Log:** {}"\
+                "name": "**❯ Logging**",
+                "value": ">  **Mod Log:** {} \n>  **Message Log:** {}\n>  **Server Log:** {}\n>  **Join Log:** {} \n>  **Member Log:** {} \n>  **Voice Log:** {} \n>  **Report Log:** {}"\
                 .format(
-                    "disabled" if config.mod_log == "" else f"<#{config.mod_log}>",
-                    "disabled" if config.message_log == "" else f"<#{config.message_log}>",
-                    "disabled" if config.server_log == "" else f"<#{config.server_log}>",
-                    "disabled" if config.join_log == "" else f"<#{config.join_log}>",
-                    "disabled" if config.member_log == "" else f"<#{config.member_log}>",
-                    "disabled" if config.voice_log == "" else f"<#{config.voice_log}>",
-                    "disabled" if config.report_log == "" else f"<#{config.report_log}>"
+                    no if config.mod_log == "" else f"<#{config.mod_log}>",
+                    no if config.message_log == "" else f"<#{config.message_log}>",
+                    no if config.server_log == "" else f"<#{config.server_log}>",
+                    no if config.join_log == "" else f"<#{config.join_log}>",
+                    no if config.member_log == "" else f"<#{config.member_log}>",
+                    no if config.voice_log == "" else f"<#{config.voice_log}>",
+                    no if config.report_log == "" else f"<#{config.report_log}>"
                 ),
                 "inline": True
             },
             e.dash_field(dash_length),
             {
-                "name": "⚔️ __**Automod Rules**__",
-                "value": "``▶`` **Max Mentions:** {} \n``▶`` **Max Newlines:** {} \n``▶`` **Max Emotes:** {} \n``▶`` **Max Repetitions:** {} \n``▶`` **Links:** {} \n``▶`` **Invites:** {} \n``▶`` **Bad Files:** {} \n``▶`` **Zalgo:** {}  \n``▶`` **CAPS:** {} \n``▶`` **Spam:** {}"\
+                "name": "**❯ Automod Rules**",
+                "value": ">  **Max Mentions:** {} \n>  **Max Newlines:** {} \n>  **Max Emotes:** {} \n>  **Max Repetitions:** {} \n>  **Links:** {} \n>  **Invites:** {} \n>  **Bad Files:** {} \n>  **Zalgo:** {}  \n>  **CAPS:** {} \n>  **Spam:** {}"\
                 .format(
-                    "disabled" if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
-                    "disabled" if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
-                    "disabled" if not hasattr(rules, "emotes") else f"{rules.emotes.threshold}",
-                    "disabled" if not hasattr(rules, "repeat") else f"{rules.repeat.threshold}",
-                    "disabled" if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
-                    "disabled" if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
-                    "disabled" if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
-                    "disabled" if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
-                    "disabled" if not hasattr(rules, "caps") else f"{rules.caps.warns} warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "delete message",
-                    "disabled" if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} warn{'' if config.antispam.warns == 1 else 's'})"
+                    no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
+                    no if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
+                    no if not hasattr(rules, "emotes") else f"{rules.emotes.threshold}",
+                    no if not hasattr(rules, "repeat") else f"{rules.repeat.threshold}",
+                    no if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
+                    no if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
+                    no if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
+                    no if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
+                    no if not hasattr(rules, "caps") else f"{rules.caps.warns} warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "delete message",
+                    no if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} warn{'' if config.antispam.warns == 1 else 's'})"
                 ),
                 "inline": True
             },
             {
-                "name": "🔨 __**Punishments**__",
+                "name": "**❯ Punishments**",
                 "value": "\n".join([
-                    f"``▶`` **{x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1][0]}" \
+                    f">  **{x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1][0]}" \
                     for x, y in dict(
                         sorted(
                             config.punishments.items(), 
                             key=lambda x: int(x[0])
                         )
                     ).items()
-                ]) if len(config.punishments.items()) > 0 else "> None",
+                ]) if len(config.punishments.items()) > 0 else f"> {no}",
                 "inline": True
             },
             e.dash_field(dash_length),
             {
-                "name": "🔒 __**Ignored Roles (automod)**__",
-                "value": "``▶`` None" if len(config.ignored_roles_automod) < 1 else "``▶`` {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
+                "name": "**❯ Ignored Roles (automod)**",
+                "value": f"> {no}" if len(config.ignored_roles_automod) < 1 else ">  {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             {
-                "name": "🔒 __**Ignored Channels (automod)**__",
-                "value": "``▶`` None" if len(config.ignored_channels_automod) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
-                "inline": True
-            },
-            e.dash_field(dash_length),
-            {
-                "name": "🔒 __**Ignored Roles (logging)**__",
-                "value": "``▶`` None" if len(config.ignored_roles_log) < 1 else "``▶`` {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
-                "inline": True
-            },
-            {
-                "name": "🔒 __**Ignored Channels (logging)**__",
-                "value": "``▶`` None" if len(config.ignored_channels_log) < 1 else "``▶`` {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
+                "name": "**❯ Ignored Channels (automod)**",
+                "value":  f"> {no}" if len(config.ignored_channels_automod) < 1 else ">  {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             e.dash_field(dash_length),
             {
-                "name": "🎭 __**Reaction Roles**__",
-                "value": "``▶`` None" if len(rrs) < 1 else "\n".join(
+                "name": "**❯ Ignored Roles (logging)**",
+                "value":  f"> {no}" if len(config.ignored_roles_log) < 1 else ">  {}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
+                "inline": True
+            },
+            {
+                "name": "**❯ Ignored Channels (logging)**",
+                "value": f"> {no}" if len(config.ignored_channels_log) < 1 else ">  {}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
+                "inline": True
+            },
+            e.dash_field(dash_length),
+            {
+                "name": "**❯ Reaction Roles**",
+                "value": f"> {no}" if len(rrs) < 1 else "\n".join(
                     [
-                        f"``▶`` **[Message](https://discord.com/channels/{ctx.guild.id}/{v['channel']}/{k})** {', '.join([f'``[``{self.parse_emote(ctx.guild, data[emote])} <@&{data[role]}>``]``' for data in v['pairs']])}" for k, v in rrs.items()
+                        f">  **[Message](https://discord.com/channels/{ctx.guild.id}/{v['channel']}/{k})** {', '.join([f'``[``{self.parse_emote(ctx.guild, data[emote])} <@&{data[role]}>``]``' for data in v['pairs']])}" for k, v in rrs.items()
                     ]
                 ),
+                "inline": False
+            },
+            e.dash_field(dash_length),
+            {
+                "name": "**❯ Configuration Guide**",
+                "value": "> ``/filter`` - Configure word filters \n> ``/regex`` - Configure regex filters \n> ``/log`` - Configure logging \n> ``/automod`` - Configure the automoderator \n> ``/ignore_automod`` - Configure immune automod roles & channels \n> ``/ignore_log`` -  Configre ignored roles & channels for logs",
                 "inline": False
             }
         ])
@@ -436,7 +443,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             "Mod",
             "Server",
             "Messages",
-            "Joins",
+            "Joins & Leaves",
             "Members",
             "Voice",
             "Reports"
@@ -454,6 +461,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         -log server True
         """
         option = option.lower()
+        if option == "joins & leaves": option = "joins"
         data = Object(LOG_OPTIONS[option])
         if disable == "True":
             self.db.configs.update(ctx.guild.id, data.db_field, "")
@@ -472,11 +480,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 )
                 e.add_fields([
                     {
-                        "name": "__**Enable this option**__",
+                        "name": "**❯ Enable this option**",
                         "value": f"``{prefix}log {option} #channel``"
                     },
                     {
-                        "name": "__**Disable this option**__",
+                        "name": "**❯ Disable this option**",
                         "value": f"``{prefix}log {option} disable:True``"
                     }
                 ])
@@ -522,12 +530,12 @@ class ConfigPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "🎭 __**Roles**__",
-                    "value": "``▶`` {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "``▶`` None"
+                    "name": "**❯ Roles**",
+                    "value": ">  {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else ">  None"
                 },
                 {
-                    "name": "💬 __**Channels**__",
-                    "value": "``▶`` {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "``▶`` None"
+                    "name": "**❯ Channels**",
+                    "value": ">  {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else ">  None"
                 }
             ])
 
@@ -584,8 +592,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "🎭 __**Added roles**__",
-                "value": "``▶`` {}".format(", ".join(
+                "name": "**❯ Added roles**",
+                "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
                     ]
@@ -593,11 +601,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in added if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "``▶`` None"
+                ) > 0 else ">  None"
             },
             {
-                "name": "💬 __**Added channels**__",
-                "value": "``▶`` {}".format(", ".join(
+                "name": "**❯ Added channels**",
+                "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
                     ]
@@ -605,11 +613,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in added if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
                     ]
-                ) > 0 else "``▶`` None"
+                ) > 0 else ">  None"
             },
             {
-                "name": "🔒 __**Ignored**__",
-                "value": "``▶`` {}".format(", ".join(
+                "name": "**❯ Ignored**",
+                "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -617,7 +625,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "``▶`` None"
+                ) > 0 else ">  None"
             },
         ])
 
@@ -672,8 +680,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "🎭 __**Removed roles**__",
-                "value": "``▶`` {}".format(", ".join(
+                "name": "**❯ Removed roles**",
+                "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.Role)
                     ]
@@ -681,11 +689,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in removed if isinstance(_, discord.Role)
                     ]
-                ) > 0 else "``▶`` None"
+                ) > 0 else ">  None"
             },
             {
-                "name": "💬 __**Removed channels**__",
-                "value": "``▶`` {}".format(", ".join(
+                "name": "**❯ Removed channels**",
+                "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
                     ]
@@ -693,11 +701,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in removed if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
                     ]
-                ) > 0 else "``▶`` None"
+                ) > 0 else ">  None"
             },
             {
-                "name": "🔒 __**Ignored**__",
-                "value": "``▶`` {}".format(", ".join(
+                "name": "**❯ Ignored**",
+                "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -705,7 +713,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in ignored
                     ]
-                ) > 0 else "``▶`` None"
+                ) > 0 else ">  None"
             },
         ])
 
@@ -745,11 +753,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 )
                 e.add_fields([
                     {
-                        "name": "__**Set the join role**__",
+                        "name": "**❯ Set the join role**",
                         "value": f"``{prefix}join_role @role``"
                     },
                     {
-                        "name": "__**Remove the join role**__",
+                        "name": "**❯ Remove the join role**",
                         "value": f"``{prefix}join_role disable:True``"
                     }
                 ])

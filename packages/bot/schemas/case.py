@@ -18,7 +18,8 @@ def Case(
         discord.Member, 
         discord.User
     ], 
-    reason: str, ts: datetime.datetime, 
+    reason: str, 
+    ts: datetime.datetime, 
     warns_added: int = 0, 
     until: datetime.datetime = None
 ) -> dict:

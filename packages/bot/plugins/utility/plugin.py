@@ -24,10 +24,10 @@ ACTUAL_PLUGIN_NAMES = {
     "AutoModPluginBlueprint": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
     "UtilityPlugin": "🔧 Utility",
-    "TagsPlugin": "📝 Custom Commands",
+    "LevelPlugin": "🏆 Level System",
     "CasesPlugin": "📦 Cases",
+    "TagsPlugin": "📝 Custom Commands",
     "ReactionRolesPlugin": "🎭 Reaction Roles",
-    "LevelPlugin": "🏆 Level System"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
@@ -69,8 +69,8 @@ def get_help_embed(
         title=f"``{usage}``"
     )
     e.add_field(
-        name="🔎 __**Description**__", 
-        value=f"``▶`` {help_message}"
+        name="**❯ Description**", 
+        value=f">  {help_message}"
     )
     
     if not isinstance(cmd, discord.app_commands.Group):
@@ -78,17 +78,17 @@ def get_help_embed(
         if len(examples) > 0:
             prefix = "/"
             e.add_field(
-                name="✏️ __**Examples**__",
+                name="**❯ Examples**",
                 value="\n".join(
                     [
-                        f"``▶`` {prefix}{exmp}" for exmp in examples
+                        f">  {prefix}{exmp}" for exmp in examples
                     ]
                 )
             )
     else:
         e.add_field(
-            name="🔗 __**Subcommands**__", 
-            value="{}".format("\n".join([f"``▶`` /{x.qualified_name}" for x in cmd.commands]))
+            name="**❯ Subcommands**", 
+            value="{}".format("\n".join([f">  /{x.qualified_name}" for x in cmd.commands]))
         )
 
     e.set_footer(text="<required> [optional]")
@@ -311,7 +311,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                             name="**{}**".format(
                                 f"/{cmd.qualified_name} {' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''} {' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}"
                             ),
-                            value="``▶`` {}".format(
+                            value="> {}".format(
                                 self.bot.locale.t(i.guild, cmd.help.split('\nexamples:')[0]) if isinstance(
                                     cmd, (
                                         commands.Command,
@@ -406,7 +406,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         # Shard
         shard = self.bot.get_shard(ctx.guild.shard_id)
         
-        await ctx.followup.send(embed=E("``▶`` **Rest:** {}ms \n``▶`` **Client:** {}ms \n``▶`` **Shard:** {}ms \n``▶`` **Database:** {}ms".format(
+        await ctx.followup.send(embed=E("> **Rest:** {}ms \n> **Client:** {}ms \n> **Shard:** {}ms \n> **Database:** {}ms".format(
             round((msg_t2 - msg_t1) * 1000),
             round(self.bot.latency * 1000),
             round(shard.latency * 1000),
@@ -435,8 +435,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
             {
-                "name": "📈 __**Status**__",
-                "value": "``▶`` **Uptime:** {} \n``▶`` **Version:** {} \n``▶`` **Latency:** {}ms"\
+                "name": "**❯ Status**",
+                "value": "> **Uptime:** {} \n> **Version:** {} \n> **Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
                     get_version(),
@@ -445,8 +445,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "📰 __**Stats**__",
-                "value": "``▶`` **Guilds:** {0:,} \n``▶`` **Users:** {1:,} \n``▶`` **Shards:** {2:,}"\
+                "name": "**❯ Stats**",
+                "value": "> **Guilds:** {0:,} \n> **Users:** {1:,} \n> **Shards:** {2:,}"\
                 .format(
                     len(self.bot.guilds),
                     sum([x.member_count for x in self.bot.guilds]),
@@ -455,8 +455,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "✏️ __**Usage**__",
-                "value": "``▶`` **Commands:** {} \n``▶`` **Custom:** {}"\
+                "name": "**❯ Usage**",
+                "value": "> **Commands:** {} \n> **Custom:** {}"\
                 .format(
                     self.bot.used_commands,
                     self.bot.used_tags
@@ -483,7 +483,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         examples:
         -help
         -help ban
-        -help commands add
+        -help commands
         """
         query = command
         if query == None:
@@ -493,7 +493,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 description=self.locale.t(ctx.guild, "help_desc", prefix="/")
             )
             viewable_plugins = []
-            for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
+            for i, p in enumerate([self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]):
                 if p != None:
                     if p._requires_premium:
                         if self.db.configs.get(ctx.guild.id, "premium") == False:
@@ -510,7 +510,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     if len(cmds) > 0:
                         viewable_plugins.append(p.qualified_name)
                         e.add_field(
-                            name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} __**{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}**__",
+                            name=f"**❯ {' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}**",
                             value="> {}".format(
                                 ", ".join(
                                     [
@@ -666,8 +666,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             url=user.display_avatar
         )
         e.add_field(
-            name="👤 __**User Information**__",
-            value="``▶`` **ID:** {} \n``▶`` **Profile:** {} \n``▶`` **Badges:** {} \n``▶`` **Created at:** <t:{}>"\
+            name="**❯ User Information**",
+            value=">  **ID:** {} \n>  **Profile:** {} \n>  **Badges:** {} \n>  **Created at:** <t:{}>"\
             .format(
                 user.id,
                 user.mention,
@@ -679,8 +679,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             e.add_field(
-                name="📍 __**Server Information**__",
-                value="``▶`` **Nickname:** {} \n``▶`` **Joined at:** <t:{}> \n``▶`` **Join position:** {} \n``▶`` **Status:** {} \n``▶`` **Roles:** {}"\
+                name="**❯ Server Information**",
+                value=">  **Nickname:** {} \n>  **Joined at:** <t:{}> \n>  **Join position:** {} \n>  **Status:** {} \n>  **Roles:** {}"\
                 .format(
                     member.nick,
                     round(member.joined_at.timestamp()),
@@ -712,8 +712,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")    
 
         e.add_field(
-            name="🚩 __**Infractions**__",
-            value="``▶`` **Total Cases:** {} \n``▶`` **Last 3 Cases:** {}"\
+            name="**❯ Infractions**",
+            value=">  **Total Cases:** {} \n>  **Last 3 Cases:** {}"\
             .format(
                 len(cases),
                 ", ".join(last_3)
@@ -747,8 +747,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
         e.add_fields([
             {
-                "name": "📌 __**Information**__",
-                "value": "``▶`` **ID:** {} \n``▶`` **Owner:** {} \n``▶`` **Created:** <t:{}> \n``▶`` **Invite Splash:** {} \n``▶`` **Banner:** {}"\
+                "name": "**❯ Information**",
+                "value": ">  **ID:** {} \n>  **Owner:** {} \n>  **Created:** <t:{}> \n>  **Invite Splash:** {} \n>  **Banner:** {}"\
                 .format(
                     g.id, 
                     g.owner, 
@@ -760,8 +760,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True),
             {
-                "name": "💬 __**Channels**__",
-                "value": "``▶`` **Categories:** {} \n``▶`` **Text:** {} \n``▶`` **Voice:** {} \n``▶`` **Threads:** {}"\
+                "name": "**❯ Channels**",
+                "value": ">  **Categories:** {} \n>  **Text:** {} \n>  **Voice:** {} \n>  **Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
                     len(g.text_channels), 
@@ -771,8 +771,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "👥 __**Members**__",
-                "value": "``▶`` **Total:** {} \n``▶`` **Users:** {} \n``▶`` **Bots:** {}"\
+                "name": "**❯ Members**",
+                "value": ">  **Total:** {} \n>  **Users:** {} \n>  **Bots:** {}"\
                 .format(
                     len(g.members), 
                     len([x for x in g.members if not x.bot]), 
@@ -782,8 +782,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True),
             {
-                "name": "🌀 __**Other**__",
-                "value": "``▶`` **Roles:** {} \n``▶`` **Emojis:** {} \n``▶`` **Features:** {}"\
+                "name": "**❯ Other**",
+                "value": ">  **Roles:** {} \n>  **Emojis:** {} \n>  **Features:** {}"\
                 .format(
                     len(g.roles), 
                     len(g.emojis), 
@@ -826,8 +826,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     channel = ctx.guild.get_channel(int(s["id"].split("-")[1]))
                     if channel != None:
                         e.add_field(
-                            name=f"__**#{channel.name}**__",
-                            value="``▶`` **Time:** {} \n``▶`` **Mode:** {} \n``▶`` **Moderator:** {}"\
+                            name=f"**❯ #{channel.name}**",
+                            value=">  **Time:** {} \n>  **Mode:** {} \n>  **Moderator:** {}"\
                                 .format(
                                     s["pretty"],
                                     s["mode"],

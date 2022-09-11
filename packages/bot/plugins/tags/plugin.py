@@ -420,35 +420,35 @@ class TagsPlugin(AutoModPluginBlueprint):
                 )
                 e.add_fields([
                     {
-                        "name": "📝 __**Name**__",
-                        "value": f"``▶`` {name}"
+                        "name": "**❯ Name**",
+                        "value": f">  {name}"
                     },
                     {
-                        "name": "💬 __**Content**__",
+                        "name": "**❯ Content**",
                         "value": f"```\n{data.content}\n```"
                     },
                     {
-                        "name": "📌 __**Description**__",
+                        "name": "**❯ Description**",
                         "value": f"```\n{data.description}\n```"
                     },
                     {
-                        "name": "👻 __**ephemeral**__",
-                        "value": f"``▶`` {'yes' if data.ephemeral == True else 'no'}"
+                        "name": "**❯ Ephemeral**",
+                        "value": f">  {'yes' if data.ephemeral == True else 'no'}"
                     },
                     {
-                        "name": "📈 __**Uses**__",
-                        "value": f"``▶`` {data.uses}"
+                        "name": "**❯ Uses**",
+                        "value": f">  {data.uses}"
                     },
                     
                     {
-                        "name": "👤 __**Creator**__",
-                        "value": f"``▶`` <@{data.author}> (<t:{round(data.created.timestamp())}>)"
+                        "name": "**❯ Creator**",
+                        "value": f">  <@{data.author}> (<t:{round(data.created.timestamp())}>)"
                     }
                 ])
                 if data.edited != None:
                     e.add_field(
-                        name="✏️ __**Editor**__",
-                        value=f"``▶`` <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
+                        name="**❯ Editor**",
+                        value=f">  <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
                     )
 
                 await ctx.response.send_message(embed=e)
