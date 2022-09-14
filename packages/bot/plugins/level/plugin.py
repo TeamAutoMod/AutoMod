@@ -503,7 +503,7 @@ class LevelPlugin(AutoModPluginBlueprint):
 
         e = Embed(
             ctx,
-            title=f"Leaderboard  for {ctx.guild.name}"
+            title=f"Leaderboard for {ctx.guild.name}"
         )
         e.set_thumbnail(
             url=ctx.guild.icon.url
