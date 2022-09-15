@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Union, TypeVar
 from toolbox import Database, Collection
 import logging; log = logging.getLogger(__name__)

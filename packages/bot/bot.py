@@ -1,3 +1,5 @@
+# type: ignore
+
 import discord
 from discord.ext import commands
 
@@ -366,7 +368,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                         description=self.locale.t(i.guild, "fail", _emote="NO", exc=ex)
                     )
                 )
-
+                
 
     async def register_report_ctx_menu(
         self

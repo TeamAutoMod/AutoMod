@@ -1,7 +1,9 @@
+# type: ignore
+
 import discord
 from discord.ext import commands as _commands
 
-from typing import Union, TypeVar
+from typing import TypeVar
 
 from ..bot import ShardedBotInstance
 

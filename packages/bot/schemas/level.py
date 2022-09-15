@@ -1,3 +1,5 @@
+# type: ignore
+
 import discord
 
 from random import randint

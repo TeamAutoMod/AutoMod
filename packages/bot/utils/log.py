@@ -1,4 +1,5 @@
-from re import L
+# type: ignore
+
 import discord
 
 from typing import Union

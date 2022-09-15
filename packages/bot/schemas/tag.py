@@ -1,3 +1,5 @@
+# type: ignore
+
 import discord
 
 import datetime

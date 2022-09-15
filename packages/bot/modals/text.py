@@ -157,7 +157,7 @@ class FilterEditModal(TextModalBase):
         self.add_item(
             discord.ui.TextInput(
                 custom_id="warns",
-                default=self.warns,
+                default=str(self.warns),
                 label="Warns",
                 style=discord.TextStyle.long,
                 placeholder="Warns given upon violation. Use 0 to just have the message deleted",
@@ -214,7 +214,7 @@ class RegexEditModal(TextModalBase):
         self.add_item(
             discord.ui.TextInput(
                 custom_id="warns",
-                default=self.warns,
+                default=str(self.warns),
                 label="Warns",
                 style=discord.TextStyle.long,
                 placeholder="Warns given upon violation. Use 0 to just have the message deleted",

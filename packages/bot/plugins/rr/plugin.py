@@ -1,3 +1,5 @@
+# type: ignore
+
 import discord
 from discord.ext import commands
 
@@ -283,7 +285,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                 if len([x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"]) < 1:
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr_role", _emote="NO"), 0))
                 else:
-                    msg = await self.get_message(data["channel"], message_id)
+                    msg = await self.get_message(int(data["channel"]), int(message_id))
                     if msg != None:
                         try:
                             await msg.remove_reaction(

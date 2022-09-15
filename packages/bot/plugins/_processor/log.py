@@ -1,3 +1,5 @@
+# type: ignore
+
 import discord
 
 from toolbox import S as Object

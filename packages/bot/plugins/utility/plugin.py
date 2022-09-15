@@ -1,3 +1,5 @@
+# type: ignore
+
 import unicodedata
 import discord
 from discord.ext import commands
@@ -540,6 +542,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         description="👻 Shows a bigger version of a users avatar"
     )
     @discord.app_commands.describe(
+        user="The user whose avatar you want to view",
         server_avatar="Whether to show the server avatar (if set) or the regular avatar"
     )
     async def avatar(
