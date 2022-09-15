@@ -9,7 +9,7 @@ import requests
 import datetime
 import asyncio
 from toolbox import S as Object
-from typing import Union
+from typing import Union, Dict, List, Tuple
 import logging; log = logging.getLogger()
 
 from .cache import InternalCache
@@ -111,15 +111,14 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.used_commands = 0
         self.used_tags = 0
 
-        self.command_stats = {}
-        self.ignore_for_events = []
-        self.case_cmd_cache = {}
-        self.webhook_cache = {}
-        self.fetched_user_cache = {}
-        self.log_queue = {}
-        self.tasks = []
-        self.auto_processing = []
-        self.event_stats = {}
+        self.command_stats: Dict[str, int] = {}
+        self.ignore_for_events: List[int] = []
+        self.case_cmd_cache: Dict[str, Dict[str, Tuple[int, List[embed.Embed]]]] = {}
+        self.webhook_cache: Dict[int, discord.Webhook] = {}
+        self.fetched_user_cache: Dict[int, discord.User] = {}
+        self.log_queue: Dict[int, Dict[str, List[Dict[str, Tuple[embed.Embed, bool]]]]] = {}
+        self.auto_processing: List[str] = []
+        self.event_stats: Dict[str, int] = {}
 
         if self.config.watch == True:
             self.observer = Observer(self)
