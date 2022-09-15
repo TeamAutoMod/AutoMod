@@ -294,7 +294,7 @@ BYPASS_TO_SECONDS = {
 CHANNEL_OR_ROLE_T = TypeVar("CHANNEL_OR_ROLE_T", discord.Role, discord.TextChannel)
 
 
-class AutoModPluginBlueprint(AutoModPluginBlueprint):
+class AutomodPlugin(AutoModPluginBlueprint):
     """Plugin for enforcing automoderator rules"""
     def __init__(
         self, 
@@ -1821,4 +1821,4 @@ class AutoModPluginBlueprint(AutoModPluginBlueprint):
 
 async def setup(
     bot: ShardedBotInstance
-) -> None: await bot.register_plugin(AutoModPluginBlueprint(bot))
+) -> None: await bot.register_plugin(AutomodPlugin(bot))

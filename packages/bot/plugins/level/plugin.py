@@ -126,7 +126,6 @@ class LevelPlugin(AutoModPluginBlueprint):
         )
         if len(rewards) > 0:
             role = guild.get_role(int(list(rewards.values())[-1]))
-            print(role)
             if role != None:
                 try:
                     await user.add_roles(role)
@@ -135,8 +134,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                 else:
                     try:
                         await user.send(embed=E(self.locale.t(guild, "new_reward", _emote="PARTY", role=role.name, lvl=level, server=guild.name), 2))
-                    except Exception as ex:
-                        print(ex)
+                    except Exception:
                         pass
 
 

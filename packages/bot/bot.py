@@ -96,7 +96,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 everyone=False, 
                 replied_user=False
             ),
-            *args, **kwargs
+            *args, 
+            **kwargs
         )
         for f in [pages, embed]: f.inject_bot_obj(self)
 
@@ -275,7 +276,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = "AutomodPlugin"
         else:
             in_plugins_name = f"{plugin.capitalize()}Plugin"
-            
+        
         if in_plugins_name not in self.plugins:
             try: await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
             except Exception: raise
