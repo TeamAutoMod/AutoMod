@@ -212,6 +212,10 @@ class ModerationPlugin(WarnPlugin):
         name="ban",
         description="🔨 Bans the user from the server"
     )
+    @discord.app_commands.describe(
+        user="The user you want to ban",
+        reason="An optional reason for the ban"
+    )
     @discord.app_commands.default_permissions(ban_members=True)
     async def ban(
         self, 
@@ -238,6 +242,10 @@ class ModerationPlugin(WarnPlugin):
     @discord.app_commands.command(
         name="unban",
         description="🔓 Unbans the user from the server"
+    )
+    @discord.app_commands.describe(
+        user="The user you want to unban",
+        reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def unban(
@@ -285,6 +293,10 @@ class ModerationPlugin(WarnPlugin):
         name="softban",
         description="🔨 Softbans the user from the server (ban & unban)"
     )
+    @discord.app_commands.describe(
+        user="The user you want to ban",
+        reason="An optional reason for the ban"
+    )
     @discord.app_commands.default_permissions(ban_members=True)
     async def softban(
         self, 
@@ -311,6 +323,10 @@ class ModerationPlugin(WarnPlugin):
     @discord.app_commands.command(
         name="forceban",
         description="🔨 Bans the user from the server (even if they aren't in the server)"
+    )
+    @discord.app_commands.describe(
+        user="The user you want to ban",
+        reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def hackban(
@@ -340,7 +356,9 @@ class ModerationPlugin(WarnPlugin):
         description="🔨 Temporarily bans the user from the server"
     )
     @discord.app_commands.describe(
-        length="10m, 2h, 1d"
+        user="The user you want to ban",
+        length="10m, 2h, 1d",
+        reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def tempban(
@@ -487,6 +505,10 @@ class ModerationPlugin(WarnPlugin):
     @discord.app_commands.command(
         name="kick",
         description="👢 Kicks the user from the server"
+    )
+    @discord.app_commands.describe(
+        user="The user you want to kick",
+        reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(kick_members=True)
     async def kick(

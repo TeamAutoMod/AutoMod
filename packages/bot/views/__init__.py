@@ -5,3 +5,4 @@ from .pages import MultiPageView
 from .meta import DeleteView, ChoiceView, ActionedView
 from .help import HelpView
 from .setup import SetupView
+from .config import ConfigView

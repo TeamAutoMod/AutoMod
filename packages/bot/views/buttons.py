@@ -1,3 +1,5 @@
+# type: ignore
+
 import discord
 from discord.ui import Button
 

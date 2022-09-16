@@ -642,6 +642,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="whois", 
         description="📌 Shows some information about the user"
     )
+    @discord.app_commands.describe(
+        user="The user who you want to get more information about"
+    )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def whois(
         self, 
@@ -659,7 +662,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if user == None:
             user = member = ctx.user
         else:
-            member: discord.Member = ctx.guild.get_member(user.id) or None
+            member: Union[discord.Member, None] = ctx.guild.get_member(user.id)
 
         e = Embed(
             ctx,

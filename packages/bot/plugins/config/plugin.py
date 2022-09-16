@@ -10,7 +10,7 @@ import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
-from ...views import SetupView
+from ...views import SetupView, ConfigView
 
 
 
@@ -208,7 +208,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         tags = self.bot.get_plugin("TagsPlugin")._tags
         no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
 
-        mute_perm = "no"
+        mute_perm = no
         if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
             if ctx.guild.me.guild_permissions.administrator == True: 
                 mute_perm = yes
@@ -319,6 +319,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": False
             }
         ])
+
+        # view = ConfigView(self.bot)
         await ctx.response.send_message(embed=e)
 
 

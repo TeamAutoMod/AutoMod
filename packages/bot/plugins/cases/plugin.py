@@ -126,6 +126,9 @@ class CasesPlugin(AutoModPluginBlueprint):
         name="infractions",
         description="🛅 Shows recent server or user infractions"
     )
+    @discord.app_commands.describe(
+        user="The user whose cases you want to view"
+    )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def infractions(
         self, 
@@ -344,6 +347,9 @@ class CasesPlugin(AutoModPluginBlueprint):
         name="check",
         description="🩺 Checks the users moderation status"
     )
+    @discord.app_commands.describe(
+        user="The user you want to check"
+    )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def check(
         self, 
@@ -369,14 +375,15 @@ class CasesPlugin(AutoModPluginBlueprint):
         mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
         ban_data = await self.ban_data(ctx, user)
         warns = self.db.warns.get(f"{ctx.guild.id}-{user.id}", "warns")
+        no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
         e.add_fields([
             {
                 "name": "**❯ Status**",
                 "value": ">  **Banned:** {}{} \n>  **Muted:** {} \n>  **Muted until:** {}"\
                 .format(
-                    "yes" if ban_data != None else "no",
+                    yes if ban_data != None else no,
                     f" (``{ban_data.reason}``)" if ban_data != None else "",
-                    "yes" if mute_data != None else "no",
+                    yes if mute_data != None else no,
                     f"<t:{round(mute_data['until'].timestamp())}>" if mute_data != None else "N/A"
                 )
             },
