@@ -1197,7 +1197,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             try:
                 rate = int(rate)
                 per = int(per)
-            except ValueError:
+            except Exception:
                 return await ctx.response.send_message(embed=info_embed)
             else:
                 if rate < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_rate", _emote="NO"), 0))
