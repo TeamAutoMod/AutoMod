@@ -24,6 +24,7 @@ class TagsPlugin(AutoModPluginBlueprint):
     ) -> None:
         super().__init__(bot)
         self._tags = {}
+        self._cached_from_api = {}
         self.bot.loop.create_task(self.cache_tags())
 
 
@@ -215,9 +216,25 @@ class TagsPlugin(AutoModPluginBlueprint):
             )]["components"][0].get("value", None) for x in args
         )
 
+
+    async def get_tags(
+        self,
+        guild: discord.Guild,
+        raw: dict
+    ) -> dict:
+        pre_cached = self._cached_from_api.get(guild.id, [])
+        for e in raw:
+            if e not in pre_cached:
+                re_cache = await self.bot.tree.fetch_commands(guild=guild)
+                self._cached_from_api.update({
+                    guild.id: {x.name: x.id for x in re_cache}
+                })
+                return self._cached_from_api[guild.id]
+        return self._cached_from_api[guild.id]
+
     
     _commands = discord.app_commands.Group(
-        name="commands",
+        name="slash",
         description="📝 Manage custom slash commands",
         default_permissions=discord.Permissions(manage_messages=True)
     )
@@ -232,16 +249,15 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_show_help
         examples:
-        -commands show
+        -slash show
         """
         if ctx.guild.id in self._tags:
-            tags = self._tags[ctx.guild.id]
-            prefix = self.get_prefix(ctx.guild)
+            tags = await self.get_tags(ctx.guild, self._tags[ctx.guild.id])
             if len(tags) > 0:
                 e = Embed(
                     ctx,
                     title="Custom Slash Commands",
-                    description="> {}".format(", ".join([f"``/{x}``" for x in tags]))
+                    description="> {}".format(", ".join([f"</{name}:{cid}>" for name, cid in tags.items()]))
                 )
                 await ctx.response.send_message(embed=e)
             else:
@@ -262,7 +278,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_add_help
         examples:
-        -commands add
+        -slash add
         """
         async def callback(
             i: discord.Interaction
@@ -283,12 +299,13 @@ class TagsPlugin(AutoModPluginBlueprint):
             for p in [
                 self.bot.get_plugin(x) for x in [
                     "ConfigPlugin",
-                    "AutoModPluginBlueprint",
+                    "AutomodPlugin",
                     "ModerationPlugin",
                     "UtilityPlugin",
                     "TagsPlugin",
                     "CasesPlugin",
                     "ReactionRolesPlugin",
+                    "FilterPlugin"
                 ]
             ]:
                 if p != None:
@@ -327,7 +344,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_delete_help
         examples:
-        -commands delete test_command
+        -slash delete test_command
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
@@ -367,7 +384,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_edit_help
         examples:
-        -commands edit test_cmd This is the new content
+        -slash edit test_cmd This is the new content
         """
         if len(content) > 1900:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
@@ -407,7 +424,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_info_help
         examples:
-        -commands info test_cmd
+        -slash info test_cmd
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
@@ -422,34 +439,34 @@ class TagsPlugin(AutoModPluginBlueprint):
                 )
                 e.add_fields([
                     {
-                        "name": "**❯ Name**",
+                        "name": "**❯ __Name__**",
                         "value": f">  {name}"
                     },
                     {
-                        "name": "**❯ Content**",
+                        "name": "**❯ __Content__**",
                         "value": f"```\n{data.content}\n```"
                     },
                     {
-                        "name": "**❯ Description**",
+                        "name": "**❯ __Description__**",
                         "value": f"```\n{data.description}\n```"
                     },
                     {
-                        "name": "**❯ Ephemeral**",
+                        "name": "**❯ __Ephemeral__**",
                         "value": f">  {'yes' if data.ephemeral == True else 'no'}"
                     },
                     {
-                        "name": "**❯ Uses**",
+                        "name": "**❯ __Uses__**",
                         "value": f">  {data.uses}"
                     },
                     
                     {
-                        "name": "**❯ Creator**",
+                        "name": "**❯ __Creator__**",
                         "value": f">  <@{data.author}> (<t:{round(data.created.timestamp())}>)"
                     }
                 ])
                 if data.edited != None:
                     e.add_field(
-                        name="**❯ Editor**",
+                        name="**❯ __Editor__**",
                         value=f">  <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
                     )
 

@@ -4,7 +4,6 @@ import discord
 from discord.ext import commands
 
 import re
-import itertools
 from toolbox import S as Object
 from urllib.parse import urlparse
 from typing import TypeVar, Literal, List
@@ -14,7 +13,6 @@ from typing import Union, Tuple
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed, E
-from ...modals import FilterCreateModal, RegexCreateModal, FilterEditModal, RegexEditModal
 
 
 
@@ -844,7 +842,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 description=self.locale.t(ctx.guild, "automod_description", prefix="/")
             )
             e.add_field(
-                name="**❯ Command usage**",
+                name="**❯ __Command usage__**",
                 value=self.locale.t(ctx.guild, "automod_commands", prefix="/")
             )
             return await ctx.response.send_message(embed=e)
@@ -856,7 +854,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 description=self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO", given=rule)
             )
             e.add_field(
-                name="**❯ Valid rules**",
+                name="**❯ __Valid rules__**",
                 value=">  mentions \n>  links \n>  invites \n>  files \n>  zalgo \n>  lines \n>  emotes \n>  repeat \n>  caps"
             )
             return await ctx.response.send_message(embed=e)
@@ -893,7 +891,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
 
     allowed_invites = discord.app_commands.Group(
-        name="allowed_invites",
+        name="invites",
         description="🔀 Configure allowed invite links",
         default_permissions=discord.Permissions(manage_guild=True)
     )
@@ -970,514 +968,133 @@ class AutomodPlugin(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_inv", _emote="YES"), 1))
 
 
-    link_blacklist = discord.app_commands.Group(
-        name="link_blacklist",
-        description="🔀 Configure the link blacklist",
+    _links = discord.app_commands.Group(
+        name="links",
+        description="🔀 Configure the link blacklist & whitelist",
         default_permissions=discord.Permissions(manage_guild=True)
     )
-    @link_blacklist.command(
+    @_links.command(
         name="show",
-        description="🔗 Shows the current link blacklist"
+        description="🔗 Shows the current link blacklist or whitelist"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def show_link(
         self, 
-        ctx: discord.Interaction
+        ctx: discord.Interaction,
+        type: Literal[
+            "Blacklist",
+            "Whitelist"
+        ]
     ) -> None:
         """
         link_blacklist_help
         examples:
-        -link_blacklist show
+        -links show Blacklist
         """
-        links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"), 0))
-        
-        e = Embed(
-            ctx,
-            title="Blacklisted links",
-            description="> {}".format(", ".join(links))
-        )
-        await ctx.response.send_message(embed=e)
+        if type.lower() == "blacklist":
+            links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+            if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"), 0))
+            
+            e = Embed(
+                ctx,
+                title="Blacklisted links",
+                description="> {}".format(", ".join(links))
+            )
+            await ctx.response.send_message(embed=e)
+        else:
+            links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
+            if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"), 0))
+            
+            e = Embed(
+                ctx,
+                title="Allowed links",
+                description="> {}".format(", ".join(links))
+            )
+            await ctx.response.send_message(embed=e)
 
 
-    @link_blacklist.command(
+    @_links.command(
         name="add",
-        description="✅ Adds a link to the blacklist"
+        description="✅ Adds a link to the blacklist or whitelist"
+    )
+    @discord.app_commands.describe(
+        type="The type of list this link is for",
+        url="The URl to add to the list (e.g. google.com)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add_link(
         self, 
-        ctx: discord.Interaction, 
+        ctx: discord.Interaction,
+        type: Literal[
+            "Blacklist",
+            "Whitelist"
+        ],
         url: str
     ) -> None:
         """
         link_blacklist_add_help
         examples:
-        -link_blacklist add google.com
+        -links add Blacklist google.com
         """
         url = self.safe_parse_url(url)
+        if type.lower() == "blacklist":
+            links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+            if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link", _emote="NO"), 0))
+            
+            links.append(url)
+            self.db.configs.update(ctx.guild.id, "black_listed_links", links)
 
-        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link", _emote="NO"), 0))
-        
-        links.append(url)
-        self.db.configs.update(ctx.guild.id, "black_listed_links", links)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_link", _emote="YES"), 1))
+        else:
+            links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
+            if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link2", _emote="NO"), 0))
+            
+            links.append(url)
+            self.db.configs.update(ctx.guild.id, "white_listed_links", links)
 
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_link", _emote="YES"), 1))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_link2", _emote="YES"), 1))
 
 
-    @link_blacklist.command(
+    @_links.command(
         name="remove",
-        description="❌ Removes the link from the blacklist"
+        description="❌ Removes the link from the blacklist or whitelist"
+    )
+    @discord.app_commands.describe(
+        type="The type of list this link is for",
+        url="The URl to remove from the list (e.g. google.com)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def remove_link(
         self, 
         ctx: discord.Interaction, 
+        type: Literal[
+            "Blacklist",
+            "Whitelist"
+        ],
         url: str
     ) -> None:
         """
         link_blacklist_remove_help
         examples:
-        -link_blacklist remove google.com
+        -links remove Blacklist google.com
         """
         url = self.safe_parse_url(url)
-
-        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-        if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link", _emote="NO"), 0))
-        
-        links.remove(url)
-        self.db.configs.update(ctx.guild.id, "black_listed_links", links)
-
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"), 1))
-
-
-    link_whitelist = discord.app_commands.Group(
-        name="link_whitelist",
-        description="🔀 Configure the link whitelist",
-        default_permissions=discord.Permissions(manage_guild=True)
-    )
-    @link_whitelist.command(
-        name="show",
-        description="🔗 Shows the current link whitelist"
-    )
-    @discord.app_commands.default_permissions(manage_guild=True)
-    async def show_link2(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
-        """
-        link_whitelist_help
-        examples:
-        -link_whitelist
-        """
-        links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-        if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"), 0))
-        
-        e = Embed(
-            ctx,
-            title="Allowed links",
-            description="> {}".format(", ".join(links))
-        )
-        await ctx.response.send_message(embed=e)
-
-
-    @link_whitelist.command(
-        name="add",
-        description="✅ Adds a link to the whitelist"
-    )
-    @discord.app_commands.default_permissions(manage_guild=True)
-    async def add_link2(
-        self, 
-        ctx: discord.Interaction, 
-        url: str
-    ) -> None:
-        """
-        link_whitelist_add_help
-        examples:
-        -link_whitelist add google.com
-        """
-        url = self.safe_parse_url(url)
-        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-
-        if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link2", _emote="NO"), 0))
-        
-        links.append(url)
-        self.db.configs.update(ctx.guild.id, "white_listed_links", links)
-
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_link2", _emote="YES"), 1))
-
-
-    @link_whitelist.command(
-        name="remove",
-        description="❌ Removes the link from the whitelist"
-    )
-    @discord.app_commands.default_permissions(manage_guild=True)
-    async def remove_link_2(
-        self, 
-        ctx: discord.Interaction, 
-        url: str
-    ) -> None:
-        """
-        link_whitelist_remove_help
-        examples:
-        -link_whitelist remove google.com
-        """
-        url = self.safe_parse_url(url)
-        links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-
-        if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link2", _emote="NO"), 0))
-        
-        links.remove(url)
-        self.db.configs.update(ctx.guild.id, "white_listed_links", links)
-
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"), 1))
-
-
-    _filter = discord.app_commands.Group(
-        name="filter",
-        description="🔀 Configure word filters",
-        default_permissions=discord.Permissions(manage_messages=True)
-    )
-    @_filter.command(
-        name="show",
-        description="⛔️ Shows all active word filters"
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def show_filter(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
-        """
-        filter_show_help
-        examples:
-        -filter show
-        """
-        filters = self.db.configs.get(ctx.guild.id, "filters")
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="NO"), 0))
-
-        e = Embed(
-            ctx,
-            title="Filters"
-        )
-        for indx, name in enumerate(dict(itertools.islice(filters.items(), 10))):
-            i = filters[name]
-            action = str(i["warns"]) + " warn" if i["warns"] == 1 else str(i["warns"]) + " warns" if i["warns"] > 0 else "delete message"
-            channels = "all channels" if len(i["channels"]) < 1 else ", ".join([f'#{ctx.guild.get_channel(int(x))}' for x in i["channels"]])
-
-            e.add_field(
-                name=f"**❯ {name}**",
-                value=f">  **Action:** {action} \n>  **Channels:** {channels} \n>  **Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
-                inline=True
-            )
-            if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
-
-            footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
-            if footer != None: e.set_footer(text=footer)
-
-        await ctx.response.send_message(embed=e)
-    
-
-    @_filter.command(
-        name="add",
-        description="✅ Creates a new word filter"
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def add_filter(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
-        """
-        filter_add_help
-        examples:
-        -filter add
-        """
-        async def callback(
-            i: discord.Interaction
-        ) -> None:
-            name, warns, words, channels = self.extract_args(i, "name", "warns", "words", "channels")
-
-            name = name.lower()
-            filters = self.db.configs.get(i.guild.id, "filters")
-
-            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_name_too_long", _emote="NO"), 0))
-            if name in filters: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_exists", _emote="NO"), 0))
+        if type.lower() == "blacklist":
+            links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
+            if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link", _emote="NO"), 0))
             
-            try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
+            links.remove(url)
+            self.db.configs.update(ctx.guild.id, "black_listed_links", links)
 
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"), 1))
+        else:
+            links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
+            if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link2", _emote="NO"), 0))
+            
+            links.remove(url)
+            self.db.configs.update(ctx.guild.id, "white_listed_links", links)
 
-            filters[name] = {
-                "warns": warns,
-                "words": words.split(", "),
-                "channels": [] if channels == None else self.parse_channels(channels)
-            }
-            self.db.configs.update(i.guild.id, "filters", filters)
-            await i.response.send_message(embed=E(self.locale.t(i.guild, "added_filter", _emote="YES"), 1))
-
-        modal = FilterCreateModal(self.bot, "Create Filter", callback)
-        await ctx.response.send_modal(modal)
-
-    
-    @_filter.command(
-        name="remove",
-        description="❌ Deletes an exisiting word filter"
-    )
-    @discord.app_commands.describe(
-        name="Name of the filter",
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def remove_filter(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
-        """
-        filter_remove_help
-        examples:
-        -filter remove test_filter
-        """
-        name = name.lower()
-        filters = self.db.configs.get(ctx.guild.id, "filters")
-
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="NO"), 0))
-        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
-
-        del filters[name]
-        self.db.configs.update(ctx.guild.id, "filters", filters)
-
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_filter", _emote="YES"), 1))
-
-    
-    @_filter.command(
-        name="edit",
-        description="🔀 Edits an exisiting word filter"
-    )
-    @discord.app_commands.describe(
-        name="Name of the filter",
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def edit_filter(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-    ) -> None:
-        """
-        filter_edit_help
-        examples:
-        -filter edit test_filter
-        """
-        name = name.lower()
-        filters = self.db.configs.get(ctx.guild.id, "filters")
-
-        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"), 0))
-        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
-
-        async def callback(
-            i: discord.Interaction
-        ) -> None:
-            warns, words, channels = self.extract_args(i, "warns", "words", "channels")
-
-            try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
-
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
-
-            filters[name] = {
-                "warns": warns,
-                "words": words.split(", "),
-                "channels": [] if channels == None else self.parse_channels(channels)
-            }
-            self.db.configs.update(i.guild.id, "filters", filters)
-
-            await i.response.send_message(embed=E(self.locale.t(i.guild, "edited_filter", _emote="YES"), 1))
-        
-        modal = FilterEditModal(
-            self.bot, 
-            f"Edit Filter {name}", 
-            filters[name].get("warns"),
-            ", ".join(filters[name].get("words")),
-            ", ".join(filters[name].get("channels")),
-            callback
-        )
-        await ctx.response.send_modal(modal)
-
-    
-    regex = discord.app_commands.Group(
-        name="regex",
-        description="🔀 Configure regex filters",
-        default_permissions=discord.Permissions(manage_messages=True)
-    )
-    @regex.command(
-        name="show",
-        description="⛔️ Shows a list of active regex filters"
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def show_regex(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
-        r"""
-        regex_help
-        examples:
-        -regex show
-        """
-        regexes = self.db.configs.get(ctx.guild.id, "regexes")
-        if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO"), 0))
-
-        e = Embed(
-            ctx,
-            title="Regexes"
-        )
-        for indx, name in enumerate(dict(itertools.islice(regexes.items(), 10))):
-            data = regexes[name]
-            action = str(data["warns"]) + " warn" if data["warns"] == 1 else str(data["warns"]) + " warns" if data["warns"] > 0 else "delete message"
-            channels = "all channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
-
-            e.add_field(
-                name=f"**❯ {name}**",
-                value=f">  **Action:** {action} \n>  **Channels:** {channels} \n>  **Pattern:** \n```\n{data['regex']}\n```",
-                inline=True
-            )
-            if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
-
-            footer = f"And {len(regexes)-len(dict(itertools.islice(regexes.items(), 10)))} more filters" if len(regexes) > 10 else None
-        if footer != None: e.set_footer(text=footer)
-        
-        await ctx.response.send_message(embed=e)
-
-
-    @regex.command(
-        name="add",
-        description="✅ Adds a new regex filter with the given name, warns, pattern and channels"
-    )
-    async def add_regex(
-        self, 
-        ctx: discord.Interaction, 
-    ) -> None:
-        r"""
-        regex_add_help
-        examples:
-        -regex add
-        """
-        async def callback(
-            i: discord.Interaction
-        ) -> None:
-            name, warns, regex, channels = self.extract_args(i, "name", "warns", "pattern", "channels")
-            regexes = self.db.configs.get(i.guild.id, "regexes")
-            name = name.lower()
-
-            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_name_too_long", _emote="NO"), 0))
-            if name in regexes: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_exists", _emote="NO"), 0))
-
-            try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
-
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
-
-            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0))
-
-            regexes[name] = {
-                "warns": warns,
-                "regex": regex,
-                "channels": [] if channels == None else self.parse_channels(channels)
-            }
-            self.db.configs.update(i.guild.id, "regexes", regexes)
-
-            await i.response.send_message(embed=E(self.locale.t(i.guild, "added_regex", _emote="YES"), 1))
-        
-        modal = RegexCreateModal(self.bot, "Create Regex Filter", callback)
-        await ctx.response.send_modal(modal)
-
-
-    @regex.command(
-        name="remove",
-        description="❌ Deletes an exisiting regex filter"
-    )
-    @discord.app_commands.describe(
-        name="Name of the filter",
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def remove_regex(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
-        """
-        regex_remove_help
-        examples:
-        -regex remove test_regex
-        """
-        regexes = self.db.configs.get(ctx.guild.id, "regexes")
-        name = name.lower()
-
-        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0))
-
-        del regexes[name]
-        self.db.configs.update(ctx.guild.id, "regexes", regexes)
-
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_regex", _emote="YES"), 1))
-
-
-    @regex.command(
-        name="edit",
-        description="🔀 Edits an existing regex filter"
-    )
-    @discord.app_commands.describe(
-        name="Name of the regex filter you want to edit",
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def edit_regex(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
-        r"""
-        regex_edit_help
-        examples:
-        -regex edit test_regex
-        """
-        name = name.lower()
-        regexes = self.db.configs.get(ctx.guild.id, "regexes")
-
-        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"), 0))
-        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0))
-
-        async def callback(
-            i: discord.Interaction
-        ) -> None:
-            warns, regex, channels = self.extract_args(i, "warns", "pattern", "channels")
-
-            try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
-
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
-
-            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0))
-
-            regexes[name] = {
-                "warns": warns,
-                "regex": regex,
-                "channels": [] if channels == None else self.parse_channels(channels)
-            }
-            self.db.configs.update(i.guild.id, "regexes", regexes)
-
-            await i.response.send_message(embed=E(self.locale.t(i.guild, "edited_regex", _emote="YES"), 1))
-
-        modal = RegexEditModal(
-            self.bot, 
-            f"Edit Regex {name}", 
-            regexes[name].get("warns"),
-            regexes[name].get("regex"),
-            ", ".join(regexes[name].get("channels")),
-            callback
-        )
-        await ctx.response.send_modal(modal)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"), 1))
 
 
     @discord.app_commands.command(
@@ -1513,15 +1130,15 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         info_embed.add_fields([
             {
-                "name": "**❯ View current config**",
-                "value": f"``{prefix}antispam``"
+                "name": "**❯ __View current config__**",
+                "value": f"</antispam:{self.bot.internal_cmd_store.get('antispam')}>"
             },
             {
-                "name": "**❯ Enable antispam**",
+                "name": "**❯ __Enable antispam__**",
                 "value": f"``{prefix}antispam <rate> <per> <warns>``"
             },
             {
-                "name": "**❯ Disable antispam**",
+                "name": "**❯ __Disable antispam__**",
                 "value": f"``{prefix}antispam rate:off``"
             }
         ])
@@ -1533,17 +1150,17 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**❯ Status**",
+                    "name": "**❯ __Status__**",
                     "value": ">  Enabled" if config["enabled"] == True else ">  Disabled",
                     "inline": False
                 },
                 {
-                    "name": "**❯ Threshold**",
+                    "name": "**❯ __Threshold__**",
                     "value": f">  **{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else ">  N/A",
                     "inline": False
                 },
                 {
-                    "name": "**❯ Action**",
+                    "name": "**❯ __Action__**",
                     "value": f">  **{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else ">  N/A",
                     "inline": False
                 }
@@ -1587,7 +1204,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     "warns": warns
                 })
 
-                am_plugin = self.bot.get_plugin("AutoModPluginBlueprint")
+                am_plugin = self.bot.get_plugin("AutomodPlugin")
                 am_plugin.spam_cache.update({
                     ctx.guild.id: commands.CooldownMapping.from_cooldown(
                         rate,
@@ -1600,7 +1217,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
 
     ignore_automod = discord.app_commands.Group(
-        name="ignore_automod",
+        name="bypass_automod",
         description="🔀 Manage ignored roles & channels for the automoderator",
         default_permissions=discord.Permissions(manage_guild=True)
     )
@@ -1616,7 +1233,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_help
         examples:
-        -ignore_automod show
+        -bypass_automod show
         """
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
@@ -1629,11 +1246,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**❯ Roles**",
+                    "name": "**❯ __Roles__**",
                     "value": ">  {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else ">  None"
                 },
                 {
-                    "name": "**❯ Channels**",
+                    "name": "**❯ __Channels__**",
                     "value": ">  {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else ">  None"
                 }
             ])
@@ -1659,8 +1276,8 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_add_help
         examples:
-        -ignore_automod add @test
-        -ignore_automod add #test
+        -bypass_automod add @test
+        -bypass_automod add #test
         """
         if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
         role_or_channel = [role, channel]
@@ -1691,7 +1308,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "**❯ Added roles**",
+                "name": "**❯ __Added roles__**",
                 "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
@@ -1703,7 +1320,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else ">  None"
             },
             {
-                "name": "**❯ Added channels**",
+                "name": "**❯ __Added channels__**",
                 "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.TextChannel)
@@ -1715,7 +1332,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else ">  None"
             },
             {
-                "name": "**❯ Ignored**",
+                "name": "**❯ __Ignored__**",
                 "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in ignored
@@ -1745,8 +1362,8 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_remove_help
         examples:
-        -ignore_automod remove @test
-        -ignore_automod remove #test
+        -bypass_automod remove @test
+        -bypass_automod remove #test
         """
         if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
         role_or_channel = [role, channel]
@@ -1779,7 +1396,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "**❯ Removed roles**",
+                "name": "**❯ __Removed roles__**",
                 "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.Role)
@@ -1791,7 +1408,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else ">  None"
             },
             {
-                "name": "**❯ Removed channels**",
+                "name": "**❯ __Removed channels__**",
                 "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.TextChannel)
@@ -1803,7 +1420,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else ">  None"
             },
             {
-                "name": "**❯ Ignored**",
+                "name": "**❯ __Ignored__**",
                 "value": ">  {}".format(", ".join(
                     [
                         x.mention for x in ignored

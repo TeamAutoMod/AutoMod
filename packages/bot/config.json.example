@@ -30,14 +30,17 @@
     ],
     "plugins": [
         "error",
-        "utility",
         "admin",
         "internal",
         "mod",
-        "tags",
-        "config",
         "automod",
-        "cases"
+        "config",
+        "utility",
+        "tags",
+        "cases",
+        "rr",
+        "level",
+        "filter"
     ],
     "disabled_commands": [],
     "error_channel": 123456789,

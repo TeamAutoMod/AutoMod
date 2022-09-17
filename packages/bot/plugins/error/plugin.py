@@ -120,11 +120,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**❯ Usage**",
+                    "name": "**❯ __Usage__**",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "**❯ Info**",
+                    "name": "**❯ __Info__**",
                     "value": f"``{info}``"
                 }
             ])
@@ -151,11 +151,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**❯ Usage**",
+                    "name": "**❯ __Usage__**",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "**❯ Info**",
+                    "name": "**❯ __Info__**",
                     "value": f"``{info}``"
                 }
             ])
@@ -179,11 +179,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             e = Embed(ctx)
             e.add_fields([
                 {
-                    "name": "**❯ Usage**",
+                    "name": "**❯ __Usage__**",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "**❯ Info**",
+                    "name": "**❯ __Info__**",
                     "value": f"``{info}``"
                 }
             ])
@@ -212,12 +212,12 @@ class ErrorPlugin(AutoModPluginBlueprint):
                 )
                 e.add_fields([
                     {
-                        "name": "**❯ Command**",
+                        "name": "**❯ __Command__**",
                         "value": f">  {ctx.command.qualified_name}" if ctx.command != None else "Unknown",
                         "inline": True
                     },
                     {
-                        "name": "**❯ Location**",
+                        "name": "**❯ __Location__**",
                         "value": f">  {ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
                         "inline": True
                     }

@@ -131,12 +131,12 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         self.db.configs.update(payload.guild_id, "reaction_roles", rrs)
 
 
-    reaction_roles = discord.app_commands.Group(
-        name="reaction_roles",
+    rr = discord.app_commands.Group(
+        name="rr",
         description="🎭 Configure reaction roles",
         default_permissions=discord.Permissions(manage_roles=True)
     )
-    @reaction_roles.command(
+    @rr.command(
         name="show",
         description="🎭 Shows a list of active reaction roles"
     )
@@ -148,7 +148,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         reaction_roles_help
         examples:
-        -reaction_roles show
+        -rr show
         """
         rrs = {
             k: v for k, v in self.db.configs.get(
@@ -166,7 +166,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             for msg, data in rrs.items():
                 channel = ctx.guild.get_channel(int(data["channel"]))
                 e.add_field(
-                    name=f"**❯ {msg}{f' (#{channel.name})' if channel != None else ''}**",
+                    name=f"**❯ __{msg}{f' (#{channel.name})' if channel != None else ''}__**",
                     value=f"{f'> [Jump to message](https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg})' if channel != None else ''}" + 
                     "{}".format(
                         "\n" if channel != None else ""
@@ -179,7 +179,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=e)
 
 
-    @reaction_roles.command(
+    @rr.command(
         name="add",
         description="✅ Adds a new reaction role"
     )
@@ -199,7 +199,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         reaction_roles_add_help
         examples:
-        -reaction_roles add 543056846601191508 🟢 @GreenRole
+        -rr add 543056846601191508 🟢 @GreenRole
         """
         try:
             emote = await Emote().convert(ctx, emote)
@@ -254,7 +254,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_rr", _emote="YES"), 1))
 
 
-    @reaction_roles.command(
+    @rr.command(
         name="remove",
         description="❌ Removes an exisitng reaction role"
     )
@@ -272,7 +272,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         reaction_roles_remove_help
         examples:
-        -reaction_roles remove 543056846601191508 @Greenrole
+        -rr remove 543056846601191508 @Greenrole
         """
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if len(rrs) < 1:

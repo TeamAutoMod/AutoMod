@@ -310,19 +310,19 @@ class CasesPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "**❯ User**",
+                "name": "**❯ __User__**",
                 "value": f">  <@{data.user_id}> ({data.user_id})"
             },
             {
-                "name": "❯ Moderator**",
+                "name": "❯ __Moderator__**",
                 "value": f">  <@{data.mod_id}> ({data.mod_id})"
             },
             {
-                "name": "**❯ Timestamp**",
+                "name": "**❯ __Timestamp__**",
                 "value": f">  <t:{round(data.timestamp.timestamp())}>"
             },
             {
-                "name": "**❯ Reason**",
+                "name": "**❯ __Reason__**",
                 "value": f">  {data.reason}"
             },
         ])
@@ -330,14 +330,14 @@ class CasesPlugin(AutoModPluginBlueprint):
         if hasattr(data, "warns_added"):
             if int(data.warns_added) > 0: 
                 e.add_field(
-                    name=f"**❯ Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}**",
+                    name=f"**❯ __Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}__**",
                     value=f">  {data.warns_added}"
                 )
         
         if hasattr(data, "until"):
             if data.until != "": 
                 e.add_field(
-                    name="**❯ Until**",
+                    name="**❯ __Until__**",
                     value=f">  {data.until}"
                 )
         await ctx.response.send_message(embed=e)
@@ -378,7 +378,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
         e.add_fields([
             {
-                "name": "**❯ Status**",
+                "name": "**❯ __Status__**",
                 "value": ">  **Banned:** {}{} \n>  **Muted:** {} \n>  **Muted until:** {}"\
                 .format(
                     yes if ban_data != None else no,
@@ -388,7 +388,7 @@ class CasesPlugin(AutoModPluginBlueprint):
                 )
             },
             {
-                "name": "**❯ Warnings**",
+                "name": "**❯ __Warnings__**",
                 "value": ">  **Warns:** {}"\
                 .format(
                     0 if warns == None else warns

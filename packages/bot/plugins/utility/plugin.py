@@ -23,13 +23,14 @@ from ...schemas import Slowmode
 
 ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "⚙️ Configuration",
-    "AutoModPluginBlueprint": "⚔️ Automoderator",
+    "AutomodPlugin": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
+    "FilterPlugin": "⛔️ Filters/Regexes",
     "UtilityPlugin": "🔧 Utility",
     "LevelPlugin": "🏆 Level System",
-    "CasesPlugin": "📦 Cases",
     "TagsPlugin": "📝 Custom Commands",
-    "ReactionRolesPlugin": "🎭 Reaction Roles",
+    "CasesPlugin": "📦 Cases",
+    "ReactionRolesPlugin": "🎭 Reaction Roles"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
@@ -71,7 +72,7 @@ def get_help_embed(
         title=f"``{usage}``"
     )
     e.add_field(
-        name="**❯ Description**", 
+        name="**❯ __Description__**", 
         value=f">  {help_message}"
     )
     
@@ -80,17 +81,17 @@ def get_help_embed(
         if len(examples) > 0:
             prefix = "/"
             e.add_field(
-                name="**❯ Examples**",
+                name="**❯ __Examples__**",
                 value="\n".join(
                     [
-                        f">  {prefix}{exmp}" for exmp in examples
+                        f"> {prefix}{exmp}" for exmp in examples
                     ]
                 )
             )
     else:
         e.add_field(
-            name="**❯ Subcommands**", 
-            value="{}".format("\n".join([f">  /{x.qualified_name}" for x in cmd.commands]))
+            name="**❯ __Subcommands__**", 
+            value="{}".format("\n".join([f"> </{x.qualified_name}:{plugin.bot.internal_cmd_store.get(cmd.name)}>" for x in cmd.commands]))
         )
 
     e.set_footer(text="<required> [optional]")
@@ -108,8 +109,16 @@ def get_command_help(
     for p in [plugin.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
         if p != None:
             cmds = {x.name.lower(): x for x in p.__cog_app_commands__ if x.name not in plugin.bot.config.disabled_commands}
-            if query.lower() in cmds:
-                return get_help_embed(plugin, ctx, cmds.get(query.lower()))
+            root = "".join(query.lower().split(" ")[0])
+            if root in cmds:
+                if len(query.split(" ")) < 2:
+                    return get_help_embed(plugin, ctx, cmds.get(root))
+                else:
+                    sub = " ".join(query.lower().split(" ")[1:])
+                    for final in cmds.get(root).commands:
+                        if final.name == sub:
+                            return get_help_embed(plugin, ctx, final)
+                    return None
     return None
 
 
@@ -263,19 +272,19 @@ class UtilityPlugin(AutoModPluginBlueprint):
         log = Embed(
             None,
             title="📁 Logging",
-            description=self.locale.t(guild, "log_val", prefix=_prefix)
+            description=self.locale.t(guild, "log_val", prefix=_prefix, cmd=f"</log:{self.bot.internal_cmd_store.get('log')}>")
         )
 
         am = Embed(
             None,
             title="⚔️ Automoderator",
-            description=self.locale.t(guild, "automod_val", prefix=_prefix)
+            description=self.locale.t(guild, "automod_val", prefix=_prefix, cmd=f"</automod:{self.bot.internal_cmd_store.get('automod')}>")
         )
 
         pun = Embed(
             None,
             title="🔨 Punishments",
-            description=self.locale.t(guild, "pun_val", prefix=_prefix)
+            description=self.locale.t(guild, "pun_val", prefix=_prefix, cmd=f"</punishment:{self.bot.internal_cmd_store.get('punishment')}>")
         )
         
         embeds = [base, log, am, pun]
@@ -437,8 +446,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
             {
-                "name": "**❯ Status**",
-                "value": "> **Uptime:** {} \n> **Version:** {} \n> **Latency:** {}ms"\
+                "name": "**❯ __Status__**",
+                "value": "> **Up:** {} \n> **Version:** {} \n> **Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
                     get_version(),
@@ -447,7 +456,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**❯ Stats**",
+                "name": "**❯ __Stats__**",
                 "value": "> **Guilds:** {0:,} \n> **Users:** {1:,} \n> **Shards:** {2:,}"\
                 .format(
                     len(self.bot.guilds),
@@ -457,7 +466,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**❯ Usage**",
+                "name": "**❯ __Usage__**",
                 "value": "> **Commands:** {} \n> **Custom:** {}"\
                 .format(
                     self.bot.used_commands,
@@ -474,25 +483,34 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="help", 
         description="🔎 Shows help for a specific command or a full list of commands when used without any arguments"
     )
+    @discord.app_commands.describe(
+        command="The (sub-)command you want to get help about (e.g. ban OR slash add)",
+        mobile_view="Use this if you're on mobile to have the embed displayed in a more readable way"
+    )
     async def help(
         self, 
         ctx: discord.Interaction, 
         *, 
-        command: str = None
+        command: str = None,
+        mobile_view: Literal[
+            "True",
+            "False"
+        ] = "False"
     ) -> None:
         """
         help_help
         examples:
         -help
         -help ban
-        -help commands
+        -help slash add
+        -help kick mobile_view:True
         """
         query = command
         if query == None:
             e = Embed(
                 ctx,
                 title="Command List",
-                description=self.locale.t(ctx.guild, "help_desc", prefix="/")
+                description=self.locale.t(ctx.guild, "help_desc", prefix="/", cmd=f"</setup:{self.bot.internal_cmd_store.get('setup')}>")
             )
             viewable_plugins = []
             for i, p in enumerate([self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]):
@@ -505,22 +523,31 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         if cmd.qualified_name not in self.bot.config.disabled_commands:
                             if cmd.default_permissions != None:
                                 if ctx.user.guild_permissions >= cmd.default_permissions:
-                                    cmds.append(f"/{cmd.qualified_name}")
+                                    if isinstance(cmd, discord.app_commands.Group):
+                                        for sub in cmd.commands:
+                                            cmds.append(f"</{sub.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
+                                    else:
+                                        cmds.append(f"</{cmd.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
                             else:
-                                cmds.append(f"/{cmd.qualified_name}")
+                                if isinstance(cmd, discord.app_commands.Group):
+                                    for sub in cmd.commands:
+                                        cmds.append(f"</{sub.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
+                                else:
+                                    cmds.append(f"</{cmd.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
                     
                     if len(cmds) > 0:
                         viewable_plugins.append(p.qualified_name)
                         e.add_field(
-                            name=f"**❯ {' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}**",
+                            name=f"**❯ __{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}__**",
                             value="> {}".format(
-                                ", ".join(
-                                    [
-                                        f"``{x}``" for x in cmds
-                                    ]
-                                )
-                            )
+                                "\n> ".join(cmds) if mobile_view.lower() != "true" else " ``|`` ".join(cmds)
+                            ),
+                            inline=True if mobile_view.lower() != "true" else False
                         )
+            
+            if len(viewable_plugins) > 0 and len(viewable_plugins) % 3 != 0 and mobile_view.lower() != "true":
+                e.add_fields([e.blank_field(inline=True) for _ in range((len(viewable_plugins) % 3) - 1)])
+
             e.credits()
 
             await ctx.response.send_message(
@@ -672,7 +699,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             url=user.display_avatar
         )
         e.add_field(
-            name="**❯ User Information**",
+            name="**❯ __User Information__**",
             value=">  **ID:** {} \n>  **Profile:** {} \n>  **Badges:** {} \n>  **Created at:** <t:{}>"\
             .format(
                 user.id,
@@ -685,7 +712,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             e.add_field(
-                name="**❯ Server Information**",
+                name="**❯ __Server Information__**",
                 value=">  **Nickname:** {} \n>  **Joined at:** <t:{}> \n>  **Join position:** {} \n>  **Status:** {} \n>  **Roles:** {}"\
                 .format(
                     member.nick,
@@ -718,7 +745,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")    
 
         e.add_field(
-            name="**❯ Infractions**",
+            name="**❯ __Infractions__**",
             value=">  **Total Cases:** {} \n>  **Last 3 Cases:** {}"\
             .format(
                 len(cases),
@@ -753,7 +780,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
         e.add_fields([
             {
-                "name": "**❯ Information**",
+                "name": "**❯ __Information__**",
                 "value": ">  **ID:** {} \n>  **Owner:** {} \n>  **Created:** <t:{}> \n>  **Invite Splash:** {} \n>  **Banner:** {}"\
                 .format(
                     g.id, 
@@ -766,7 +793,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True),
             {
-                "name": "**❯ Channels**",
+                "name": "**❯ __Channels__**",
                 "value": ">  **Categories:** {} \n>  **Text:** {} \n>  **Voice:** {} \n>  **Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
@@ -777,7 +804,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**❯ Members**",
+                "name": "**❯ __Members__**",
                 "value": ">  **Total:** {} \n>  **Users:** {} \n>  **Bots:** {}"\
                 .format(
                     len(g.members), 
@@ -788,7 +815,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True),
             {
-                "name": "**❯ Other**",
+                "name": "**❯ __Other__**",
                 "value": ">  **Roles:** {} \n>  **Emojis:** {} \n>  **Features:** {}"\
                 .format(
                     len(g.roles), 
@@ -832,7 +859,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     channel = ctx.guild.get_channel(int(s["id"].split("-")[1]))
                     if channel != None:
                         e.add_field(
-                            name=f"**❯ #{channel.name}**",
+                            name=f"**❯ __#{channel.name}__**",
                             value=">  **Time:** {} \n>  **Mode:** {} \n>  **Moderator:** {}"\
                                 .format(
                                     s["pretty"],

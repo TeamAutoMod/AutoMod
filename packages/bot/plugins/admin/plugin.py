@@ -133,7 +133,7 @@ class AdminPlugin(AutoModPluginBlueprint):
         e = Embed(ctx)
         d, h, m, s = self.bot.get_uptime(True)
         e.add_field(
-            name="**❯ AutoMod Statistics**",
+            name="**❯ __AutoMod Statistics__**",
             value=">  **Last startup:** {} \n>  **RAM usage:** {}% \n>  **CPU usage:** {}%"\
                 .format(
                     f"<t:{round((datetime.datetime.utcnow() - datetime.timedelta(days=d, hours=h, minutes=m, seconds=s)).timestamp())}>", 
@@ -143,7 +143,7 @@ class AdminPlugin(AutoModPluginBlueprint):
         )
         shards = [self.parse_shard_info(x) for x in self.bot.shards.values()]
         e.add_field(
-            name="**❯ {} ({})**".format(self.bot.user.name, self.bot.user.id),
+            name="**❯ __{} ({})__**".format(self.bot.user.name, self.bot.user.id),
             value=">  **Guilds:** {} \n>  **Latency:** {}ms \n>  **Total shards:** {} \n>  **Shard Connectivity:** \n```diff\n{}\n```"\
             .format(
                 len(self.bot.guilds),

@@ -714,85 +714,47 @@ class ModerationPlugin(WarnPlugin):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unmuted", _emote="YES", user=user), 1))
 
 
-    clean = discord.app_commands.Group(
+    @discord.app_commands.command(
         name="clean",
-        description="🧹 Purge deletes messages from the channel",
-        default_permissions=discord.Permissions(manage_messages=True)
+        description="🧹 Purges messages from the channel"
     )
-    @clean.command(
-        name="all",
-        description="🧹 Deletes the specified amount of messages"
+    @discord.app_commands.describe(
+        amount="The amount of messages to delete (to check)",
+        user="Only checks for messages by this user",
+        content="Only checks for messages with the given content"
     )
     async def all(
         self, 
         ctx: discord.Interaction, 
-        amount: int = 10
+        amount: int = 10,
+        user: discord.User = None,
+        content: str = None
     ) -> None:
         """
         clean_all_help
         examples:
-        -clean all 25
+        -clean 25
+        -clean 10 paul#0009
+        -clean 50 paul#0009 bad words
         """
         if amount < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"), 0))
         if amount > 300: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"), 0))
         
+        if user == None and content == None:
+            func = lambda _: True
+        else:
+            if user != None and content != None:
+                func = lambda x: x.author.id == user.id and x.content.lower() == content.lower()
+            elif user != None and content == None:
+                func = lambda x: x.author.id
+            else:
+                func = lambda x: x.content.lower() == content.lower()
+            
         await ctx.response.defer(thinking=True)
         msg, kwargs = await self.clean_messages(
             ctx,
             amount,
-            lambda _: True
-        )
-        await ctx.followup.send(embed=E(msg, 1), **kwargs)
-
-
-    @clean.command(
-        name="user",
-        description="🧹 Deletes the specified amount of messages from the user"
-    )
-    async def user(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.Member, 
-        amount: int = 10
-    ) -> None:
-        """
-        clean_user_help
-        examples:
-        -clean user @paul#0009 25
-        -clean user 543056846601191508
-        """
-        if amount < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"), 0))
-        if amount > 300: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"), 0))
-
-        await ctx.response.defer(thinking=True)
-        msg, kwargs = await self.clean_messages(
-            ctx,
-            amount,
-            lambda m: m.author.id == user.id
-        )
-        await ctx.followup.send(embed=E(msg, 1), **kwargs)
-
-
-    @clean.command(
-        name="content",
-        description="🧹 Deletes the specified amount of messages containing the given content"
-    )
-    async def content(
-        self, 
-        ctx: discord.Interaction, 
-        *, 
-        text: str
-    ) -> None:
-        """
-        clean_content_help
-        examples:
-        -clean content bad words
-        """
-        await ctx.response.defer(thinking=True)
-        msg, kwargs = await self.clean_messages(
-            ctx,
-            300,
-            lambda m: text.lower() in m.content.lower()
+            func
         )
         await ctx.followup.send(embed=E(msg, 1), **kwargs)
 

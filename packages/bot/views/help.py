@@ -9,18 +9,19 @@ from .buttons import LinkBtn
 
 ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "⚙️ Configuration",
-    "AutoModPluginBlueprint": "⚔️ Automoderator",
+    "AutomodPlugin": "⚔️ Automoderator",
+    "FilterPlugin": "⛔️ Filters/Regexes",
     "ModerationPlugin": "🔨 Moderation",
     "UtilityPlugin": "🔧 Utility",
     "TagsPlugin": "📝 Custom Commands",
     "CasesPlugin": "📦 Cases",
     "ReactionRolesPlugin": "🎭 Reaction Roles",
-    "LevelPlugin": "🏆 Level System"
+    "LevelPlugin": "🏆 Level System",
 }
 
 
 class HelpView(View):
-     def __init__(
+    def __init__(
         self, 
         bot, 
         show_buttons: bool = False,

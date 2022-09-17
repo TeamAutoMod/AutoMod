@@ -119,6 +119,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.log_queue: Dict[int, Dict[str, List[Dict[str, Tuple[embed.Embed, bool]]]]] = {}
         self.auto_processing: List[str] = []
         self.event_stats: Dict[str, int] = {}
+        self.internal_cmd_store: Dict[str, int] = {}
 
         if self.config.watch == True:
             self.observer = Observer(self)
@@ -240,6 +241,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     self.remove_command(cmd)
                 except Exception:
                     pass
+            
+            for cmd in await self.tree.fetch_commands():
+                self.internal_cmd_store.update({
+                    cmd.name: cmd.id
+                })
 
 
     async def register_plugin(
