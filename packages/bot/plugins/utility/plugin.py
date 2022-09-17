@@ -832,6 +832,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="slowmode", 
         description="🕒 Edits the channel's slowmode or shows all active bot-set slowmodes"
     )
+    @discord.app_commands.describe(
+        time="5s, 10m, 3h, 1d (0 to disable)"
+    )
     @discord.app_commands.default_permissions(manage_channels=True)
     async def slowmode(
         self, 
