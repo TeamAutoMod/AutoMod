@@ -278,7 +278,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_add_help
         examples:
-        -slash add
+        -commands add
         """
         async def callback(
             i: discord.Interaction
@@ -344,7 +344,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_delete_help
         examples:
-        -slash delete test_command
+        -commands delete test_command
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
@@ -384,7 +384,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_edit_help
         examples:
-        -slash edit test_cmd This is the new content
+        -commands edit test_cmd This is the new content
         """
         if len(content) > 1900:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
@@ -424,7 +424,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_info_help
         examples:
-        -slash info test_cmd
+        -commands info test_cmd
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
