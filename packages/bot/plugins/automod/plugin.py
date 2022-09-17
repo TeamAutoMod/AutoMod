@@ -1351,7 +1351,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     ]
                 )) if len(
                     [
-                        _ for _ in ignored
+                        _ for _ in ignored if _ != None
                     ]
                 ) > 0 else ">  None"
             },
@@ -1439,7 +1439,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     ]
                 )) if len(
                     [
-                        _ for _ in ignored
+                        _ for _ in ignored if _ != None
                     ]
                 ) > 0 else ">  None"
             },
