@@ -690,7 +690,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             user = member = ctx.user
         else:
             member: Union[discord.Member, None] = ctx.guild.get_member(user.id)
-
+        
+        await ctx.response.defer(thinking=True)
         e = Embed(
             ctx,
             color=user.color if user.color != None else None
@@ -753,7 +754,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             )
         )
 
-        await ctx.response.send_message(embed=e, ephemeral=True if ctx.data.get("type") == 2 else False)
+        await ctx.followup.send(embed=e, ephemeral=(True if ctx.data.get("type") == 2 else False) if ctx.data != None else False)
 
 
     @discord.app_commands.command(
