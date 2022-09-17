@@ -839,7 +839,13 @@ class AutomodPlugin(AutoModPluginBlueprint):
             e = Embed(
                 ctx,
                 title="Automoderator Configuration",
-                description=self.locale.t(ctx.guild, "automod_description", prefix="/")
+                description=self.locale.t(
+                    ctx.guild, 
+                    "automod_description", 
+                    prefix="/", 
+                    cmd_invites=f"</invites add:{self.bot.internal_cmd_store.get('invites')}>",
+                    cmd_links=f"</links add:{self.bot.internal_cmd_store.get('links')}>",
+                )
             )
             e.add_field(
                 name="**❯ __Command usage__**",
@@ -883,9 +889,15 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
             text = ""
             if not rule in ["mentions", "lines", "emotes", "repeat"] and amount == 0:
-                text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
+                if rule == "links":
+                    text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                else:
+                    text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
             else:
-                text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
+                if rule == "links":
+                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                else:
+                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", )
 
             await ctx.response.send_message(text)
 
