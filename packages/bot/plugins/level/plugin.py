@@ -13,6 +13,9 @@ from ...types import Embed, E
 
 
 
+MAX_BONUS_XP = 500000
+
+
 class LevelPlugin(AutoModPluginBlueprint):
     """Plugin for all level system commands"""
     def __init__(
@@ -20,6 +23,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         bot: ShardedBotInstance,
     ) -> None:
         super().__init__(bot, requires_premium=True)
+        self._processing = []
 
 
     def exists(
@@ -110,6 +114,13 @@ class LevelPlugin(AutoModPluginBlueprint):
         return self.db.configs.get(guild.id, "premium")
 
 
+    def get_xp_for_next_lvl(
+        self,
+        lvl: int
+    ):
+        return int(5 / 6 * (lvl + 1) * (2 * (lvl + 1) * (lvl + 1) + 27 * (lvl + 1) + 91))
+
+
     async def add_reward(
         self,
         guild: discord.Guild,
@@ -161,16 +172,21 @@ class LevelPlugin(AutoModPluginBlueprint):
             msg.author
         ): return
 
+        pid = f"{msg.guild.id}-{msg.author.id}"
+        if pid in self._processing: return
+        else: self._processing.append(pid)
+
         data = self.get_user_data(
             msg.guild, 
             msg.author
         )
 
         if data.lvl < 4:
-            xp = randint(1, 4)
+            xp = randint(15, 25)
         else:
-            xp = randint(2, 7)
-        for_nxt_lvl = 3 * ((data.lvl - 1) ** 2) + 30
+            xp = randint(15, 25)
+
+        for_nxt_lvl = self.get_xp_for_next_lvl(data.lvl)
         new_xp = (data.xp + xp)
 
         if new_xp >= for_nxt_lvl:
@@ -213,6 +229,9 @@ class LevelPlugin(AutoModPluginBlueprint):
                 new_xp,
                 data.lvl
             )
+
+        if pid in self._processing:
+            self._processing.remove(pid)
 
 
     @discord.app_commands.command(
@@ -459,8 +478,8 @@ class LevelPlugin(AutoModPluginBlueprint):
             user
         )
 
-        for_nxt_lvl = 3 * ((data.lvl - 1) ** 2) + 30
-        for_last_lvl = 3 * ((data.lvl - 2) ** 2) + 30
+        for_nxt_lvl = self.get_xp_for_next_lvl(data.lvl)
+        for_last_lvl = self.get_xp_for_next_lvl(data.lvl - 1)
 
         e = Embed(
             ctx,
@@ -469,7 +488,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                 .format(
                     data.lvl,
                     ((for_nxt_lvl - for_last_lvl) - (for_nxt_lvl - data.xp)) if data.lvl > 1 else data.xp,
-                    (for_nxt_lvl - for_last_lvl) if data.lvl > 1 else 30,
+                    (for_nxt_lvl - for_last_lvl) if data.lvl > 1 else 50,
                     data.xp
                 )
         )
@@ -533,6 +552,37 @@ class LevelPlugin(AutoModPluginBlueprint):
             )
         )
         await ctx.response.send_message(embed=e)
+
+
+    # @discord.app_commands.command(
+    #     name="bonus",
+    #     description=""
+    # )
+    # @discord.app_commands.describe(
+    #     xp="The amount of XP you want  to grant (use a negative number to subract XP)"
+    # )
+    # @discord.app_commands.default_permissions(manage_guild=True)
+    # async def bonus(
+    #     self,
+    #     ctx: discord.Interaction,
+    #     user: discord.Member,
+    #     xp: int
+    # ) -> None:
+    #     """
+    #     bonus_help
+    #     examples:
+    #     -bonus @paul#0009 1000
+    #     -bonus @paul#0009 -500
+    #     """
+    #     if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+
+    #     config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
+    #     if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+
+    #     if xp > MAX_BONUS_XP: return await ctx.response.send_message(embed=E(elf.locale.t(ctx.guild, "max_bonus_xp", _emote="NO", amount=MAX_BONUS_XP), 0))
+
+    #     xp = max(0, xp)
+
 
 
 async def setup(
