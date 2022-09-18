@@ -891,13 +891,17 @@ class AutomodPlugin(AutoModPluginBlueprint):
             if not rule in ["mentions", "lines", "emotes", "repeat"] and amount == 0:
                 if rule == "links":
                     text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                elif rule == "invites":
+                    text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
                 else:
                     text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
             else:
                 if rule == "links":
                     text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                elif rule == "invites":
+                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", cmd=f"</invites add:{self.bot.internal_cmd_store.get('invites')}>")
                 else:
-                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", )
+                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
 
             await ctx.response.send_message(text)
 

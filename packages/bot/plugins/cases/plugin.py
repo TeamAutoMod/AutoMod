@@ -168,7 +168,7 @@ class CasesPlugin(AutoModPluginBlueprint):
                 x for x in \
                 [
                     self.db.cases.get_doc(f"{ctx.guild.id}-{k}") for k, v in \
-                    self.db.configs.get(ctx.guild.id, "case_ids").items() if v[opt] == f"{user.id}"
+                    self.db.configs.get(ctx.guild.id, "case_ids").items() if v[opt] == f"{user.id if not isinstance(user, str) else user}"
                 ] if x != None
             ],
             key=lambda e: int(e["id"].split("-")[-1]),
