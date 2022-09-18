@@ -723,7 +723,8 @@ class ModerationPlugin(WarnPlugin):
         user="Only checks for messages by this user",
         content="Only checks for messages with the given content"
     )
-    async def all(
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def clean_call(
         self, 
         ctx: discord.Interaction, 
         amount: int = 10,
