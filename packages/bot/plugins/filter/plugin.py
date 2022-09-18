@@ -3,12 +3,11 @@
 import discord
 from discord.ext import commands
 
-import logging
+import logging; log = logging.getLogger()
 import itertools
 
-from packages.bot.types.embed import E; log = logging.getLogger()
-
 from .. import AutoModPluginBlueprint, ShardedBotInstance
+from ...types import Embed, E
 from ...modals import FilterCreateModal, RegexCreateModal, FilterEditModal, RegexEditModal
 
 
