@@ -136,8 +136,8 @@ class LevelPlugin(AutoModPluginBlueprint):
             }.items())
         )
         if len(rewards) > 0:
-            role = guild.get_role(int(list(rewards.values())[-1]))
-            if role != None:
+            new_role = guild.get_role(int(list(rewards.values())[-1]))
+            if new_role != None:
                 try:
                     await user.add_roles(role)
                 except Exception:
@@ -147,6 +147,19 @@ class LevelPlugin(AutoModPluginBlueprint):
                         await user.send(embed=E(self.locale.t(guild, "new_reward", _emote="PARTY", role=role.name, lvl=level, server=guild.name), 2))
                     except Exception:
                         pass
+                finally:
+                    if config.reward_mode == "single":
+                        to_rm = []
+                        for r in [x for x in user.roles if x != guild.default_role]:
+                            if r.id != new_role.id:
+                                if r.id in [int(_) for _ in list(rewards.values())]:
+                                    to_rm.append(r)
+                        
+                        if len(to_rm) > 0:
+                            try:
+                                await user.remove_roles(*to_rm)
+                            except Exception:
+                                pass
 
 
     @AutoModPluginBlueprint.listener()
