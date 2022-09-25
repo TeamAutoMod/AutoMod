@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    background-color: #1b1b1b;
+}
+
+body {
+    width: 100vw;
+    min-height: 100vh;
+    color: #5964f2;
+    align-items: center;
+    position: relative;
+}
+
+.container {
+    max-width: 100%;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    top: 37%;
+    transform: translate(-50%, -50%);
+}
+
+.container .header {
+    position: relative;
+    padding-left: 38px;
+    padding-bottom: 1px;
+}
+
+.container .icon {
+    position: relative;
+    padding-left: 12px;
+    padding-bottom: 15px;
+}
+
+.container .icon img {
+    width: 180px;
+    height: 180px;
+}
+
+.links {
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+.links li {
+    display: inline;
+}
+
+.links li a {
+    text-decoration: none;
+    padding: 10px;
+    color: #ffffff;
+    font-size: 21px;
+}
+
+.links li a:hover {
+    color: #2674c7
+}
+
+.stats {
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+.stats li {
+    display: inline;
+    padding: 0.3px;
+}
+
+.stats li #invite {
+    border: 1px solid #2674c7;
+    background-color: #2674c7;
+}
+
+.stats li #invite:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+    transition: 0.05s ease-in-out;
+}
+
+.stats li h1 {
+    text-decoration: none;
+    padding: 10px;
+    color: #ffffff;
+    font-size: 15px;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    text-align: center;
+    vertical-align: middle; 
+}
+
+.stats li h1:hover {
+    border: 1px solid #2674c7;
+}

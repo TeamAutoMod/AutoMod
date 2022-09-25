@@ -1,0 +1,73 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoMod</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://kit.fontawesome.com/75daf56dea.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        window.onload = async () => {
+        const r = await fetch("/stats");
+        const data = await r.json();
+        document.getElementById("guilds").innerHTML = `${data.guilds.toLocaleString()} servers`;
+        document.getElementById("users").innerHTML = `${data.users.toLocaleString()} users`;
+    };
+
+    const invite_redirect = () => {
+        return window.location.href = "/invite";
+    };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            <img src="img/icon.png" alt="AutoMod Icon" />
+        </div>
+
+        <h1 id="stats"></h1>
+            
+        <div class="links">
+            <ul>
+                <li>
+                    <a href="https://discord.gg/S9BEBux " target="_blank">
+                        <i class="fa-regular fa-envelope"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/TeamAutoMod/AutoMod" target="_blank">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://top.gg/bot/697487580522086431/vote" target="_blank">
+                        <i class="fa-regular fa-star"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://twitter.com/AutoModBot" target="_blank">
+                        <i class="fa-brands fa-twitter"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="stats">
+            <ul>
+                <li>
+                    <h1 onclick=invite_redirect() id="invite">
+                        Add to server
+                    </h1>
+                </li>
+                <li>
+                    <h1 id="guilds"></h1>
+                </li>
+                <li>
+                    <h1 id="users"></h1>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

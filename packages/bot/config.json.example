@@ -6,12 +6,12 @@
     "status_type": "playing",
     "embed_color": "0x202225",
 
-    "token": "",
+    "token": "YOUR_BOT_TOKEN",
     "sentry_dsn": "",
     "top_gg_token": "",
     "discords_token": "",
     "support_invite": "https://discord.gg/S9BEBux",
-    "web_url_base": "http://localhost:3001",
+    "web_url_base": "http://localhost:3000",
     "premium_role": 123456789,
 
     "mongo_url": "",

