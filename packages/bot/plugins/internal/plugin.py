@@ -1163,7 +1163,10 @@ class InternalPlugin(AutoModPluginBlueprint):
         self,
         status: int
     ) -> None:
-        if status == 200: log.info(f"📬 Posted server count ({self.discords.servers()}) to discords.com")
+        if status == 200: 
+            log.info(f"📬 Posted server count ({self.discords.servers()}) to discords.com")
+        else:
+            log.info(f"Failed to post stats to discords.com ({status})")
 
 
     @AutoModPluginBlueprint.listener()
