@@ -13,6 +13,7 @@ from typing import Union, Tuple
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed, E
+from ...modals import AutomodRuleModal
 
 
 
@@ -803,8 +804,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
     )
     @discord.app_commands.describe(
         rule="The rule you want to configure", 
-        warns_or_threshold="Warn amount or threshold for this rule (use 0 to just  have the message deleted)",
-        disable="Set this to true if you want to disable the rule"
+        action="Whether to enable or disable this rule",
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def automod(
@@ -821,89 +821,76 @@ class AutomodPlugin(AutoModPluginBlueprint):
             "Zalgo",
             "Caps"
         ],
-        warns_or_threshold: int = None,
-        disable: Literal[
-            "True"
-        ] = None
+        action: Literal[
+            "Enable",
+            "Disable",
+            "Edit"
+        ]
     ) -> None:
         """
         automod_help
         examples:
-        -automod invites 1
-        -automod mentions 10
-        -automod files 0
-        -automod links off
-        """
-        amount = warns_or_threshold
-        if warns_or_threshold == None and disable == None:
-            e = Embed(
-                ctx,
-                title="Automoderator Configuration",
-                description=self.locale.t(
-                    ctx.guild, 
-                    "automod_description", 
-                    prefix="/", 
-                    cmd_invites=f"</invites add:{self.bot.internal_cmd_store.get('invites')}>",
-                    cmd_links=f"</links add:{self.bot.internal_cmd_store.get('links')}>",
-                )
-            )
-            e.add_field(
-                name="**❯ __Command usage__**",
-                value=self.locale.t(ctx.guild, "automod_commands", prefix="/")
-            )
-            return await ctx.response.send_message(embed=e)
-        
+        -automod Invites Enable
+        -automod Mentions Disable
+        -aautomod Links Edit
+        """  
         rule = rule.lower()
-        if not rule in AUTOMOD_RULES:
-            e = Embed(
-                ctx,
-                description=self.locale.t(ctx.guild, "invalid_automod_rule", _emote="NO", given=rule)
-            )
-            e.add_field(
-                name="**❯ __Valid rules__**",
-                value="> mentions \n> links \n> invites \n> files \n> zalgo \n> lines \n> emotes \n> repeat \n> caps"
-            )
-            return await ctx.response.send_message(embed=e)
-        
         current = self.db.configs.get(ctx.guild.id, "automod")
         data = Object(AUTOMOD_RULES[rule])
 
-        if disable != None:
+        if action.lower() == "disable":
             self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type), 1))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type), 1))
         else:
-            amount = round(int(amount))
-            if rule in ["mentions", "lines", "emotes", "repeat"]:
-                if amount < 5: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
-                if amount > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
-            else:
-                if amount < 0: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns_esp", _emote="NO"), 0))
-                if amount > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+            async def callback(
+                i: discord.Interaction
+            ) -> None:
+                amount, = self.extract_args(i, "amount")
 
-            current.update({
-                rule: {
-                    data.int_field_name: int(amount)
-                }
-            })
-            self.db.configs.update(ctx.guild.id, "automod", current)
+                try:
+                    amount = int(amount)
+                except Exception as ex:
+                    return self.error(ctx, ex)
 
-            text = ""
-            if not rule in ["mentions", "lines", "emotes", "repeat"] and amount == 0:
-                if rule == "links":
-                    text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
-                elif rule == "invites":
-                    text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                if rule in ["mentions", "lines", "emotes", "repeat"]:
+                    if amount < 5: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
+                    if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
                 else:
-                    text = self.locale.t(ctx.guild, f"{data.i18n_key}_zero", _emote="YES")
-            else:
-                if rule == "links":
-                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
-                elif rule == "invites":
-                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", cmd=f"</invites add:{self.bot.internal_cmd_store.get('invites')}>")
-                else:
-                    text = self.locale.t(ctx.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
+                    if amount < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
+                    if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
 
-            await ctx.response.send_message(text)
+                current.update({
+                    rule: {
+                        data.int_field_name: int(amount)
+                    }
+                })
+                self.db.configs.update(i.guild.id, "automod", current)
+
+                text = ""
+                if not rule in ["mentions", "lines", "emotes", "repeat"] and amount == 0:
+                    if rule == "links":
+                        text = self.locale.t(i.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                    elif rule == "invites":
+                        text = self.locale.t(i.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                    else:
+                        text = self.locale.t(i.guild, f"{data.i18n_key}_zero", _emote="YES")
+                else:
+                    if rule == "links":
+                        text = self.locale.t(i.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
+                    elif rule == "invites":
+                        text = self.locale.t(i.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s", cmd=f"</invites add:{self.bot.internal_cmd_store.get('invites')}>")
+                    else:
+                        text = self.locale.t(i.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
+                await i.response.send_message(embed=E(text, 1))
+        
+            modal = AutomodRuleModal(
+                self.bot, 
+                f"Configure {rule.title()} Rule", 
+                "threshold" if rule in ["mentions", "lines", "emotes", "repeat"] else "warns",
+                current.get(rule, {}).get(data.int_field_name, None),
+                callback
+            )
+            await ctx.response.send_modal(modal)
 
 
     allowed_invites = discord.app_commands.Group(

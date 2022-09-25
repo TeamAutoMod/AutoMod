@@ -286,3 +286,26 @@ class CommandCreateModal(TextModalBase):
         required=True,
         max_length=75
     )
+
+
+class AutomodRuleModal(TextModalBase):
+    def __init__(
+        self, 
+        bot, 
+        title: str,
+        _type: str,
+        default: str,
+        callback: Callable
+    ) -> None:
+        super().__init__(bot, title, callback)
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="amount",
+                label=_type.capitalize(),
+                style=discord.TextStyle.short,
+                default=default,
+                placeholder="Warns upon violation (0 to just delete the message)" if _type == "warns" else "Max allowed amount for this rule",
+                required=True,
+                max_length=2
+            )
+        )
