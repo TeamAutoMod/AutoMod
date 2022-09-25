@@ -6,6 +6,7 @@ from discord import AuditLogAction
 
 import asyncio
 import topgg
+import discordspy
 from toolbox import S as Object
 from typing import Callable, List, Union, Tuple, TypeVar
 import logging; log = logging.getLogger()
@@ -199,6 +200,12 @@ class InternalPlugin(AutoModPluginBlueprint):
                 bot.config.top_gg_token,
                 autopost=True,
                 post_shard_count=True
+            )
+        if bot.config.discords_token != "":
+            self.discords = discordspy.Client(
+                self.bot,
+                bot.config.discords_token,
+                post=discordspy.Post.auto()
             )
 
 
@@ -1147,8 +1154,16 @@ class InternalPlugin(AutoModPluginBlueprint):
     @AutoModPluginBlueprint.listener()
     async def on_autopost_success(
         self
-    ):
-        log.info(f"📬 Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)})")
+    ) -> None:
+        log.info(f"📬 Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)}) to Top.GG")
+
+
+    @AutoModPluginBlueprint.listener()
+    async def on_discords_server_post(
+        self,
+        status: int
+    ) -> None:
+        if status == 200: log.info(f"📬 Posted server count ({self.discords.servers()}) to discords.com")
 
 
     @AutoModPluginBlueprint.listener()
