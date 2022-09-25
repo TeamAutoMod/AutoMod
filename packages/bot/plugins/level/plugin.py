@@ -22,7 +22,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         self, 
         bot: ShardedBotInstance,
     ) -> None:
-        super().__init__(bot, requires_premium=True)
+        super().__init__(bot, requires_premium=False) # set this to true for now (testing etc)
         self._processing = []
 
 
@@ -157,7 +157,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         if msg.guild == None: return
         if msg.author == None: return
         if msg.author.bot == True: return
-        if not self.has_premium(msg.guild): return
+        # if not self.has_premium(msg.guild): return
         if not msg.guild.chunked:
             await self.bot.chunk_guild(msg.guild)
         
@@ -255,7 +255,7 @@ class LevelPlugin(AutoModPluginBlueprint):
             "DM"
         ] = None
     ) -> None:
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         if enabled == None and notifications == None:
@@ -291,7 +291,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -reset @paul#0009
         """
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
@@ -319,7 +319,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -rewards
         """
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
@@ -365,7 +365,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         -reward add 5 @Level5
         -reward add 10 @Advanced
         """
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
@@ -401,7 +401,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -reward remove 5
         """
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
@@ -432,7 +432,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -reward mode Stack
         """
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
@@ -460,7 +460,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         -rank
         -rank paul#0009
         """
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
         if user == None: user = ctx.user
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
@@ -511,7 +511,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -leaderboard
         """
-        if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
 
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
