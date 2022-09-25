@@ -171,9 +171,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
             m = self.guilds[0].me
             if m != None:
                 if m.avatar != None:
-                    self.avatar_as_bytes = await m.avatar.read()
-                else:
-                    self.avatar_as_bytes = None
+                    try:
+                        self.avatar_as_bytes = await m.avatar.read()
+                    except discord.HTTPException:
+                        self.avatar_as_bytes = None
                     
             self.ready = True
 
