@@ -9,15 +9,15 @@
     <script src="https://kit.fontawesome.com/75daf56dea.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
         window.onload = async () => {
-        const r = await fetch("/stats");
-        const data = await r.json();
-        document.getElementById("guilds").innerHTML = `${data.guilds.toLocaleString()} servers`;
-        document.getElementById("users").innerHTML = `${data.users.toLocaleString()} users`;
-    };
+            const r = await fetch("/stats");
+            const data = await r.json();
+            document.getElementById("guilds").innerHTML = `${data.guilds.toLocaleString()} servers`;
+            document.getElementById("users").innerHTML = `${data.users.toLocaleString()} users`;
+        };
 
-    const invite_redirect = () => {
-        return window.location.href = "/invite";
-    };
+        const invite_redirect = () => {
+            return window.location.href = "/invite";
+        };
     </script>
 </head>
 <body>
