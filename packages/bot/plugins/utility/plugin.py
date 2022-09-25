@@ -73,7 +73,7 @@ def get_help_embed(
     )
     e.add_field(
         name="**❯ __Description__**", 
-        value=f">  {help_message}"
+        value=f"> {help_message}"
     )
     
     if not isinstance(cmd, discord.app_commands.Group):
@@ -538,7 +538,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     if len(cmds) > 0:
                         viewable_plugins.append(p.qualified_name)
                         e.add_field(
-                            name=f"**❯ __{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}__**",
+                            name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} **__{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}__**",
                             value="> {}".format(
                                 "\n> ".join(cmds) if mobile_view.lower() != "true" else " ``|`` ".join(cmds)
                             ),
@@ -701,7 +701,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         )
         e.add_field(
             name="**❯ __User Information__**",
-            value=">  **ID:** {} \n>  **Profile:** {} \n>  **Badges:** {} \n>  **Created at:** <t:{}>"\
+            value="> **ID:** {} \n> **Profile:** {} \n> **Badges:** {} \n> **Created at:** <t:{}>"\
             .format(
                 user.id,
                 user.mention,
@@ -714,7 +714,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
             e.add_field(
                 name="**❯ __Server Information__**",
-                value=">  **Nickname:** {} \n>  **Joined at:** <t:{}> \n>  **Join position:** {} \n>  **Status:** {} \n>  **Roles:** {}"\
+                value="> **Nickname:** {} \n> **Joined at:** <t:{}> \n> **Join position:** {} \n> **Status:** {} \n> **Roles:** {}"\
                 .format(
                     member.nick,
                     round(member.joined_at.timestamp()),
@@ -747,7 +747,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
         e.add_field(
             name="**❯ __Infractions__**",
-            value=">  **Total Cases:** {} \n>  **Last 3 Cases:** {}"\
+            value="> **Total Cases:** {} \n> **Last 3 Cases:** {}"\
             .format(
                 len(cases),
                 ", ".join(last_3)
@@ -782,7 +782,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "**❯ __Information__**",
-                "value": ">  **ID:** {} \n>  **Owner:** {} \n>  **Created:** <t:{}> \n>  **Invite Splash:** {} \n>  **Banner:** {}"\
+                "value": "> **ID:** {} \n> **Owner:** {} \n> **Created:** <t:{}> \n> **Invite Splash:** {} \n> **Banner:** {}"\
                 .format(
                     g.id, 
                     g.owner, 
@@ -795,7 +795,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             e.blank_field(True),
             {
                 "name": "**❯ __Channels__**",
-                "value": ">  **Categories:** {} \n>  **Text:** {} \n>  **Voice:** {} \n>  **Threads:** {}"\
+                "value": "> **Categories:** {} \n> **Text:** {} \n> **Voice:** {} \n> **Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
                     len(g.text_channels), 
@@ -806,7 +806,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             {
                 "name": "**❯ __Members__**",
-                "value": ">  **Total:** {} \n>  **Users:** {} \n>  **Bots:** {}"\
+                "value": "> **Total:** {} \n> **Users:** {} \n> **Bots:** {}"\
                 .format(
                     len(g.members), 
                     len([x for x in g.members if not x.bot]), 
@@ -817,7 +817,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             e.blank_field(True),
             {
                 "name": "**❯ __Other__**",
-                "value": ">  **Roles:** {} \n>  **Emojis:** {} \n>  **Features:** {}"\
+                "value": "> **Roles:** {} \n> **Emojis:** {} \n> **Features:** {}"\
                 .format(
                     len(g.roles), 
                     len(g.emojis), 
@@ -864,7 +864,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     if channel != None:
                         e.add_field(
                             name=f"**❯ __#{channel.name}__**",
-                            value=">  **Time:** {} \n>  **Mode:** {} \n>  **Moderator:** {}"\
+                            value="> **Time:** {} \n> **Mode:** {} \n> **Moderator:** {}"\
                                 .format(
                                     s["pretty"],
                                     s["mode"],

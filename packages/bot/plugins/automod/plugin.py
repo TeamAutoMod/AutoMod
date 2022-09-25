@@ -861,7 +861,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_field(
                 name="**❯ __Valid rules__**",
-                value=">  mentions \n>  links \n>  invites \n>  files \n>  zalgo \n>  lines \n>  emotes \n>  repeat \n>  caps"
+                value="> mentions \n> links \n> invites \n> files \n> zalgo \n> lines \n> emotes \n> repeat \n> caps"
             )
             return await ctx.response.send_message(embed=e)
         
@@ -1167,17 +1167,17 @@ class AutomodPlugin(AutoModPluginBlueprint):
             e.add_fields([
                 {
                     "name": "**❯ __Status__**",
-                    "value": ">  Enabled" if config["enabled"] == True else ">  Disabled",
+                    "value": "> Enabled" if config["enabled"] == True else "> Disabled",
                     "inline": False
                 },
                 {
                     "name": "**❯ __Threshold__**",
-                    "value": f">  **{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else ">  N/A",
+                    "value": f"> **{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "> N/A",
                     "inline": False
                 },
                 {
                     "name": "**❯ __Action__**",
-                    "value": f">  **{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else ">  N/A",
+                    "value": f"> **{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "> N/A",
                     "inline": False
                 }
             ])
@@ -1263,11 +1263,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
             e.add_fields([
                 {
                     "name": "**❯ __Roles__**",
-                    "value": ">  {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else ">  None"
+                    "value": "> {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                 },
                 {
                     "name": "**❯ __Channels__**",
-                    "value": ">  {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else ">  None"
+                    "value": "> {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                 }
             ])
 
@@ -1325,7 +1325,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "**❯ __Added roles__**",
-                "value": ">  {}".format(", ".join(
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
                     ]
@@ -1333,11 +1333,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in added if isinstance(_, discord.Role)
                     ]
-                ) > 0 else ">  None"
+                ) > 0 else "> None"
             },
             {
                 "name": "**❯ __Added channels__**",
-                "value": ">  {}".format(", ".join(
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.TextChannel)
                     ]
@@ -1345,11 +1345,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in added if isinstance(_, discord.TextChannel)
                     ]
-                ) > 0 else ">  None"
+                ) > 0 else "> None"
             },
             {
                 "name": "**❯ __Ignored__**",
-                "value": ">  {}".format(", ".join(
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -1357,7 +1357,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in ignored if _ != None
                     ]
-                ) > 0 else ">  None"
+                ) > 0 else "> None"
             },
         ])
 
@@ -1413,7 +1413,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "**❯ __Removed roles__**",
-                "value": ">  {}".format(", ".join(
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.Role)
                     ]
@@ -1421,11 +1421,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in removed if isinstance(_, discord.Role)
                     ]
-                ) > 0 else ">  None"
+                ) > 0 else "> None"
             },
             {
                 "name": "**❯ __Removed channels__**",
-                "value": ">  {}".format(", ".join(
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in removed if isinstance(x, discord.TextChannel)
                     ]
@@ -1433,11 +1433,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in removed if isinstance(_, discord.TextChannel)
                     ]
-                ) > 0 else ">  None"
+                ) > 0 else "> None"
             },
             {
                 "name": "**❯ __Ignored__**",
-                "value": ">  {}".format(", ".join(
+                "value": "> {}".format(", ".join(
                     [
                         x.mention for x in ignored
                     ]
@@ -1445,7 +1445,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in ignored if _ != None
                     ]
-                ) > 0 else ">  None"
+                ) > 0 else "> None"
             },
         ])
 

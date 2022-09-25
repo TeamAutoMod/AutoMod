@@ -87,11 +87,11 @@ class LevelPlugin(AutoModPluginBlueprint):
     ) -> str:
         i = (i+1)
         if i == 1:
-            return "🏆"
+            return "**❯** 🏆"
         elif i == 2:
-            return "🥈"
+            return "**❯** 🥈"
         elif i == 3:
-            return "🥉"
+            return "**❯** 🥉"
         else:
             if len(str(i)) >= 2 and int(str(i)[-2]) == 1:
                 end = "th"
@@ -104,7 +104,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                     end = "rd"
                 else:
                     end = "th"
-            return f"{i}{end}"
+            return f"**❯ __{i}{end}__**"
 
 
     def has_premium(
@@ -536,8 +536,8 @@ class LevelPlugin(AutoModPluginBlueprint):
 
             if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 5)])
             e.add_field(
-                name=f"❯ {self.lb_pos(i)}",
-                value="> **• User:** {} \n> **• Level:** {} \n> **• Total XP:** {}"\
+                name=f"{self.lb_pos(i)}",
+                value="> **User:** {} \n> **Level:** {} \n> **Total XP:** {}"\
                     .format(
                         user,
                         entry.lvl,

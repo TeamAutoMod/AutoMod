@@ -206,7 +206,7 @@ class CasesPlugin(AutoModPluginBlueprint):
             log_url = self.get_log_for_case(ctx, case)
 
             out.append(
-                ">  {} ``{}`` {} {}"\
+                "> {} ``{}`` {} {}"\
                 .format(
                     timestamp,
                     case["type"].upper(),
@@ -311,19 +311,19 @@ class CasesPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "**❯ __User__**",
-                "value": f">  <@{data.user_id}> ({data.user_id})"
+                "value": f"> <@{data.user_id}> ({data.user_id})"
             },
             {
                 "name": "❯ __Moderator__**",
-                "value": f">  <@{data.mod_id}> ({data.mod_id})"
+                "value": f"> <@{data.mod_id}> ({data.mod_id})"
             },
             {
                 "name": "**❯ __Timestamp__**",
-                "value": f">  <t:{round(data.timestamp.timestamp())}>"
+                "value": f"> <t:{round(data.timestamp.timestamp())}>"
             },
             {
                 "name": "**❯ __Reason__**",
-                "value": f">  {data.reason}"
+                "value": f"> {data.reason}"
             },
         ])
 
@@ -331,14 +331,14 @@ class CasesPlugin(AutoModPluginBlueprint):
             if int(data.warns_added) > 0: 
                 e.add_field(
                     name=f"**❯ __Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}__**",
-                    value=f">  {data.warns_added}"
+                    value=f"> {data.warns_added}"
                 )
         
         if hasattr(data, "until"):
             if data.until != "": 
                 e.add_field(
                     name="**❯ __Until__**",
-                    value=f">  {data.until}"
+                    value=f"> {data.until}"
                 )
         await ctx.response.send_message(embed=e)
 
@@ -379,7 +379,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": "**❯ __Status__**",
-                "value": ">  **Banned:** {}{} \n>  **Muted:** {} \n>  **Muted until:** {}"\
+                "value": "> **Banned:** {}{} \n> **Muted:** {} \n> **Muted until:** {}"\
                 .format(
                     yes if ban_data != None else no,
                     f" (``{ban_data.reason}``)" if ban_data != None else "",
@@ -389,7 +389,7 @@ class CasesPlugin(AutoModPluginBlueprint):
             },
             {
                 "name": "**❯ __Warnings__**",
-                "value": ">  **Warns:** {}"\
+                "value": "> **Warns:** {}"\
                 .format(
                     0 if warns == None else warns
                 )

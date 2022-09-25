@@ -440,7 +440,7 @@ class TagsPlugin(AutoModPluginBlueprint):
                 e.add_fields([
                     {
                         "name": "**❯ __Name__**",
-                        "value": f">  {name}"
+                        "value": f"> {name}"
                     },
                     {
                         "name": "**❯ __Content__**",
@@ -452,22 +452,22 @@ class TagsPlugin(AutoModPluginBlueprint):
                     },
                     {
                         "name": "**❯ __Ephemeral__**",
-                        "value": f">  {'yes' if data.ephemeral == True else 'no'}"
+                        "value": f"> {'yes' if data.ephemeral == True else 'no'}"
                     },
                     {
                         "name": "**❯ __Uses__**",
-                        "value": f">  {data.uses}"
+                        "value": f"> {data.uses}"
                     },
                     
                     {
                         "name": "**❯ __Creator__**",
-                        "value": f">  <@{data.author}> (<t:{round(data.created.timestamp())}>)"
+                        "value": f"> <@{data.author}> (<t:{round(data.created.timestamp())}>)"
                     }
                 ])
                 if data.edited != None:
                     e.add_field(
                         name="**❯ __Editor__**",
-                        value=f">  <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
+                        value=f"> <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
                     )
 
                 await ctx.response.send_message(embed=e)

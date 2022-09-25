@@ -54,7 +54,7 @@ class FilterPlugin(AutoModPluginBlueprint):
 
             e.add_field(
                 name=f"**❯ __{name}__**",
-                value=f">  **Action:** {action} \n>  **Channels:** {channels} \n>  **Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
+                value=f"> **Action:** {action} \n> **Channels:** {channels} \n> **Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
                 inline=True
             )
             if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
@@ -226,7 +226,7 @@ class FilterPlugin(AutoModPluginBlueprint):
 
             e.add_field(
                 name=f"**❯ __{name}__**",
-                value=f">  **Action:** {action} \n>  **Channels:** {channels} \n>  **Pattern:** \n```\n{data['regex']}\n```",
+                value=f"> **Action:** {action} \n> **Channels:** {channels} \n> **Pattern:** \n```\n{data['regex']}\n```",
                 inline=True
             )
             if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
