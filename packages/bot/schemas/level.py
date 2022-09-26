@@ -17,6 +17,6 @@ def UserLevel(
     return {
         "id": f"{guild.id}-{user.id}",
         "guild": f"{guild.id}",
-        "xp": randint(15, 25),
+        "xp": randint(5, 15),
         "lvl": 1
     }

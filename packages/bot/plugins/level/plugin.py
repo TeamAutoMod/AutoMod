@@ -118,7 +118,10 @@ class LevelPlugin(AutoModPluginBlueprint):
         self,
         lvl: int
     ):
-        return int(5 / 6 * (lvl + 1) * (2 * (lvl + 1) * (lvl + 1) + 27 * (lvl + 1) + 91))
+        if lvl > 1:
+            return int((50 * ((lvl - 1) ** 2)) + (50 * (lvl - 1)))
+        else:
+            return 50
 
 
     async def add_reward(
@@ -194,11 +197,7 @@ class LevelPlugin(AutoModPluginBlueprint):
             msg.author
         )
 
-        if data.lvl < 4:
-            xp = randint(15, 25)
-        else:
-            xp = randint(15, 25)
-
+        xp = randint(5, 15)
         for_nxt_lvl = self.get_xp_for_next_lvl(data.lvl)
         new_xp = (data.xp + xp)
 
@@ -492,7 +491,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         )
 
         for_nxt_lvl = self.get_xp_for_next_lvl(data.lvl)
-        for_last_lvl = self.get_xp_for_next_lvl(data.lvl - 1)
+        for_last_lvl = self.get_xp_for_next_lvl(data.lvl - 1) if data.lvl > 2 else 0
 
         e = Embed(
             ctx,
@@ -501,7 +500,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                 .format(
                     data.lvl,
                     ((for_nxt_lvl - for_last_lvl) - (for_nxt_lvl - data.xp)) if data.lvl > 1 else data.xp,
-                    (for_nxt_lvl - for_last_lvl) if data.lvl > 1 else for_nxt_lvl,
+                    (for_nxt_lvl - for_last_lvl) if data.lvl > 1 else 50,
                     data.xp
                 )
         )
