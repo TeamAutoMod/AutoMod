@@ -5,15 +5,14 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
-    background-color: #1b1b1b;
 }
 
 body {
     width: 100vw;
     min-height: 100vh;
-    color: #5964f2;
     align-items: center;
     position: relative;
+    background: #052445;
 }
 
 .container {
@@ -54,12 +53,12 @@ body {
 .links li a {
     text-decoration: none;
     padding: 10px;
-    color: #ffffff;
+    color: #ffff;
     font-size: 21px;
 }
 
 .links li a:hover {
-    color: #2674c7
+    color: rgb(204, 201, 201);
 }
 
 .stats {
@@ -73,27 +72,31 @@ body {
 }
 
 .stats li #invite {
-    border: 1px solid #2674c7;
-    background-color: #2674c7;
+    border: 1px solid #3e98f7;
+    background-color: #3e98f7;
+    border-radius: 25px;
 }
 
 .stats li #invite:hover {
     cursor: pointer;
     transform: scale(1.01);
     transition: 0.05s ease-in-out;
+    background-color: #1baafd;
+    border: 1px solid #1baafd;
 }
 
 .stats li h1 {
     text-decoration: none;
-    padding: 10px;
+    padding: 12px;
     color: #ffffff;
     font-size: 15px;
     border: 1px solid #ffffff;
-    border-radius: 3px;
+    border-radius: 25px;
     text-align: center;
-    vertical-align: middle; 
+    vertical-align: middle;
+    background-color: #052445; 
 }
 
 .stats li h1:hover {
-    border: 1px solid #2674c7;
+    background-color: #0a2d53;
 }

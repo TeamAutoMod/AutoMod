@@ -5,7 +5,6 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
-    background-color: #1b1b1b;
 }
 
 body {
@@ -14,6 +13,7 @@ body {
     color: #fff;
     align-items: center;
     position: relative;
+    background: #052445;
 }
 
 .container {
@@ -54,9 +54,9 @@ body {
 
 a {
     text-decoration: none;
-    color: #5964f2;
+    color: #3e98f7;
 }
 
 a:hover {
-    color: #7289da
+    color: #1384fc
 }
