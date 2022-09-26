@@ -44,11 +44,11 @@ app.get("/terms", (_, res) => {
 
 
 app.post("/pstats", (req, res) => {
-    if (req.body?.token != process.env.BOT_TOKEN) {
+    if (req.body.token != process.env.BOT_TOKEN) {
         res.status(401).send("Unauthorized");
     } else {
-        stats.guilds = req.body?.guilds;
-        stats.users = req.body?.users;
+        stats.guilds = req.body.guilds;
+        stats.users = req.body.users;
         res.send(req.body)
     }
 })
