@@ -82,7 +82,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         async def callback(
             i: discord.Interaction
         ) -> None:
-            name, warns, words, channels = self.extract_args(i, "name", "warns", "words", "channels")
+            name, warns, words, channels = self.bot.extract_args(i, "name", "warns", "words", "channels")
 
             name = name.lower()
             filters = self.db.configs.get(i.guild.id, "filters")
@@ -165,7 +165,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         async def callback(
             i: discord.Interaction
         ) -> None:
-            warns, words, channels = self.extract_args(i, "warns", "words", "channels")
+            warns, words, channels = self.bot.extract_args(i, "warns", "words", "channels")
 
             try: warns = int(warns)
             except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
@@ -253,7 +253,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         async def callback(
             i: discord.Interaction
         ) -> None:
-            name, warns, regex, channels = self.extract_args(i, "name", "warns", "pattern", "channels")
+            name, warns, regex, channels = self.bot.extract_args(i, "name", "warns", "pattern", "channels")
             regexes = self.db.configs.get(i.guild.id, "regexes")
             name = name.lower()
 
@@ -337,7 +337,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         async def callback(
             i: discord.Interaction
         ) -> None:
-            warns, regex, channels = self.extract_args(i, "warns", "pattern", "channels")
+            warns, regex, channels = self.bot.extract_args(i, "warns", "pattern", "channels")
 
             try: warns = int(warns)
             except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))

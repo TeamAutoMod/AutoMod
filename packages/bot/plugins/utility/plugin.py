@@ -25,10 +25,10 @@ ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "⚙️ Configuration",
     "AutomodPlugin": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
-    "FilterPlugin": "⛔️ Filters/Regexes",
+    "FilterPlugin": "🚫 Filters & Regexes",
     "UtilityPlugin": "🔧 Utility",
     "LevelPlugin": "🏆 Level System",
-    "TagsPlugin": "📝 Custom Commands",
+    "TagsPlugin": "💬 Responders",
     "CasesPlugin": "📦 Cases",
     "ReactionRolesPlugin": "🎭 Reaction Roles"
 }
@@ -939,7 +939,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="charinfo", 
-        description="💬 Shows some information about the characters in the given string"
+        description="💱 Shows some information about the characters in the given string"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def charinfo(

@@ -544,7 +544,7 @@ class LevelPlugin(AutoModPluginBlueprint):
             if user == None: 
                 user = "Unknown#0000"
             else:
-                user = f"{user.name}#{user.discriminator}"
+                user = f"<@{entry.id.split('-')[-1]}>"
 
             if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 5)])
             e.add_field(

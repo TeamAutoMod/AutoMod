@@ -131,7 +131,9 @@ dmypy.json
 
 /packages/bot/config.json
 /packages/bot/plugins/_processor/config.py
-/packages/bot/plugins/reply
+/packages/bot/plugins/keywords
+/packages/bot/plugins/timers
+/packages/bot/plugins/alerts
 /packages/frontend
 
 # Docker

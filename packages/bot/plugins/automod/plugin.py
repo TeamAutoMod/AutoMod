@@ -450,18 +450,6 @@ class AutomodPlugin(AutoModPluginBlueprint):
         return roles, channels
 
 
-    def extract_args(
-        self,
-        i: discord.Interaction,
-        *args
-    ) -> tuple:
-        return (
-            i.data["components"][i.data["components"].index(
-                [_ for _ in i.data["components"] if _["components"][0]["custom_id"] == x][0]
-            )]["components"][0].get("value", None) for x in args
-        )
-
-
     async def delete_msg(
         self, 
         rule: str, 
@@ -845,7 +833,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             async def callback(
                 i: discord.Interaction
             ) -> None:
-                amount, = self.extract_args(i, "amount")
+                amount, = self.bot.extract_args(i, "amount")
 
                 try:
                     amount = int(amount)

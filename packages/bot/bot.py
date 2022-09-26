@@ -472,6 +472,18 @@ class ShardedBotInstance(commands.AutoShardedBot):
         except Exception:
             pass
 
+    
+    def extract_args(
+        self,
+        i: discord.Interaction,
+        *args
+    ) -> tuple:
+        return (
+            i.data["components"][i.data["components"].index(
+                [_ for _ in i.data["components"] if _["components"][0]["custom_id"] == x][0]
+            )]["components"][0].get("value", None) for x in args
+        )
+
 
     def run(
         self

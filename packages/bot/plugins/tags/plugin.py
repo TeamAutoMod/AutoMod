@@ -205,18 +205,6 @@ class TagsPlugin(AutoModPluginBlueprint):
         return True
 
 
-    def extract_args(
-        self,
-        i: discord.Interaction,
-        *args
-    ) -> tuple:
-        return (
-            i.data["components"][i.data["components"].index(
-                [_ for _ in i.data["components"] if _["components"][0]["custom_id"] == x][0]
-            )]["components"][0].get("value", None) for x in args
-        )
-
-
     async def get_tags(
         self,
         guild: discord.Guild,
@@ -283,7 +271,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         async def callback(
             i: discord.Interaction
         ) -> None:
-            name, content, description = self.extract_args(i, "name", "content", "description")
+            name, content, description = self.bot.extract_args(i, "name", "content", "description")
 
             if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "name_too_long", _emote="NO"), 0))
             if len(content) > 1900: return await i.response.send_message(embed=E(self.locale.t(i.guild, "content_too_long", _emote="NO"), 0))
