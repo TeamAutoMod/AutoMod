@@ -60,7 +60,7 @@ class FilterCreateModal(TextModalBase):
         style=discord.TextStyle.long,
         placeholder="Warns given upon violation. Use 0 to just have the message deleted",
         required=True,
-        max_length=2
+        max_length=3
     )
 
 
@@ -110,7 +110,7 @@ class RegexCreateModal(TextModalBase):
         style=discord.TextStyle.long,
         placeholder="Warns given upon violation. Use 0 to just have the message deleted",
         required=True,
-        max_length=2
+        max_length=3
     )
 
 
@@ -162,7 +162,7 @@ class FilterEditModal(TextModalBase):
                 style=discord.TextStyle.long,
                 placeholder="Warns given upon violation. Use 0 to just have the message deleted",
                 required=True,
-                max_length=2
+                max_length=3
             )
         )
 

@@ -5,6 +5,7 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 import itertools
+from typing import List
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, E
@@ -19,6 +20,19 @@ class FilterPlugin(AutoModPluginBlueprint):
         bot: ShardedBotInstance
     ) -> None:
         super().__init__(bot)
+
+    
+    def parse_channels(
+        self,
+        channels: str
+    ) -> List[
+        int
+    ]:
+        final = []
+        for s in channels.split(", "):
+            if s.isdigit():
+                final.append(int(s))
+        return final
 
 
     _filter = discord.app_commands.Group(
