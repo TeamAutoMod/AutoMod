@@ -501,7 +501,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                 .format(
                     data.lvl,
                     ((for_nxt_lvl - for_last_lvl) - (for_nxt_lvl - data.xp)) if data.lvl > 1 else data.xp,
-                    (for_nxt_lvl - for_last_lvl) if data.lvl > 1 else 50,
+                    (for_nxt_lvl - for_last_lvl) if data.lvl > 1 else for_nxt_lvl,
                     data.xp
                 )
         )
