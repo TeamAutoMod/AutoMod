@@ -133,3 +133,6 @@ dmypy.json
 /packages/bot/plugins/_processor/config.py
 /packages/bot/plugins/reply
 /packages/frontend
+
+# Docker
+*.override.yaml

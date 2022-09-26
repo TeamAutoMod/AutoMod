@@ -1,0 +1,35 @@
+---
+version: '3.8'
+
+services:
+  web:
+    image: node:18
+    restart: unless-stopped
+    volumes:
+      - .:/web
+    working_dir: /web/packages/web
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        npm install
+        npm run start
+    ports:
+      - "3000:3000"
+
+  bot:
+    image: python:3.10.7
+    restart: unless-stopped
+    volumes:
+      - env:/usr/local/lib/python3.10/site-packages
+      - .:/bot
+    network_mode: "host"
+    working_dir: /bot
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        python launch.py
+
+volumes:
+  env:
