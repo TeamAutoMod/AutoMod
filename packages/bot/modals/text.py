@@ -328,6 +328,7 @@ class DefaultReasonModal(TextModalBase):
                 default=default,
                 placeholder="The default reason when none is given in commands",
                 required=True,
-                max_length=250
+                max_length=250,
+                min_length=4
             )
         )

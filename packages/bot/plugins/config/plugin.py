@@ -47,18 +47,6 @@ LOG_OPTIONS = {
 }
 
 
-PRETTY_PLUGIN_NAMES = {
-    "AutomodPlugin": "Automoderator",
-    "ModerationPlugin": "Moderation",
-    "UtilityPlugin": "Utility",
-    "CasesPlugin": "Cases",
-    "TagsPlugin": "Custom Commands",
-    "ReactionRolesPlugin": "Reaction Roles",
-    "AutoReplyPlugin": "Auto Reply",
-    "FilterPlugin": "Filters/Regexes"
-}
-
-
 class ConfigPlugin(AutoModPluginBlueprint):
     """Plugin for all configuration commands"""
     def __init__(
@@ -779,8 +767,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
 
     @discord.app_commands.command(
-        name="reason",
-        description=""
+        name="default_reason",
+        description="✍️ Configure a default reason used when none is used in commands"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def default_reason(
@@ -790,7 +778,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         reason_help
         examples:
-        -reason
+        -default_reason
         """
         async def callback(
             i: discord.Interaction
