@@ -309,3 +309,25 @@ class AutomodRuleModal(TextModalBase):
                 max_length=2
             )
         )
+
+
+class DefaultReasonModal(TextModalBase):
+    def __init__(
+        self, 
+        bot, 
+        title: str,
+        default: str,
+        callback: Callable
+    ) -> None:
+        super().__init__(bot, title, callback)
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="reason",
+                label=title,
+                style=discord.TextStyle.long,
+                default=default,
+                placeholder="The default reason when none is given in commands",
+                required=True,
+                max_length=250
+            )
+        )

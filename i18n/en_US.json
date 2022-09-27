@@ -346,5 +346,7 @@
     "premium_bot_enabled": "{emote} Premium isn't enabled for this server",
     "enabled_premium": "{emote} Enabled lifetime premium",
     "disabled_premium": "{emote} Disabled premium",
-    "no_premiums": "{emote} No premium server found"
+    "no_premiums": "{emote} No premium server found",
+
+    "set_reason": "{emote} Set new default reason"
 }

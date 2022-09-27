@@ -230,7 +230,7 @@ class ModerationPlugin(WarnPlugin):
         -ban @paul#0009 test
         -ban 543056846601191508
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
@@ -260,7 +260,7 @@ class ModerationPlugin(WarnPlugin):
         examples:
         -unban 543056846601191508
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
     
         try:
             await ctx.guild.fetch_ban(user)
@@ -311,7 +311,7 @@ class ModerationPlugin(WarnPlugin):
         -softban @paul#0009 test
         -softban 543056846601191508
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
@@ -342,7 +342,7 @@ class ModerationPlugin(WarnPlugin):
         -hackban @paul#0009 test
         -hackban 543056846601191508
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
@@ -375,7 +375,7 @@ class ModerationPlugin(WarnPlugin):
         -tempban @paul#0009 5d test
         -tempban 543056846601191508 7d
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
 
         try:
             length = await Duration().convert(ctx, length)
@@ -524,7 +524,7 @@ class ModerationPlugin(WarnPlugin):
         -kick @paul#0009 test
         -kick 543056846601191508
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
@@ -555,7 +555,7 @@ class ModerationPlugin(WarnPlugin):
         -mute @paul#0009 10m test
         -mute 543056846601191508 1h
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
 
         try:
             length = await Duration().convert(ctx, length)

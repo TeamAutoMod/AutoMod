@@ -10,7 +10,8 @@ import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
-from ...views import SetupView, ConfigView
+from ...views import SetupView
+from ...modals import DefaultReasonModal
 
 
 
@@ -775,6 +776,38 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
                 self.db.configs.update(ctx.guild.id, "join_role", f"{role.id}")
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "join_role_on", _emote="YES", role=role.name), 1))
+
+
+    @discord.app_commands.command(
+        name="reason",
+        description=""
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def default_reason(
+        self,
+        ctx: discord.Interaction
+    ) -> None:
+        """
+        reason_help
+        examples:
+        -reason
+        """
+        async def callback(
+            i: discord.Interaction
+        ) -> None:
+            n_reason, = self.bot.extract_args(i, "reason")
+
+            self.db.configs.update(i.guild.id, "default_reason", n_reason)
+            await i.response.send_message(embed=E(self.locale.t(i.guild, "set_reason", _emote="YES"), 1))
+
+        c_reason = self.db.configs.get(ctx.guild.id, "default_reason")
+        modal = DefaultReasonModal(
+            self.bot,
+            "Default Reason",
+            c_reason,
+            callback
+        )
+        await ctx.response.send_modal(modal)
 
 
     @discord.app_commands.command(

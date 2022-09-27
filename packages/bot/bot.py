@@ -485,6 +485,13 @@ class ShardedBotInstance(commands.AutoShardedBot):
         )
 
 
+    def get_default_reason(
+        self,
+        guild: discord.Guild
+    ) -> str:
+        return self.db.configs.get(guild.id, "default_reason")
+
+
     def run(
         self
     ) -> None:

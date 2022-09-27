@@ -72,6 +72,7 @@ def GuildConfig(
         },
         "disabled_commands": [],
 
+        "default_reason": "No reason",
         "lang": "en_US",
         "guild_name": f"{guild.name}",
 }

@@ -75,7 +75,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         -warn @paul#0009 3 Warned you three times
         -warn 543056846601191508 
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None: warns = 1
@@ -112,7 +112,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         -unwarn @paul#0009 3 Removed three of your warns
         -unwarn 543056846601191508 
         """
-        if reason == None: reason = self.locale.t(ctx.guild, "no_reason")
+        if reason == None: reason = self.bot.get_default_reason(ctx.guild)
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None: warns = 1
