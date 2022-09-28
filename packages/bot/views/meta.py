@@ -10,11 +10,12 @@ from .buttons import DeleteBtn, ActionedBtn
 class DeleteView(View):
     def __init__(
         self, 
+        user_id: int,
         *args, 
         **kwargs
     ) -> None:
         super().__init__(*args, **kwargs)
-        self.add_item(DeleteBtn())
+        self.add_item(DeleteBtn(lambda x: x == user_id))
 
 
 class ChoiceView(View):
@@ -45,8 +46,9 @@ class ActionedView(View):
     def __init__(
         self, 
         bot,
+        user_id: int,
         *args, 
         **kwargs
     ) -> None:
         super().__init__(*args, **kwargs)
-        self.add_item(ActionedBtn(bot))
+        self.add_item(ActionedBtn(bot, lambda x: x == user_id))

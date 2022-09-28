@@ -806,7 +806,7 @@ class ModerationPlugin(WarnPlugin):
                 "inline": False
             }
         ])
-        e.add_view(ActionedView(self.bot))
+        e.add_view(ActionedView(self.bot, i.user.id))
         await self.log_processor.execute(msg.guild, "report", **{
             "_embed": e
         })

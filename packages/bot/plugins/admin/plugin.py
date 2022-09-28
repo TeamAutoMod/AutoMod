@@ -81,7 +81,7 @@ class AdminPlugin(AutoModPluginBlueprint):
         examples:
         -eval 1+1
         """
-        view = DeleteView()
+        view = DeleteView(ctx.author.id)
         try:
             t1 = time.perf_counter()
             fn_name = "_eval_expr"

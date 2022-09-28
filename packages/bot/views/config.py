@@ -13,7 +13,7 @@ from ..types import Embed
 class ConfigView(View):
     def __init__(
         self, 
-        bot, 
+        bot,
         *args, 
         **kwargs
     ) -> None:

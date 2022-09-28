@@ -268,7 +268,7 @@ class CasesPlugin(AutoModPluginBlueprint):
                     "page_number": 0
                 }
             })
-            view = MultiPageView(0, len(pages), user.id)
+            view = MultiPageView(ctx.user.id, 0, len(pages), user.id)
             await ctx.followup.send(content=None, embed=pages[0], view=view, ephemeral=True if ctx.data.get("type") == 2 else False)
         else:
             await ctx.followup.send(content=None, embed=pages[0], ephemeral=True if ctx.data.get("type") == 2 else False)

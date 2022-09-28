@@ -53,6 +53,7 @@ async def get_cases_from_cache(
 class MultiPageView(View):
     def __init__(
         self, 
+        user_id: int,
         page: int, 
         pages: int,
         id_salt: int
@@ -60,19 +61,20 @@ class MultiPageView(View):
         super().__init__(timeout=None)
         self.id = ""
         self._id_salt = id_salt
+        self.user_id = user_id
 
         self.add_item(CallbackBtn(
-            f"{page+1}/{pages}", self.none, "cases:none", disabled=True, style=discord.ButtonStyle.grey
+            f"{page+1}/{pages}", self.none, lambda x: x == user_id, "cases:none", disabled=True, style=discord.ButtonStyle.grey
         ))
 
         if page > 0:
             self.add_item(CallbackBtn(
-                "◀", self.prev_page, "cases:prev_page", disabled=page==0
+                "◀", self.prev_page, lambda x: x == user_id, "cases:prev_page", disabled=page==0
             ))
 
         if (page+1) < pages:
             self.add_item(CallbackBtn(
-                "▶", self.next_page, "cases:next_page", disabled=page>=pages-1
+                "▶", self.next_page, lambda x: x == user_id, "cases:next_page", disabled=page>=pages-1
             ))
 
     
@@ -84,7 +86,7 @@ class MultiPageView(View):
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(
             embed=embed,
-            view=MultiPageView(page=page_count, pages=pages, id_salt=self._id_salt)
+            view=MultiPageView(user_id=self.user_id, page=page_count, pages=pages, id_salt=self._id_salt)
         )
 
 
@@ -96,7 +98,7 @@ class MultiPageView(View):
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(
             embed=embed,
-            view=MultiPageView(page=page_count, pages=pages, id_salt=self._id_salt)
+            view=MultiPageView(user_id=self.user_id, page=page_count, pages=pages, id_salt=self._id_salt)
         )
 
 
@@ -124,7 +126,7 @@ class MultiPageView(View):
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(
             embed=embed,
-            view=MultiPageView(page=page_count, pages=pages, id_salt=self._id_salt)
+            view=MultiPageView(user_id=self.user_id, page=page_count, pages=pages, id_salt=self._id_salt)
         )
 
 
@@ -136,5 +138,5 @@ class MultiPageView(View):
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(
             embed=embed,
-            view=MultiPageView(page=page_count, pages=pages, id_salt=self._id_salt)
+            view=MultiPageView(user_id=self.user_id, page=page_count, pages=pages, id_salt=self._id_salt)
         )
