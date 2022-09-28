@@ -294,6 +294,37 @@ class UtilityPlugin(AutoModPluginBlueprint):
         return embeds
 
 
+    def get_color(
+        self,
+        inp: str
+    ) -> Union[
+        int,
+        None
+    ]:
+        base = {
+            "red": "FF0000",
+            "blue": "0000FF",
+            "green": "00FF00",
+            "yellow": "FFFF00",
+            "orange": "FFA500",
+            "purple": "800080",
+            "pink": "FFC0CB",
+            "cyan": "00FFFF",
+            "black": "000000",
+            "white": "FFFFFF"
+        }
+        if inp.lower() in base:
+            return int(base[inp.lower()], 16)
+        else:
+            if inp.startswith("#"): inp = inp[1:]
+            try:
+                out = int(inp, 16)
+            except Exception:
+                out = None
+            finally:
+                return out
+
+
     @AutoModPluginBlueprint.listener()
     async def on_interaction(
         self,
@@ -966,7 +997,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     @discord.app_commands.describe(
         channel="What channel to send the message/embed in",
         message="The message sent together with the embed",
-        color="Color code for the embed in (e.g. 7289da or FF0000)",
+        color="Color for the embed (e.g. 7289da, FF0000 or Blue)",
         title="Title for the embed",
         description="Description for the embed",
         use_fields="Whether you want to add fields to the embed (will open a modal)",
@@ -1012,11 +1043,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if message == None and (title == None and description == None):
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0))
         
-        try:
-            color = int(color, 16)
-        except Exception:
-            color = None
-
+        if color != None: color = self.get_color(color)
         try:
             e = Embed(
                 ctx,
@@ -1031,7 +1058,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
             if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)
         except Exception as ex:
-            return self.error(i, ex)
+            return self.error(ctx, ex)
         else:
             if use_fields.lower() != "false" and (title != None or description != None):
                 async def callback(
