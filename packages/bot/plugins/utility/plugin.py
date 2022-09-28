@@ -308,7 +308,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             "yellow": "FFFF00",
             "orange": "FFA500",
             "purple": "800080",
-            "pink": "FFC0CB",
+            "pink": "FF66CC",
             "cyan": "00FFFF",
             "black": "000000",
             "white": "FFFFFF"
@@ -1074,7 +1074,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     except Exception as ex:
                         await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
                     else:
-                        await i.response.send_message(embed=E(self.locale.t(i.guild, "send_msg", _emote="YES", channel=channel), 1)) 
+                        await i.response.send_message(embed=E(self.locale.t(i.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True) 
 
                 modal = EmbedBuilderModal(
                     self.bot,
@@ -1088,7 +1088,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 except Exception as ex:
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
                 else:
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1))            
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True)            
 
 
 async def setup(
