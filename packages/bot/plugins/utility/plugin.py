@@ -18,6 +18,7 @@ from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
 from ...views import AboutView, HelpView
 from ...schemas import Slowmode
+from ...modals import EmbedBuilderModal
 
 
 
@@ -941,7 +942,6 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="charinfo", 
         description="💱 Shows some information about the characters in the given string"
     )
-    @discord.app_commands.default_permissions(manage_messages=True)
     async def charinfo(
         self, 
         ctx: discord.Interaction, 
@@ -957,6 +957,111 @@ class UtilityPlugin(AutoModPluginBlueprint):
         """
         msg = "```\n{}\n```".format("\n".join(map(to_string, chars)))
         await ctx.response.send_message(msg[:2000])
+
+
+    @discord.app_commands.command(
+        name="create_message",
+        description="✍️ Creates a message the bot will send"
+    )
+    @discord.app_commands.describe(
+        channel="What channel to send the message/embed in",
+        message="The message sent together with the embed",
+        color="Color code for the embed in (e.g. 0x7289da)",
+        title="Title for the embed",
+        description="Description for the embed",
+        use_fields="Whether you want to add fields to the embed (will open a modal)",
+        timestamp="Whether or not to show the timestamp in the footer",
+        image_url="URL to an image shown in the embed",
+        thumbnail_url="URL to an image used as the thumbnail in the right corner",
+        author_name="Text of the author field",
+        author_icon_url="URL to an image used as the small icon next to the author text",
+        author_url="Create a hyperlink for the author text",
+        footer_text="Text for the embed footer",
+        footer_icon_url="URL to an image used as the small icon next to the footer text"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def create_message(
+        self,
+        ctx: discord.Interaction,
+        channel: discord.TextChannel,
+        message: str = None,
+        color: str = None,
+        title: str = None,
+        description: str = None,
+        use_fields: Literal[
+            "True",
+            "False"
+        ] = "False",
+        timestamp: Literal[
+            "True",
+            "False"
+        ] = "False",
+        image_url: str = None,
+        thumbnail_url: str = None,
+        author_name: str = None,
+        author_icon_url: str = None,
+        author_url: str = None,
+        footer_text: str = None,
+        footer_icon_url: str = None
+    ) -> None:
+        """
+        create_message_help
+        examples:
+        -create_message #test
+        """
+        if message == None and (title == None and description == None):
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0))
+        
+        try:
+            color = int(color, 16)
+        except Exception:
+            color = None
+
+        try:
+            e = Embed(
+                ctx,
+                color=color,
+                title=title,
+                description=description,
+                timestamp=datetime.datetime.now() if timestamp.lower() == "true" else None
+            )
+
+            if image_url != None: e.set_image(image_url)
+            if thumbnail_url != None: e.set_thumbnail(thumbnail_url)
+            if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
+            if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)
+        except Exception as ex:
+            return self.error(i, ex)
+        else:
+            if use_fields.lower() != "false" and (title != None or description != None):
+                async def callback(
+                    i: discord.Interaction
+                ) -> None:
+                    fn1, fv1, fn2, fv2 = self.bot.extract_args(i, "fn1", "fv1", "fn2", "fv2")
+
+                    e.add_field(name=fn1, value=fv1)
+                    if fn2 != None and fv2 != None: e.add_field(name=fn2, value=fv2)
+
+                    try:
+                        await channel.send(content=message, embed=e)
+                    except Exception as ex:
+                        await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
+                    else:
+                        await i.response.send_message(embed=E(self.locale.t(i.guild, "send_msg", _emote="YES", channel=channel), 1)) 
+
+                modal = EmbedBuilderModal(
+                    self.bot,
+                    "Embed Field Builder",
+                    callback=callback
+                )
+                await ctx.response.send_modal(modal)
+            else:
+                try:
+                    await channel.send(content=message, embed=e if (title != None or description != None) else None)
+                except Exception as ex:
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+                else:
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1))            
 
 
 async def setup(

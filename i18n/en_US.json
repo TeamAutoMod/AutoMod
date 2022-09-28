@@ -9,6 +9,7 @@
     "now_slash": "{emote} AutoMod has switched to slash commands! You can now use this command with ``/{cmd}``. To get a list of all commands, use ``/help``",
     "must_be_int": "{emote} The **{arg}** argument must be a valid number",
     "need_premium": "{emote} To use this feature, you need premium. For more information, check out https://patreon.com/xez",
+    "num_req": "{emote} ``{arg}`` needs to be a valid number",
 
     "eval_help": "Evaluates a block of code",
     "debug_help": "Shows useful developer information",
@@ -348,5 +349,7 @@
     "disabled_premium": "{emote} Disabled premium",
     "no_premiums": "{emote} No premium server found",
 
-    "set_reason": "{emote} Set new default reason"
+    "set_reason": "{emote} Set new default reason",
+    "send_msg": "{emote} Send message to {channel.mention}",
+    "embed_req": "{emote} Either a message or an embed title/description is required"
 }

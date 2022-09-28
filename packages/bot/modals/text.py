@@ -332,3 +332,53 @@ class DefaultReasonModal(TextModalBase):
                 min_length=4
             )
         )
+
+
+class EmbedBuilderModal(TextModalBase):
+    def __init__(
+        self, 
+        bot, 
+        title: str, 
+        callback: Callable
+    ) -> None:
+        super().__init__(bot, title, callback)
+    
+
+    field_n_1 = discord.ui.TextInput(
+        custom_id="fn1",
+        label="Field Name [1]",
+        style=discord.TextStyle.long,
+        placeholder="Name of the field",
+        required=True,
+        max_length=150
+    )
+
+
+    field_v_1 = discord.ui.TextInput(
+        custom_id="fv1",
+        label="Field Value [1]",
+        style=discord.TextStyle.long,
+        placeholder="Value of the field",
+        required=True,
+        max_length=1024
+    )
+
+
+    field_n_2 = discord.ui.TextInput(
+        custom_id="fn2",
+        label="Field Name [2]",
+        style=discord.TextStyle.short,
+        placeholder="Name of the field",
+        required=False,
+        max_length=150
+    )
+
+
+    field_v_2 = discord.ui.TextInput(
+        custom_id="fv2",
+        label="Field Value [2]",
+        style=discord.TextStyle.long,
+        placeholder="Value of the field",
+        required=False,
+        max_length=1024
+    )

@@ -768,7 +768,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="default_reason",
-        description="✍️ Configure a default reason used when none is used in commands"
+        description="📑 Configure a default reason used when none is used in commands"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def default_reason(

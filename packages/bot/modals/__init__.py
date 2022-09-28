@@ -1,2 +1,2 @@
-from .text import FilterCreateModal, RegexCreateModal, FilterEditModal, RegexEditModal, CommandCreateModal, AutomodRuleModal, DefaultReasonModal
+from .text import FilterCreateModal, RegexCreateModal, FilterEditModal, RegexEditModal, CommandCreateModal, AutomodRuleModal, DefaultReasonModal, EmbedBuilderModal
 from .select import ReactionRoleModal

@@ -838,7 +838,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 try:
                     amount = int(amount)
                 except Exception as ex:
-                    return self.error(ctx, ex)
+                    return i.response.send_message(embed=E(self.locale.t(i.guild, "num_req", _emote="NO", arg="amount"), 0))
 
                 if rule in ["mentions", "lines", "emotes", "repeat"]:
                     if amount < 5: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
