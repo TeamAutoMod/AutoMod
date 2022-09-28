@@ -170,6 +170,17 @@ class ModerationPlugin(WarnPlugin):
         if not self.can_act(ctx.guild, ctx.user, user):
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_act", _emote="NO"), 0))
 
+        self.dm_processor.execute(
+            ctx,
+            "ban",
+            user,
+            **{
+                "guild_name": ctx.guild.name,
+                "reason": reason,
+                "_emote": "HAMMER"
+            }
+        )
+
         try:
             func = getattr(ctx.guild, ACTIONS[action]["action"])
             await func(user=user, reason=reason)
@@ -177,16 +188,6 @@ class ModerationPlugin(WarnPlugin):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
         else:
             self.bot.ignore_for_events.append(user.id)
-            self.dm_processor.execute(
-                ctx,
-                "ban",
-                user,
-                **{
-                    "guild_name": ctx.guild.name,
-                    "reason": reason,
-                    "_emote": "HAMMER"
-                }
-            )
             if action == "softban":
                 try:
                     await ctx.guild.unban(user=user)
@@ -460,6 +461,18 @@ class ModerationPlugin(WarnPlugin):
                     await ctx.response.send_message(embed=e, view=ConfirmView(self.bot, ctx.guild.id, on_confirm=confirm, on_cancel=cancel, on_timeout=timeout,check=check))
                 else:
                     if seconds >= 1:
+                        self.dm_processor.execute(
+                            ctx,
+                            "tempban",
+                            user,
+                            **{
+                                "guild_name": ctx.guild.name,
+                                "until": f"<t:{round(until.timestamp())}>",
+                                "reason": reason,
+                                "_emote": "HAMMER"
+                            }
+                        )
+                        
                         try:
                             await ctx.guild.ban(
                                 user=user, 
@@ -472,17 +485,6 @@ class ModerationPlugin(WarnPlugin):
                             until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
                             self.db.tbans.insert(Tempban(ctx.guild.id, user.id, until))
 
-                            self.dm_processor.execute(
-                                ctx,
-                                "tempban",
-                                user,
-                                **{
-                                    "guild_name": ctx.guild.name,
-                                    "until": f"<t:{round(until.timestamp())}>",
-                                    "reason": reason,
-                                    "_emote": "HAMMER"
-                                }
-                            )
 
                             await self.log_processor.execute(ctx.guild, "tempban", **{
                                 "mod": ctx.user, 

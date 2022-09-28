@@ -200,22 +200,23 @@ class ActionProcessor(object):
         if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already banning user"
 
         self.bot.auto_processing.append(f"{msg.guild.id}-{user.id}")
+        self.dm_processor.execute(
+            msg,
+            "ban",
+            user,
+            **{
+                "guild_name": msg.guild.name,
+                "reason": log_kwargs.get("raw_reason"),
+                "_emote": "HAMMER"
+            }
+        )
+
         try:
             await msg.guild.ban(user=user)
         except Exception as ex:
             return ex
         else:
             self.bot.ignore_for_events.append(user.id)
-            self.dm_processor.execute(
-                msg,
-                "ban",
-                user,
-                **{
-                    "guild_name": msg.guild.name,
-                    "reason": log_kwargs.get("raw_reason"),
-                    "_emote": "HAMMER"
-                }
-            )
 
             log_kwargs.update(
                 {
@@ -250,22 +251,23 @@ class ActionProcessor(object):
         if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already kicking user"
 
         self.bot.auto_processing.append(f"{msg.guild.id}-{user.id}")
+        self.dm_processor.execute(
+            msg,
+            "kick",
+            user,
+            **{
+                "guild_name": msg.guild.name,
+                "reason": log_kwargs.get("raw_reason"),
+                "_emote": "SHOE"
+            }
+        )
+
         try:
             await msg.guild.kick(user=user)
         except Exception as ex:
             return ex
         else:
             self.bot.ignore_for_events.append(user.id)
-            self.dm_processor.execute(
-                msg,
-                "kick",
-                user,
-                **{
-                    "guild_name": msg.guild.name,
-                    "reason": log_kwargs.get("raw_reason"),
-                    "_emote": "SHOE"
-                }
-            )
 
             log_kwargs.update(
                 {
@@ -371,15 +373,8 @@ class ActionProcessor(object):
 
         if self.bot.db.tbans.exists(f"{msg.guild.id}-{user.id}"): return
         self.bot.db.tbans.insert(Tempban(msg.guild.id, user.id, until))
-
-        try:
-            await msg.guild.ban(user=user)
-        except Exception as ex:
-            return ex
-        else:
-            self.bot.ignore_for_events.append(user.id)
-
-            self.dm_processor.execute(
+        
+        self.dm_processor.execute(
                 msg,
                 "tempban",
                 user,
@@ -390,6 +385,13 @@ class ActionProcessor(object):
                     "_emote": "HAMMER"
                 }
             )
+
+        try:
+            await msg.guild.ban(user=user)
+        except Exception as ex:
+            return ex
+        else:
+            self.bot.ignore_for_events.append(user.id)
 
             log_kwargs.pop("length")
             log_kwargs.update(
