@@ -966,7 +966,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     @discord.app_commands.describe(
         channel="What channel to send the message/embed in",
         message="The message sent together with the embed",
-        color="Color code for the embed in (e.g. 0x7289da)",
+        color="Color code for the embed in (e.g. 7289da or FF0000)",
         title="Title for the embed",
         description="Description for the embed",
         use_fields="Whether you want to add fields to the embed (will open a modal)",
