@@ -1053,7 +1053,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 timestamp=datetime.datetime.now() if timestamp.lower() == "true" else None
             )
 
-            if image_url != None: e.set_image(image_url)
+            if image_url != None: e.set_image(url=image_url)
             if thumbnail_url != None: e.set_thumbnail(thumbnail_url)
             if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
             if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)

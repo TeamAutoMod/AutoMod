@@ -278,6 +278,9 @@ class CasesPlugin(AutoModPluginBlueprint):
         name="case",
         description="📂 Shows info about a specific case"
     )
+    @discord.app_commands.describe(
+        case="The number of the case you want to to view"
+    )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def case(
         self, 

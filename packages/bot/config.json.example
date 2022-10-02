@@ -14,7 +14,7 @@
     "web_url_base": "http://localhost:3000",
     "premium_role": 123456789,
 
-    "mongo_url": "",
+    "mongo_url": "mongodb+srv://<user>:<password>@XXX.XXX.mongodb.net/main?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",
     "db_name": "main",
     "cache_options": [
         "configs",
