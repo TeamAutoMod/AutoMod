@@ -15,4 +15,5 @@ if __name__ == "__main__":
     if not inspect.iscoroutinefunction(commands.Bot.load_extension):
         print("You're discord.py version is too old. Install a newer one using the following command: \npip install git+https://github.com/Rapptz/discord.py"); sys.exit(1)
     else:
-        ShardedBotInstance()
+        __instance = ShardedBotInstance()
+        __instance.run()

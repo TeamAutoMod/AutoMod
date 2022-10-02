@@ -130,8 +130,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self._log_queue = LogQueue(self)
         self.message_cache = MessageCache()
 
-        self.run()
-
 
     async def on_ready(
         self
@@ -222,7 +220,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.event_stats.update({
             ev: self.event_stats.get(ev, 0) + 1
         })
-        super().dispatch(event_name, *args, **kwargs)
+        try:
+            super().dispatch(event_name, *args, **kwargs)
+        except Exception as ex:
+            log.error(f"❗️ Error in {event_name} - {ex}")
             
     
     async def load_plugins(
@@ -497,5 +498,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     ) -> None:
         try:
             super().run(self.config.token, reconnect=True)
+        except Exception as ex:
+            log.error(f"❗️ Error in run() function - {ex}")
         finally:
             pass
