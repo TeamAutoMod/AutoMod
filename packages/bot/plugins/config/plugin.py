@@ -317,7 +317,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="punishment",
-        description="💣 Adds or removes a punishment for a specific amount of warns"
+        description="💣 Adds/removes an automatic punishment (use /setup for more info)"
     )
     @discord.app_commands.describe(
         warns="The amount of warns the punishment is being configured for",
@@ -423,10 +423,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="log",
-        description="🚸 Configure logging"
+        description="🚸 Configure logging (use /setup for more info)"
     )
     @discord.app_commands.describe(
-        option="The logging option you want to configure",
+        option="Logging option you want to configure (use /setup for more info)",
         channel="Channel where actions from the log option will be sent to",
         disable="Wheter you want to disable the logging option"
     )

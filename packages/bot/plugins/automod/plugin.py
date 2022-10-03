@@ -788,11 +788,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="automod", 
-        description="🔰 Configure the automoderator"
+        description="🔰 Configure the automoderator (use /setup for more info)"
     )
     @discord.app_commands.describe(
-        rule="The rule you want to configure", 
-        action="Whether to enable or disable this rule",
+        rule="The rule you want to configure (use /setup for more info)", 
+        action="Whether to enable, disable or edit this rule",
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def automod(
