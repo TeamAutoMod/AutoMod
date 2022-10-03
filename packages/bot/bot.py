@@ -419,7 +419,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 )
 
 
-
     async def post_stats(
         self
     ) -> None:

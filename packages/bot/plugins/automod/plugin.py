@@ -20,16 +20,24 @@ from ...modals import AutomodRuleModal
 INVITE_RE = re.compile(
     r"(?:https?://)?(?:www\.)?(?:discord(?:\.| |\[?\(?\"?'?dot'?\"?\)?\]?)?(?:gg|io|me|li)|discord(?:app)?\.com/invite)/+((?:(?!https?)[\w\d-])+)"
 )
+
+
 LINK_RE = re.compile(
     r"((?:https?://)[a-z0-9]+(?:[-._][a-z0-9]+)*\.[a-z]{2,5}(?::[0-9]{1,5})?(?:/[^ \n<>]*)?)", 
     re.IGNORECASE
 )
+
+
 MENTION_RE = re.compile(
     r"<@[!&]?\\d+>"
 )
+
+
 EMOTE_RE = re.compile(
     r"<(a?):([^: \n]+):([0-9]{15,20})>"
 )
+
+
 ALLOWED_FILE_FORMATS = [
     # plain text/markdown
     "txt",
@@ -53,6 +61,8 @@ ALLOWED_FILE_FORMATS = [
     "wav",
     "m4a"
 ]
+
+
 ZALGO = [
     u'\u030d',
     u'\u030e',
@@ -167,6 +177,8 @@ ZALGO = [
     u'\u035a',
     u'\u0323',
 ]
+
+
 ZALGO_RE = re.compile(
     u"|".join(ZALGO)
 )
@@ -288,6 +300,13 @@ BYPASS_TO_SECONDS = {
     "6 Moths": 16070400,
     "1 Year": 32140800
 }
+
+
+ILLEGAL_CHARS = [
+    "­", # soft hyphen
+    "​", # zero width space
+    "\\"
+]
 
 
 CHANNEL_OR_ROLE_T = TypeVar("CHANNEL_OR_ROLE_T", discord.Role, discord.TextChannel)
@@ -450,6 +469,15 @@ class AutomodPlugin(AutoModPluginBlueprint):
         return roles, channels
 
 
+    def sanitize_content(
+        self,
+        content: str
+    ) -> None:
+        for c in ILLEGAL_CHARS:
+            content = content.replace(c, "")
+        return content
+        
+
     async def delete_msg(
         self, 
         rule: str, 
@@ -537,7 +565,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         self, 
         msg: discord.Message
     ) -> None:
-        content = msg.content.replace("\\", "")
+        content = self.sanitize_content(msg.content)
 
         config = Object(self.db.configs.get_doc(msg.guild.id))
         rules = config.automod
