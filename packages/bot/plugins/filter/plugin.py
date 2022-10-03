@@ -6,6 +6,7 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 import itertools
 from typing import List
+import re
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, E
