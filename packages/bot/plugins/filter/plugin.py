@@ -35,6 +35,18 @@ class FilterPlugin(AutoModPluginBlueprint):
         return final
 
 
+    def validate_regex(
+        self, 
+        regex: str
+    ) -> bool:
+        try:
+            re.compile(regex)
+        except re.error:
+            return False
+        else:
+            return True
+
+
     _filter = discord.app_commands.Group(
         name="filter",
         description="🔀 Configure word filters",
