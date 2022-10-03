@@ -249,7 +249,7 @@
     "alr_cleaned": "{emote} Looks like these messages have already been deleted",
 
     "lvl_up_channel": "{emote} {mention}, congratulations on reaching **Level {lvl}**!",
-    "lvl_up_dm": "{emote} {mention}, congratulations on reaching **Level {lvl}** in {guild}!",
+    "lvl_up_dm": "{emote} {mention}, congratulations on reaching **Level {lvl}** in {server}!",
     "not_ranked": "{emote} User is not ranked yet",
     "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using ``{prefix}lvlsys``",
     "no_one_ranked": "{emote} No users are currently ranked",

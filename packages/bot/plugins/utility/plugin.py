@@ -112,12 +112,17 @@ def get_command_help(
             cmds = {x.name.lower(): x for x in p.__cog_app_commands__ if x.name not in plugin.bot.config.disabled_commands}
             root = "".join(query.lower().split(" ")[0])
             if root in cmds:
+                cmd = cmds.get(root)
                 if len(query.split(" ")) < 2:
-                    return get_help_embed(plugin, ctx, cmds.get(root))
+                    return get_help_embed(plugin, ctx, cmd)
                 else:
                     sub = " ".join(query.lower().split(" ")[1:])
-                    for final in cmds.get(root).commands:
-                        if final.name == sub:
+                    if hasattr(cmd, "commands"):
+                        for final in cmd.commands:
+                            if final.name == sub:
+                                return get_help_embed(plugin, ctx, final)
+                    else:
+                        if cmd.name == sub:
                             return get_help_embed(plugin, ctx, final)
                     return None
     return None

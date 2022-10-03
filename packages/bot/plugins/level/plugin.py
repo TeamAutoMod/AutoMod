@@ -230,7 +230,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                         _emote="PARTY", 
                         mention=msg.author.mention,
                         lvl=(data.lvl + 1),
-                        guild=msg.guild.name
+                        server=msg.guild.name
                     ), 2))
                 except discord.Forbidden:
                     pass
