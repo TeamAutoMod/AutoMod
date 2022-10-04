@@ -306,12 +306,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": "**❯ __Configuration Guide__**",
-                "value": f"> </log:{c.get('log')}> - Configure logging \n> </automod:{c.get('automod')}> - Configure the automoderator \n> </filter add:{c.get('filter')}> - Configure word filters \n> </regex add:{c.get('regex')}> - Configure regex filters \n> </bypass_log add:{c.get('bypass_log')}> - Configure immune automod roles & channels \n> </bypass_log add:{c.get('bypass_log')}> -  Configre ignored roles & channels for logs",
+                "value": f"> </log:{c.get('log')}> - Configure logging \n> </automod:{c.get('automod')}> - Configure the automoderator \n> </filter add:{c.get('filter')}> - Configure word filters \n> </regex add:{c.get('regex')}> - Configure regex filters \n> </bypass_automod add:{c.get('bypass_automod')}> - Configure immune automod roles & channels \n> </bypass_log add:{c.get('bypass_log')}> -  Configure ignored roles & channels for logs",
                 "inline": False
             }
         ])
 
-        # view = ConfigView(self.bot)
         await ctx.response.send_message(embed=e)
 
 
