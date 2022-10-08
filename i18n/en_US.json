@@ -126,7 +126,7 @@
     "alr_banned": "{emote} User is already banned",
     "not_banned": "{emote} This user isn't banned",
     "not_muted": "{emote} This user isn't muted",
-    "fail": "{emote} Looks like an error occured ||{exc}||",
+    "fail": "{emote} Looks like an error occured: ||{exc}||",
     "report_mod": "{emote} You can't report this user",
 
     "banned": "{emote} ***Banned {user.name}#{user.discriminator}***",

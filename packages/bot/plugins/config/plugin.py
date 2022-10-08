@@ -320,8 +320,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
     )
     @discord.app_commands.describe(
         warns="The amount of warns the punishment is being configured for",
-        action="The action that should be taken (use 'none' to remove the punishment)",
-        time="10m, 2h, 1d (the 'mute' action requires this, while the 'ban' option can have a duration)"
+        action="The action that should be taken (use 'None' to remove the punishment)",
+        time="10m, 2h, 1d (the 'Mute' action requires this, while the 'Ban' option can have a duration)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def punishment(

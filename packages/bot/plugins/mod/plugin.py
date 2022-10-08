@@ -1,5 +1,6 @@
 # type: ignore
 
+import json
 import discord
 from discord.ext import commands
 
@@ -643,7 +644,14 @@ class ModerationPlugin(WarnPlugin):
                     until = (datetime.datetime.utcnow() + datetime.timedelta(seconds=seconds))
                     exc = self.bot.handle_timeout(True, ctx.guild, user, until.isoformat())
                     if exc != "":
-                        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc), 0))
+                        try:
+                            _temp_exc = json.loads(exc)
+                        except Exception:
+                            pass
+                        else:
+                            if int(_temp_exc["code"]) == 50013: exc = "The bot is missing permissions to mute this user"
+                        finally:
+                            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc), 0))
                     else:
                         self.db.mutes.insert(Mute(ctx.guild.id, user.id, until))
 
@@ -749,7 +757,7 @@ class ModerationPlugin(WarnPlugin):
             if user != None and content != None:
                 func = lambda x: x.author.id == user.id and x.content.lower() == content.lower()
             elif user != None and content == None:
-                func = lambda x: x.author.id
+                func = lambda x: x.author.id == user.id
             else:
                 func = lambda x: x.content.lower() == content.lower()
             
