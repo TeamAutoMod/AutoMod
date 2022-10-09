@@ -18,9 +18,16 @@ async def _shutdown(
     sig: str
 ) -> None:
     log.info(f"💤 Shutting down (triggered by {sig})")
-    try: await bot.close()
-    except Exception: pass
-    
+    try: 
+        await bot.close()
+    except Exception: 
+        pass
+    else:
+        try:
+            bot.run()
+        except Exception as ex:
+            log.info(f"❗️ Restart failed - {ex}")
+        
 
 if __name__ == "__main__":
     if not inspect.iscoroutinefunction(commands.Bot.load_extension):
@@ -44,4 +51,3 @@ if __name__ == "__main__":
                 _shutdown(__instance, "__main__"),
                 asyncio.get_event_loop()
             )
-            
