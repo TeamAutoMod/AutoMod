@@ -1,19 +1,47 @@
 # type: ignore
 
+import asyncio
 import discord
 from discord.ext import commands
 
 import sys
 import inspect
+import signal as sig_lib
 import logging; log = logging.getLogger(__name__)
 
 from packages.bot import ShardedBotInstance
 
 
 
+async def _shutdown(
+    bot: ShardedBotInstance,
+    sig: str
+) -> None:
+    log.info(f"💤 Shutting down (triggered by {sig})")
+    try: await bot.close()
+    except Exception: pass
+    
+
 if __name__ == "__main__":
     if not inspect.iscoroutinefunction(commands.Bot.load_extension):
         print("You're discord.py version is too old. Install a newer one using the following command: \npip install git+https://github.com/Rapptz/discord.py"); sys.exit(1)
     else:
         __instance = ShardedBotInstance()
-        __instance.run()
+
+        try:
+            for sn in ["SIGINT", "SIGTERM"]:
+                asyncio.get_event_loop().add_signal_handler(
+                    getattr(sig_lib, sn), 
+                    lambda: asyncio.ensure_future(_shutdown(__instance, sn))
+                )
+        except Exception: pass
+
+        try:
+            __instance.run()
+        except Exception as ex:
+            log.error(f"❗️ Error in run() function - {ex}")
+            asyncio.run_coroutine_threadsafe(
+                _shutdown(__instance, "__main__"),
+                asyncio.get_event_loop()
+            )
+            

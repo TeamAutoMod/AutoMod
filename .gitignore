@@ -135,6 +135,7 @@ dmypy.json
 /packages/bot/plugins/timers
 /packages/bot/plugins/alerts
 /packages/frontend
+/configs
 
 # Docker
 *.override.yaml

@@ -496,8 +496,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self
     ) -> None:
         try:
-            super().run(self.config.token, reconnect=True)
+            super().run(self.config.token)
         except Exception as ex:
             log.error(f"❗️ Error in run() function - {ex}")
-        finally:
-            pass
