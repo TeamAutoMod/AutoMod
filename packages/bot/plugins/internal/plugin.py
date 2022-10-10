@@ -773,7 +773,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         elif len(b) < len(a):
             action = "emoji_created"
             emoji = [x for x in a if x not in b][0]
-            extra_text = {"showcase": f"<:{emoji.name}:{emoji.id}>"}
+            extra_text = {"showcase": f"<{'a' if emoji.animated else ''}:{emoji.name}:{emoji.id}>"}
         else:
             return
 

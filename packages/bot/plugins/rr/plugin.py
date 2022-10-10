@@ -60,7 +60,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         if payload.emoji.id == None:
             possible_name = payload.emoji.name
         else:
-            possible_name = f"<:{payload.emoji.name}:{payload.emoji.id}>"
+            possible_name = f"<{'a' if payload.emoji.animated else ''}:{payload.emoji.name}:{payload.emoji.id}>"
 
         role_id = [list(x.values())[1] for x in data["pairs"] if list(x.values())[0] == possible_name]
         if len(role_id) < 1: 
@@ -95,7 +95,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         if payload.emoji.id == None:
             possible_name = payload.emoji.name
         else:
-            possible_name = f"<:{payload.emoji.name}:{payload.emoji.id}>"
+            possible_name = f"<{'a' if payload.emoji.animated else ''}:{payload.emoji.name}:{payload.emoji.id}>"
 
         role_id = [list(x.values())[1] for x in data["pairs"] if list(x.values())[0] == possible_name]
         if len(role_id) < 1: 
@@ -186,7 +186,8 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
     @discord.app_commands.describe(
         message_id="The message the reaction should be added to",
         emote="The emote of the reaction (custom or default emotes)",
-        role="The role users should receive when reacting"
+        role="The role users should receive when reacting",
+        always_one="Whether to keep the reaction count at 1"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
     async def add(
@@ -223,24 +224,24 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                 "pairs": []
             }
         if len(data["pairs"]) > 10:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr", _emote="NO"), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr", _emote="NO"), 0), ephemeral=True)
         else:
             if len(message.reactions) > 10:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr_reactions", _emote="NO"), 0))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr_reactions", _emote="NO"), 0)), ephemeral=True
             else:
                 if role.position >= ctx.guild.me.top_role.position:
-                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_too_high", _emote="NO"), 0))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_too_high", _emote="NO"), 0), ephemeral=True)
                 elif f"{emote}" in [list(x.values())[0] for x in data["pairs"]]:
-                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_emoji_alr_bound", _emote="NO"), 0))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_emoji_alr_bound", _emote="NO"), 0), ephemeral=True)
                 elif f"{role.id}" in [list(x.values())[1] for x in data["pairs"]]:
-                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_alr_bound", _emote="NO"), 0))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_alr_bound", _emote="NO"), 0), ephemeral=True)
                 else:
                     try:
                         await message.add_reaction(
                             emote
                         )
                     except Exception as ex:
-                        return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+                        return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
                     else:
                         data["pairs"].append({
                             "emote": f"{emote}",
@@ -251,7 +252,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                         })
                         self.db.configs.update(ctx.guild.id, "reaction_roles", rrs)
 
-                        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_rr", _emote="YES"), 1))
+                        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_rr", _emote="YES"), 1), ephemeral=True)
 
 
     @rr.command(
@@ -276,14 +277,14 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if len(rrs) < 1:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="NO"), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="NO"), 0), ephemeral=True)
         else:
             if not f"{message_id}" in rrs:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_rr_msg", _emote="NO"), 0))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_rr_msg", _emote="NO"), 0), ephemeral=True)
             else:
                 data = rrs[f"{message_id}"]
                 if len([x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"]) < 1:
-                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr_role", _emote="NO"), 0))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr_role", _emote="NO"), 0), ephemeral=True)
                 else:
                     msg = await self.get_message(int(data["channel"]), int(message_id))
                     if msg != None:
@@ -302,7 +303,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                         del rrs[f"{message_id}"]
                     self.db.configs.update(ctx.guild.id, "reaction_roles", rrs)
 
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_rr", _emote="YES"), 1))
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_rr", _emote="YES"), 1), ephemeral=True)
 
 
 async def setup(
