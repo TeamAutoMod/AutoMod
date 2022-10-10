@@ -186,8 +186,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
     @discord.app_commands.describe(
         message_id="The message the reaction should be added to",
         emote="The emote of the reaction (custom or default emotes)",
-        role="The role users should receive when reacting",
-        always_one="Whether to keep the reaction count at 1"
+        role="The role users should receive when reacting"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
     async def add(
@@ -227,7 +226,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr", _emote="NO"), 0), ephemeral=True)
         else:
             if len(message.reactions) > 10:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr_reactions", _emote="NO"), 0)), ephemeral=True
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr_reactions", _emote="NO"), 0), ephemeral=True)
             else:
                 if role.position >= ctx.guild.me.top_role.position:
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_too_high", _emote="NO"), 0), ephemeral=True)
