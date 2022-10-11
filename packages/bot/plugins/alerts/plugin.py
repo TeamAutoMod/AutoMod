@@ -43,8 +43,10 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self._event_sub.unsubscribe_all()
         self._event_sub.start()
 
-        user = Object(list((twitch.get_users(logins=["trymacs"])).values())[0][0])
-        self._event_sub.listen_channel_update(user.id, self.on_live)
+        max = Object(list((twitch.get_users(logins=["trymacs"])).values())[0][0])
+        me = Object(list((twitch.get_users(logins=["xpaul2k"])).values())[0][0])
+        self._event_sub.listen_stream_online(max.id, self.on_live)
+        self._event_sub.listen_channel_update(me.id, self.on_live)
 
 
     async def on_live(
@@ -52,7 +54,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         data: dict
     ) -> None:
         c = self.bot.get_channel(697830154113777695)
-        await c.send("Live!")
+        await c.send("Works!")
         
 
 async def setup(bot) -> None: await bot.register_plugin(AlertsPlugin(bot))
