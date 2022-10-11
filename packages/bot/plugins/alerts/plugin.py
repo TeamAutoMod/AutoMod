@@ -53,6 +53,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self,
         data: dict
     ) -> None:
+        print(data)
         c = self.bot.get_channel(697830154113777695)
         await c.send("Works!")
         
