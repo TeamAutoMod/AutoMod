@@ -591,7 +591,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 if users.update_rate_limit(now):
                     return await self.delete_msg(
                         "antispam",
-                        f"{users.rate}/{round(users.per, 0)}",
+                        f"**``{users.rate}/{round(users.per, 0)}``**",
                         msg, 
                         antispam.warns, 
                         f"Spam detected"
@@ -608,7 +608,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                         if found:
                             return await self.delete_msg(
                                 "filter",
-                                ", ".join([f"``{x}``" for x in found]),
+                                ", ".join([f"**``{x}``**" for x in found]),
                                 msg, 
                                 int(f["warns"]), 
                                 f"Blacklisted spam",
@@ -624,7 +624,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                         if found:
                             return await self.delete_msg(
                                 "regex",
-                                ", ".join([f"``{x}``" for x in found]),
+                                ", ".join([f"**``{x}``**" for x in found]),
                                 msg, 
                                 int(data["warns"]), 
                                 f"Blacklisted spam",
@@ -647,7 +647,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     except discord.NotFound:
                         return await self.delete_msg(
                             "invites",
-                            f"``{inv}``",
+                            f"**``{inv}``**",
                             msg, 
                             rules.invites.warns, 
                             f"Sending Discord invite link or equivalent redirect"
@@ -655,7 +655,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     if invite.guild == None:
                         return await self.delete_msg(
                             "invites",
-                            f"``{inv}``",
+                            f"**``{inv}``**",
                             msg, 
                             rules.invites.warns, 
                             f"Sending Discord invite link or equivalent redirect"
@@ -668,7 +668,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                             ):
                                 return await self.delete_msg(
                                     "invites",
-                                    f"``{inv}``",
+                                    f"**``{inv}``**",
                                     msg, 
                                     rules.invites.warns, 
                                     f"Sending Discord invite link or equivalent redirect"
@@ -682,7 +682,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     if url.hostname in config.black_listed_links:
                         return await self.delete_msg(
                             "links_blacklist", 
-                            f"``{url.hostname}``",
+                            f"**``{url.hostname}``**",
                             msg, 
                             rules.links.warns, 
                             f"Posting a link without permission"
@@ -691,7 +691,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                         if not url.hostname in config.white_listed_links:
                             return await self.delete_msg(
                                 "links", 
-                                f"``{url.hostname}``",
+                                f"**``{url.hostname}``**",
                                 msg, 
                                 rules.links.warns, 
                                 f"Posting a link without permission"
@@ -709,7 +709,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 if len(forbidden) > 0:
                     return await self.delete_msg(
                         "files", 
-                        ", ".join([f"``{x}``" for x in forbidden]), 
+                        ", ".join([f"**``{x}``**" for x in forbidden]), 
                         msg, 
                         rules.files.warns, 
                         f"Posting forbidden attachment type"
@@ -731,7 +731,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             if found > rules.mentions.threshold:
                 return await self.delete_msg(
                     "mentions", 
-                    f"``{found}``", 
+                    f"**``{found}``**", 
                     msg, 
                     0 if (found - rules.mentions.threshold) == 1 else 1, 
                     f"Excessive use of mentions"
@@ -742,7 +742,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             if found > rules.lines.threshold:
                 return await self.delete_msg(
                     "lines", 
-                    f"``{found}``", 
+                    f"**``{found}``**", 
                     msg, 
                     0 if (found - rules.lines.threshold) == 1 else 1, 
                     f"Message too long"
@@ -753,7 +753,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             if found > rules.emotes.threshold:
                 return await self.delete_msg(
                     "emotes", 
-                    f"``{found}``", 
+                    f"**``{found}``**", 
                     msg, 
                     0 if (found - rules.emotes.threshold) == 1 else 1, 
                     f"Excessive use of emotes"
@@ -770,7 +770,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     if v > rules.repeat.threshold:
                         return await self.delete_msg(
                             "repeat", 
-                            f"``{k} ({v}x)``", 
+                            f"**``{k} ({v}x)``**", 
                             msg, 
                             0 if (v - rules.repeat.threshold) == 1 else 1, 
                             f"Duplicated text"
@@ -782,7 +782,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 if perc_caps >= 75:
                     return await self.delete_msg(
                         "caps", 
-                        f"``{perc_caps}% in {len(content)} chars``", 
+                        f"**``{perc_caps}% in {len(content)} chars``**", 
                         msg, 
                         rules.caps.warns, 
                         f"Excessive use of CAPS"
