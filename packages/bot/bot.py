@@ -459,8 +459,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
         guild: discord.Guild
     ) -> None:
         if not guild.chunked:
-            await guild.chunk(cache=True)
-            self._post_stats()
+            try:
+                await guild.chunk(cache=True)
+            except Exception:
+                self._post_stats()
     
 
     async def join_thread(
@@ -495,7 +497,4 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def run(
         self
     ) -> None:
-        try:
-            super().run(self.config.token)
-        except Exception as ex:
-            log.error(f"❗️ Error in run() function - {ex}")
+        super().run(self.config.token)
