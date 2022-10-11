@@ -131,6 +131,12 @@ class LevelPlugin(AutoModPluginBlueprint):
         level: int,
         config: Object
     ) -> None:
+        if not hasattr(config, "rewards"):
+            for k, v in {"rewards": {}, "reward_mode": "stack"}.items():
+                setattr(config, k, v)
+            self.db.configs.update(guild.id, "lvl_sys", config._raw)
+            return
+            
         if len(config.rewards) < 1: return
 
         rewards = OrderedDict(
