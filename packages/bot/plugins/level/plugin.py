@@ -132,9 +132,10 @@ class LevelPlugin(AutoModPluginBlueprint):
         config: Object
     ) -> None:
         if not hasattr(config, "rewards"):
+            cur = self.db.configs.get(guild.id, "lvl_sys")
             for k, v in {"rewards": {}, "reward_mode": "stack"}.items():
-                setattr(config, k, v)
-            self.db.configs.update(guild.id, "lvl_sys", config._raw)
+                cur.update({k: v})
+            self.db.configs.update(guild.id, "lvl_sys", cur)
             return
             
         if len(config.rewards) < 1: return
