@@ -24,6 +24,15 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self.bot.loop.create_task(self._init_twitch_event_sub())
 
 
+    def cog_unload(
+        self
+    ) -> None:
+        try:
+            self._event_sub.stop()
+        except Exception:
+            pass
+
+
     async def _init_twitch_event_sub(
         self
     ) -> None:
