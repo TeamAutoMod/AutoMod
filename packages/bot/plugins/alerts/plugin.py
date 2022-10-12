@@ -52,9 +52,9 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self._event_sub.unsubscribe_all()
         self._event_sub.start()
 
-        max = Object(list((twitch.get_users(logins=["trymacs"])).values())[0][0])
+        #max = Object(list((twitch.get_users(logins=["trymacs"])).values())[0][0])
         me = Object(list((twitch.get_users(logins=["xpaul2k"])).values())[0][0])
-        self._event_sub.listen_stream_online(max.id, self.on_live)
+        #self._event_sub.listen_stream_online(max.id, self.on_live)
         self._event_sub.listen_channel_update(me.id, self.on_live)
 
 
