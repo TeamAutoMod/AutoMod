@@ -8,6 +8,7 @@ import logging; log = logging.getLogger()
 from twitchAPI.twitch import Twitch
 from twitchAPI.eventsub import EventSub
 from toolbox import S as Object
+import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed
