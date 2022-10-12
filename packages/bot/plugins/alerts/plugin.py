@@ -1,5 +1,6 @@
 # type: ignore
 
+import asyncio
 import discord
 from discord.ext import commands
 
@@ -64,7 +65,10 @@ class AlertsPlugin(AutoModPluginBlueprint):
     ) -> None:
         print(data)
         c = self.bot.get_channel(697830154113777695)
-        await c.send("Works!")
+        asyncio.run_coroutine_threadsafe(
+            c.send("Works!"),
+            loop=self.bot.loop
+        )
         
 
 async def setup(bot) -> None: await bot.register_plugin(AlertsPlugin(bot))
