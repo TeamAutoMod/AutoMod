@@ -17,6 +17,7 @@ ACTUAL_PLUGIN_NAMES = {
     "CasesPlugin": "📦 Cases",
     "ReactionRolesPlugin": "🎭 Reaction Roles",
     "LevelPlugin": "🏆 Level System",
+    "AlertsPlugin": "👾 Twitch Alerts"
 }
 
 

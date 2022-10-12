@@ -14,6 +14,9 @@
     "web_url_base": "http://localhost:3000",
     "premium_role": 123456789,
 
+    "twitch_app_id": "",
+    "twitch_secret": "",
+
     "mongo_url": "mongodb+srv://<user>:<password>@XXX.XXX.mongodb.net/main?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",
     "db_name": "main",
     "cache_options": [
@@ -22,7 +25,8 @@
         "warns",
         "cases",
         "slowmodes",
-        "tbans"
+        "tbans",
+        "alerts"
     ],
     
     "langs": [
@@ -40,7 +44,8 @@
         "cases",
         "rr",
         "level",
-        "filter"
+        "filter",
+        "alerts"
     ],
     "disabled_commands": [],
     "error_channel": 123456789,

@@ -10,6 +10,7 @@ import datetime
 import asyncio
 from toolbox import S as Object
 from typing import Union, Dict, List, Tuple
+from pyngrok import ngrok
 import logging; log = logging.getLogger()
 
 from .cache import InternalCache
@@ -86,6 +87,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
     ) -> None:
         with open("packages/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
+            if self.config.twitch_app_id != "" and self.config.twitch_secret != "":
+                self._set_ngrok_url()
         super().__init__(
             command_prefix=prefix_callable, 
             intents=self.intents, 
@@ -129,6 +132,24 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.locale = Translator(self)
         self._log_queue = LogQueue(self)
         self.message_cache = MessageCache()
+
+
+    def _set_ngrok_url(
+        self
+    ) -> None:
+        active: List[ngrok.NgrokTunnel] = ngrok.get_tunnels()
+        if len(active) > 0:
+            for t in active:
+                try:
+                    ngrok.disconnect(t.public_url)
+                except Exception:
+                    pass
+        try:
+            ngrok_tunnel_url = ngrok.connect(8080, bind_tls=True).public_url
+        except Exception as ex:
+            log.warn(f"❗️ Failed to create ngrok tunnel URL - {ex}"); ngrok_tunnel_url = ""
+        finally:
+            setattr(self.config, "twitch_callback_url", ngrok_tunnel_url)
 
 
     async def on_ready(
