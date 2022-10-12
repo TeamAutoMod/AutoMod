@@ -27,12 +27,6 @@ async def _shutdown(
             bot.loop.close()
         except Exception:
             pass
-        else:
-            try:
-                __new_instance = ShardedBotInstance()
-                __new_instance.run()
-            except Exception as ex:
-                log.info(f"❗️ Restart failed - {ex}")
         
 
 if __name__ == "__main__":
