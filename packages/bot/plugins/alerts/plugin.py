@@ -62,7 +62,8 @@ class AlertsPlugin(AutoModPluginBlueprint):
         for streamer in self.db.alerts.find({}):
             try:
                 obj = Object(list((twitch.get_users(logins=[streamer["id"]])).values())[0][0])
-                sub_id = self._event_sub.listen_channel_update(obj.id, self.on_live)
+                sub_id = self._event_sub.listen_stream_online(obj.id, self.on_live)
+                self._event_sub.listen_channel_update(obj.id, self.on_test)
             except Exception as ex:
                 log.warn(f"Failed to add event listener for streamer {streamer['id']} - {ex}"); sub_id = None
             else:
@@ -83,6 +84,13 @@ class AlertsPlugin(AutoModPluginBlueprint):
         None
     ]:
         return self.bot.get_channel(channel_id)
+    
+
+    async def on_test(
+        self,
+        data: dict
+    ) -> None:
+        print(f"Works - {', '.join(list(data.values()))}")
 
 
     async def on_live(
