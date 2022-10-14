@@ -90,7 +90,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self,
         data: dict
     ) -> None:
-        print(f"Works - {', '.join(list(data.values()))}")
+        print(f"Works - {data['event']['broadcaster_user_login']}")
 
 
     async def on_live(
@@ -212,7 +212,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         -alerts add xqc #live
         """
         raw = self._twitch.get_users(logins=[streamer])
-        if len(raw) < 1:
+        if len(raw["data"]) < 1:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_streamer", _emote="NO"), 0))
 
         if len(self.get_alerts(ctx.guild)) > 6:
@@ -262,7 +262,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         -alerts remove xqc
         """
         raw = self._twitch.get_users(logins=[streamer])
-        if len(raw) < 1:
+        if len(raw["data"]) < 1:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_streamer", _emote="NO"), 0))
 
         if len(self.get_alerts(ctx.guild)) < 1:
