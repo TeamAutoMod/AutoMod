@@ -206,7 +206,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return
         else:
             if msg.content.lower() == f"<@{self.user.id}>":
-                return await msg.channel.send(self.locale.t(msg.guild, "server_prefix"))
+                try:
+                    await msg.channel.send(self.locale.t(msg.guild, "server_prefix"))
+                except Exception:
+                    pass
             else:
                 if msg.guild != None:
                     ctx = await self.get_context(msg, cls=Context)

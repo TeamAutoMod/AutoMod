@@ -27,6 +27,8 @@ async def _shutdown(
             bot.loop.close()
         except Exception:
             pass
+        finally:
+            sys.exit(0)
         
 
 if __name__ == "__main__":

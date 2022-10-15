@@ -28,7 +28,8 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self._stream_data = {}
         if hasattr(self.config, "twitch_callback_url"):
             if self.config.twitch_callback_url != "":
-                self.bot.loop.create_task(self._init_twitch_event_sub())
+                for f in [self._init_twitch_event_sub, self._tunnel_demon]:
+                    self.bot.loop.create_task(f())
 
 
     def cog_unload(
@@ -74,6 +75,20 @@ class AlertsPlugin(AutoModPluginBlueprint):
                         "sub_id": sub_id
                     }
                 })
+
+
+    async def _tunnel_demon(
+        self
+    ) -> None:
+        while True:
+            await asyncio.sleep(1800) # every 30 minutes renew ngrok URL
+            try:
+                self._event_sub.stop()
+            except Exception as ex:
+                log.warn(f"Failed to stop Twitch EventSub - {ex}")
+            else:
+                self.bot._set_ngrok_url()
+                await self._init_twitch_event_sub()
 
 
     def get_channel(
