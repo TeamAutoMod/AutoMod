@@ -51,10 +51,13 @@ class AlertsPlugin(AutoModPluginBlueprint):
     async def _init_twitch_event_sub(
         self
     ) -> None:
-        twitch = self._twitch = Twitch(
-            self.config.twitch_app_id, 
-            self.config.twitch_secret
-        ); twitch.authenticate_app([])
+        if self._twitch == None:
+            twitch = self._twitch = Twitch(
+                self.config.twitch_app_id, 
+                self.config.twitch_secret
+            ); twitch.authenticate_app([])
+        else:
+            twitch = self._twitch
 
         sub = EventSub(
             self.config.twitch_callback_url,  
@@ -90,7 +93,9 @@ class AlertsPlugin(AutoModPluginBlueprint):
         while True:
             await asyncio.sleep(1800) # every 30 minutes renew ngrok URL
             try:
+                self._event_sub.unsubscribe_all()
                 self._event_sub.stop()
+                self._event_sub = None
             except Exception as ex:
                 log.warn(f"Failed to stop Twitch EventSub - {ex}")
             else:
