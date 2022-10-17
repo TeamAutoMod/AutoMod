@@ -6,8 +6,11 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 from twitchAPI.twitch import Twitch
 from twitchAPI.eventsub import EventSub
+from typing import List
 from toolbox import S as Object
 from typing import Union
+from pyngrok import ngrok
+import random
 import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
@@ -28,8 +31,11 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self._stream_data = {}
         if hasattr(self.config, "twitch_callback_url"):
             if self.config.twitch_callback_url != "":
-                for f in [self._init_twitch_event_sub, self._tunnel_demon]:
-                    self.bot.loop.create_task(f())
+                asyncio.run_coroutine_threadsafe(
+                    self._init_twitch_event_sub(),
+                    loop=self.bot.loop
+                )
+                self.bot.loop.create_task(self._tunnel_demon())
 
 
     def cog_unload(
@@ -37,6 +43,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
     ) -> None:
         try:
             self._event_sub.stop()
+            ngrok.kill()
         except Exception:
             pass
 
@@ -52,7 +59,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         sub = EventSub(
             self.config.twitch_callback_url,  
             self.config.twitch_app_id,
-            8080,
+            self.bot.ngrok_port,
             twitch
         ); sub.wait_for_subscription_confirm = False
         setattr(self, "_event_sub", sub)
@@ -87,6 +94,14 @@ class AlertsPlugin(AutoModPluginBlueprint):
             except Exception as ex:
                 log.warn(f"Failed to stop Twitch EventSub - {ex}")
             else:
+                tunnels: List[ngrok.NgrokTunnel] = ngrok.get_tunnels()
+                for t in tunnels:
+                    try:
+                        ngrok.disconnect(t.public_url)
+                    except Exception:
+                        pass
+                
+                self.bot.ngrok_port = random.randint(1024, 65535)
                 self.bot._set_ngrok_url()
                 await self._init_twitch_event_sub()
 
