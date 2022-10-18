@@ -49,7 +49,13 @@ if __name__ == "__main__":
             __instance.run()
         except Exception as ex:
             log.error(f"❗️ Error in run() function - {ex}")
+            loop = asyncio.get_event_loop()
+            if loop != None:
+                if loop.is_closed():
+                    loop = asyncio.new_event_loop()
+            else:
+                loop = asyncio.new_event_loop()
             asyncio.run_coroutine_threadsafe(
                 _shutdown(__instance, "__main__"),
-                asyncio.get_event_loop()
+                loop=loop
             )

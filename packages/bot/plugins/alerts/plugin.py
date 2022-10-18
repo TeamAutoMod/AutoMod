@@ -29,6 +29,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         self._event_sub: EventSub = None # for type hint
         self._twitch: Twitch = None
         self._stream_data = {}
+        self._first_start = True
         if hasattr(self.config, "twitch_callback_url"):
             if self.config.twitch_callback_url != "":
                 asyncio.run_coroutine_threadsafe(
@@ -59,13 +60,12 @@ class AlertsPlugin(AutoModPluginBlueprint):
         else:
             twitch = self._twitch
 
-        sub = EventSub(
+        setattr(self, "_event_sub", EventSub(
             self.config.twitch_callback_url,  
             self.config.twitch_app_id,
             self.bot.ngrok_port,
             twitch
-        ); sub.wait_for_subscription_confirm = False
-        setattr(self, "_event_sub", sub)
+        )); self._event_sub.wait_for_subscription_confirm = False
 
         self._event_sub.unsubscribe_all()
         self._event_sub.start()
@@ -76,8 +76,9 @@ class AlertsPlugin(AutoModPluginBlueprint):
                 sub_id = self._event_sub.listen_stream_online(obj.id, self.on_live)
                 self._event_sub.listen_channel_update(obj.id, self.on_test)
             except Exception as ex:
-                log.warn(f"Failed to add event listener for streamer {streamer['id']} - {ex}"); sub_id = None
+                log.warn(f"❗️ Failed to add event listener for streamer {streamer['id']} - {ex}"); sub_id = None
             else:
+                log.info(f"👾 Registered listener(s) for {obj.display_name}")
                 self._stream_data.update({
                     obj.display_name.lower(): {
                         "offline_image_url": obj.offline_image_url,
@@ -93,7 +94,6 @@ class AlertsPlugin(AutoModPluginBlueprint):
         while True:
             await asyncio.sleep(1800) # every 30 minutes renew ngrok URL
             try:
-                self._event_sub.unsubscribe_all()
                 self._event_sub.stop()
                 self._event_sub = None
             except Exception as ex:
