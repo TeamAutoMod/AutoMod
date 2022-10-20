@@ -359,5 +359,6 @@
     "streamer_added": "{emote} Added an alert for ``{streamer}`` and will send it to {channel}",
     "max_alerts": "{emote} You can only have up to **5** Twitch alerts",
     "no_alert": "{emote} No alert found for this streamer",
-    "streamer_removed": "{emote} Removed alert for ``{streamer}``"
+    "streamer_removed": "{emote} Removed alert for ``{streamer}``",
+    "exported": "{emote} Exported the file with the words"
 }

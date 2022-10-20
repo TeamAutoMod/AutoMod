@@ -5,8 +5,9 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 import itertools
-from typing import List
+from typing import List, Literal
 import re
+import io
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, E
@@ -218,6 +219,47 @@ class FilterPlugin(AutoModPluginBlueprint):
             callback
         )
         await ctx.response.send_modal(modal)
+
+
+    @_filter.command(
+        name="export",
+        description="📤 Exports all words from a filter to a text file"
+    )
+    @discord.app_commands.describe(
+        name="Name of the filter",
+        seperator="Whether to seperate each word by a comma or by a line split"
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def export_filter(
+        self, 
+        ctx: discord.Interaction, 
+        name: str,
+        seperator: Literal[
+            "Comma (,)",
+            "Line Split"
+        ] = "Comma (,)"
+    ) -> None:
+        """
+        filter_export_help
+        examples:
+        -filter export test_filter
+        """
+        name = name.lower()
+        filters = self.db.configs.get(ctx.guild.id, "filters")
+
+        if not name in filters: 
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
+        else:
+            await ctx.response.defer(thinking=True)
+
+            if seperator.lower() != "line split":
+                seperator = ", "
+            else:
+                seperator = "\n"
+
+            istr = seperator.join(filters[name]["words"])
+            fp = io.BytesIO(istr.encode("utf-8"))
+            await ctx.followup.send(embed=E(self.locale.t(ctx.guild, "exported", _emote="YES"), 1), file=discord.File(fp, f"{name}-export.txt"))
 
     
     regex = discord.app_commands.Group(

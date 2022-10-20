@@ -26,13 +26,13 @@ ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "⚙️ Configuration",
     "AutomodPlugin": "⚔️ Automoderator",
     "ModerationPlugin": "🔨 Moderation",
-    "FilterPlugin": "🚫 Filters & Regexes",
+    "FilterPlugin": "⛔ Filters & Regexes",
     "UtilityPlugin": "🔧 Utility",
     "LevelPlugin": "🏆 Level System",
     "TagsPlugin": "💬 Responders",
     "CasesPlugin": "📦 Cases",
-    "ReactionRolesPlugin": "🎭 Reaction Roles",
-    "AlertsPlugin": "👾 Twitch Alerts"
+    "ReactionRolesPlugin": "🎭 Reaction Roles"
+    #"AlertsPlugin": "👾 Twitch Alerts"
 }
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"

@@ -25,8 +25,7 @@
         "warns",
         "cases",
         "slowmodes",
-        "tbans",
-        "alerts"
+        "tbans"
     ],
     
     "langs": [
@@ -44,8 +43,7 @@
         "cases",
         "rr",
         "level",
-        "filter",
-        "alerts"
+        "filter"
     ],
     "disabled_commands": [],
     "error_channel": 123456789,
