@@ -617,7 +617,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         
         if len(regexes) > 0:
             for name, data in regexes.items():
-                if msg.channel.id in f["channels"] or len(f["channels"]) < 1:
+                if msg.channel.id in data["channels"] or len(data["channels"]) < 1:
                     parsed = self.parse_regex(data["regex"])
                     if parsed != None:
                         found = parsed.findall(content)

@@ -97,7 +97,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
                 self._event_sub.stop()
                 self._event_sub = None
             except Exception as ex:
-                log.warn(f"Failed to stop Twitch EventSub - {ex}")
+                log.warn(f"❗️ Failed to stop Twitch EventSub - {ex}")
             else:
                 tunnels: List[ngrok.NgrokTunnel] = ngrok.get_tunnels()
                 for t in tunnels:
