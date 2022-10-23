@@ -15,7 +15,7 @@ from toolbox import S as Object
 from typing import Union, List, Literal
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed, Duration, E
+from ...types import Embed, Duration, E, Emote
 from ...views import AboutView, HelpView
 from ...schemas import Slowmode
 from ...modals import EmbedBuilderModal

@@ -551,7 +551,6 @@ class ConfigPlugin(AutoModPluginBlueprint):
         role: discord.Role = None,
         channel: Union[
             discord.TextChannel,
-            discord.VoiceChannel,
             discord.ForumChannel
         ] = None
     ) -> None:
@@ -641,7 +640,6 @@ class ConfigPlugin(AutoModPluginBlueprint):
         role: discord.Role = None,
         channel: Union[
             discord.TextChannel,
-            discord.VoiceChannel,
             discord.ForumChannel
         ] = None
     ) -> None:
