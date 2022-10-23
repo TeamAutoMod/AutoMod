@@ -529,7 +529,7 @@ class InternalPlugin(AutoModPluginBlueprint):
                 url=user.display_avatar
             )
             e.set_footer(
-                text="User joined"
+                text=f"User joined | {user.name}#{user.discriminator}"
             )
             await self.log_processor.execute(user.guild, "user_joined", **{
                 "_embed": e
@@ -562,7 +562,7 @@ class InternalPlugin(AutoModPluginBlueprint):
             url=user.display_avatar
         )
         e.set_footer(
-            text="User left"
+            text=f"User left | {user.name}#{user.discriminator}"
         )
         await self.log_processor.execute(user.guild, "user_left", **{
             "_embed": e
