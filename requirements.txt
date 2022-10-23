@@ -1,4 +1,4 @@
-discord.py
+git+https://github.com/Rapptz/discord.py
 discordspy
 dnspython==2.2.1
 emoji

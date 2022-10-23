@@ -360,5 +360,7 @@
     "max_alerts": "{emote} You can only have up to **5** Twitch alerts",
     "no_alert": "{emote} No alert found for this streamer",
     "streamer_removed": "{emote} Removed alert for ``{streamer}``",
-    "exported": "{emote} Exported the file with the words"
+    "exported": "{emote} Exported the file with the words",
+
+    "emote_file_req": "{emote} Either a valid emote or a file is required"
 }
