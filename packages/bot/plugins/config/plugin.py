@@ -5,7 +5,7 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 from toolbox import S as Object
-from typing import Tuple, Literal
+from typing import Tuple, Literal, Union
 import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
@@ -549,7 +549,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
         self, 
         ctx: discord.Interaction, 
         role: discord.Role = None,
-        channel: discord.TextChannel = None
+        channel: Union[
+            discord.TextChannel,
+            discord.ForumChannel
+        ] = None
     ) -> None:
         """
         ignore_log_add_help
@@ -635,7 +638,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
         self, 
         ctx: discord.Interaction, 
         role: discord.Role = None,
-        channel: discord.TextChannel = None
+        channel: Union[
+            discord.TextChannel,
+            discord.ForumChannel
+        ] = None
     ) -> None:
         """
         ignore_log_remove_help

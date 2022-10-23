@@ -223,7 +223,7 @@ class FilterPlugin(AutoModPluginBlueprint):
 
     @_filter.command(
         name="export",
-        description="📤 Exports all words from a filter to a text file"
+        description="📤 Exports all words from a filter to a text file for sharing"
     )
     @discord.app_commands.describe(
         name="Name of the filter",

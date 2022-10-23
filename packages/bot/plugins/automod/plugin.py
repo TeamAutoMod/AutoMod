@@ -1290,7 +1290,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
         self, 
         ctx: discord.Interaction,
         role: discord.Role = None,
-        channel: discord.TextChannel = None
+        channel: Union[
+            discord.TextChannel,
+            discord.ForumChannel
+        ] = None
     ) -> None:
         """
         ignore_automod_add_help
@@ -1376,7 +1379,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
         self, 
         ctx: discord.Interaction, 
         role: discord.Role = None,
-        channel: discord.TextChannel = None
+        channel: Union[
+            discord.TextChannel,
+            discord.ForumChannel
+        ] = None
     ) -> None:
         """
         ignore_automod_remove_help

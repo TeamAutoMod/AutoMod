@@ -90,7 +90,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             self.config = Object(json.load(config_file))
             if self.config.twitch_app_id != "" and self.config.twitch_secret != "":
                 self.ngrok_port = random.randint(1024, 65535)
-                self._set_ngrok_url()
+                #self._set_ngrok_url()
         super().__init__(
             command_prefix=prefix_callable, 
             intents=self.intents, 
