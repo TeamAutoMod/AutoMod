@@ -551,6 +551,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         role: discord.Role = None,
         channel: Union[
             discord.TextChannel,
+            discord.VoiceChannel,
             discord.ForumChannel
         ] = None
     ) -> None:
@@ -572,7 +573,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     roles.append(e.id); added.append(e)
                 else:
                     ignored.append(e)
-            elif isinstance(e, (discord.TextChannel, discord.VoiceChannel)):
+            elif isinstance(e, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel)):
                 if not e.id in channels:
                     channels.append(e.id); added.append(e)
                 else:
@@ -604,11 +605,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Added channels__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
+                        x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
                     ]
                 )) if len(
                     [
-                        _ for _ in added if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
+                        _ for _ in added if isinstance(_, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
                     ]
                 ) > 0 else "> None"
             },
@@ -616,7 +617,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Ignored__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in ignored
+                        x.mention for x in ignored if x != None
                     ]
                 )) if len(
                     [
@@ -640,6 +641,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         role: discord.Role = None,
         channel: Union[
             discord.TextChannel,
+            discord.VoiceChannel,
             discord.ForumChannel
         ] = None
     ) -> None:
@@ -661,7 +663,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     roles.remove(e.id); removed.append(e)
                 else:
                     ignored.append(e)
-            elif isinstance(e, (discord.TextChannel, discord.VoiceChannel)):
+            elif isinstance(e, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel)):
                 if e.id in channels:
                     channels.remove(e.id); removed.append(e)
                 else:
@@ -695,11 +697,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Removed channels__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in removed if isinstance(x, (discord.TextChannel, discord.VoiceChannel))
+                        x.mention for x in removed if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
                     ]
                 )) if len(
                     [
-                        _ for _ in removed if isinstance(_, (discord.TextChannel, discord.VoiceChannel))
+                        _ for _ in removed if isinstance(_, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
                     ]
                 ) > 0 else "> None"
             },
@@ -707,7 +709,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Ignored__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in ignored
+                        x.mention for x in ignored if x != None
                     ]
                 )) if len(
                     [

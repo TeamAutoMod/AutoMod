@@ -1313,7 +1313,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     roles.append(e.id); added.append(e)
                 else:
                     ignored.append(e)
-            elif isinstance(e, discord.TextChannel):
+            elif isinstance(e, (discord.TextChannel, discord.ForumChannel)):
                 if not e.id in channels:
                     channels.append(e.id); added.append(e)
                 else:
@@ -1345,11 +1345,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Added channels__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in added if isinstance(x, discord.TextChannel)
+                        x.mention for x in added if isinstance(x, (discord.TextChannel, discord.ForumChannel))
                     ]
                 )) if len(
                     [
-                        _ for _ in added if isinstance(_, discord.TextChannel)
+                        _ for _ in added if isinstance(_, (discord.TextChannel, discord.ForumChannel))
                     ]
                 ) > 0 else "> None"
             },
@@ -1357,7 +1357,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Ignored__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in ignored
+                        x.mention for x in ignored if x != None
                     ]
                 )) if len(
                     [
@@ -1402,7 +1402,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     roles.remove(e.id); removed.append(e)
                 else:
                     ignored.append(e)
-            elif isinstance(e, discord.TextChannel):
+            elif isinstance(e, (discord.TextChannel, discord.ForumChannel)):
                 if e.id in channels:
                     channels.remove(e.id); removed.append(e)
                 else:
@@ -1436,11 +1436,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Removed channels__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in removed if isinstance(x, discord.TextChannel)
+                        x.mention for x in removed if isinstance(x, (discord.TextChannel, discord.ForumChannel))
                     ]
                 )) if len(
                     [
-                        _ for _ in removed if isinstance(_, discord.TextChannel)
+                        _ for _ in removed if isinstance(_, (discord.TextChannel, discord.ForumChannel))
                     ]
                 ) > 0 else "> None"
             },
@@ -1448,7 +1448,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 "name": "**❯ __Ignored__**",
                 "value": "> {}".format(", ".join(
                     [
-                        x.mention for x in ignored
+                        x.mention for x in ignored if x != None
                     ]
                 )) if len(
                     [
