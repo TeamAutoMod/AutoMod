@@ -50,7 +50,7 @@ def get_help_embed(
     ]
 ) -> Embed:
     if isinstance(cmd, discord.app_commands.Group): 
-        help_message = cmd.description[2:]
+        help_message = cmd.description
         usage = f"/{cmd.name}"
     else:
         usage = f"""{
@@ -66,7 +66,7 @@ def get_help_embed(
             )
         }"""
 
-        help_message = cmd.description[2:]
+        help_message = cmd.description
         if usage[-1] == " ": usage = usage[:-1]
 
     e = Embed(
