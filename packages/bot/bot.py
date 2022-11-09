@@ -173,6 +173,13 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         if not self.ready:
             await self.load_plugins()
+            for cmd in self.tree.walk_commands():
+                if hasattr(cmd, "description"):
+                    setattr(
+                        cmd,
+                        "description",
+                        f"{cmd.description[2:]}."
+                    )
             
             await self.register_user_info_ctx_menu()
             await self.register_report_ctx_menu()

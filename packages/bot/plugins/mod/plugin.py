@@ -136,19 +136,21 @@ class ModerationPlugin(WarnPlugin):
         Exception
     ]: 
         try:
-            d = await ctx.channel.purge(
-                limit=amount,
-                check=check,
-                before=before if before != None else discord.Object(id=ctx.id),
-                after=after if after != None else None
-            )
+            msgs = [
+                m async for m in ctx.channel.history(
+                    limit=300, 
+                    before=before if before != None else discord.Object(id=ctx.id),
+                    after=after if after != None else None
+                ) if check(m) == True
+            ][:amount]
+            await ctx.channel.delete_messages(msgs)
         except Exception as ex:
             return self.error(ctx, ex)
         else:
-            if len(d) < 1:
+            if len(msgs) < 1:
                 return self.locale.t(ctx.guild, "no_messages_found", _emote="NO"), {}
             else:
-                return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(d), plural="" if len(d) == 1 else "s"), {}
+                return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(msgs), plural="" if len(msgs) == 1 else "s"), {}
 
 
     async def kick_or_ban(
@@ -767,7 +769,10 @@ class ModerationPlugin(WarnPlugin):
             amount,
             func
         )
-        await ctx.followup.send(embed=E(msg, 1), **kwargs)
+        msg = await ctx.followup.send(embed=E(msg, 1), **kwargs)
+        if msg != None:
+            try: await msg.delete(delay=5.0)
+            except Exception: pass
 
 
     async def report(

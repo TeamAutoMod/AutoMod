@@ -6,3 +6,4 @@ from .meta import DeleteView, ChoiceView, ActionedView
 from .help import HelpView
 from .setup import SetupView
 from .config import ConfigView
+from .ignore import RoleChannelSelect

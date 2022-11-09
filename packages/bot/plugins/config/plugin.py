@@ -10,7 +10,7 @@ import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
-from ...views import SetupView
+from ...views import SetupView, RoleChannelSelect
 from ...modals import DefaultReasonModal
 
 
@@ -547,7 +547,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
         self, 
-        ctx: discord.Interaction, 
+        ctx: discord.Interaction,
         role: discord.Role = None,
         channel: Union[
             discord.TextChannel,
@@ -559,7 +559,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         ignore_log_add_help
         examples:
         -bypass_log add @test
-        -bypass_log add #test
+        -bypass_log add @test #test
         """
         if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
         role_or_channel = [role, channel]
