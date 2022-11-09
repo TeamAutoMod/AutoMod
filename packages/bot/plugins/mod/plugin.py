@@ -727,7 +727,7 @@ class ModerationPlugin(WarnPlugin):
 
 
     @discord.app_commands.command(
-        name="clean",
+        name="purge",
         description="🧹 Purges messages from the channel"
     )
     @discord.app_commands.describe(
