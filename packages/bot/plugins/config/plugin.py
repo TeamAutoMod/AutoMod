@@ -6,11 +6,13 @@ from discord.ext import commands
 import logging; log = logging.getLogger()
 from toolbox import S as Object
 from typing import Tuple, Literal, Union
+import requests as rq
 import asyncio
+import io
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
-from ...views import SetupView, RoleChannelSelect
+from ...views import SetupView
 from ...modals import DefaultReasonModal
 
 
@@ -54,6 +56,15 @@ class ConfigPlugin(AutoModPluginBlueprint):
         bot: ShardedBotInstance
     ) -> None:
         super().__init__(bot)
+        self._names = {
+            "mod": "Moderation Logs",
+            "message": "Message Logs",
+            "server": "Server Logs",
+            "join": "Join Logs",
+            "member": "Member Logs",
+            "voice": "Voice Logs",
+            "report": "Report Logs"
+        } 
         self.webhook_queue = []
         self.bot.loop.create_task(self.create_webhooks())
 
@@ -97,7 +108,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         
         try:
             w = await channel.create_webhook(
-                name=ctx.bot.user.name,
+                name=self._names[option.split("_")[0].lower()],
                 avatar=self.bot.avatar_as_bytes
             )
         except Exception:
