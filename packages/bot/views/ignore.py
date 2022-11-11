@@ -15,13 +15,13 @@ class RoleChannelSelect(View):
         super().__init__(*args, **kwargs)
         self.add_item(discord.ui.RoleSelect(
             custom_id=f"{_type}:roles",
-            placeholder="Select a role",
+            placeholder="Select roles",
             min_values=1,
             max_values=25
         ))
         self.add_item(discord.ui.ChannelSelect(
             custom_id=f"{_type}:channels",
-            placeholder="Select a channel",
+            placeholder="Select channels",
             min_values=1,
             max_values=25
         ))

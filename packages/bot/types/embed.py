@@ -81,11 +81,12 @@ class Embed(discord.Embed):
             if not isinstance(field, dict):
                 raise Exception("Fields have to be dicts")
             else:
-                self.add_field(
-                    name=field["name"],
-                    value=str(field["value"])[:1023],
-                    inline=field.get("inline", False)
-                )
+                if field != {}:
+                    self.add_field(
+                        name=field["name"],
+                        value=str(field["value"])[:1023],
+                        inline=field.get("inline", False)
+                    )
 
 
     def blank_field(

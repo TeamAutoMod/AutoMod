@@ -13,6 +13,7 @@ from typing import Union, Tuple
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed, E
+from ...views import RoleChannelSelect
 from ...modals import AutomodRuleModal
 
 
@@ -814,6 +815,105 @@ class AutomodPlugin(AutoModPluginBlueprint):
         await self.enforce_rules(msg)
 
 
+    @AutoModPluginBlueprint.listener()
+    async def on_interaction(
+        self,
+        i: discord.Interaction
+    ) -> None:
+        cid = i.data.get("custom_id", "").lower()
+        parts = cid.split(":")
+
+        if len(parts) != 2: return
+        if not "automod" in parts[0]: return
+        
+        if parts[1] == "channels":
+            func = i.guild.get_channel
+        else:
+            func = i.guild.get_role
+
+        inp = [func(int(r)) for r in i.data.get("values", [])]
+        roles, channels = self.get_ignored_roles_channels(i.guild)
+        added, removed, ignored = [], [], []
+        
+        if parts[0] == "automod_add":
+            for e in inp:
+                if isinstance(e, discord.Role):
+                    if not e.id in roles:
+                        roles.append(e.id); added.append(e)
+                    else:
+                        ignored.append(e)
+                elif isinstance(e, (discord.TextChannel, discord.ForumChannel)):
+                    if not e.id in channels:
+                        channels.append(e.id); added.append(e)
+                    else:
+                        ignored.append(e)
+        else:
+            for e in inp:
+                if isinstance(e, discord.Role):
+                    if e.id in roles:
+                        roles.remove(e.id); removed.append(e)
+                    else:
+                        ignored.append(e)
+                elif isinstance(e, (discord.TextChannel, discord.ForumChannel)):
+                    if e.id in channels:
+                        channels.remove(e.id); removed.append(e)
+                    else:
+                        ignored.append(e)
+                else:
+                    ignored.append(e)
+        
+        self.db.configs.multi_update(i.guild.id, {
+            "ignored_roles_automod": roles,
+            "ignored_channels_automod": channels
+        })
+        if parts[0] != "automod_add": added = removed
+
+        e = Embed(
+            i,
+            title="Updated the following roles & channels"
+        )
+        e.add_fields([
+            {
+                "name": "**❯ __Roles__**",
+                "value": "> {}".format(", ".join(
+                    [
+                        x.mention for x in added if isinstance(x, discord.Role)
+                    ]
+                )) if len(
+                    [
+                        _ for _ in added if isinstance(_, discord.Role)
+                    ]
+                ) > 0 else f"> {self.bot.emotes.get('NO')}"
+            },
+            {
+                "name": "**❯ __Channels__**",
+                "value": "> {}".format(", ".join(
+                    [
+                        x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
+                    ]
+                )) if len(
+                    [
+                        _ for _ in added if isinstance(_, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
+                    ]
+                ) > 0 else f"> {self.bot.emotes.get('NO')}"
+            },
+            {
+                "name": "**❯ __Ignored__**",
+                "value": "> {}".format(", ".join(
+                    [
+                        x.mention for x in ignored if x != None
+                    ]
+                )) if len(
+                    [
+                        _ for _ in ignored if _ != None
+                    ]
+                ) > 0 else f"> {self.bot.emotes.get('NO')}"
+            },
+        ])
+
+        await i.response.edit_message(embed=e)
+
+
     @discord.app_commands.command(
         name="automod", 
         description="🔰 Configure the automoderator (use /setup for more info)"
@@ -1281,93 +1381,18 @@ class AutomodPlugin(AutoModPluginBlueprint):
         name="add",
         description="✅ Adds the given role or channel as ignored for the automoderator"
     )
-    @discord.app_commands.describe(
-        role="Users with this role will be ignored by the automod",
-        channel="Messages within this channel will be ignored by the automod"
-    )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def add(
         self, 
-        ctx: discord.Interaction,
-        role: discord.Role = None,
-        channel: Union[
-            discord.TextChannel,
-            discord.ForumChannel
-        ] = None
+        ctx: discord.Interaction
     ) -> None:
         """
         ignore_automod_add_help
         examples:
-        -bypass_automod add @test
-        -bypass_automod add #test
+        -bypass_automod add
         """
-        if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
-        role_or_channel = [role, channel]
-
-        roles, channels = self.get_ignored_roles_channels(ctx.guild)
-        
-        added, ignored = [], []
-        for e in role_or_channel:
-            if isinstance(e, discord.Role):
-                if not e.id in roles:
-                    roles.append(e.id); added.append(e)
-                else:
-                    ignored.append(e)
-            elif isinstance(e, (discord.TextChannel, discord.ForumChannel)):
-                if not e.id in channels:
-                    channels.append(e.id); added.append(e)
-                else:
-                    ignored.append(e)
-        
-        self.db.configs.multi_update(ctx.guild.id, {
-            "ignored_roles_automod": roles,
-            "ignored_channels_automod": channels
-        })
-
-        e = Embed(
-            ctx,
-            title="Updated the following roles & channels"
-        )
-        e.add_fields([
-            {
-                "name": "**❯ __Added roles__**",
-                "value": "> {}".format(", ".join(
-                    [
-                        x.mention for x in added if isinstance(x, discord.Role)
-                    ]
-                )) if len(
-                    [
-                        _ for _ in added if isinstance(_, discord.Role)
-                    ]
-                ) > 0 else "> None"
-            },
-            {
-                "name": "**❯ __Added channels__**",
-                "value": "> {}".format(", ".join(
-                    [
-                        x.mention for x in added if isinstance(x, (discord.TextChannel, discord.ForumChannel))
-                    ]
-                )) if len(
-                    [
-                        _ for _ in added if isinstance(_, (discord.TextChannel, discord.ForumChannel))
-                    ]
-                ) > 0 else "> None"
-            },
-            {
-                "name": "**❯ __Ignored__**",
-                "value": "> {}".format(", ".join(
-                    [
-                        x.mention for x in ignored if x != None
-                    ]
-                )) if len(
-                    [
-                        _ for _ in ignored if _ != None
-                    ]
-                ) > 0 else "> None"
-            },
-        ])
-
-        await ctx.response.send_message(embed=e)
+        view = RoleChannelSelect("automod_add")
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_add"), color=2), view=view, ephemeral=True)
 
 
     @ignore_automod.command(
@@ -1377,88 +1402,15 @@ class AutomodPlugin(AutoModPluginBlueprint):
     @discord.app_commands.default_permissions(manage_guild=True)
     async def remove(
         self, 
-        ctx: discord.Interaction, 
-        role: discord.Role = None,
-        channel: Union[
-            discord.TextChannel,
-            discord.ForumChannel
-        ] = None
+        ctx: discord.Interaction
     ) -> None:
         """
         ignore_automod_remove_help
         examples:
-        -bypass_automod remove @test
-        -bypass_automod remove #test
+        -bypass_automod remove
         """
-        if role == None and channel == None: return self.error(ctx, commands.BadArgument("At least one role or channel required"))
-        role_or_channel = [role, channel]
-        
-        roles, channels = self.get_ignored_roles_channels(ctx.guild)
-
-        removed, ignored = [], []
-        for e in role_or_channel:
-            if isinstance(e, discord.Role):
-                if e.id in roles:
-                    roles.remove(e.id); removed.append(e)
-                else:
-                    ignored.append(e)
-            elif isinstance(e, (discord.TextChannel, discord.ForumChannel)):
-                if e.id in channels:
-                    channels.remove(e.id); removed.append(e)
-                else:
-                    ignored.append(e)
-            else:
-                ignored.append(e)
-        
-        self.db.configs.multi_update(ctx.guild.id, {
-            "ignored_roles_automod": roles,
-            "ignored_channels_automod": channels
-        })
-
-        e = Embed(
-            ctx,
-            title="Updated the following roles & channels"
-        )
-        e.add_fields([
-            {
-                "name": "**❯ __Removed roles__**",
-                "value": "> {}".format(", ".join(
-                    [
-                        x.mention for x in removed if isinstance(x, discord.Role)
-                    ]
-                )) if len(
-                    [
-                        _ for _ in removed if isinstance(_, discord.Role)
-                    ]
-                ) > 0 else "> None"
-            },
-            {
-                "name": "**❯ __Removed channels__**",
-                "value": "> {}".format(", ".join(
-                    [
-                        x.mention for x in removed if isinstance(x, (discord.TextChannel, discord.ForumChannel))
-                    ]
-                )) if len(
-                    [
-                        _ for _ in removed if isinstance(_, (discord.TextChannel, discord.ForumChannel))
-                    ]
-                ) > 0 else "> None"
-            },
-            {
-                "name": "**❯ __Ignored__**",
-                "value": "> {}".format(", ".join(
-                    [
-                        x.mention for x in ignored if x != None
-                    ]
-                )) if len(
-                    [
-                        _ for _ in ignored if _ != None
-                    ]
-                ) > 0 else "> None"
-            },
-        ])
-
-        await ctx.response.send_message(embed=e)
+        view = RoleChannelSelect("automod_remove")
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=2), view=view, ephemeral=True)
 
 
 async def setup(
