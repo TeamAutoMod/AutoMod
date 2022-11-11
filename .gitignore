@@ -134,6 +134,7 @@ dmypy.json
 /packages/bot/plugins/keywords
 /packages/bot/plugins/timers
 /packages/frontend
+/packages/web
 /js
 /configs
 
