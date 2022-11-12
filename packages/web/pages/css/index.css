@@ -18,6 +18,7 @@ body {
 .container {
     max-width: 100%;
     justify-content: center;
+    align-items: center;
     position: absolute;
     left: 50%;
     top: 37%;
@@ -31,8 +32,8 @@ body {
 }
 
 .container .icon {
-    position: relative;
-    padding-left: 12px;
+    text-align: center;
+    align-items: center;
     padding-bottom: 15px;
 }
 
@@ -42,7 +43,8 @@ body {
 }
 
 .links {
-    padding-left: 10px;
+    text-align: center;
+    align-items: center;
     padding-top: 10px;
 }
 
@@ -62,19 +64,33 @@ body {
 }
 
 .stats {
-    padding-left: 10px;
-    padding-top: 10px;
+    padding-top: 30px;
+}
+
+.stats ul {
+    align-items: center;
+    justify-content: center;
 }
 
 .stats li {
+    padding: 5px;
+    max-width: 600px;
+}
+
+.stats #second {
+    float: left;
     display: inline;
-    padding: 0.3px;
+}
+
+.stats #first {
+    display: block;
 }
 
 .stats li #invite {
     border: 1px solid #3e98f7;
     background-color: #3e98f7;
     border-radius: 25px;
+    width: 100%;
 }
 
 .stats li #invite:hover {
@@ -95,6 +111,7 @@ body {
     text-align: center;
     vertical-align: middle;
     background-color: #052445; 
+    width: 200px;
 }
 
 .stats li h1:hover {
