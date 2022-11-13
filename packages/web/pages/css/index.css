@@ -21,7 +21,7 @@ body {
     align-items: center;
     position: absolute;
     left: 50%;
-    top: 37%;
+    top: 47%;
     transform: translate(-50%, -50%);
 }
 
@@ -65,16 +65,17 @@ body {
 
 .stats {
     padding-top: 30px;
+    padding-bottom: 10px;
 }
 
 .stats ul {
     align-items: center;
     justify-content: center;
+    max-width: 800px;
 }
 
 .stats li {
     padding: 5px;
-    max-width: 600px;
 }
 
 .stats #second {
@@ -89,6 +90,8 @@ body {
 .stats li #invite {
     border: 1px solid #3e98f7;
     background-color: #3e98f7;
+    font-style: bold;
+    font-size: 15px;
     border-radius: 25px;
     width: 100%;
 }
@@ -115,5 +118,56 @@ body {
 }
 
 .stats li h1:hover {
+    background-color: #0a2d53;
+}
+
+.features {
+    padding-top: 60px;
+}
+
+.features ul {
+    align-items: center;
+    justify-content: center;
+    max-width: 630px;
+}
+
+.features ul li {
+    float: left;
+    display: inline;
+    padding: 5px;
+}
+
+.features ul li .feature {
+    text-decoration: none;
+    padding: 12px;
+    border: 0.5px solid #ffffff;
+    border-radius: 7px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #052445; 
+    width: 305px
+}
+
+.features ul li .feature i {
+    text-decoration: none;
+    color: #ffff;
+    font-size: 22px;
+    padding-bottom: 5px;
+}
+
+.features ul li .feature h1  {
+    color: #ffffff;
+    font-size: 15px;
+    font-style: bold;
+    padding-bottom: 4px;
+}
+
+.features ul li .feature p  {
+    color: #ffffff;
+    font-size: 14px;
+    padding-top: 5px;
+}
+
+.features ul li .feature:hover {
     background-color: #0a2d53;
 }

@@ -476,6 +476,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     json={
                         "guilds": len(self.guilds),
                         "users": sum([x.member_count for x in self.guilds]),
+                        "shards": self.shard_count,
                         "token": self.config.token
                     }
                 )

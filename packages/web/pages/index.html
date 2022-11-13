@@ -13,6 +13,7 @@
             const data = await r.json();
             document.getElementById("guilds").innerHTML = `${data.guilds.toLocaleString()} Servers`;
             document.getElementById("users").innerHTML = `${data.users.toLocaleString()} Users`;
+            document.getElementById("shards").innerHTML = `${data.shards.toLocaleString()} Shards`;
         };
 
         const invite_redirect = () => {
@@ -30,7 +31,7 @@
             <ul>
                 <li>
                     <a href="https://discord.gg/S9BEBux " target="_blank">
-                        <i class="fa-regular fa-envelope"></i>
+                        <i class="fa-brands fa-discord"></i>
                     </a>
                 </li>
                 <li>
@@ -40,7 +41,7 @@
                 </li>
                 <li>
                     <a href="https://top.gg/bot/697487580522086431/vote" target="_blank">
-                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-thumbs-up"></i>
                     </a>
                 </li>
                 <li>
@@ -63,6 +64,42 @@
                 </li>
                 <li id="second"> 
                     <h1 id="users"></h1>
+                </li>
+                <li id="second"> 
+                    <h1 id="shards"></h1>
+                </li>
+            </ul>
+        </div>
+
+        <div class="features">
+            <ul>
+                <li>
+                    <div class="feature">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <h1>Automoderator</h1>
+                        <p>Robust & highly efficient automoderator with customisable rules & punishments.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="feature">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <h1>Case System</h1>
+                        <p>Case system for past moderation actions to hold your moderators accountable.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="feature">
+                        <i class="fa-solid fa-terminal"></i>
+                        <h1>Custom Commands</h1>
+                        <p>Create custom slash commands so you don't have to keep repeating yourself.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="feature">
+                        <i class="fa-solid fa-book"></i>
+                        <h1>And More</h1>
+                        <p>Check out the help command or join the support server to find out more.</p>
+                    </div>
                 </li>
             </ul>
         </div>

@@ -9,7 +9,8 @@ const path = require("path");
 
 const stats = {
     guilds: 0,
-    users: 0
+    users: 0,
+    shards: 0
 }
 
 
@@ -49,6 +50,7 @@ app.post("/pstats", (req, res) => {
     } else {
         stats.guilds = req.body.guilds;
         stats.users = req.body.users;
+        stats.shards = req.body.shards;
         res.send(req.body)
     }
 })
@@ -57,7 +59,8 @@ app.post("/pstats", (req, res) => {
 app.get("/stats", (req, res) => {
     res.json({
         guilds: stats.guilds,
-        users: stats.users
+        users: stats.users,
+        shards: stats.shards
     })
 })
 
