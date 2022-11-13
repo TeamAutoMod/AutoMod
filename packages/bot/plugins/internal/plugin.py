@@ -356,6 +356,13 @@ class InternalPlugin(AutoModPluginBlueprint):
             return self.bot.message_cache.get(guild, payload.message_id)
 
 
+    def _c(
+        self,
+        inp: str
+    ) -> str:
+        return discord.utils.escape_markdown(inp)
+
+
     @AutoModPluginBlueprint.listener()
     async def on_guild_join(
         self, 
@@ -405,7 +412,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         guild = self.bot.get_guild(payload.guild_id)
         if guild == None: return
 
-        msg = self.get_message(guild, payload)
+        msg: discord.Message = self.get_message(guild, payload)
         if msg == None: return
 
         await asyncio.sleep(0.3) # wait a bit before checking ignore_for_events
@@ -416,8 +423,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         cfg = self.db.configs.get_doc(msg.guild.id)
         if cfg["message_log"] == "" \
         or not isinstance(msg.channel, discord.TextChannel) \
-        or msg.author.id == self.bot.user.id \
-        or msg.type != discord.MessageType.default:
+        or msg.author.id == self.bot.user.id:
             return
 
         if guild.chunked == False: await self.bot.chunk_guild(guild)
@@ -428,15 +434,34 @@ class InternalPlugin(AutoModPluginBlueprint):
             if any(x in [i.id for i in msg.author.roles] for x in roles): return
         if msg.channel.id in channels: return
         
-        content = " ".join([x.url for x in msg.attachments]) + msg.content
-        if content == "": return
+        content = msg.content
         e = Embed(
             None,
             color=0xf04a47,
-            description=content[:2000] # idk the limits tbh
+            description=content[:4096] if content != None or content != "" else None
         )
+        e.add_field(
+            name="Attachments",
+            value=f"{len(msg.attachments)}"
+        )
+
+        no = self.bot.emotes.get("NO")
+        yes = self.bot.emotes.get("YES")
+        for i, _e in enumerate(msg.embeds[:23]):
+            e.add_field(
+                name=f"Embed ({i+1}/{len(msg.embeds)})",
+                value="> **Title:** {} \n> **Description:** {} \n> **Fields:** {} \n> **Thumbnail:** {} \n> **Image:** {} \n> **Footer:** {}".format(
+                    self._c(_e.title) if _e.title else no,
+                    yes if _e.description else no,
+                    len(_e.fields),
+                    f"{yes}" if _e.thumbnail else no,
+                    f"{yes}" if _e.image else no,
+                    yes if _e.footer else no
+                )
+            )
+        
         e.set_author(
-            name="{0.name}#{0.discriminator} ({0.id})".format(msg.author),
+            name="Message deleted by {0.name}#{0.discriminator} ({0.id})".format(msg.author),
             icon_url=msg.author.display_avatar
         )
         e.set_footer(
@@ -481,7 +506,7 @@ class InternalPlugin(AutoModPluginBlueprint):
                 color=0xffdc5c
             )
             e.set_author(
-                name="{0.name}#{0.discriminator} ({0.id})".format(msg.author),
+                name="Message edited by {0.name}#{0.discriminator} ({0.id})".format(msg.author),
                 icon_url=msg.author.display_avatar,
                 url=msg.jump_url
             )
