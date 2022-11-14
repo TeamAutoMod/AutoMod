@@ -361,7 +361,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": "**❯ __Automod Rules__**",
-                "value": "> **Max Mentions:** {} \n> **Max Newlines:** {} \n> **Max Emotes:** {} \n> **Max Repetitions:** {} \n> **Links:** {} \n> **Invites:** {} \n> **Bad Files:** {} \n> **Zalgo:** {}  \n> **CAPS:** {} \n> **Spam:** {}"\
+                "value": "> **Max Mentions:** {} \n> **Max Newlines:** {} \n> **Max Emotes:** {} \n> **Max Repetitions:** {} \n> **Links:** {} \n> **Invites:** {} \n> **Bad Files:** {} \n> **Zalgo:** {} \n> **CAPS:** {} \n> **Spam:** {}"\
                 .format(
                     no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
                     no if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
