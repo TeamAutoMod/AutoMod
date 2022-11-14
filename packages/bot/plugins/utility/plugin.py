@@ -358,20 +358,18 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     for cmd in cmds:
                         e.add_field(
                             name="**{}**".format(
-                                f"/{cmd.qualified_name} {' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''} {' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}"
+                                f"/{cmd.qualified_name} " \
+                                f"{' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''} " \
+                                f"{' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}" \
+                                f"{'(*)' if isinstance(cmd, discord.app_commands.Group) else ''}"
                             ),
                             value="> {}".format(
-                                self.bot.locale.t(i.guild, cmd.help.split('\nexamples:')[0]) if isinstance(
-                                    cmd, (
-                                        commands.Command,
-                                        commands.GroupMixin
-                                    )
-                                ) else cmd.description[2:]
+                                cmd.description
                             ),
                             inline=False
                         )
 
-                    e.set_footer(text="<required> [optional]")
+                    e.set_footer(text="<required> [optional] (* has subcommands)")
                     await i.response.edit_message(embed=e)
 
             elif cid == "setup-select":
@@ -522,26 +520,20 @@ class UtilityPlugin(AutoModPluginBlueprint):
         description="🔎 Shows help for a specific command or a full list of commands when used without any arguments"
     )
     @discord.app_commands.describe(
-        command="The (sub-)command you want to get help about (e.g. ban OR slash add)",
-        mobile_view="Use this if you're on mobile to have the embed displayed in a more readable way"
+        command="The (sub-)command you want to get help about (e.g. ban OR commands add)"
     )
     async def help(
         self, 
         ctx: discord.Interaction, 
         *, 
-        command: str = None,
-        mobile_view: Literal[
-            "True",
-            "False"
-        ] = "False"
+        command: str = None
     ) -> None:
         """
         help_help
         examples:
         -help
         -help ban
-        -help slash add
-        -help kick mobile_view:True
+        -help commands add
         """
         query = command
         if query == None:
@@ -551,7 +543,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 description=self.locale.t(ctx.guild, "help_desc", prefix="/", cmd=f"</setup:{self.bot.internal_cmd_store.get('setup')}>")
             )
             viewable_plugins = []
-            for i, p in enumerate([self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]):
+            for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
                 if p != None:
                     if p._requires_premium:
                         if self.db.configs.get(ctx.guild.id, "premium") == False:
@@ -562,28 +554,26 @@ class UtilityPlugin(AutoModPluginBlueprint):
                             if cmd.default_permissions != None:
                                 if ctx.user.guild_permissions >= cmd.default_permissions:
                                     if isinstance(cmd, discord.app_commands.Group):
-                                        for sub in cmd.commands:
-                                            cmds.append(f"</{sub.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
+                                        cmds.append(f"``/{cmd.qualified_name}*``")
                                     else:
-                                        cmds.append(f"</{cmd.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
+                                        cmds.append(f"``/{cmd.qualified_name}``")
                             else:
                                 if isinstance(cmd, discord.app_commands.Group):
-                                    for sub in cmd.commands:
-                                        cmds.append(f"</{sub.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
+                                    cmds.append(f"``/{cmd.qualified_name}*``")
                                 else:
-                                    cmds.append(f"</{cmd.qualified_name}:{self.bot.internal_cmd_store.get(cmd.qualified_name)}>")
+                                    cmds.append(f"``/{cmd.qualified_name}``")
                     
                     if len(cmds) > 0:
                         viewable_plugins.append(p.qualified_name)
                         e.add_field(
                             name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} **__{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}__**",
                             value="> {}".format(
-                                "\n> ".join(cmds) if mobile_view.lower() != "true" else " ``|`` ".join(cmds)
+                                ", ".join(cmds)
                             ),
-                            inline=True if mobile_view.lower() != "true" else False
+                            inline=False
                         )
             
-            if len(viewable_plugins) > 0 and len(viewable_plugins) % 3 != 0 and mobile_view.lower() != "true":
+            if len(viewable_plugins) > 0 and len(viewable_plugins) % 3 != 0:
                 e.add_fields([e.blank_field(inline=True) for _ in range((len(viewable_plugins) % 3) - 1)])
 
             e.credits()

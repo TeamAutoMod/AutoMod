@@ -1336,7 +1336,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
 
     ignore_automod = discord.app_commands.Group(
-        name="bypass_automod",
+        name="bypass-automod",
         description="🔀 Manage ignored roles & channels for the automoderator",
         default_permissions=discord.Permissions(manage_guild=True)
     )

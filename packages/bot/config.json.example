@@ -4,7 +4,7 @@
     "default_prefix": "+",
     "custom_status": "+help",
     "status_type": "playing",
-    "embed_color": "0x202225",
+    "embed_color": "0x3b94f4",
 
     "token": "YOUR_BOT_TOKEN",
     "sentry_dsn": "",

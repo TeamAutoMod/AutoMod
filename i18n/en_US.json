@@ -1,5 +1,5 @@
 {
-    "help_desc": "First time using the bot? Use {cmd} for help with configuration!",
+    "help_desc": "First time using the bot? Use {cmd} for help with configuration! \nCommands marked with a ``*`` have additional subcommands.",
     "invalid_command": "{emote} This isn't a valid command",
     "no_reason": "No reason",
     "aborting": "Aborting",

@@ -613,7 +613,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
 
     ignore_log = discord.app_commands.Group(
-        name="bypass_log",
+        name="bypass-log",
         description="🔀 Manage ignored roles & channels for logging",
         default_permissions=discord.Permissions(manage_guild=True)
     )
@@ -691,7 +691,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
 
     @discord.app_commands.command(
-        name="join_role",
+        name="join-role",
         description="🚪 Configure the join role (role users automatically get when joining the server)"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
@@ -720,7 +720,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
 
     @discord.app_commands.command(
-        name="default_reason",
+        name="default-reason",
         description="📑 Configure a default reason used when none is used in commands"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
