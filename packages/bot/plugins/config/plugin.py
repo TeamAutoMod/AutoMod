@@ -424,7 +424,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": "**❯ __Configuration Guide__**",
-                "value": f"> </log:{c.get('log')}> - Configure logging \n> </automod:{c.get('automod')}> - Configure the automoderator \n> </filter add:{c.get('filter')}> - Configure word filters \n> </regex add:{c.get('regex')}> - Configure regex filters \n> </bypass_automod add:{c.get('bypass_automod')}> - Configure immune automod roles & channels \n> </bypass_log add:{c.get('bypass_log')}> -  Configure ignored roles & channels for logs",
+                "value": f"> </log:{c.get('log')}> - Configure logging \n> </automod:{c.get('automod')}> - Configure the automoderator \n> </filter add:{c.get('filter')}> - Configure word filters \n> </regex add:{c.get('regex')}> - Configure regex filters \n> </bypass-automod add:{c.get('bypass-automod')}> - Configure immune automod roles & channels \n> </bypass-log add:{c.get('bypass-log')}> -  Configure ignored roles & channels for logs",
                 "inline": False
             }
         ])
@@ -629,7 +629,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         ignore_log_help
         examples:
-        -bypass_log show
+        -bypass-log show
         """
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
@@ -666,7 +666,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         ignore_log_add_help
         examples:
-        -bypass_log add
+        -bypass-log add
         """
         view = RoleChannelSelect("log_add")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_add"), color=2), view=view, ephemeral=True)
@@ -684,7 +684,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         ignore_log_remove_help
         examples:
-        -bypass_log remove
+        -bypass-log remove
         """
         view = RoleChannelSelect("log_remove")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=2), view=view, ephemeral=True)

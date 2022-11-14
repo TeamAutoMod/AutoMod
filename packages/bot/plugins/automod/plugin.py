@@ -1352,7 +1352,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_help
         examples:
-        -bypass_automod show
+        -bypass-automod show
         """
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
@@ -1389,7 +1389,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_add_help
         examples:
-        -bypass_automod add
+        -bypass-automod add
         """
         view = RoleChannelSelect("automod_add")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_add"), color=2), view=view, ephemeral=True)
@@ -1407,7 +1407,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_remove_help
         examples:
-        -bypass_automod remove
+        -bypass-automod remove
         """
         view = RoleChannelSelect("automod_remove")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=2), view=view, ephemeral=True)
