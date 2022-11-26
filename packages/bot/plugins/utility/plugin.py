@@ -993,10 +993,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
     @discord.app_commands.describe(
         channel="What channel to send the message/embed in",
         message="The message sent together with the embed",
+        has_embed="Whether this message has an embed in general",
         color="Color for the embed (e.g. 7289da, FF0000 or Blue)",
-        title="Title for the embed",
-        description="Description for the embed",
-        use_fields="Whether you want to add fields to the embed (will open a modal)",
         timestamp="Whether or not to show the timestamp in the footer",
         image_url="URL to an image shown in the embed",
         thumbnail_url="URL to an image used as the thumbnail in the right corner",
@@ -1013,9 +1011,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         channel: discord.TextChannel,
         message: str = None,
         color: str = None,
-        title: str = None,
-        description: str = None,
-        use_fields: Literal[
+        has_embed: Literal[
             "True",
             "False"
         ] = "False",
@@ -1036,55 +1032,53 @@ class UtilityPlugin(AutoModPluginBlueprint):
         examples:
         -create_message #test
         """
-        if message == None and (title == None and description == None):
+        if message == None and has_embed.lower() == "false":
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0))
         
         if color != None: color = self.get_color(color)
-        try:
-            e = Embed(
-                ctx,
-                color=color,
-                title=title,
-                description=description,
-                timestamp=datetime.datetime.now() if timestamp.lower() == "true" else None
-            )
 
-            if image_url != None: e.set_image(url=image_url)
-            if thumbnail_url != None: e.set_thumbnail(thumbnail_url)
-            if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
-            if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)
-        except Exception as ex:
-            return self.error(ctx, ex)
-        else:
-            if use_fields.lower() != "false" and (title != None or description != None):
-                async def callback(
-                    i: discord.Interaction
-                ) -> None:
-                    fn1, fv1, fn2, fv2 = self.bot.extract_args(i, "fn1", "fv1", "fn2", "fv2")
-
-                    e.add_field(name=fn1, value=fv1)
-                    if fn2 != None and fv2 != None: e.add_field(name=fn2, value=fv2)
-
-                    try:
-                        await channel.send(content=message, embed=e)
-                    except Exception as ex:
-                        await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
-                    else:
-                        await i.response.send_message(embed=E(self.locale.t(i.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True) 
-
-                modal = EmbedBuilderModal(
-                    self.bot,
-                    "Embed Field Builder",
-                    callback=callback
+        if has_embed.lower() == "true":
+            async def callback(
+                i: discord.Interaction
+            ) -> None:
+                title, desc, fn1, fv1 = self.bot.extract_args(i, "title", "desc", "fn1", "fv1")
+                
+                e = Embed(
+                    None,
+                    title=title if title != "" else "None" if desc == "" else None,
+                    description=desc if desc != "" else "None" if title == "" else None,
+                    color=color,
+                    timestamp=datetime.datetime.now() if timestamp.lower() == "true" else None
                 )
-                await ctx.response.send_modal(modal)
-            else:
+
+                if fn1 != "" or fv1 != "":
+                    e.add_field(name=fn1 if fn1 != "" else "None", value=fv1 if fv1 != "" else "None")
+
+                if image_url != None: e.set_image(url=image_url)
+                if thumbnail_url != None: e.set_thumbnail(thumbnail_url)
+                if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
+                if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)
+
                 try:
-                    await channel.send(content=message, embed=e if (title != None or description != None) else None)
+                    await channel.send(content=message, embed=e)
                 except Exception as ex:
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+                    await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
                 else:
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True)            
+                    await i.response.send_message(embed=E(self.locale.t(i.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True) 
+
+            modal = EmbedBuilderModal(
+                self.bot,
+                "Embed Field Builder",
+                callback=callback
+            )
+            await ctx.response.send_modal(modal)
+        else:
+            try:
+                await channel.send(content=message)
+            except Exception as ex:
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+            else:
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True)            
 
 
 async def setup(

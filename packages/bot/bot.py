@@ -162,7 +162,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     await self.change_presence(
                         activity=discord.Activity(
                             type=discord.ActivityType.playing if self.config.status_type.lower() not in [
-                                "playing", "listening", "watching"
+                                "playing", "listening", "watching", "competing"
                             ] else getattr(discord.ActivityType, self.config.status_type.lower()), 
                             name=str(self.config.custom_status).format(
                                 user_count=len(self.users),

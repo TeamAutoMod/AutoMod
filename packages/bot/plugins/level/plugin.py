@@ -241,6 +241,8 @@ class LevelPlugin(AutoModPluginBlueprint):
                     ), 2))
                 except discord.Forbidden:
                     pass
+            else:
+                pass # None
         else:
             self.update_user_data(
                 msg.guild,
@@ -271,7 +273,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         ] = None,
         notifications: Literal[
             "Channel",
-            "DM"
+            "DM",
+            "None"
         ] = None
     ) -> None:
         # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))

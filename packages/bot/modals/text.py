@@ -1,4 +1,6 @@
-import discord#
+# type: ignore
+
+import discord
 from discord.ui import Modal
 
 from typing import Callable
@@ -343,40 +345,40 @@ class EmbedBuilderModal(TextModalBase):
     ) -> None:
         super().__init__(bot, title, callback)
     
+        
+    e_title = discord.ui.TextInput(
+        custom_id="title",
+        label="Title",
+        style=discord.TextStyle.long,
+        placeholder="Optional title of the embed",
+        required=False,
+        max_length=200
+    )
+
+
+    e_description = discord.ui.TextInput(
+        custom_id="desc",
+        label="Description",
+        style=discord.TextStyle.long,
+        placeholder="Optional description of the embed",
+        required=False,
+        max_length=2000
+    )
+
 
     field_n_1 = discord.ui.TextInput(
         custom_id="fn1",
-        label="Field Name [1]",
+        label="Field Name",
         style=discord.TextStyle.long,
-        placeholder="Name of the field",
-        required=True,
-        max_length=150
-    )
-
-
-    field_v_1 = discord.ui.TextInput(
-        custom_id="fv1",
-        label="Field Value [1]",
-        style=discord.TextStyle.long,
-        placeholder="Value of the field",
-        required=True,
-        max_length=1024
-    )
-
-
-    field_n_2 = discord.ui.TextInput(
-        custom_id="fn2",
-        label="Field Name [2]",
-        style=discord.TextStyle.short,
         placeholder="Name of the field",
         required=False,
         max_length=150
     )
 
 
-    field_v_2 = discord.ui.TextInput(
-        custom_id="fv2",
-        label="Field Value [2]",
+    field_v_1 = discord.ui.TextInput(
+        custom_id="fv1",
+        label="Field Value",
         style=discord.TextStyle.long,
         placeholder="Value of the field",
         required=False,

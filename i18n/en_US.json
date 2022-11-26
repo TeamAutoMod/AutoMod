@@ -170,7 +170,7 @@
     "already_tempbanned_description": "User is already tempbanned. Do you want to extend their tempban?",
 
     "amount_too_small": "{emote} Too few messages (<1)",
-    "amount_too_big": "{emote} Too many messages (>300)",
+    "amount_too_big": "{emote} Too many messages (>100)",
 
     "about_description": "AutoMod is a moderation bot with multiple, customizable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax.",
 

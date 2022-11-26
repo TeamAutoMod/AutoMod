@@ -9,6 +9,7 @@ import asyncio
 import logging; log = logging.getLogger()
 import datetime
 from typing import Union, Callable
+import pytz; UTC = pytz.UTC
 
 from ..warn.plugin import WarnPlugin, ShardedBotInstance
 from .._processor import LogProcessor, ActionProcessor, DMProcessor
@@ -141,7 +142,7 @@ class ModerationPlugin(WarnPlugin):
                     limit=300, 
                     before=before if before != None else discord.Object(id=ctx.id),
                     after=after if after != None else None
-                ) if check(m) == True
+                ) if check(m) == True and UTC.localize((datetime.datetime.now() - datetime.timedelta(days=14))) <= m.created_at
             ][:amount]
             await ctx.channel.delete_messages(msgs)
         except Exception as ex:
@@ -751,7 +752,7 @@ class ModerationPlugin(WarnPlugin):
         -clean 50 paul#0009 bad words
         """
         if amount < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_small", _emote="NO"), 0))
-        if amount > 300: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"), 0))
+        if amount > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"), 0))
         
         if user == None and content == None:
             func = lambda _: True
