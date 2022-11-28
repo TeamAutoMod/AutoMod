@@ -204,7 +204,10 @@ class LevelPlugin(AutoModPluginBlueprint):
             msg.author
         )
 
-        xp = randint(5, 15)
+        if len(msg.content.split(" ")) < 5:
+            xp = randint(1, 5)
+        else:
+            xp = randint(5, 10)
         for_nxt_lvl = self.get_xp_for_next_lvl(data.lvl)
         new_xp = (data.xp + xp)
 
