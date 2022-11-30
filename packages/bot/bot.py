@@ -434,7 +434,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     async def register_infractions_ctx_menu(
         self
     ) -> None:
-        @self.tree.context_menu(name="Infractions")
+        @self.tree.context_menu(name="history")
         @discord.app_commands.default_permissions(manage_messages=True)
         async def _(
             i: discord.Interaction, 

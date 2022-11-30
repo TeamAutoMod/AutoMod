@@ -48,7 +48,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         else:
             url=user.display_avatar
         e.set_author(
-            name=f"Infractions for {user} {f'[{opt.capitalize()}]' if opt != 'guild' else ''}",
+            name=f"History for {user} {f'[{opt.capitalize()}]' if opt != 'guild' else ''}",
             icon_url=url
         )
 
@@ -123,7 +123,7 @@ class CasesPlugin(AutoModPluginBlueprint):
 
 
     @discord.app_commands.command(
-        name="infractions",
+        name="history",
         description="🛅 Shows recent server or user infractions"
     )
     @discord.app_commands.describe(
@@ -138,8 +138,8 @@ class CasesPlugin(AutoModPluginBlueprint):
         """
         infractions_help
         examples:
-        -infractions
-        -infractions 543056846601191508
+        -history
+        -history 543056846601191508
         """
         if user == None: user = ctx.guild
 
@@ -206,11 +206,11 @@ class CasesPlugin(AutoModPluginBlueprint):
             log_url = self.get_log_for_case(ctx, case)
 
             out.append(
-                "> {} ``{}`` {} {}"\
+                "> {} ``{}`` {} - {}"\
                 .format(
                     timestamp,
                     case["type"].upper(),
-                    f"[``#{case_nr}``]({log_url})" if log_url is not None else f"``#{case_nr}``",
+                    f"[#{case_nr}]({log_url})" if log_url is not None else f"#{case_nr}",
                     reason
                 )
             )
