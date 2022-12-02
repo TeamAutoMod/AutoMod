@@ -368,12 +368,12 @@ class InternalPlugin(AutoModPluginBlueprint):
         self, 
         guild: discord.Guild
     ) -> None:
-        log.info(f"📥 Joined guild: {guild.name} ({guild.id})")
+        log.info(f"Joined guild: {guild.name} ({guild.id})")
 
         try:
             await self.bot.chunk_guild(guild)
         except Exception as ex:
-            log.warn(f"❌ Failed to chunk members for guild {guild.id} upon joining - {ex}")
+            log.warn(f"Failed to chunk members for guild {guild.id} upon joining - {ex}")
         finally:
             if not self.db.configs.exists(guild.id):
                 self.db.configs.insert(GuildConfig(guild, self.config.default_prefix))
@@ -385,7 +385,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         guild: discord.Guild
     ) -> None:
         if guild == None: return
-        log.info(f"📤 Removed from guild: {guild.name} ({guild.id})")
+        log.info(f"Removed from guild: {guild.name} ({guild.id})")
         if self.db.configs.exists(guild.id):
             self.db.cases.multi_delete({"guild": f"{guild.id}"})
             self.db.configs.delete(guild.id)
@@ -1180,7 +1180,7 @@ class InternalPlugin(AutoModPluginBlueprint):
     async def on_autopost_success(
         self
     ) -> None:
-        log.info(f"📬 Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)}) to Top.GG")
+        log.info(f"Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)}) to Top.GG")
 
 
     @AutoModPluginBlueprint.listener()
@@ -1189,7 +1189,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         status: int
     ) -> None:
         if status == 200: 
-            log.info(f"📬 Posted server count ({self.discords.servers()}) to discords.com")
+            log.info(f"Posted server count ({self.discords.servers()}) to discords.com")
         else:
             log.info(f"Failed to post stats to discords.com ({status})")
 

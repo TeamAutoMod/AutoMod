@@ -191,7 +191,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_message(embed=e)
 
         else:
-            log.error(f"❗️ Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
+            log.error(f"Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}")
 
             try:
                 await ctx.response.send_message(embed=E(self.bot.locale.t(ctx.guild, "fail", _emote="NO", exc=error), 0))

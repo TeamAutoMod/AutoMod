@@ -17,7 +17,7 @@ async def _shutdown(
     bot: ShardedBotInstance,
     sig: str
 ) -> None:
-    log.info(f"💤 Shutting down (triggered by {sig})")
+    log.info(f"Shutting down (triggered by {sig})")
     try: 
         await bot.close()
     except Exception: 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         try:
             __instance.run()
         except Exception as ex:
-            log.error(f"❗️ Error in run() function - {ex}")
+            log.error(f"Error in run() function - {ex}")
             loop = asyncio.get_event_loop()
             if loop != None:
                 if loop.is_closed():

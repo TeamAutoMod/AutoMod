@@ -2,6 +2,7 @@ import sentry_sdk
 import json
 import logging
 import subprocess
+import os
 from .bot import ShardedBotInstance
 
 
@@ -25,10 +26,36 @@ if config.get("sentry_dsn", "") != "":
     )
 
 
+class _Formatter(logging.Formatter):
+    def __init__(self) -> None:
+        super().__init__(fmt="[{asctime}] \033[92m {levelname:<7} \033[0m: {message}", datefmt="%H:%M:%S", style="{")
+
+    
+    def format(self, record) -> str:
+        fm_og = self._style._fmt
+
+        if record.levelno == logging.DEBUG:
+            self._style._fmt = "[{asctime}] ⚙️\033[1;34m {levelname:<7} \033[0;0m: {message}"
+
+        elif record.levelno == logging.INFO:
+            self._style._fmt = "[{asctime}] 🆗\033[92m {levelname:<7} \033[0m: {message}"
+
+        elif record.levelno == logging.WARN:
+            self._style._fmt = "[{asctime}] ☣️\033[1;33m {levelname:<7} \033[0;0m: {message}"
+
+        elif record.levelno == logging.ERROR:
+            self._style._fmt = "[{asctime}] 🔥\033[1;31m {levelname:<7} \033[0;0m: {message}"
+
+        res = logging.Formatter.format(self, record)
+        self._style._fmt = fm_og
+
+        return res
+    
+
 logging.getLogger("discord").propagate = False
-logging.basicConfig(
-    level=logging.INFO, 
-    format="[{asctime}] {levelname:<7}: {message}",
-    datefmt="%H:%M:%S",
-    style="{"
-)
+
+sh = logging.StreamHandler()
+sh.setFormatter(_Formatter())
+
+logging.root.addHandler(sh)
+logging.root.setLevel(logging.INFO)

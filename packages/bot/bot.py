@@ -86,6 +86,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         *args, 
         **kwargs
     ) -> None:
+        self._start_text()
         with open("packages/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
             if self.config.twitch_app_id != "" and self.config.twitch_secret != "":
@@ -136,6 +137,19 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.message_cache = MessageCache()
 
 
+    def _start_text(
+        self
+    ) -> None:
+        print("\033[1;34m" + """
+     _         _        __  __           _ 
+    / \  _   _| |_ ___ |  \/  | ___   __| |
+   / _ \| | | | __/ _ \| |\/| |/ _ \ / _` |
+  / ___ \ |_| | || (_) | |  | | (_) | (_| |
+ /_/   \_\__,_|\__\___/|_|  |_|\___/ \__,_|
+                                                                                                                                                    
+            """ + "\033[0;0m")
+
+
     def _set_ngrok_url(
         self
     ) -> None:
@@ -149,7 +163,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             ngrok_tunnel_url = ngrok.connect(self.ngrok_port, bind_tls=True).public_url
         except Exception as ex:
-            log.warn(f"❗️ Failed to create ngrok tunnel URL - {ex}"); ngrok_tunnel_url = ""
+            log.warn(f"Failed to create ngrok tunnel URL - {ex}"); ngrok_tunnel_url = ""
         finally:
             setattr(self.config, "twitch_callback_url", ngrok_tunnel_url)
 
@@ -256,7 +270,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             super().dispatch(event_name, *args, **kwargs)
         except Exception as ex:
-            log.error(f"❗️ Error in {event_name} - {ex}")
+            log.error(f"Error in {event_name} - {ex}")
             
     
     async def load_plugins(
@@ -297,9 +311,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
         except Exception:
-            log.error(f"❗️ Failed to load {plugin} - {traceback.format_exc()}")
+            log.error(f"Failed to load {plugin} - {traceback.format_exc()}")
         else:
-            log.info(f"✅ Successfully loaded {plugin}")
+            log.info(f"Successfully loaded {plugin}")
 
     
     async def reload_plugin(
@@ -369,7 +383,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             )
             if resp.status_code != 200: exc = resp.text
         except Exception as ex:
-            log.warn(f"❌ Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}"); exc = ex
+            log.warn(f"Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}"); exc = ex
         finally:
             return exc
 
@@ -459,9 +473,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
             rc = self._post_stats()
             if rc != 0:
                 if rc != 200:
-                    log.warn(f"❗️ Failed to post stats to website ({rc})")
+                    log.warn(f"Failed to post stats to website ({rc})")
                 else:
-                    log.info("📈 Posted stats to website")
+                    log.info("Posted stats to website")
             
             await asyncio.sleep(3600) # once every hour
 
@@ -531,4 +545,4 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def run(
         self
     ) -> None:
-        super().run(self.config.token)
+        super().run(self.config.token, log_handler=None)

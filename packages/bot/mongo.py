@@ -124,4 +124,4 @@ class MongoDB(Database):
         self.tbans = MongoCollection(bot, self, "tbans")
         self.alerts = MongoCollection(bot, self, "alerts")
         
-        log.info("📮 Database initialized")
+        log.info("Database initialized")

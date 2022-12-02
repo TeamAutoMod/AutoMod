@@ -22,7 +22,7 @@ class InternalCacheStore(object):
             if not str(i["id"]) in self.data:
                 self.data[str(i["id"])] = i
         log.info(
-            "📁 Cached {}/{} documents from {}".format(
+            "Cached {}/{} documents from {}".format(
                 len(self.data),
                 len(list((getattr(self.bot.db, self._type)).find({}))),
                 self._type

@@ -23,7 +23,7 @@ class Translator(object):
         for l in bot.config.langs:
             with open(f"i18n/{l}.json", "r", encoding="utf8", errors="ignore") as f:
                 self._langs[l] = json.load(f)
-                log.info(f"📝 Loaded strings for language {l}")
+                log.info(f"Loaded strings for language {l}")
     
     
     def t(
