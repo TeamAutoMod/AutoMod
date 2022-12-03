@@ -368,12 +368,12 @@ class InternalPlugin(AutoModPluginBlueprint):
         self, 
         guild: discord.Guild
     ) -> None:
-        log.info(f"Joined guild: {guild.name} ({guild.id})")
+        log.info(f"[Events] Joined guild: {guild.name} ({guild.id})", extra={"loc": f"Shard {guild.shard_id}"})
 
         try:
             await self.bot.chunk_guild(guild)
         except Exception as ex:
-            log.warn(f"Failed to chunk members for guild {guild.id} upon joining - {ex}")
+            log.warn(f"[Events] Failed to chunk members for guild {guild.id} upon joining - {ex}", extra={"loc": f"Shard {guild.shard_id}"})
         finally:
             if not self.db.configs.exists(guild.id):
                 self.db.configs.insert(GuildConfig(guild, self.config.default_prefix))
@@ -385,7 +385,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         guild: discord.Guild
     ) -> None:
         if guild == None: return
-        log.info(f"Removed from guild: {guild.name} ({guild.id})")
+        log.info(f"[Events] Removed from guild: {guild.name} ({guild.id})", extra={"loc": f"Shard {guild.shard_id}"})
         if self.db.configs.exists(guild.id):
             self.db.cases.multi_delete({"guild": f"{guild.id}"})
             self.db.configs.delete(guild.id)
@@ -1182,7 +1182,7 @@ class InternalPlugin(AutoModPluginBlueprint):
     async def on_autopost_success(
         self
     ) -> None:
-        log.info(f"Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)}) to Top.GG")
+        log.info(f"[Events] Posted server count ({self.topgg.guild_count}) and shard count ({len(self.bot.shards)}) to Top.GG", extra={"loc": f"PID {os.getpid()}"})
 
 
     @AutoModPluginBlueprint.listener()
@@ -1191,9 +1191,9 @@ class InternalPlugin(AutoModPluginBlueprint):
         status: int
     ) -> None:
         if status == 200: 
-            log.info(f"Posted server count ({self.discords.servers()}) to discords.com")
+            log.info(f"[Events] Posted server count ({self.discords.servers()}) to discords.com", extra={"loc": f"PID {os.getpid()}"})
         else:
-            log.info(f"Failed to post stats to discords.com ({status})")
+            log.info(f"[Events] Failed to post stats to discords.com ({status})", extra={"loc": f"PID {os.getpid()}"})
 
 
     @AutoModPluginBlueprint.listener()
@@ -1201,8 +1201,8 @@ class InternalPlugin(AutoModPluginBlueprint):
         self, 
         data
     ) -> None:
-        log.info(type(data))
-        log.info(data)
+        print(type(data))
+        print(data)
 
 
 async def setup(

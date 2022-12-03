@@ -2,6 +2,7 @@
 
 from typing import Union, TypeVar
 from toolbox import Database, Collection
+import os
 import logging; log = logging.getLogger(__name__)
 
 
@@ -125,4 +126,4 @@ class MongoDB(Database):
         self.alerts = MongoCollection(bot, self, "alerts")
         self.responders = MongoCollection(bot, self, "responders")
         
-        log.info("Database initialized")
+        log.info("[Database] Connected to mongo", extra={"loc": f"PID {os.getpid()}"})

@@ -11,3 +11,4 @@ toolbox_py==0.0.1
 topggpy
 pyngrok
 twitchAPI
+prometheus-client

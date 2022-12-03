@@ -14,6 +14,7 @@
     "support_invite": "https://discord.gg/S9BEBux",
     "web_url_base": "http://localhost:3000",
     "premium_role": 123456789,
+    "prometheus_prefix": "am",
 
     "twitch_app_id": "",
     "twitch_secret": "",

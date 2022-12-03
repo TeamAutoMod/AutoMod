@@ -27,7 +27,7 @@ class Emotes(object):
         try:
             return self.emotes[key]
         except KeyError:
-            log.warn("Failed to obtain an emoji with key {}".format(key)); return "❓"
+            log.warn("[AutoMod] Failed to obtain an emoji with key {}".format(key), extra={"loc": f"PID {os.getpid()}"}); return "❓"
 
 
     def reload(

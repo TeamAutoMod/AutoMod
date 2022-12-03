@@ -2,6 +2,7 @@
 
 import logging; log = logging.getLogger(__name__)
 from typing import Union, TypeVar
+import os
 
 
 
@@ -22,11 +23,12 @@ class InternalCacheStore(object):
             if not str(i["id"]) in self.data:
                 self.data[str(i["id"])] = i
         log.info(
-            "Cached {}/{} documents from {}".format(
+            "[Database] Cached {}/{} documents from {}".format(
                 len(self.data),
                 len(list((getattr(self.bot.db, self._type)).find({}))),
                 self._type
-            )
+            ), 
+            extra={"loc": f"PID {os.getpid()}"}
         )
 
 

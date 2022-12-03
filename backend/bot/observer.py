@@ -61,9 +61,9 @@ class Observer(object):
             else:
                 func(*func_args)
         except Exception as ex:
-            log.warn(f"Failed to hot reload {file} - {ex}")
+            log.warn(f"[Observer] Failed to hot reload {file} - {ex}", extra={"loc": f"PID {os.getpid()}"})
         else:
-            log.info(f"Hot reload completed for {file}")
+            log.info(f"[Observer] Hot reload completed for {file}", extra={"loc": f"PID {os.getpid()}"})
         finally:
             self.bot.last_reload = datetime.datetime.utcnow().timestamp()
             self.stamp_cache[file]["content"] = content
@@ -107,5 +107,5 @@ class Observer(object):
     async def start(
         self
     ) -> None:
-        log.info("Observer is starting")
+        log.info("[Observer] Observer is starting", extra={"loc": f"PID {os.getpid()}"})
         self.bot.loop.create_task(self.watch())

@@ -5,6 +5,7 @@ import discord
 import logging; log = logging.getLogger()
 import json
 import asyncio
+import os
 
 from typing import Union
 
@@ -23,7 +24,7 @@ class Translator(object):
         for l in bot.config.langs:
             with open(f"i18n/{l}.json", "r", encoding="utf8", errors="ignore") as f:
                 self._langs[l] = json.load(f)
-                log.info(f"Loaded strings for language {l}")
+                log.info(f"[AutoMod] Loaded strings for language {l}", extra={"loc": f"PID {os.getpid()}"})
     
     
     def t(

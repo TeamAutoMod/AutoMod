@@ -12,6 +12,7 @@ from toolbox import S as Object
 from typing import Union, Dict, List, Tuple
 from pyngrok import ngrok
 import random
+import os
 import logging; log = logging.getLogger()
 
 from .cache import InternalCache
@@ -140,14 +141,14 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def _start_text(
         self
     ) -> None:
-        log.critical("\033[1;34m" + """
+        log.critical("\33[1m\33[34m" + """
      _         _        __  __           _ 
     / \  _   _| |_ ___ |  \/  | ___   __| |
    / _ \| | | | __/ _ \| |\/| |/ _ \ / _` |
   / ___ \ |_| | || (_) | |  | | (_) | (_| |
  /_/   \_\__,_|\__\___/|_|  |_|\___/ \__,_|
                                                                                                                                                     
-            """ + "\033[0;0m") # we use log.critical() here to have it being interpreted as a log message for linux pm2 logs
+            """ + "\33[0m") # we use log.critical() here to have it being interpreted as a log message for linux pm2 logs
 
 
     def _set_ngrok_url(
@@ -163,7 +164,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             ngrok_tunnel_url = ngrok.connect(self.ngrok_port, bind_tls=True).public_url
         except Exception as ex:
-            log.warn(f"Failed to create ngrok tunnel URL - {ex}"); ngrok_tunnel_url = ""
+            log.warn(f"[ngrok] Failed to create ngrok tunnel URL - {ex}", extra={"loc": f"PID {os.getpid()}"}); ngrok_tunnel_url = ""
         finally:
             setattr(self.config, "twitch_callback_url", ngrok_tunnel_url)
 
@@ -184,6 +185,34 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     )
                 )
             )
+
+
+    async def on_shard_connect(
+        self,
+        shard_id: int
+    ) -> None:
+        log.info("[Sharding] Shard has connected", extra={"loc":  f"Shard {shard_id}"})
+
+
+    async def on_shard_disconnect(
+        self,
+        shard_id: int
+    ) -> None:
+        log.error("[Sharding] Shard has disconnected", extra={"loc":  f"Shard {shard_id}"})
+
+
+    async def on_shard_ready(
+        self,
+        shard_id: int
+    ) -> None:
+        log.info("[Sharding] Shard is ready", extra={"loc": f"Shard {shard_id}"})
+
+
+    async def on_shard_resumed(
+        self,
+        shard_id: int
+    ) -> None:
+        log.info("[Sharding] Shard has resumed session", extra={"loc":  f"Shard {shard_id}"})
 
 
     async def on_ready(
@@ -289,7 +318,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             super().dispatch(event_name, *args, **kwargs)
         except Exception as ex:
-            log.error(f"Error in {event_name} - {ex}")
+            log.error(f"[Events] Error in {event_name} - {ex}", extra={"loc": f"PID {os.getpid()}"})
             
     
     async def load_plugins(
@@ -330,9 +359,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
         try:
             await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
         except Exception:
-            log.error(f"Failed to load {plugin} - {traceback.format_exc()}")
+            log.error(f"[Plugins] Failed to load {plugin} - {traceback.format_exc()}", extra={"loc": f"PID {os.getpid()}"})
         else:
-            log.info(f"Successfully loaded {plugin}")
+            log.info(f"[Plugins] Successfully loaded {plugin}", extra={"loc": f"PID {os.getpid()}"})
 
     
     async def reload_plugin(
@@ -404,7 +433,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             )
             if resp.status_code != 200: exc = resp.text
         except Exception as ex:
-            log.warn(f"Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}"); exc = ex
+            log.warn(f"[Commands] Error while trying to mute user ({user.id}) (guild: {guild.id}) - {ex}", extra={"loc": f"Shard {guild.shard_id}"}); exc = ex
         finally:
             return exc
 
@@ -494,9 +523,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
             rc = self._post_stats()
             if rc != 0:
                 if rc != 200:
-                    log.warn(f"Failed to post stats to website ({rc})")
+                    log.warn(f"[Events] Failed to post stats to website ({rc})", extra={"loc": f"PID {os.getpid()}"})
                 else:
-                    log.info("Posted stats to website")
+                    log.info("[Events] Posted stats to website", extra={"loc": f"PID {os.getpid()}"})
             
             await asyncio.sleep(3600) # once every hour
 

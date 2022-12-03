@@ -76,9 +76,9 @@ class AlertsPlugin(AutoModPluginBlueprint):
                 sub_id = self._event_sub.listen_stream_online(obj.id, self.on_live)
                 self._event_sub.listen_channel_update(obj.id, self.on_test)
             except Exception as ex:
-                log.warn(f"Failed to add event listener for streamer {streamer['id']} - {ex}"); sub_id = None
+                log.warn(f"[AutoMod] Failed to add event listener for streamer {streamer['id']} - {ex}"); sub_id = None
             else:
-                log.info(f"Registered listener(s) for {obj.display_name}")
+                log.info(f"[AutoMod] Registered listener(s) for {obj.display_name}")
                 self._stream_data.update({
                     obj.display_name.lower(): {
                         "offline_image_url": obj.offline_image_url,
@@ -97,7 +97,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
                 self._event_sub.stop()
                 self._event_sub = None
             except Exception as ex:
-                log.warn(f"Failed to stop Twitch EventSub - {ex}")
+                log.warn(f"[AutoMod] Failed to stop Twitch EventSub - {ex}")
             else:
                 tunnels: List[ngrok.NgrokTunnel] = ngrok.get_tunnels()
                 for t in tunnels:

@@ -202,6 +202,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         msg: discord.Message
     ) -> None:
         # if not self.has_premium(msg.guild): return
+        if msg.guild == None: return
         if not msg.guild.chunked:
             await self.bot.chunk_guild(msg.guild)
         
