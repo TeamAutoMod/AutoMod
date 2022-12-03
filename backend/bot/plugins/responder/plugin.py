@@ -27,6 +27,20 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
     ) -> None:
         super().__init__(bot)
         self._r = {}
+        self._position_funcs = {
+            "startswith": lambda msg, triggers: (
+                msg.lower().startswith(tuple([_.lower() for _ in triggers]))
+            ),
+            "endswith": lambda msg, triggers: (
+                msg.lower().endswith(tuple([_.lower() for _ in triggers]))
+            ),
+            "contains": lambda msg, triggers: (
+                any(trigger.lower() in msg.lower() for trigger in triggers)
+            ),
+            "regex": lambda msg, regex: (
+                re.search(re.compile(regex, re.IGNORECASE), msg)
+            )
+        }
         self.bot.loop.create_task(self.cache_responders())
         
 
@@ -39,14 +53,16 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             str,
             list
         ],
-        position: str
+        position: str,
+        ignore_mods: bool
     ) -> None:
         data = {
             name: {
                 "content": content,
                 "author": ctx.user.id,
                 "trigger": trigger,
-                "position": position
+                "position": position,
+                "ignore_mods": ignore_mods
             }
         }
         if not ctx.guild.id in self._r:
@@ -54,7 +70,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         else:
             self._r[ctx.guild.id].update(data)
 
-        self.db.responders.insert(Responder(ctx, name, content, trigger, position))
+        self.db.responders.insert(Responder(ctx, name, content, trigger, position, ignore_mods))
         return None
 
 
@@ -100,7 +116,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                         "content": e["content"],
                         "author": int(e["author"]),
                         "trigger": e["trigger"],
-                        "position": e["position"]
+                        "position": e["position"],
+                        "ignore_mods": e.get("ignore_mods", True)
                     }
                 }
                 
@@ -155,6 +172,17 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         guild: discord.Guild,
     ) -> dict:
         return self._r[guild.id]
+    
+
+    def is_mod(
+        self,
+        user: discord.Member
+    ) -> bool:
+        return (
+            user.guild_permissions.ban_members == True \
+            or user.guild_permissions.kick_members == False \
+            or user.guild_permissions.manage_messages == False
+        )
 
     
     _responders = discord.app_commands.Group(
@@ -186,13 +214,14 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 5)])
                     e.add_field(
                         name=f"**__{name}__**",
-                        value="**• Search position:** {} \n**• Trigger:** {} \n**• Response:** \n```{}\n```".format(
+                        value="**• Search position:** {} \n**• Ignore mods:** {} \n**• Trigger:** {} \n**• Response:** \n```{}\n```".format(
                             {
                                 "startswith": "Starts with",
                                 "endswith": "Ends with",
                                 "contains": "Contains", 
                                 "regex": "RegEx"
                             }[obj["position"]],
+                            self.bot.emotes.get("YES") if obj.get("ignore_mods", True) == True else self.bot.emotes.get("NO"),
                             f"``{obj['trigger']}``" if not isinstance(obj["trigger"], list) else ', '.join([f"``{_}``" for _ in obj["trigger"]]),
                             obj["content"]
                         ),
@@ -210,7 +239,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         description="✅ Creates a new auto responder"
     )
     @discord.app_commands.describe(
-        position="Where or how  to search messages for triggers"
+        position="Where or how  to search messages for triggers",
+        ignore_mods="Whether to ignore mods for this responder"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def addresponder(
@@ -221,7 +251,11 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             "Ends with",
             "Contains",
             "RegEx"
-        ]
+        ],
+        ignore_mods: Literal[
+            "True",
+            "False"
+        ] = "True"
     ) -> None:
         """
         autoresponders_add_help
@@ -230,6 +264,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         -autoresponders position:RegEx
         """
         position = position.replace(" ", "").lower()
+        ignore_mods = ignore_mods.lower()
         async def callback(
             i: discord.Interaction
         ) -> None:
@@ -251,10 +286,15 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             if i.guild.id in self._r:
                 if name in self._r[i.guild.id]:
                     return await i.response.send_message(embed=E(self.locale.t(i.guild, "response_alr_exists", _emote="NO"), 0))
+            
+            if ignore_mods == "true":
+                _ignore_mods = True
+            else:
+                _ignore_mods = False
 
-            self.add_responder(i, name, content, trigger, position)
+            self.add_responder(i, name, content, trigger, position, _ignore_mods)
             await i.response.send_message(embed=E(self.locale.t(i.guild, "response_added", _emote="YES", name=name), 1))
-
+        
         modal = ResponseCreateModal(self.bot, "Create Auto Responder", position, callback)
         await ctx.response.send_modal(modal)
 
@@ -336,3 +376,30 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_modal(modal)
         else:
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="NO"), 0))
+
+
+    @AutoModPluginBlueprint.listener()
+    async def on_message(
+        self,
+        msg: discord.Message
+    ) -> None:
+        if msg.author.bot == True: return
+        if msg.guild == None: return
+        if not msg.guild.id in self._r: return
+
+        if not msg.guild.chunked:
+            await msg.guild.chunk(cache=True)
+        
+        for name, obj in self.get_responders(msg.guild).items():
+            if obj.get("ignore_mods", True) == True:
+                if self.is_mod(msg.author): continue
+                
+            if (self._position_funcs[obj["position"]])(msg.content, obj["trigger"]) == True:
+                try:
+                    await msg.channel.send(content=obj["content"])
+                except Exception:
+                    pass
+                else:
+                    self.update_uses(f"{msg.guild.id}-{name}")
+
+        

@@ -15,7 +15,8 @@ def Responder(
         str, 
         list
     ],
-    position: str
+    position: str,
+    ignore_mods: bool
 ) -> dict:
     return {
         "id": f"{ctx.guild.id}-{name}",
@@ -25,6 +26,7 @@ def Responder(
         "content": content,
         "trigger": trigger,
         "position": position.lower(),
+        "ignore_mods": ignore_mods,
 
         "author": f"{ctx.user.id}",
         "editor": None,

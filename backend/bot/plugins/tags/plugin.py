@@ -9,7 +9,7 @@ from typing import Literal
 import re
 import logging; log = logging.getLogger()
 
-from .. import AutoModPluginBlueprint, ShardedBotInstance
+from .. import ShardedBotInstance
 from ...schemas import Tag
 from ...types import Embed, E
 from ...modals import CommandCreateModal
