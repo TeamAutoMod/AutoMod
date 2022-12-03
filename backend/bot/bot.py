@@ -168,22 +168,40 @@ class ShardedBotInstance(commands.AutoShardedBot):
             setattr(self.config, "twitch_callback_url", ngrok_tunnel_url)
 
 
+    async def _activity_handler(
+        self
+    ) -> None:
+        while True:
+            await asyncio.sleep(120)
+            await self.change_presence(
+                activity=discord.Activity(
+                    type=discord.ActivityType.playing if self.config.status_type.lower() not in [
+                        "playing", "listening", "watching", "competing"
+                    ] else getattr(discord.ActivityType, self.config.status_type.lower()), 
+                    name=str(self.config.custom_status).format(
+                        user_count=len(self.users),
+                        guild_count=len(self.guilds)
+                    )
+                )
+            )
+
+
     async def on_ready(
         self
     ) -> None:
         if self.config.custom_status != "":
             if self.activity == None:
-                    await self.change_presence(
-                        activity=discord.Activity(
-                            type=discord.ActivityType.playing if self.config.status_type.lower() not in [
-                                "playing", "listening", "watching", "competing"
-                            ] else getattr(discord.ActivityType, self.config.status_type.lower()), 
-                            name=str(self.config.custom_status).format(
-                                user_count=len(self.users),
-                                guild_count=len(self.guilds)
-                            )
+                await self.change_presence(
+                    activity=discord.Activity(
+                        type=discord.ActivityType.playing if self.config.status_type.lower() not in [
+                            "playing", "listening", "watching", "competing"
+                        ] else getattr(discord.ActivityType, self.config.status_type.lower()), 
+                        name=str(self.config.custom_status).format(
+                            user_count=len(self.users),
+                            guild_count=len(self.guilds)
                         )
                     )
+                )
 
         if not self.ready:
             await self.load_plugins()
@@ -217,7 +235,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
                         self.avatar_as_bytes = await m.avatar.read()
                     except discord.HTTPException:
                         self.avatar_as_bytes = None
-                    
+            
+            self.loop.create_task(self._activity_handler())
             self.ready = True
 
     
