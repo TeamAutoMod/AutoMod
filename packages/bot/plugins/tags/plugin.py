@@ -227,7 +227,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @_commands.command(
-        name="show",
+        name="list",
         description="📝 Shows a list of all custom commands"
     )
     async def custom_commands(
@@ -237,7 +237,7 @@ class TagsPlugin(AutoModPluginBlueprint):
         """
         commands_show_help
         examples:
-        -slash show
+        -commands list
         """
         if ctx.guild.id in self._tags:
             tags = await self.get_tags(ctx.guild, self._tags[ctx.guild.id])
@@ -245,7 +245,7 @@ class TagsPlugin(AutoModPluginBlueprint):
                 e = Embed(
                     ctx,
                     title="Custom Slash Commands",
-                    description="> {}".format(", ".join([f"</{name}:{cid}>" for name, cid in tags.items()]))
+                    description="{}".format(", ".join([f"</{name}:{cid}>" for name, cid in tags.items()]))
                 )
                 await ctx.response.send_message(embed=e)
             else:
@@ -420,43 +420,50 @@ class TagsPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
                 data = Object(self.db.tags.get_doc(f"{ctx.guild.id}-{name}"))
+                y = self.bot.emotes.get("YES")
+                n = self.bot.emotes.get("NO")
 
                 e = Embed(
-                ctx,
-                    title="Command Info"
+                    ctx,
+                    title=f"/{name}"
                 )
                 e.add_fields([
                     {
-                        "name": "**❯ __Name__**",
-                        "value": f"> {name}"
+                        "name": "**__Content__**",
+                        "value": f"```\n{data.content}\n```",
+                        "inline": False
                     },
                     {
-                        "name": "**❯ __Content__**",
-                        "value": f"```\n{data.content}\n```"
+                        "name": "**__Description__**",
+                        "value": f"```\n{data.description}\n```",
+                        "inline": False
                     },
                     {
-                        "name": "**❯ __Description__**",
-                        "value": f"```\n{data.description}\n```"
+                        "name": "**__Ephemeral__**",
+                        "value": f"{y if data.ephemeral == True else n}",
+                        "inline": True
+                    },
+                    e.blank_field(True, 6),
+                    {
+                        "name": "**__Uses__**",
+                        "value": f"{data.uses}",
+                        "inline": True
                     },
                     {
-                        "name": "**❯ __Ephemeral__**",
-                        "value": f"> {'yes' if data.ephemeral == True else 'no'}"
-                    },
-                    {
-                        "name": "**❯ __Uses__**",
-                        "value": f"> {data.uses}"
-                    },
-                    
-                    {
-                        "name": "**❯ __Creator__**",
-                        "value": f"> <@{data.author}> (<t:{round(data.created.timestamp())}>)"
+                        "name": "**__Creator__**",
+                        "value": f"<@{data.author}> \n(<t:{round(data.created.timestamp())}>)",
+                        "inline": True
                     }
                 ])
                 if data.edited != None:
-                    e.add_field(
-                        name="**❯ __Editor__**",
-                        value=f"> <@{data.editor}> (<t:{round(data.edited.timestamp())}>)"
-                    )
+                    e.add_fields([
+                        e.blank_field(True),
+                        {
+                            "name": "**__Editor__**",
+                            "value": f"<@{data.editor}> \n(<t:{round(data.edited.timestamp())}>)",
+                            "inline": True
+                        }
+                    ])
 
                 await ctx.response.send_message(embed=e)
         else:

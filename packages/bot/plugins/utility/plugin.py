@@ -23,17 +23,18 @@ from ...modals import EmbedBuilderModal
 
 
 ACTUAL_PLUGIN_NAMES = {
-    "ConfigPlugin": "⚙️ Configuration",
-    "AutomodPlugin": "⚔️ Automoderator",
-    "ModerationPlugin": "🔨 Moderation",
-    "FilterPlugin": "⛔ Filters & Regexes",
-    "UtilityPlugin": "🔧 Utility",
-    "LevelPlugin": "🏆 Level System",
-    "TagsPlugin": "💬 Responders",
-    "CasesPlugin": "📦 Cases",
-    "ReactionRolesPlugin": "🎭 Reaction Roles"
+    "ConfigPlugin": "Configuration",
+    "AutomodPlugin": "Automoderator",
+    "ModerationPlugin": "Moderation",
+    "FilterPlugin": "Filters & Regexes",
+    "UtilityPlugin": "Utility",
+    "LevelPlugin": "Level System",
+    "TagsPlugin": "Custom Commands",
+    "CasesPlugin": "Case System",
+    "ReactionRolesPlugin": "Reaction Roles"
     #"AlertsPlugin": "👾 Twitch Alerts"
 }
+
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
 CDN = "https://twemoji.maxcdn.com/2/72x72/{}.png"
 
@@ -74,8 +75,8 @@ def get_help_embed(
         title=f"``{usage}``"
     )
     e.add_field(
-        name="**❯ __Description__**", 
-        value=f"> {help_message}"
+        name="**__Description__**", 
+        value=f"{help_message}"
     )
     
     if not isinstance(cmd, discord.app_commands.Group):
@@ -83,16 +84,16 @@ def get_help_embed(
         if len(examples) > 0:
             prefix = "/"
             e.add_field(
-                name="**❯ __Examples__**",
+                name="**__Examples__**",
                 value="\n".join(
                     [
-                        f"> {prefix}{exmp}" for exmp in examples
+                        f"{prefix}{exmp}" for exmp in examples
                     ]
                 )
             )
     else:
         e.add_field(
-            name="**❯ __Subcommands__**", 
+            name="**__Subcommands__**", 
             value="{}".format("\n".join([f"> </{x.qualified_name}:{plugin.bot.internal_cmd_store.get(cmd.name)}>" for x in cmd.commands]))
         )
 
@@ -359,7 +360,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         e.add_field(
                             name="**{}**".format(
                                 f"/{cmd.qualified_name} " \
-                                f"{' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''} " \
+                                f"{' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''}" \
                                 f"{' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}" \
                                 f"{'(*)' if isinstance(cmd, discord.app_commands.Group) else ''}"
                             ),
@@ -453,7 +454,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         # Shard
         shard = self.bot.get_shard(ctx.guild.shard_id)
         
-        await ctx.followup.send(embed=E("> **Rest:** {}ms \n> **Client:** {}ms \n> **Shard:** {}ms \n> **Database:** {}ms".format(
+        await ctx.followup.send(embed=E("**• Rest:** {}ms \n**• Client:** {}ms \n**• Shard:** {}ms \n**• Database:** {}ms".format(
             round((msg_t2 - msg_t1) * 1000),
             round(self.bot.latency * 1000),
             round(shard.latency * 1000),
@@ -482,8 +483,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
             {
-                "name": "**❯ __Status__**",
-                "value": "> **Up:** {} \n> **Version:** {} \n> **Latency:** {}ms"\
+                "name": "**__Status__**",
+                "value": "**• Up:** {} \n**• Version:** {} \n**• Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
                     get_version(),
@@ -492,8 +493,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**❯ __Stats__**",
-                "value": "> **Guilds:** {0:,} \n> **Users:** {1:,} \n> **Shards:** {2:,}"\
+                "name": "**__Stats__**",
+                "value": "**• Guilds:** {0:,} \n**• Users:** {1:,} \n**• Shards:** {2:,}"\
                 .format(
                     len(self.bot.guilds),
                     sum([x.member_count for x in self.bot.guilds]),
@@ -502,8 +503,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**❯ __Usage__**",
-                "value": "> **Commands:** {} \n> **Custom:** {}"\
+                "name": "**__Usage__**",
+                "value": "**• Commands:** {} \n**• Custom:** {}"\
                 .format(
                     self.bot.used_commands,
                     self.bot.used_tags
@@ -566,7 +567,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     if len(cmds) > 0:
                         viewable_plugins.append(p.qualified_name)
                         e.add_field(
-                            name=f"{ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[0]} **__{' '.join(ACTUAL_PLUGIN_NAMES[p.qualified_name].split(' ')[1:])}__**",
+                            name=f"**__{ACTUAL_PLUGIN_NAMES[p.qualified_name]}__**",
                             value="> {}".format(
                                 ", ".join(cmds)
                             ),
@@ -598,15 +599,15 @@ class UtilityPlugin(AutoModPluginBlueprint):
     )
     @discord.app_commands.describe(
         user="The user whose avatar you want to view",
-        server_avatar="Whether to show the server avatar (if set) or the regular avatar"
+        avatar_type="Whether to show the server avatar (if set) or the regular avatar"
     )
     async def avatar(
         self, 
         ctx: discord.Interaction, 
         user: discord.User = None,
-        server_avatar: Literal[
-            "True",
-            "False"
+        avatar_type: Literal[
+            "Regular",
+            "Server"
         ] = None
     ) -> None:
         """
@@ -625,10 +626,10 @@ class UtilityPlugin(AutoModPluginBlueprint):
         )
 
         url = None
-        if server_avatar == None:
+        if avatar_type == None:
             url = user.display_avatar
         else:
-            if server_avatar == "True":
+            if avatar_type == "Server":
                 url = user.display_avatar
             else:
                 url = user.avatar.url if user.avatar != None else user.display_avatar
@@ -719,7 +720,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         else:
             member: Union[discord.Member, None] = ctx.guild.get_member(user.id)
         
-        await ctx.response.defer(thinking=True)
+        await ctx.response.defer(thinking=True, ephemeral=(True if ctx.data.get("type") == 2 else False) if ctx.data != None else False)
         e = Embed(
             ctx,
             color=user.color if user.color != None else None
@@ -728,8 +729,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             url=user.display_avatar
         )
         e.add_field(
-            name="**❯ __User Information__**",
-            value="> **ID:** {} \n> **Profile:** {} \n> **Badges:** {} \n> **Created at:** <t:{}>"\
+            name="**__User Information__**",
+            value="**• ID:** {} \n**• Profile:** {} \n**• Badges:** {} \n**• Created at:** <t:{}>"\
             .format(
                 user.id,
                 user.mention,
@@ -741,8 +742,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             e.add_field(
-                name="**❯ __Server Information__**",
-                value="> **Nickname:** {} \n> **Joined at:** <t:{}> \n> **Join position:** {} \n> **Status:** {} \n> **Roles:** {}"\
+                name="**__Server Information__**",
+                value="**• Nickname:** {} \n**• Joined at:** <t:{}> \n**• Join position:** {} \n**• Status:** {} \n**• Roles:** {}"\
                 .format(
                     member.nick,
                     round(member.joined_at.timestamp()),
@@ -774,8 +775,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")    
 
         e.add_field(
-            name="**❯ __Infractions__**",
-            value="> **Total Cases:** {} \n> **Last 3 Cases:** {}"\
+            name="**__Infractions__**",
+            value="**• Total Cases:** {} \n**• Last 3 Cases:** {}"\
             .format(
                 len(cases),
                 ", ".join(last_3)
@@ -786,7 +787,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
 
     @discord.app_commands.command(
-        name="server", 
+        name="serverinfo", 
         description="📚 Shows some information about the server"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
@@ -797,7 +798,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         """ 
         server_help
         examples:
-        -server
+        -serverinfo
         """
         g: discord.Guild = ctx.guild
 
@@ -809,8 +810,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
         e.add_fields([
             {
-                "name": "**❯ __Information__**",
-                "value": "> **ID:** {} \n> **Owner:** {} \n> **Created:** <t:{}> \n> **Invite Splash:** {} \n> **Banner:** {}"\
+                "name": "**__Information__**",
+                "value": "**• ID:** {} \n**• Owner:** {} \n**• Created:** <t:{}> \n**• Invite Splash:** {} \n**• Banner:** {}"\
                 .format(
                     g.id, 
                     g.owner, 
@@ -822,8 +823,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True),
             {
-                "name": "**❯ __Channels__**",
-                "value": "> **Categories:** {} \n> **Text:** {} \n> **Voice:** {} \n> **Threads:** {}"\
+                "name": "**__Channels__**",
+                "value": "**• Categories:** {} \n**• Text:** {} \n**• Voice:** {} \n**• Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
                     len(g.text_channels), 
@@ -833,8 +834,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**❯ __Members__**",
-                "value": "> **Total:** {} \n> **Users:** {} \n> **Bots:** {}"\
+                "name": "**__Members__**",
+                "value": "**• Total:** {} \n**• Users:** {} \n**• Bots:** {}"\
                 .format(
                     len(g.members), 
                     len([x for x in g.members if not x.bot]), 
@@ -844,15 +845,23 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True),
             {
-                "name": "**❯ __Other__**",
-                "value": "> **Roles:** {} \n> **Emojis:** {} \n> **Features:** {}"\
+                "name": "**__Other__**",
+                "value": "**• Roles:** {} \n**• Emojis:** {} \n**• Boosters:** {}"\
                 .format(
                     len(g.roles), 
-                    len(g.emojis), 
-                    ", ".join([f"{x.replace('_', ' ').title()}" for x in g.features]) if len(g.features) > 0 else "None"
+                    len(g.emojis),
+                    g.premium_subscription_count
                 ),
                 "inline": True
-            }
+            },
+            {
+                "name": "**__Features__**",
+                "value": "{}"\
+                .format(
+                    ", ".join([f"{x.replace('_', ' ').title()}" for x in g.features]) if len(g.features) > 0 else "None"
+                ),
+                "inline": False
+            },
         ])
         await ctx.response.send_message(embed=e)
 
@@ -891,8 +900,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     channel = ctx.guild.get_channel(int(s["id"].split("-")[1]))
                     if channel != None:
                         e.add_field(
-                            name=f"**❯ __#{channel.name}__**",
-                            value="> **Time:** {} \n> **Mode:** {} \n> **Moderator:** {}"\
+                            name=f"**__#{channel.name}__**",
+                            value="**• Time:** {} \n**• Mode:** {} \n**• Moderator:** {}"\
                                 .format(
                                     s["pretty"],
                                     s["mode"],

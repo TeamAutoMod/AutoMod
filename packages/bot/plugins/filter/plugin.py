@@ -81,8 +81,8 @@ class FilterPlugin(AutoModPluginBlueprint):
             channels = "all channels" if len(i["channels"]) < 1 else ", ".join([f'#{ctx.guild.get_channel(int(x))}' for x in i["channels"]])
 
             e.add_field(
-                name=f"**❯ __{name}__**",
-                value=f"> **Action:** {action} \n> **Channels:** {channels} \n> **Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
+                name=f"**__{name}__**",
+                value=f"**• Action:** {action} \n**• Channels:** {channels} \n**• Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
                 inline=True
             )
             if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
@@ -294,8 +294,8 @@ class FilterPlugin(AutoModPluginBlueprint):
             channels = "all channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
 
             e.add_field(
-                name=f"**❯ __{name}__**",
-                value=f"> **Action:** {action} \n> **Channels:** {channels} \n> **Pattern:** \n```\n{data['regex']}\n```",
+                name=f"**__{name}__**",
+                value=f"**• Action:** {action} \n**• Channels:** {channels} \n**• Pattern:** \n```\n{data['regex']}\n```",
                 inline=True
             )
             if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])

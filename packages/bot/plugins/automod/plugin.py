@@ -874,8 +874,8 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "**❯ __Roles__**",
-                "value": "> {}".format(", ".join(
+                "name": "**__Roles__**",
+                "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
                     ]
@@ -883,11 +883,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in added if isinstance(_, discord.Role)
                     ]
-                ) > 0 else f"> {self.bot.emotes.get('NO')}"
+                ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "**❯ __Channels__**",
-                "value": "> {}".format(", ".join(
+                "name": "**__Channels__**",
+                "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
                     ]
@@ -895,11 +895,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in added if isinstance(_, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
                     ]
-                ) > 0 else f"> {self.bot.emotes.get('NO')}"
+                ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "**❯ __Ignored__**",
-                "value": "> {}".format(", ".join(
+                "name": "**__Ignored__**",
+                "value": "{}".format(", ".join(
                     [
                         x.mention for x in ignored if x != None
                     ]
@@ -907,7 +907,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     [
                         _ for _ in ignored if _ != None
                     ]
-                ) > 0 else f"> {self.bot.emotes.get('NO')}"
+                ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
         ])
 
@@ -1034,7 +1034,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         e = Embed(
             ctx,
             title="Allowed invites (by server ID)",
-            description="> {}".format(", ".join(allowed))
+            description="{}".format(", ".join(allowed))
         )
         await ctx.response.send_message(embed=e)
 
@@ -1117,7 +1117,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             e = Embed(
                 ctx,
                 title="Blacklisted links",
-                description="> {}".format(", ".join(links))
+                description="{}".format(", ".join(links))
             )
             await ctx.response.send_message(embed=e)
         else:
@@ -1127,7 +1127,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             e = Embed(
                 ctx,
                 title="Allowed links",
-                description="> {}".format(", ".join(links))
+                description="{}".format(", ".join(links))
             )
             await ctx.response.send_message(embed=e)
 
@@ -1249,15 +1249,15 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         info_embed.add_fields([
             {
-                "name": "**❯ __View current config__**",
+                "name": "**__View current config__**",
                 "value": f"</antispam:{self.bot.internal_cmd_store.get('antispam')}>"
             },
             {
-                "name": "**❯ __Enable antispam__**",
+                "name": "**__Enable antispam__**",
                 "value": f"``{prefix}antispam <rate> <per> <warns>``"
             },
             {
-                "name": "**❯ __Disable antispam__**",
+                "name": "**__Disable antispam__**",
                 "value": f"``{prefix}antispam rate:off``"
             }
         ])
@@ -1269,18 +1269,18 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**❯ __Status__**",
+                    "name": "**__Status__**",
                     "value": "> Enabled" if config["enabled"] == True else "> Disabled",
                     "inline": False
                 },
                 {
-                    "name": "**❯ __Threshold__**",
-                    "value": f"> **{config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "> N/A",
+                    "name": "**__Threshold__**",
+                    "value": f"**• {config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "> N/A",
                     "inline": False
                 },
                 {
-                    "name": "**❯ __Action__**",
-                    "value": f"> **{config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "> N/A",
+                    "name": "**__Action__**",
+                    "value": f"**• {config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "> N/A",
                     "inline": False
                 }
             ])
@@ -1336,7 +1336,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
 
     ignore_automod = discord.app_commands.Group(
-        name="bypass-automod",
+        name="ignore-automod",
         description="🔀 Manage ignored roles & channels for the automoderator",
         default_permissions=discord.Permissions(manage_guild=True)
     )
@@ -1352,7 +1352,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_help
         examples:
-        -bypass-automod show
+        -ignore-automod show
         """
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
@@ -1365,12 +1365,12 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**❯ __Roles__**",
-                    "value": "> {}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
+                    "name": "**__Roles__**",
+                    "value": "{}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                 },
                 {
-                    "name": "**❯ __Channels__**",
-                    "value": "> {}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
+                    "name": "**__Channels__**",
+                    "value": "{}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                 }
             ])
 
@@ -1389,7 +1389,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_add_help
         examples:
-        -bypass-automod add
+        -ignore-automod add
         """
         view = RoleChannelSelect("automod_add")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_add"), color=2), view=view, ephemeral=True)
@@ -1407,7 +1407,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_remove_help
         examples:
-        -bypass-automod remove
+        -ignore-automod remove
         """
         view = RoleChannelSelect("automod_remove")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=2), view=view, ephemeral=True)

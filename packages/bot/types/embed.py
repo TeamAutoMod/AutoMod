@@ -137,7 +137,7 @@ def E(
     colors = {
         0: 0xf04a47,
         1: 0x43b582,
-        2: int(bot_obj.config.embed_color, 16)
+        2: int(bot_obj.config.bot_color, 16)
     }
 
     return Embed(

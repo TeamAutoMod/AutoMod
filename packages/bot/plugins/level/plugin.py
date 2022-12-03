@@ -83,15 +83,19 @@ class LevelPlugin(AutoModPluginBlueprint):
 
     def lb_pos(
         self, 
-        i: int
+        i: int,
+        user: Union[
+            str,
+            discord.Member
+        ]
     ) -> str:
         i = (i+1)
         if i == 1:
-            return "**❯** 🏆"
+            return f"🏆 {user}"
         elif i == 2:
-            return "**❯** 🥈"
+            return f"🥈 {user}"
         elif i == 3:
-            return "**❯** 🥉"
+            return f"🥉 {user}"
         else:
             if len(str(i)) >= 2 and int(str(i)[-2]) == 1:
                 end = "th"
@@ -104,7 +108,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                     end = "rd"
                 else:
                     end = "th"
-            return f"**❯ __{i}{end}__**"
+            return f"**__{i}{end}__** {user}"
 
 
     def has_premium(
@@ -284,7 +288,16 @@ class LevelPlugin(AutoModPluginBlueprint):
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         if enabled == None and notifications == None:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_status", status="enabled" if config["enabled"] == True else "disabled"), 2))
+            e = Embed(
+                ctx,
+                title="Level System",
+                description="**• Enabled:** {} \n**• Notifications:** {} \n**• Rewards:** {}".format(
+                    self.bot.emotes.get("YES") if config["enabled"] == True else self.bot.emotes.get("NO"),
+                    config["notif_mode"].title(),
+                    config["reward_mode"].title()
+                )
+            )
+            await ctx.response.send_message(embed=e)
         else:
             if enabled != None:
                 if enabled.lower() == "true":
@@ -359,7 +372,7 @@ class LevelPlugin(AutoModPluginBlueprint):
             for lvl, role in dict(sorted(config.rewards.items(), key=lambda e: int(e[0]))).items():
                 e.add_field(
                     name=f"__**Level {lvl}**__",
-                    value=f"> <@&{role}>"
+                    value=f"<@&{role}>"
                 )
             await ctx.response.send_message(embed=e)
 
@@ -509,7 +522,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         e = Embed(
             ctx,
             title=f"{user.name}#{user.discriminator}",
-            description="**Level:** {} \n**Progress:** {} / {} \n**Total XP:** {}"\
+            description="**• Level:** {} \n**• Progress:** {} / {} \n**• Total XP:** {}"\
                 .format(
                     data.lvl,
                     ((for_nxt_lvl - for_last_lvl) - (for_nxt_lvl - data.xp)) if data.lvl > 1 else data.xp,
@@ -557,14 +570,13 @@ class LevelPlugin(AutoModPluginBlueprint):
             if user == None: 
                 user = "Unknown#0000"
             else:
-                user = f"<@{entry.id.split('-')[-1]}>"
+                user = f"{user.name}#{user.discriminator}"
 
-            if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 5)])
+            if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 10)])
             e.add_field(
-                name=f"{self.lb_pos(i)}",
-                value="> **User:** {} \n> **Level:** {} \n> **Total XP:** {}"\
+                name=f"{self.lb_pos(i, user)}",
+                value="**• Level:** {} \n**• Total XP:** {} \n⠀"\
                     .format(
-                        user,
                         entry.lvl,
                         entry.xp
                     ),
@@ -577,37 +589,6 @@ class LevelPlugin(AutoModPluginBlueprint):
             )
         )
         await ctx.response.send_message(embed=e)
-
-
-    # @discord.app_commands.command(
-    #     name="bonus",
-    #     description=""
-    # )
-    # @discord.app_commands.describe(
-    #     xp="The amount of XP you want  to grant (use a negative number to subract XP)"
-    # )
-    # @discord.app_commands.default_permissions(manage_guild=True)
-    # async def bonus(
-    #     self,
-    #     ctx: discord.Interaction,
-    #     user: discord.Member,
-    #     xp: int
-    # ) -> None:
-    #     """
-    #     bonus_help
-    #     examples:
-    #     -bonus @paul#0009 1000
-    #     -bonus @paul#0009 -500
-    #     """
-    #     if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
-
-    #     config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-    #     if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
-
-    #     if xp > MAX_BONUS_XP: return await ctx.response.send_message(embed=E(elf.locale.t(ctx.guild, "max_bonus_xp", _emote="NO", amount=MAX_BONUS_XP), 0))
-
-    #     xp = max(0, xp)
-
 
 
 async def setup(

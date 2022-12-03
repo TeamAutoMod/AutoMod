@@ -450,7 +450,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         for i, _e in enumerate(msg.embeds[:23]):
             e.add_field(
                 name=f"Embed ({i+1}/{len(msg.embeds)})",
-                value="> **Title:** {} \n> **Description:** {} \n> **Fields:** {} \n> **Thumbnail:** {} \n> **Image:** {} \n> **Footer:** {}".format(
+                value="**• Title:** {} \n**• Description:** {} \n**• Fields:** {} \n**• Thumbnail:** {} \n**• Image:** {} \n**• Footer:** {}".format(
                     self._c(_e.title) if _e.title else no,
                     yes if _e.description else no,
                     len(_e.fields),

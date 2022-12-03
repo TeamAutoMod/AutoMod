@@ -219,8 +219,8 @@ class AlertsPlugin(AutoModPluginBlueprint):
         )
         for streamer, cid in active.items():
             e.add_field(
-                name=f"**❯ __{streamer}__**",
-                value=f"> **Channel:** <#{cid}>"
+                name=f"**__{streamer}__**",
+                value=f"**• Channel:** <#{cid}>"
             )
         
         await ctx.response.send_message(embed=e)

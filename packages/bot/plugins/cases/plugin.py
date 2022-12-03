@@ -206,7 +206,7 @@ class CasesPlugin(AutoModPluginBlueprint):
             log_url = self.get_log_for_case(ctx, case)
 
             out.append(
-                "> {} ``{}`` {} - {}"\
+                "**•** {} ``{}`` {} - {}"\
                 .format(
                     timestamp,
                     case["type"].upper(),
@@ -304,44 +304,44 @@ class CasesPlugin(AutoModPluginBlueprint):
         e = Embed(
             ctx,
             color=LOG_TYPES[data.type.replace(" ", "_").lower()]["color"],
-            title=f"{data.type.upper()} | #{case}"
+            title=f"{data.type.title()} | #{case}"
         )
-        if log_msg_url != None:
-            e.description = f"[View log message]({log_msg_url})"
+        if log_msg_url != None: e.description = f"[View log message]({log_msg_url})"
+
         e.set_thumbnail(
             url=data.user_av
         )
         e.add_fields([
             {
-                "name": "**❯ __User__**",
-                "value": f"> <@{data.user_id}> ({data.user_id})"
+                "name": "**__User__**",
+                "value": f"<@{data.user_id}> ({data.user_id})"
             },
             {
-                "name": "❯ __Moderator__**",
-                "value": f"> <@{data.mod_id}> ({data.mod_id})"
+                "name": "**__Moderator__**",
+                "value": f"<@{data.mod_id}> ({data.mod_id})"
             },
             {
-                "name": "**❯ __Timestamp__**",
-                "value": f"> <t:{round(data.timestamp.timestamp())}>"
+                "name": "**__Timestamp__**",
+                "value": f"<t:{round(data.timestamp.timestamp())}>"
             },
             {
-                "name": "**❯ __Reason__**",
-                "value": f"> {data.reason}"
+                "name": "**__Reason__**",
+                "value": f"{data.reason}"
             },
         ])
 
         if hasattr(data, "warns_added"):
             if int(data.warns_added) > 0: 
                 e.add_field(
-                    name=f"**❯ __Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}__**",
-                    value=f"> {data.warns_added}"
+                    name=f"**__Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}__**",
+                    value=f"{data.warns_added}"
                 )
         
         if hasattr(data, "until"):
             if data.until != "": 
                 e.add_field(
-                    name="**❯ __Until__**",
-                    value=f"> {data.until}"
+                    name="**__Until__**",
+                    value=f"{data.until}"
                 )
         await ctx.response.send_message(embed=e)
 
@@ -366,14 +366,13 @@ class CasesPlugin(AutoModPluginBlueprint):
         """
         e = Embed(
             ctx,
-            title="Info for {0.name}#{0.discriminator}".format(
-                user
-            )
         )
-        if hasattr(user, "display_avatar"):
-            e.set_thumbnail(
-                url=user.display_avatar
-            )
+        e.set_author(
+            name="{0.name}#{0.discriminator}".format(
+                user
+            ),
+            icon_url=user.display_avatar
+        )
 
         mute_data = self.db.mutes.get_doc(f"{ctx.guild.id}-{user.id}")
         ban_data = await self.ban_data(ctx, user)
@@ -381,8 +380,8 @@ class CasesPlugin(AutoModPluginBlueprint):
         no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
         e.add_fields([
             {
-                "name": "**❯ __Status__**",
-                "value": "> **Banned:** {}{} \n> **Muted:** {} \n> **Muted until:** {}"\
+                "name": "**__Status__**",
+                "value": "**• Banned:** {}{} \n**• Muted:** {} \n**• Muted until:** {}"\
                 .format(
                     yes if ban_data != None else no,
                     f" (``{ban_data.reason}``)" if ban_data != None else "",
@@ -391,8 +390,8 @@ class CasesPlugin(AutoModPluginBlueprint):
                 )
             },
             {
-                "name": "**❯ __Warnings__**",
-                "value": "> **Warns:** {}"\
+                "name": "**__Warnings__**",
+                "value": "**• Warns:** {}"\
                 .format(
                     0 if warns == None else warns
                 )

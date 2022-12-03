@@ -419,7 +419,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             except Exception as ex:
                 await i.response.send_message(
                     embed=discord.Embed(
-                        color=int(self.config.embed_color, 16),
+                        color=int(self.config.bot_color, 16),
                         description=self.locale.t(i.guild, "fail", _emote="NO", exc=ex)
                     )
                 )
@@ -448,7 +448,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     async def register_infractions_ctx_menu(
         self
     ) -> None:
-        @self.tree.context_menu(name="history")
+        @self.tree.context_menu(name="History")
         @discord.app_commands.default_permissions(manage_messages=True)
         async def _(
             i: discord.Interaction, 
@@ -460,7 +460,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             except Exception as ex:
                 await i.response.send_message(
                     embed=discord.Embed(
-                        color=int(self.config.embed_color, 16),
+                        color=int(self.config.bot_color, 16),
                         description=self.locale.t(i.guild, "fail", _emote="NO", exc=ex)
                     )
                 )

@@ -8,15 +8,15 @@ from .buttons import LinkBtn
 
 
 ACTUAL_PLUGIN_NAMES = {
-    "ConfigPlugin": "⚙️ Configuration",
-    "AutomodPlugin": "⚔️ Automoderator",
-    "FilterPlugin": "⛔ Filters & Regexes",
-    "ModerationPlugin": "🔨 Moderation",
-    "UtilityPlugin": "🔧 Utility",
-    "TagsPlugin": "📝 Custom Commands",
-    "CasesPlugin": "📦 Cases",
-    "ReactionRolesPlugin": "🎭 Reaction Roles",
-    "LevelPlugin": "🏆 Level System"
+    "ConfigPlugin": "Configuration",
+    "AutomodPlugin": "Automoderator",
+    "ModerationPlugin": "Moderation",
+    "FilterPlugin": "Filters & Regexes",
+    "UtilityPlugin": "Utility",
+    "LevelPlugin": "Level System",
+    "TagsPlugin": "Custom Commands",
+    "CasesPlugin": "Case System",
+    "ReactionRolesPlugin": "Reaction Roles"
     #"AlertsPlugin": "👾 Twitch Alerts"
 }
 
