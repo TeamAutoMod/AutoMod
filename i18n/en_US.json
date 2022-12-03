@@ -367,5 +367,14 @@
     "bypass_add": "Select the roles & channels you want to add to the bypass list below",
     "bypass_remove": "Select the roles & channels you want to remove from the bypass list below",
     "select_role": "Select a join role below (make sure it's below my highest role)",
-    "role_not_found": "{emote} Role not found"
+    "role_not_found": "{emote} Role not found",
+
+    "invalid_regex_responder": "{emote} The provided RegEx seems to be invalid. If you need help, check this site https://regexr.com/",
+    "max_responders": "{emote} Maximum limit of auto responders reached ({max_responders})",
+    "response_alr_exists": "{emote} Auto responder with that name already exists",
+    "response_added": "{emote} Auto responder **{name}** has been created",
+    "no_responders": "{emote} This server doesn't have any auto responders yet",
+    "response_doesnt_exists": "{emote} Auto responder with that name doesn't exist",
+    "response_removed": "{emote} Auto responder has been deleted",
+    "response_edited": "{emote} Auto responder **{name}** has been updated"
 }

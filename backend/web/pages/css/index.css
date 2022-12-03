@@ -12,12 +12,12 @@ body {
     min-height: 100vh;
     align-items: center;
     position: relative;
-    background: #052445;
+    background: #0e1015;
 }
 
 .container {
     max-width: 100%;
-    justify-content: center;
+    justify-content: center!important;
     align-items: center;
     position: absolute;
     left: 50%;
@@ -60,12 +60,15 @@ body {
 }
 
 .links li a:hover {
-    color: rgb(204, 201, 201);
+    transition: 0.05s ease-in-out;
+    color: #6b7e91;
 }
 
 .stats {
     padding-top: 30px;
     padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
 }
 
 .stats ul {
@@ -76,6 +79,7 @@ body {
 
 .stats li {
     padding: 5px;
+    line-height: 100%;
 }
 
 .stats #second {
@@ -92,7 +96,7 @@ body {
     background-color: #3e98f7;
     font-style: bold;
     font-size: 15px;
-    border-radius: 25px;
+    border-radius: 7px;
     width: 100%;
 }
 
@@ -109,20 +113,20 @@ body {
     padding: 12px;
     color: #ffffff;
     font-size: 15px;
-    border: 1px solid #ffffff;
-    border-radius: 25px;
+    border: 1px solid #2e323d;
+    border-radius: 7px;
     text-align: center;
     vertical-align: middle;
-    background-color: #052445; 
+    background-color: #2e323d; 
     width: 200px;
 }
 
-.stats li h1:hover {
-    background-color: #0a2d53;
-}
+/* .stats li h1:hover {
+    background-color: #373a41;
+} */
 
 .features {
-    padding-top: 60px;
+    padding-top: 20px;
 }
 
 .features ul {
@@ -135,16 +139,17 @@ body {
     float: left;
     display: inline;
     padding: 5px;
+    line-height: 100%;
 }
 
 .features ul li .feature {
     text-decoration: none;
     padding: 12px;
-    border: 0.5px solid #ffffff;
+    border: 0.5px solid #2e323d;
     border-radius: 7px;
     text-align: center;
     vertical-align: middle;
-    background-color: #052445; 
+    background-color: #2e323d; 
     width: 305px
 }
 
@@ -168,6 +173,6 @@ body {
     padding-top: 5px;
 }
 
-.features ul li .feature:hover {
-    background-color: #0a2d53;
-}
+/* .features ul li .feature:hover {
+    background-color: #373a41;
+} */

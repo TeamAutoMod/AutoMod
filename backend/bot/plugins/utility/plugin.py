@@ -29,7 +29,7 @@ ACTUAL_PLUGIN_NAMES = {
     "FilterPlugin": "Filters & Regexes",
     "UtilityPlugin": "Utility",
     "LevelPlugin": "Level System",
-    "TagsPlugin": "Custom Commands",
+    "TagsPlugin": "Custom Commands & Responders",
     "CasesPlugin": "Case System",
     "ReactionRolesPlugin": "Reaction Roles"
     #"AlertsPlugin": "👾 Twitch Alerts"
@@ -550,7 +550,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         if self.db.configs.get(ctx.guild.id, "premium") == False:
                             continue
                     cmds = []
-                    for cmd in p.__cog_app_commands__:
+                    for cmd in (p.__cog_app_commands__ if p.qualified_name != "TagsPlugin" else p.__cog_app_commands__[::-1]): # Rather have commands before autoresponders
                         if cmd.qualified_name not in self.bot.config.disabled_commands:
                             if cmd.default_permissions != None:
                                 if ctx.user.guild_permissions >= cmd.default_permissions:

@@ -54,7 +54,7 @@ class _Formatter(logging.Formatter):
         return res
     
 
-logging.getLogger("discord").propagate = False
+# logging.getLogger("discord").propagate = False
 
 sh = logging.StreamHandler()
 sh.setFormatter(_Formatter())

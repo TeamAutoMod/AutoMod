@@ -402,6 +402,10 @@ class LevelPlugin(AutoModPluginBlueprint):
         name="add",
         description="✅ Adds a new role reward for the specified level"
     )
+    @discord.app_commands.describe(
+        level="At what level to assign the role",
+        role="The role to assign the user"
+    )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def role_reward_add(
         self,
@@ -440,6 +444,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         name="remove",
         description="❌ Removes the reward for the specified level"
     )
+    @discord.app_commands.describe(
+        level="The level for which you want to remove to reward",
+    )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def role_reward_remove(
         self,
@@ -472,6 +479,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         name="mode",
         description="🎉 Configure whether to stack role rewards, or only always have the highest role reward"
     )
+    @discord.app_commands.describe(
+        mode="The mod for assgning rewards (stack roles or always only allow the highest one) "
+    )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def role_reward_mode(
         self,
@@ -479,7 +489,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         mode: Literal[
             "Stack",
             "Single"
-        ] = None
+        ]
     ) -> None:
         """
         role_reward_mode_help
@@ -491,12 +501,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
         
-        if mode == None:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "current_mode", mode=config["reward_mode"]), 2))
-        else:
-            config["reward_mode"] = mode.lower()
-            self.db.configs.update(ctx.guild.id, "lvl_sys", config)
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_mode", _emote="YES", mode=config["reward_mode"]), 1))
+        config["reward_mode"] = mode.lower()
+        self.db.configs.update(ctx.guild.id, "lvl_sys", config)
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_mode", _emote="YES", mode=config["reward_mode"]), 1))
 
 
     @discord.app_commands.command(

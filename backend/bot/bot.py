@@ -347,6 +347,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = "AutoReplyPlugin"
         elif plugin == "automod":
             in_plugins_name = "AutomodPlugin"
+        elif plugin == "responder":
+            in_plugins_name = "AutoResponderPlugin"
         else:
             in_plugins_name = f"{plugin.capitalize()}Plugin"
         

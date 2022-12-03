@@ -14,7 +14,7 @@ ACTUAL_PLUGIN_NAMES = {
     "FilterPlugin": "Filters & Regexes",
     "UtilityPlugin": "Utility",
     "LevelPlugin": "Level System",
-    "TagsPlugin": "Custom Commands",
+    "TagsPlugin": "Custom Commands & Responders",
     "CasesPlugin": "Case System",
     "ReactionRolesPlugin": "Reaction Roles"
     #"AlertsPlugin": "👾 Twitch Alerts"

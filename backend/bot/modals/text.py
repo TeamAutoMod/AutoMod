@@ -384,3 +384,91 @@ class EmbedBuilderModal(TextModalBase):
         required=False,
         max_length=1024
     )
+
+
+class ResponseCreateModal(TextModalBase):
+    def __init__(
+        self, 
+        bot, 
+        title: str, 
+        position: str,
+        callback: Callable
+    ) -> None:
+        super().__init__(bot, title, callback)
+        self._placeholders = {
+            "startswith": "Triggers for the response, seperated by commas (checks beginning of a message)",
+            "endswith": "Triggers for the response, seperated by commas (checks end of a message)",
+            "contains": "Triggers for the response, seperated by commas (checks anywhere within a message)",
+            "regex": "RegEx that will trigger the response"
+        }
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="trigger",
+                label="Trigger",
+                style=discord.TextStyle.long,
+                placeholder=self._placeholders[position],
+                required=True,
+                max_length=200 if position == "regex" else 1500
+            )
+        )
+    
+
+    name = discord.ui.TextInput(
+        custom_id="name",
+        label="Name",
+        style=discord.TextStyle.short,
+        placeholder="Name of the auto responder",
+        required=True,
+        max_length=20
+    )
+
+
+    content = discord.ui.TextInput(
+        custom_id="content",
+        label="Response",
+        style=discord.TextStyle.long,
+        placeholder="What the bot should respond with",
+        required=True,
+        max_length=2000
+    )
+
+
+class ResponseEditModal(TextModalBase):
+    def __init__(
+        self, 
+        bot, 
+        title: str, 
+        position: str,
+        trigger: str,
+        response: str,
+        callback: Callable
+    ) -> None:
+        super().__init__(bot, title, callback)
+        self._placeholders = {
+            "startswith": "Triggers for the response, seperated by commas (checks beginning of a message)",
+            "endswith": "Triggers for the response, seperated by commas (checks end of a message)",
+            "contains": "Triggers for the response, seperated by commas (checks anywhere within a message)",
+            "regex": "RegEx that will trigger the response"
+        }
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="trigger",
+                label="Trigger",
+                style=discord.TextStyle.long,
+                placeholder=self._placeholders[position],
+                default=trigger,
+                required=True,
+                max_length=200 if position == "regex" else 1500
+            )
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="content",
+                label="Response",
+                style=discord.TextStyle.long,
+                placeholder="What the bot should respond with",
+                default=response,
+                required=True,
+                max_length=2000
+            )
+        )

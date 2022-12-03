@@ -13,10 +13,11 @@ from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import Tag
 from ...types import Embed, E
 from ...modals import CommandCreateModal
+from ..responder.plugin import AutoResponderPlugin
 
 
 
-class TagsPlugin(AutoModPluginBlueprint):
+class TagsPlugin(AutoResponderPlugin):
     """Plugin for tags (custom commands)"""
     def __init__(
         self, 
