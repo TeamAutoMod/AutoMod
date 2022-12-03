@@ -14,7 +14,7 @@ else:
     VERSION = str(_V).replace("b'", "")[:7]
 
 
-with open("packages/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
+with open("backend/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
     config = json.load(config_file)
 
 
@@ -44,6 +44,9 @@ class _Formatter(logging.Formatter):
 
         elif record.levelno == logging.ERROR:
             self._style._fmt = "[{asctime}] 🔥 \033[1;31m {levelname:<7} \033[0;0m: {message}"
+
+        elif record.levelno == logging.CRITICAL:
+            self._style._fmt = "{message}" # This is just used for the ascii starting text
 
         res = logging.Formatter.format(self, record)
         self._style._fmt = fm_og

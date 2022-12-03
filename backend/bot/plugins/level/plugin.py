@@ -24,6 +24,7 @@ class LevelPlugin(AutoModPluginBlueprint):
     ) -> None:
         super().__init__(bot, requires_premium=False) # set this to true for now (testing etc)
         self._processing = []
+        self._cooldowns = []
 
 
     def exists(

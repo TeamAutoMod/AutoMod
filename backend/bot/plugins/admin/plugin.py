@@ -3,9 +3,7 @@
 import discord
 from discord.ext import commands
 
-import logging
-
-from packages.bot.types.embed import E; log = logging.getLogger()
+import logging; log = logging.getLogger()
 import time
 import traceback
 import ast
@@ -14,7 +12,7 @@ import datetime
 from toolbox import S as Object
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed
+from ...types import Embed, E
 from ...views import DeleteView
 
 

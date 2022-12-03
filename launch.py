@@ -9,7 +9,7 @@ import inspect
 import signal as sig_lib
 import logging; log = logging.getLogger(__name__)
 
-from packages.bot import ShardedBotInstance
+from backend.bot import ShardedBotInstance
 
 
 

@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     volumes:
       - .:/web
-    working_dir: /web/packages/web
+    working_dir: /web/backend/web
     entrypoint: [ "/bin/sh", "-c" ]
     command:
       - |

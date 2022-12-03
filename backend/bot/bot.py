@@ -87,7 +87,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         **kwargs
     ) -> None:
         self._start_text()
-        with open("packages/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
+        with open("backend/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
             if self.config.twitch_app_id != "" and self.config.twitch_secret != "":
                 self.ngrok_port = random.randint(1024, 65535)
@@ -140,14 +140,14 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def _start_text(
         self
     ) -> None:
-        print("\033[1;34m" + """
+        log.critical("\033[1;34m" + """
      _         _        __  __           _ 
     / \  _   _| |_ ___ |  \/  | ___   __| |
    / _ \| | | | __/ _ \| |\/| |/ _ \ / _` |
   / ___ \ |_| | || (_) | |  | | (_) | (_| |
  /_/   \_\__,_|\__\___/|_|  |_|\___/ \__,_|
                                                                                                                                                     
-            """ + "\033[0;0m")
+            """ + "\033[0;0m") # we use log.critical() here to have it being interpreted as a log message for linux pm2 logs
 
 
     def _set_ngrok_url(
@@ -309,7 +309,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         plugin: str
     ) -> None:
         try:
-            await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
+            await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
         except Exception:
             log.error(f"Failed to load {plugin} - {traceback.format_exc()}")
         else:
@@ -332,15 +332,15 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = f"{plugin.capitalize()}Plugin"
         
         if in_plugins_name not in self.plugins:
-            try: await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
+            try: await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
             except Exception: raise
 
         else:
-            try: await super().unload_extension(f"packages.bot.plugins.{plugin}.plugin")
+            try: await super().unload_extension(f"backend.bot.plugins.{plugin}.plugin")
             except Exception: raise
 
             else:
-                try: await super().load_extension(f"packages.bot.plugins.{plugin}.plugin")
+                try: await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
                 except Exception: raise
 
 

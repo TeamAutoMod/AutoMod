@@ -129,11 +129,11 @@ dmypy.json
 .pyre/
 /node_modules
 
-/packages/bot/config.json
-/packages/bot/plugins/_processor/config.py
-/packages/bot/plugins/keywords
-/packages/bot/plugins/timers
-/packages/frontend
+/backend/bot/config.json
+/backend/bot/plugins/_processor/config.py
+/backend/bot/plugins/keywords
+/backend/bot/plugins/timers
+/backend/frontend
 /js
 /configs
 
