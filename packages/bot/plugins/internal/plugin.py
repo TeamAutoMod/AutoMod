@@ -423,7 +423,8 @@ class InternalPlugin(AutoModPluginBlueprint):
         cfg = self.db.configs.get_doc(msg.guild.id)
         if cfg["message_log"] == "" \
         or not isinstance(msg.channel, discord.TextChannel) \
-        or msg.author.id == self.bot.user.id:
+        or msg.author.id == self.bot.user.id \
+        or msg.author.bot == True:
             return
 
         if guild.chunked == False: await self.bot.chunk_guild(guild)
@@ -493,6 +494,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         if cfg["message_log"] == "" \
         or not isinstance(msg.channel, discord.TextChannel) \
         or msg.author.id == self.bot.user.id \
+        or msg.author.bot == True \
         or msg.type != discord.MessageType.default:
             return
 

@@ -126,6 +126,25 @@ class LevelPlugin(AutoModPluginBlueprint):
             return int((50 * ((lvl - 1) ** 2)) + (50 * (lvl - 1)))
         else:
             return 50
+        
+
+    async def is_eligible_message(
+        self,
+        msg: discord.Message,
+    ) -> bool:
+        ctx = await self.bot.get_context(msg)
+        return (
+            len(msg.content) > 3 \
+            and (not ctx.valid and ctx.command == None) \
+            and msg.guild != None \
+            and msg.author != None \
+            and msg.author.bot == False \
+            and not msg.content.startswith(tuple([
+                "!", "?","/", "-", "+", ".", ";" # common bot prefixes
+            ])) \
+            and not any([x.bot for x in msg.mentions if hasattr(x, "bot")])
+        )
+        
 
 
     async def add_reward(
@@ -181,15 +200,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         self, 
         msg: discord.Message
     ) -> None:
-        if msg.guild == None: return
-        if msg.author == None: return
-        if msg.author.bot == True: return
         # if not self.has_premium(msg.guild): return
         if not msg.guild.chunked:
             await self.bot.chunk_guild(msg.guild)
-        
-        ctx = await self.bot.get_context(msg)
-        if ctx.valid and ctx.command is not None: return
         
         config = Object(self.db.configs.get(msg.guild.id, "lvl_sys"))
         if config.enabled == False: return
@@ -198,6 +211,8 @@ class LevelPlugin(AutoModPluginBlueprint):
             msg.guild, 
             msg.author
         ): return
+
+        if not await self.is_eligible_message(msg): return
 
         pid = f"{msg.guild.id}-{msg.author.id}"
         if pid in self._processing: return
