@@ -589,7 +589,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(
             url=ctx.guild.icon.url
         )
-        for i, entry in enumerate(data[:11]):
+        for i, entry in enumerate(data[:10]):
             user = ctx.guild.get_member(int(entry.id.split("-")[-1]))
             if user == None: 
                 user = "Unknown#0000"
