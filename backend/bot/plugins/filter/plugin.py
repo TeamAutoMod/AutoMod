@@ -55,7 +55,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @_filter.command(
-        name="show",
+        name="list",
         description="⛔️ Shows all active word filters"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
@@ -66,7 +66,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         """
         filter_show_help
         examples:
-        -filter show
+        -filter list
         """
         filters = self.db.configs.get(ctx.guild.id, "filters")
         if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="NO"), 0))
@@ -268,7 +268,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_messages=True)
     )
     @regex.command(
-        name="show",
+        name="list",
         description="⛔️ Shows a list of active regex filters"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
@@ -279,7 +279,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         r"""
         regex_help
         examples:
-        -regex show
+        -regex list
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO"), 0))

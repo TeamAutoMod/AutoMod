@@ -292,7 +292,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         pun = Embed(
             None,
             title="🔨 Punishments",
-            description=self.locale.t(guild, "pun_val", prefix=_prefix, cmd=f"</punishment:{self.bot.internal_cmd_store.get('punishment')}>")
+            description=self.locale.t(guild, "pun_val", prefix=_prefix, cmd=f"</punishments add:{self.bot.internal_cmd_store.get('punishments')}>")
         )
         
         embeds = [base, log, am, pun]

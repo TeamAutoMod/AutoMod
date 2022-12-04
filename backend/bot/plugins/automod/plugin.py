@@ -1015,7 +1015,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @allowed_invites.command(
-        name="show",
+        name="list",
         description="🔗 Shows all currently allowed invite links"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
@@ -1026,7 +1026,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         allowed_invites_help
         examples:
-        -allowed_invites show
+        -allowed_invites list
         """
         allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
         if len(allowed) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix="/"), 0))
@@ -1093,8 +1093,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @_links.command(
-        name="show",
+        name="list",
         description="🔗 Shows the current link blacklist or whitelist"
+    )
+    @discord.app_commands.describe(
+        type="What list type to check"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def show_link(
@@ -1108,7 +1111,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         link_blacklist_help
         examples:
-        -links show Blacklist
+        -links list Blacklist
         """
         if type.lower() == "blacklist":
             links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
@@ -1341,7 +1344,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @ignore_automod.command(
-        name="show",
+        name="list",
         description="🔒 Shows the current list of ignored roles & channels for the automoderator"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
@@ -1352,7 +1355,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         ignore_automod_help
         examples:
-        -ignore-automod show
+        -ignore-automod list
         """
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 

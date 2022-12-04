@@ -137,7 +137,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_roles=True)
     )
     @rr.command(
-        name="show",
+        name="list",
         description="🎭 Shows a list of active reaction roles"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
@@ -148,7 +148,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         reaction_roles_help
         examples:
-        -rr show
+        -rr list
         """
         rrs = {
             k: v for k, v in self.db.configs.get(

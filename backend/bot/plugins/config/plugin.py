@@ -422,36 +422,39 @@ class ConfigPlugin(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=e)
 
 
-    @discord.app_commands.command(
-        name="punishment",
-        description="💣 Adds/removes an automatic punishment (use /setup for more info)"
+    auto_punishments = discord.app_commands.Group(
+        name="punishments",
+        description="💣 Configure automatic punishments (use /setup for more info)",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @auto_punishments.command(
+        name="add",
+        description="💣 Creates a new automatic punishment"
     )
     @discord.app_commands.describe(
         warns="The amount of warns the punishment is being configured for",
-        action="The action that should be taken (use 'None' to remove the punishment)",
+        action="The action that should be taken",
         time="10m, 2h, 1d (the 'Mute' action requires this, while the 'Ban' option can have a duration)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def punishment(
+    async def add_punishment(
         self, 
         ctx: discord.Interaction, 
         warns: int, 
         action: Literal[
             "Kick",
             "Ban",
-            "Mute",
-            "None"
+            "Mute"
         ], 
         time: str = None
     ) -> None:
         """
-        punishment_help
+        punishment_add_help
         examples:
-        -punishment 3 kick
-        -punishment 4 ban
-        -punishment 2 mute 10m
-        -punishment 6 ban 7d
-        -punishment 5 none
+        -punishments add 3 kick
+        -punishments add 4 ban
+        -punishments add 2 mute 10m
+        -punishments add 6 ban 7d
         """
         action = action.lower()
 
@@ -465,18 +468,14 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 return self.error(ctx, ex)
 
         current = self.db.configs.get(ctx.guild.id, "punishments")
-        prefix = "/"
+        cmd = f"</punishments list:{self.bot.internal_cmd_store.get('punishments')}>"
         text = ""
 
-        if action == "none":
-            current = {k: v for k, v in current.items() if str(k) != str(warns)}
-            text = self.locale.t(ctx.guild, "set_none", _emote="YES", warns=warns, prefix=prefix)
-
-        elif action != "mute":
+        if action != "mute":
             new = ""
             key = action
             kwargs = {
-                "prefix": prefix,
+                "cmd": cmd,
                 "warns": warns
             }
 
@@ -519,13 +518,77 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 current.update({
                     str(warns): f"mute {sec} {length} {unit}"
                 })
-                text = self.locale.t(ctx.guild, "set_mute", _emote="YES", warns=warns, length=length, unit=unit, prefix=prefix)
+                text = self.locale.t(ctx.guild, "set_mute", _emote="YES", warns=warns, length=length, unit=unit, cmd=cmd)
         
             else:
                 return self.error(ctx, commands.BadArgument("number_too_small"))
         
         self.db.configs.update(ctx.guild.id, "punishments", current)
-        await ctx.response.send_message(text)
+        await ctx.response.send_message(embed=E(text, 1))
+
+
+    @auto_punishments.command(
+        name="delete",
+        description="💣 Deletes an automatic punishment"
+    )
+    @discord.app_commands.describe(
+        warns="The amount of warns the punishment was set for",
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def delete_punishment(
+        self, 
+        ctx: discord.Interaction, 
+        warns: int, 
+    ) -> None:
+        """
+        punishment_delete_help
+        examples:
+        -punishments delete 3
+        """
+        current = self.db.configs.get(ctx.guild.id, "punishments")
+        cmd = f"</punishments list:{self.bot.internal_cmd_store.get('punishments')}>"
+        if not str(warns) in [str(_) for _ in current.keys()]:
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_punishment", _emote="NO", cmd=cmd), 0))
+
+        current = {k: v for k, v in current.items() if str(k) != str(warns)}    
+        self.db.configs.update(ctx.guild.id, "punishments", current)
+
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_none", _emote="YES", warns=warns, cmd=cmd), 1))
+
+
+    @auto_punishments.command(
+        name="list",
+        description="💣 Shows all current automatic punishments"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def list_punishment(
+        self, 
+        ctx: discord.Interaction, 
+    ) -> None:
+        """
+        punishment_list_help
+        examples:
+        -punishments list
+        """
+        current = self.db.configs.get(ctx.guild.id, "punishments")
+        cmd = f"</punishments list:{self.bot.internal_cmd_store.get('punishments')}>"
+        if len(current) < 1:
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_punishments", _emote="NO", cmd=cmd), 0))
+        
+        e = Embed(
+            ctx,
+            title="Automatic Punishments",
+            description="\n".join([
+                f"**• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1][0]}" \
+                for x, y in dict(
+                    sorted(
+                        current.items(), 
+                        key=lambda x: int(x[0])
+                    )
+                ).items()
+            ]) 
+        )
+        await ctx.response.send_message(embed=e)
 
 
     @discord.app_commands.command(
@@ -608,7 +671,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         default_permissions=discord.Permissions(manage_guild=True)
     )
     @ignore_log.command(
-        name="show",
+        name="list",
         description="🔒 Shows the current list of ignored roles & channels for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
@@ -619,7 +682,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         ignore_log_help
         examples:
-        -ignore-log show
+        -ignore-log list
         """
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
