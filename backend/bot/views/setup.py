@@ -14,6 +14,7 @@ class SetupView(View):
         embeds: List[
             discord.Embed
         ],
+        current_select: str = None,
         *args, 
         **kwargs
     ) -> None:
@@ -26,7 +27,8 @@ class SetupView(View):
                 options=[
                     discord.SelectOption(
                         label=e.title,
-                        value=e.title[2:].lower()
+                        value=e.title[2:].lower(),
+                        default=False if current_select == None else True if current_select.lower() == e.title[2:].lower() else False
                     ) for e in embeds
                 ],
                 custom_id="setup-select"

@@ -16,7 +16,7 @@ from typing import Union, List, Literal
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E, Emote
-from ...views import AboutView, HelpView
+from ...views import AboutView, HelpView, SetupView
 from ...schemas import Slowmode
 from ...modals import EmbedBuilderModal
 
@@ -94,7 +94,7 @@ def get_help_embed(
     else:
         e.add_field(
             name="**__Subcommands__**", 
-            value="{}".format("\n".join([f"> </{x.qualified_name}:{plugin.bot.internal_cmd_store.get(cmd.name)}>" for x in cmd.commands]))
+            value="{}".format("\n".join([f"**•** </{x.qualified_name}:{plugin.bot.internal_cmd_store.get(cmd.name)}>" for x in cmd.commands]))
         )
 
     e.set_footer(text="<required> [optional]")
@@ -330,6 +330,37 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 out = None
             finally:
                 return out
+            
+
+    def get_viewable_plugins(
+        self,
+        ctx: discord.Interaction
+    ) -> list:
+        viewable_plugins = []
+        for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
+            if p != None:
+                if p._requires_premium:
+                    if self.db.configs.get(ctx.guild.id, "premium") == False:
+                        continue
+
+                has_commands = False
+                for cmd in (p.__cog_app_commands__ if p.qualified_name != "TagsPlugin" else p.__cog_app_commands__[::-1]): # Rather have commands before autoresponders
+                    if cmd.qualified_name not in self.bot.config.disabled_commands:
+                        if cmd.default_permissions != None:
+                            if ctx.user.guild_permissions >= cmd.default_permissions:
+                                if isinstance(cmd, discord.app_commands.Group):
+                                    has_commands = True
+                                else:
+                                    has_commands = True
+                        else:
+                            if isinstance(cmd, discord.app_commands.Group):
+                                has_commands = True
+                            else:
+                                has_commands = True
+                
+                if has_commands:
+                    viewable_plugins.append(p.qualified_name)
+        return viewable_plugins
 
 
     @AutoModPluginBlueprint.listener()
@@ -358,27 +389,33 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
                     for cmd in cmds:
                         e.add_field(
-                            name="**{}**".format(
+                            name="``{}``".format(
                                 f"/{cmd.qualified_name} " \
                                 f"{' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''}" \
-                                f"{' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}" \
+                                f"{' ' if len([_ for _, v in cmd._params.items() if v.required] if hasattr(cmd, '_params') else []) > 0 else ''}{' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}" \
                                 f"{'(*)' if isinstance(cmd, discord.app_commands.Group) else ''}"
                             ),
                             value="> {}".format(
-                                cmd.description
+                                cmd.description if cmd.description[1] != " " else cmd.description[2:]
                             ),
                             inline=False
                         )
 
                     e.set_footer(text="<required> [optional] (* has subcommands)")
-                    await i.response.edit_message(embed=e)
+                    await i.response.edit_message(
+                        embed=e,
+                        view=HelpView(self.bot, show_buttons=False, viewable_plugins=self.get_viewable_plugins(i), current_select=p.qualified_name)
+                    )
 
             elif cid == "setup-select":
                 embeds = self.get_features(i.guild)
 
                 for e in embeds:
                     if e.title[2:].lower() == i.data.get("values")[0]:
-                        await i.response.edit_message(embed=e)
+                        await i.response.edit_message(
+                            embed=e, 
+                            view=SetupView(self.bot, embeds=embeds, current_select=i.data.get("values")[0])
+                        )
 
 
     @AutoModPluginBlueprint.listener()
@@ -568,7 +605,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         viewable_plugins.append(p.qualified_name)
                         e.add_field(
                             name=f"**__{ACTUAL_PLUGIN_NAMES[p.qualified_name]}__**",
-                            value="> {}".format(
+                            value="{}".format(
                                 ", ".join(cmds)
                             ),
                             inline=False
@@ -997,7 +1034,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="create-message",
-        description="✍️ Creates a message the bot will send"
+        description=" Creates a message the bot will send"
     )
     @discord.app_commands.describe(
         channel="What channel to send the message/embed in",

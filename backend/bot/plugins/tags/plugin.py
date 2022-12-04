@@ -223,7 +223,7 @@ class TagsPlugin(AutoResponderPlugin):
 
     
     _commands = discord.app_commands.Group(
-        name="commands",
+        name="custom-commands",
         description="📝 Manage custom slash commands",
         default_permissions=discord.Permissions(manage_messages=True)
     )
@@ -238,7 +238,7 @@ class TagsPlugin(AutoResponderPlugin):
         """
         commands_show_help
         examples:
-        -commands list
+        -custom-commands list
         """
         if ctx.guild.id in self._tags:
             tags = await self.get_tags(ctx.guild, self._tags[ctx.guild.id])
@@ -267,7 +267,7 @@ class TagsPlugin(AutoResponderPlugin):
         """
         commands_add_help
         examples:
-        -commands add
+        -custom-commands add
         """
         async def callback(
             i: discord.Interaction
@@ -333,7 +333,7 @@ class TagsPlugin(AutoResponderPlugin):
         """
         commands_delete_help
         examples:
-        -commands delete test_command
+        -custom-commands delete test_command
         """
         name = name.lower()
         if ctx.guild.id in self._tags:
@@ -373,7 +373,7 @@ class TagsPlugin(AutoResponderPlugin):
         """
         commands_edit_help
         examples:
-        -commands edit test_cmd This is the new content
+        -custom-commands edit test_cmd This is the new content
         """
         if len(content) > 1900:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))

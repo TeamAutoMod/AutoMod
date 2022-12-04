@@ -207,6 +207,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
                 self.db.configs.update(i.guild.id, "join_role", f"{role.id}")
                 return await i.response.edit_message(embed=E(self.locale.t(i.guild, "join_role_on", _emote="YES", role=role.name), 1))
+        
         if not "log" in parts[0]: return
         
         if parts[1] == "channels":

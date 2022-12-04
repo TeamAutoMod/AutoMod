@@ -27,6 +27,7 @@ class HelpView(View):
         bot, 
         show_buttons: bool = False,
         viewable_plugins: list = [],
+        current_select: str = None,
         *args, 
         **kwargs
     ) -> None:
@@ -40,7 +41,8 @@ class HelpView(View):
                     options=[
                         discord.SelectOption(
                             label=v,
-                            value=k
+                            value=k,
+                            default=False if current_select == None else True if current_select.lower() == k.lower() else False
                         ) for k, v in ACTUAL_PLUGIN_NAMES.items() if k in viewable_plugins
                     ],
                     custom_id="help-select"
