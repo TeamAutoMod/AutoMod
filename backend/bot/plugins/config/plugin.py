@@ -414,7 +414,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": "**__Help & Support__**",
-                "value": f"Use </setup:{c.get('setup')}> or </help:{c.get('help')}> for information about setting up the bot. If you still need help, feel free to join our [support server](https://google.com)",
+                "value": f"Use </setup:{c.get('setup')}> or </help:{c.get('help')}> for information about setting up the bot. If you still need help, feel free to join our [support server]({self.bot.config.support_invite})",
                 "inline": False
             }
         ])
