@@ -1,54 +1,239 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
     width: 100vw;
-    min-height: 100vh;
-    color: #fff;
+    min-height: 100%;
+    height: 100%;
     align-items: center;
     position: relative;
     background: #0e1015;
 }
 
-.container {
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    border-bottom: 1px solid #2e323d;
+    background-color: #0c0e13;
+    z-index: 999;
+}
+
+.nav ul {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    position: absolute;
+    display: flex;
+    top: 50%;
+    left: 2%;
+    transform: translate(-50%, -50%);
+}
+
+.nav ul li {
+    list-style: none;
+    float: left;
+    padding-right: 35px;
+}
+
+.nav ul:first-child {
+    padding-left: 750px;
+}
+
+.nav ul li #brand {
+    text-decoration: none;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 20px;
+}
+
+.nav ul li #brand .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav ul li #brand .container .img {
+    flex-basis: 40%;
+}
+
+.nav ul li #brand .container .img img {
+    max-width: 100%;
+    width: 41px;
+    height: 41px;
+    border-radius: 25px;
+}
+
+.nav ul li #brand .container .text {
+    padding-left: 5px;
+}
+
+.nav ul li #brand .container .text h1 {
+    color: #f7fafc;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.nav ul li #link {
+    color: #f7fafc;
+    font-size: 14px;
+    font-weight: lighter;
+    text-decoration: none;
+}
+
+.nav ul li #link i {
+    padding-right: 3;
+}
+
+.nav ul li #link:hover {
+    color: #3e98f7;
+    transition: 0.05s ease-in-out;
+}
+
+.main {
     max-width: 100%;
     justify-content: center;
     position: absolute;
-    left: 40%;
+    left: 45%;
     top: 20%;
     transform: translate(-50%, -50%);
 }
 
-.title {
+.main .title {
     padding-bottom: 50px;
+    color: #ffffff;
 }
 
-.title h1 {
+.main .title h1 {
     font-size: 35px;
     text-decoration: underline;
+    color: #ffffff;
 }
 
-.tos {
+.main .tos {
     position: absolute;
     top: 55%;
-    min-width: 600px;
-    max-width: 700px;
+    color: #ffffff;
 }
 
-.tos h1 {
+.main .tos h1 {
     font-size: 25px;
+    color: #ffffff;
 }
 
-.p {
+.main .tos .p {
     overflow-x: hidden;
+    color: #ffffff;
 }
 
-.tos ul li {
+.main .tos ul li {
     display: inline;
+    color: #ffffff;
+}
+
+@media only screen and (max-width: 1000px) {
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        border-bottom: 1px solid #2e323d;
+        background-color: #0c0e13;
+        z-index: 999;
+    }
+    
+    .nav ul {
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        position: absolute;
+        display: flex;
+        top: 50%;
+        left: 29%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .nav ul li {
+        list-style: none;
+        padding-right: 12px;
+    }
+    
+    .nav ul:first-child {
+        padding-left: 0px;
+    }
+    
+    .nav ul li #brand {
+        visibility: hidden;
+    }
+    
+    .nav ul li #link {
+        color: #f7fafc;
+        font-size: 13px;
+        font-weight: lighter;
+        text-decoration: none;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    
+    .nav ul li #link i {
+        visibility: hidden;
+    }
+    
+    .nav ul li #link:hover {
+        color: #3e98f7;
+        transition: 0.05s ease-in-out;
+    }
+
+    .main {
+        max-width: 100%;
+        justify-content: center!important;
+        align-items: center;
+        position: absolute;
+        left: 50%;
+        top: 23%;
+        transform: translate(-50%, -50%);
+    }
+
+    .main .title {
+        padding-bottom: 50px;
+        color: #ffffff;
+    }
+    
+    .main .title h1 {
+        font-size: 20px;
+        text-decoration: underline;
+        color: #ffffff;
+    }
+    
+    .main .tos {
+        position: absolute;
+        top: 65%;
+        color: #ffffff;
+    }
+    
+    .main .tos h1 {
+        font-size: 15px;
+        color: #ffffff;
+    }
+    
+    .main .tos .p {
+        overflow-x: hidden;
+        color: #ffffff;
+    }
+    
+    .main .tos ul li {
+        display: inline;
+        color: #ffffff;
+    }
 }
