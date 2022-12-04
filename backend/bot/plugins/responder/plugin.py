@@ -186,7 +186,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
 
     
     _responders = discord.app_commands.Group(
-        name="autoresponders",
+        name="auto-responders",
         description="📝 Manage text based responses",
         default_permissions=discord.Permissions(manage_messages=True)
     )
@@ -201,7 +201,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         """
         autoresponders_show_help
         examples:
-        -autoresponders list
+        -auto-responders list
         """
         if ctx.guild.id in self._r:
             responders = self.get_responders(ctx.guild)
@@ -260,8 +260,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         """
         autoresponders_add_help
         examples:
-        -autoresponders position:Starts with
-        -autoresponders position:RegEx
+        -auto-responders position:Starts with
+        -auto-responders position:RegEx
         """
         position = position.replace(" ", "").lower()
         ignore_mods = ignore_mods.lower()
@@ -315,7 +315,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         """
         autoresponders_delete_help
         examples:
-        -autoresponders delete test_responder
+        -auto-responders delete test_responder
         """
         name = name.lower()
         if ctx.guild.id in self._r:
@@ -344,7 +344,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         """
         autoresponder_edit_help
         examples:
-        -autoresponder edit test_responder
+        -auto-responders edit test_responder
         """
         name = name.lower()
         if ctx.guild.id in self._r:

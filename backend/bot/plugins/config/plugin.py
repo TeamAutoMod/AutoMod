@@ -413,18 +413,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": "**__Reaction Roles__**",
-                "value": f"{no}" if len(rrs) < 1 else "\n".join(
-                    [
-                        f"**• [Message](https://discord.com/channels/{ctx.guild.id}/{v['channel']}/{k})** {', '.join([f'``[``{self.parse_emote(ctx.guild, data[emote])} <@&{data[role]}>``]``' for data in v['pairs']])}" for k, v in rrs.items()
-                    ]
-                ),
-                "inline": False
-            },
-            e.dash_field(dash_length),
-            {
-                "name": "**__Configuration Guide__**",
-                "value": f"**• **</log:{c.get('log')}> - Configure logging \n**• **</automod:{c.get('automod')}> - Configure the automoderator \n**• **</filter add:{c.get('filter')}> - Configure word filters \n**• **</regex add:{c.get('regex')}> - Configure regex filters \n**• **</ignore-automod add:{c.get('ignore-automod')}> - Configure immune automod roles & channels \n**• **</ignore-log add:{c.get('ignore-log')}> -  Configure ignored roles & channels for logs",
+                "name": "**__Help & Support__**",
+                "value": f"Use </setup:{c.get('setup')}> or </help:{c.get('help')}> for information about setting up the bot. If you still need help, feel free to join our [support server](https://google.com)",
                 "inline": False
             }
         ])
