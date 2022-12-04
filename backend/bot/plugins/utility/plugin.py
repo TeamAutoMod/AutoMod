@@ -1092,115 +1092,115 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True)    
 
 
-    @discord.app_commands.command(
-        name="edit-message",
-        description="✍️ Edits a message created by the bot"
-    )
-    @discord.app_commands.describe(
-        message_id="The ID of the message you want to edit (right click message -> copy ID)",
-        message="The message sent together with the embed",
-        has_embed="Whether this message has an embed in general",
-        color="Color for the embed (e.g. 7289da, FF0000 or Blue)",
-        timestamp="Whether or not to show the timestamp in the footer",
-        image_url="URL to an image shown in the embed",
-        thumbnail_url="URL to an image used as the thumbnail in the right corner",
-        author_name="Text of the author field",
-        author_icon_url="URL to an image used as the small icon next to the author text",
-        author_url="Create a hyperlink for the author text",
-        footer_text="Text for the embed footer",
-        footer_icon_url="URL to an image used as the small icon next to the footer text"
-    )
-    @discord.app_commands.default_permissions(manage_messages=True)
-    async def edit_message(
-        self,
-        ctx: discord.Interaction,
-        message_id: str,
-        message: str = None,
-        color: str = None,
-        has_embed: Literal[
-            "True",
-            "False"
-        ] = "False",
-        timestamp: Literal[
-            "True",
-            "False"
-        ] = "False",
-        image_url: str = None,
-        thumbnail_url: str = None,
-        author_name: str = None,
-        author_icon_url: str = None,
-        author_url: str = None,
-        footer_text: str = None,
-        footer_icon_url: str = None
-    ) -> None:
-        """
-        edit_message_help
-        examples:
-        -edit-message 123456789 message:Hey
-        -edit-message 123456789 has_embed:True
-        -edit-message 123456789 message:Hey has_embed:True
-        """
-        try:
-            og_msg: discord.Message = await ctx.channel.fetch_message(int(message_id))
-        except Exception as ex:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
-        else:
-            if og_msg == None: return ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "msg_not_found", _emote="NO"), 0))
-            if str(og_msg.author.id) != str(self.bot.user.id): return ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "msg_not_own", _emote="NO"), 0))
+    # @discord.app_commands.command(
+    #     name="edit-message",
+    #     description="✍️ Edits a message created by the bot"
+    # )
+    # @discord.app_commands.describe(
+    #     message_id="The ID of the message you want to edit (right click message -> copy ID)",
+    #     message="The message sent together with the embed",
+    #     has_embed="Whether this message has an embed in general",
+    #     color="Color for the embed (e.g. 7289da, FF0000 or Blue)",
+    #     timestamp="Whether or not to show the timestamp in the footer",
+    #     image_url="URL to an image shown in the embed",
+    #     thumbnail_url="URL to an image used as the thumbnail in the right corner",
+    #     author_name="Text of the author field",
+    #     author_icon_url="URL to an image used as the small icon next to the author text",
+    #     author_url="Create a hyperlink for the author text",
+    #     footer_text="Text for the embed footer",
+    #     footer_icon_url="URL to an image used as the small icon next to the footer text"
+    # )
+    # @discord.app_commands.default_permissions(manage_messages=True)
+    # async def edit_message(
+    #     self,
+    #     ctx: discord.Interaction,
+    #     message_id: str,
+    #     message: str = None,
+    #     color: str = None,
+    #     has_embed: Literal[
+    #         "True",
+    #         "False"
+    #     ] = "False",
+    #     timestamp: Literal[
+    #         "True",
+    #         "False"
+    #     ] = "False",
+    #     image_url: str = None,
+    #     thumbnail_url: str = None,
+    #     author_name: str = None,
+    #     author_icon_url: str = None,
+    #     author_url: str = None,
+    #     footer_text: str = None,
+    #     footer_icon_url: str = None
+    # ) -> None:
+    #     """
+    #     edit_message_help
+    #     examples:
+    #     -edit-message 123456789 message:Hey
+    #     -edit-message 123456789 has_embed:True
+    #     -edit-message 123456789 message:Hey has_embed:True
+    #     """
+    #     try:
+    #         og_msg: discord.Message = await ctx.channel.fetch_message(int(message_id))
+    #     except Exception as ex:
+    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+    #     else:
+    #         if og_msg == None: return ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "msg_not_found", _emote="NO"), 0))
+    #         if str(og_msg.author.id) != str(self.bot.user.id): return ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "msg_not_own", _emote="NO"), 0))
 
-            if message == None and has_embed.lower() == "false":
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0))
+    #         if message == None and has_embed.lower() == "false":
+    #             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0))
             
-            if color != None: color = self.get_color(color)
+    #         if color != None: color = self.get_color(color)
 
-            if has_embed.lower() == "true":
-                async def callback(
-                    i: discord.Interaction
-                ) -> None:
-                    title, desc, fn1, fv1 = self.bot.extract_args(i, "title", "desc", "fn1", "fv1")
+    #         if has_embed.lower() == "true":
+    #             async def callback(
+    #                 i: discord.Interaction
+    #             ) -> None:
+    #                 title, desc, fn1, fv1 = self.bot.extract_args(i, "title", "desc", "fn1", "fv1")
                     
-                    e = Embed(
-                        None,
-                        title=title if title != "" else "None" if desc == "" else None,
-                        description=desc if desc != "" else "None" if title == "" else None,
-                        color=color,
-                        timestamp=datetime.datetime.now() if timestamp.lower() == "true" else None
-                    )
+    #                 e = Embed(
+    #                     None,
+    #                     title=title if title != "" else "None" if desc == "" else None,
+    #                     description=desc if desc != "" else "None" if title == "" else None,
+    #                     color=color,
+    #                     timestamp=datetime.datetime.now() if timestamp.lower() == "true" else None
+    #                 )
 
-                    if fn1 != "" or fv1 != "":
-                        e.add_field(name=fn1 if fn1 != "" else "None", value=fv1 if fv1 != "" else "None")
+    #                 if fn1 != "" or fv1 != "":
+    #                     e.add_field(name=fn1 if fn1 != "" else "None", value=fv1 if fv1 != "" else "None")
 
-                    if image_url != None: e.set_image(url=image_url)
-                    if thumbnail_url != None: e.set_thumbnail(thumbnail_url)
-                    if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
-                    if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)
+    #                 if image_url != None: e.set_image(url=image_url)
+    #                 if thumbnail_url != None: e.set_thumbnail(thumbnail_url)
+    #                 if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
+    #                 if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)
 
-                    try:
-                        await og_msg.edit(
-                            content=message if message != None else og_msg.content, 
-                            embed=e if has_embed.lower() == "true" else (og_msg.embeds[0] if len(og_msg.embeds) > 0 else None)
-                        )
-                    except Exception as ex:
-                        await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
-                    else:
-                        await i.response.send_message(embed=E(self.locale.t(i.guild, "edited_msg", _emote="YES"), 1), ephemeral=True) 
+    #                 try:
+    #                     await og_msg.edit(
+    #                         content=message if message != None else og_msg.content, 
+    #                         embed=e if has_embed.lower() == "true" else (og_msg.embeds[0] if len(og_msg.embeds) > 0 else None)
+    #                     )
+    #                 except Exception as ex:
+    #                     await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
+    #                 else:
+    #                     await i.response.send_message(embed=E(self.locale.t(i.guild, "edited_msg", _emote="YES"), 1), ephemeral=True) 
 
-                modal = EmbedBuilderModal(
-                    self.bot,
-                    "Embed Field Builder",
-                    callback=callback
-                )
-                await ctx.response.send_modal(modal)
-            else:
-                try:
-                    await og_msg.edit(
-                        content=message if message != None else og_msg.content, 
-                        embed=e if has_embed.lower() == "true" else (og_msg.embeds[0] if len(og_msg.embeds) > 0 else None)
-                    )
-                except Exception as ex:
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
-                else:
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "edited_msg", _emote="YES"), 1), ephemeral=True)         
+    #             modal = EmbedBuilderModal(
+    #                 self.bot,
+    #                 "Embed Field Builder",
+    #                 callback=callback
+    #             )
+    #             await ctx.response.send_modal(modal)
+    #         else:
+    #             try:
+    #                 await og_msg.edit(
+    #                     content=message if message != None else og_msg.content, 
+    #                     embed=e if has_embed.lower() == "true" else (og_msg.embeds[0] if len(og_msg.embeds) > 0 else None)
+    #                 )
+    #             except Exception as ex:
+    #                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+    #             else:
+    #                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "edited_msg", _emote="YES"), 1), ephemeral=True)         
 
 
 async def setup(
