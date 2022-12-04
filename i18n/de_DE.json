@@ -287,6 +287,8 @@
     "max_rr": "{emote} The max nnumber of reaction roles per message is 10",
     "max_rr_reactions": "{emote} The max number of reactions allowed per message is 10",
     "rr_role_too_high": "{emote} Make sure that the role you want to hand out is below my highest role",
+    "no_default_role": "{emote} You can't use the default role",
+    "cant_assign_role": "{emote} I won't be able to assign this role any users",
     "rr_emoji_alr_bound": "{emote} This emoji is already bound to a different role on that message",
     "rr_role_alr_bound": "{emote} This role is already bound to a different emoji on that message",
     "set_rr": "{emote} Added the reaction role pair",

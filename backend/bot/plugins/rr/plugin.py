@@ -132,7 +132,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
 
     rr = discord.app_commands.Group(
-        name="rr",
+        name="reaction-roles",
         description="🎭 Configure reaction roles",
         default_permissions=discord.Permissions(manage_roles=True)
     )
@@ -148,7 +148,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         reaction_roles_help
         examples:
-        -rr list
+        -reaction-roles list
         """
         rrs = {
             k: v for k, v in self.db.configs.get(
@@ -199,7 +199,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         reaction_roles_add_help
         examples:
-        -rr add 543056846601191508 🟢 @GreenRole
+        -reaction-roles add 543056846601191508 🟢 @GreenRole
         """
         try:
             emote = await Emote().convert(ctx, emote)
@@ -230,6 +230,10 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             else:
                 if role.position >= ctx.guild.me.top_role.position:
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_too_high", _emote="NO"), 0), ephemeral=True)
+                elif role.is_default() == True:
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_default_role", _emote="NO"), 0), ephemeral=True)
+                elif role.is_assignable() == False:
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_assign_role", _emote="NO"), 0), ephemeral=True)
                 elif f"{emote}" in [list(x.values())[0] for x in data["pairs"]]:
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_emoji_alr_bound", _emote="NO"), 0), ephemeral=True)
                 elif f"{role.id}" in [list(x.values())[1] for x in data["pairs"]]:
@@ -272,7 +276,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         reaction_roles_remove_help
         examples:
-        -rr remove 543056846601191508 @Greenrole
+        -reaction-roles remove 543056846601191508 @Greenrole
         """
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if len(rrs) < 1:

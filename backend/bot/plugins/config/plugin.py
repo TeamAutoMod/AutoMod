@@ -200,6 +200,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
                 if role.position >= i.guild.me.top_role.position: 
                     return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_too_high", _emote="NO"), 0))
+                elif role.is_default() == True:
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_default_role", _emote="NO"), 0), ephemeral=True)
+                elif role.is_assignable() == False:
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_assign_role", _emote="NO"), 0), ephemeral=True)
 
                 self.db.configs.update(i.guild.id, "join_role", f"{role.id}")
                 return await i.response.edit_message(embed=E(self.locale.t(i.guild, "join_role_on", _emote="YES", role=role.name), 1))
