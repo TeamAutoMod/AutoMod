@@ -65,6 +65,11 @@ app.get("/stats", (req, res) => {
 })
 
 
+app.get("/commands", (req, res) => {
+    res.status(200).redirect("/");
+})
+
+
 app.use((_, res, __) => {
     res.status(404).redirect("/");
 })
