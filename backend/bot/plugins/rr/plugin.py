@@ -163,17 +163,25 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                 ctx,
                 title="Reaction roles"
             )
-            for msg, data in rrs.items():
+            for i, (msg, data) in enumerate(rrs.items()):
                 channel = ctx.guild.get_channel(int(data["channel"]))
+
+                if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 10)])
                 e.add_field(
-                    name=f"**__{msg}{f' (#{channel.name})' if channel != None else ''}__**",
-                    value=f"{f'> [Jump to message](https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg})' if channel != None else ''}" + 
+                    name=f"**__{msg}__**",
+                    value="{}".format(
+                        f"**• Channel:** {f'<#{channel.id}>' if channel != None else '#unkown'}"
+                    ) +
+                    "\n{}".format(
+                        f"{f'**• Message:** [Here](https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg})' if channel != None else ''}"
+                    ) + 
                     "{}".format(
                         "\n" if channel != None else ""
                     ) +
                     "\n".join(
-                        [f"> {self.bot.get_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
-                    )
+                        [f"**•** {self.bot.get_emoji(int(pair['emote'])) if pair['emote'][0].isdigit() else pair['emote']} → <@&{pair['role']}>" for pair in data["pairs"]]
+                    ),
+                    inline=True
                 )
 
             await ctx.response.send_message(embed=e)
