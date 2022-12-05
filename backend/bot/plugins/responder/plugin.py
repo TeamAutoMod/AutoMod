@@ -395,14 +395,19 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 if self.is_mod(msg.author): continue
                 
             if (self._position_funcs[obj["position"]])(msg.content, obj["trigger"]) == True:
+                content = str(obj["content"])
+                
+                for k, v in {
+                    "{user}": f"<@{msg.author.id}>",
+                    "{username}": f"{msg.author.name}",
+                    "{avatar}": f"{msg.author.avatar.url if msg.author.avatar != None else msg.author.display_avatar.url}",
+                    "{server}": f"{msg.guild.name}",
+                    "{channel}": f"{msg.channel.name}"
+                }.items():
+                    content = content.replace(k, v)
+
                 try:
-                    await msg.channel.send(content=str(obj["content"]).format(
-                        user=f"<@{msg.author.id}>",
-                        username=f"{msg.author.name}",
-                        avatar=f"{msg.author.avatar.url if msg.author.avatar != None else msg.author.display_avatar.url}",
-                        server=f"{msg.guild.name}",
-                        channel=f"{msg.channel.name}"
-                    ))
+                    await msg.channel.send(content=content)
                 except Exception:
                     pass
                 else:
