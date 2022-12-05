@@ -268,7 +268,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         async def callback(
             i: discord.Interaction
         ) -> None:
-            name, content, trigger = self.bot.extract_args(i, "name", "content", "trigger")
+            name, content, trigger, _ = self.bot.extract_args(i, "name", "content", "trigger", "vars")
 
             if self.validate_name(name.lower()) == False:
                 return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_name", _emote="NO"), 0))
@@ -355,7 +355,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 async def callback(
                     i: discord.Interaction
                 ) -> None:
-                    content, trigger = self.bot.extract_args(i, "content", "trigger")
+                    content, trigger, _ = self.bot.extract_args(i, "content", "trigger", "vars")
                     if obj["position"] == "regex":
                         if self.validate_regex(trigger) == False:
                             return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex_responder", _emote="NO"), 0))
@@ -396,7 +396,13 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 
             if (self._position_funcs[obj["position"]])(msg.content, obj["trigger"]) == True:
                 try:
-                    await msg.channel.send(content=obj["content"])
+                    await msg.channel.send(content=str(obj["content"]).format(
+                        user=f"<@{msg.author.id}>",
+                        username=f"{msg.author.name}",
+                        avatar=f"{msg.author.avatar.url if msg.author.avatar != None else msg.author.display_avatar.url}",
+                        server=f"{msg.guild.name}",
+                        channel=f"{msg.channel.name}"
+                    ))
                 except Exception:
                     pass
                 else:

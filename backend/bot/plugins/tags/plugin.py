@@ -42,7 +42,13 @@ class TagsPlugin(AutoResponderPlugin):
                 cmd = Object(data)
                 self.update_uses(f"{ctx.guild_id}-{ctx.command.qualified_name.lower()}")
                 return await ctx.response.send_message(
-                    cmd.content,
+                    str(cmd.content).format(
+                        user=f"<@{ctx.user.id}>",
+                        username=f"{ctx.user.name}",
+                        avatar=f"{ctx.user.avatar.url if ctx.user.avatar != None else ctx.user.display_avatar.url}",
+                        server=f"{ctx.guild.name}",
+                        channel=f"{ctx.channel.name}"
+                    ),
                     ephemeral=cmd.ephemeral
                 )
         

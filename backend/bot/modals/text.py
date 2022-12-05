@@ -401,6 +401,18 @@ class ResponseCreateModal(TextModalBase):
             "contains": "Triggers for the response, seperated by commas (checks anywhere within a message)",
             "regex": "RegEx that will trigger the response"
         }
+        self._vars_text = "{user} - The mention of the user, e.g. @paul \n{username} - The name of the user, e.g. paul \n{avatar} - The avatar URL of the user\n{channel} - The channel name \n{server} - The server name"
+
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="name",
+                label="Name",
+                style=discord.TextStyle.short,
+                placeholder="Name of the auto responder",
+                required=True,
+                max_length=20
+            )
+        )
         self.add_item(
             discord.ui.TextInput(
                 custom_id="trigger",
@@ -411,26 +423,27 @@ class ResponseCreateModal(TextModalBase):
                 max_length=200 if position == "regex" else 1500
             )
         )
-    
-
-    name = discord.ui.TextInput(
-        custom_id="name",
-        label="Name",
-        style=discord.TextStyle.short,
-        placeholder="Name of the auto responder",
-        required=True,
-        max_length=20
-    )
-
-
-    content = discord.ui.TextInput(
-        custom_id="content",
-        label="Response",
-        style=discord.TextStyle.long,
-        placeholder="What the bot should respond with",
-        required=True,
-        max_length=2000
-    )
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="content",
+                label="Response",
+                style=discord.TextStyle.long,
+                placeholder="What the bot should respond with",
+                required=True,
+                max_length=2000
+            )
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="vars",
+                label="Variables for the response",
+                style=discord.TextStyle.long,
+                placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+                default=self._vars_text,
+                required=False,
+                max_length=len(self._vars_text)
+            )
+        )
 
 
 class ResponseEditModal(TextModalBase):
@@ -450,6 +463,8 @@ class ResponseEditModal(TextModalBase):
             "contains": "Triggers for the response, seperated by commas (checks anywhere within a message)",
             "regex": "RegEx that will trigger the response"
         }
+        self._vars_text = "{user} - The mention of the user, e.g. @paul \n{username} - The name of the user, e.g. paul \n{avatar} - The avatar URL of the user\n{channel} - The channel name \n{server} - The server name"
+
         self.add_item(
             discord.ui.TextInput(
                 custom_id="trigger",
@@ -470,5 +485,16 @@ class ResponseEditModal(TextModalBase):
                 default=response,
                 required=True,
                 max_length=2000
+            )
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="vars",
+                label="Variables for the response",
+                style=discord.TextStyle.long,
+                placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+                default=self._vars_text,
+                required=False,
+                max_length=len(self._vars_text)
             )
         )

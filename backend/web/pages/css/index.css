@@ -100,7 +100,7 @@ body {
     max-width: 100%;
     justify-content: center!important;
     align-items: center;
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 55%;
     transform: translate(-50%, -50%);
@@ -336,5 +336,69 @@ body {
         left: 50%;
         top: 92%;
         transform: translate(-50%, -50%);
+    }
+}
+
+@media only screen and (max-height: 800px) {
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        border-bottom: 1px solid #2e323d;
+        background-color: #0c0e13;
+    }
+    
+    .nav ul {
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        position: absolute;
+        display: flex;
+        top: 50%;
+        left: 45%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .nav ul li {
+        list-style: none;
+        padding-right: 7px;
+    }
+    
+    .nav ul:first-child {
+        padding-left: 0px;
+    }
+    
+    .nav ul li #brand {
+        visibility: hidden;
+    }
+    
+    .nav ul li #link {
+        color: #f7fafc;
+        font-size: 13px;
+        font-weight: lighter;
+        text-decoration: none;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    
+    .nav ul li #link i {
+        visibility: hidden;
+    }
+    
+    .nav ul li #link:hover {
+        color: #3e98f7;
+        transition: 0.05s ease-in-out;
+    }
+
+    .container {
+        max-width: 100%;
+        justify-content: center!important;
+        align-items: center;
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        transform: translate(-50%, -45%);
     }
 }
