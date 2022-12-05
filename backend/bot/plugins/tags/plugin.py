@@ -44,11 +44,11 @@ class TagsPlugin(AutoResponderPlugin):
 
                 content = str(cmd.content)
                 for k, v in {
-                    "{user}": f"<@{msg.author.id}>",
-                    "{username}": f"{msg.author.name}",
-                    "{avatar}": f"{msg.author.avatar.url if msg.author.avatar != None else msg.author.display_avatar.url}",
-                    "{server}": f"{msg.guild.name}",
-                    "{channel}": f"{msg.channel.name}"
+                    "{user}": f"<@{ctx.user.id}>",
+                    "{username}": f"{ctx.user.name}",
+                    "{avatar}": f"{ctx.user.avatar.url if ctx.user.avatar != None else ctx.user.display_avatar.url}",
+                    "{server}": f"{ctx.guild.name}",
+                    "{channel}": f"{ctx.channel.name}"
                 }.items():
                     content = content.replace(k, v)
 
