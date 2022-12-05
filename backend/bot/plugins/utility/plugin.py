@@ -1034,7 +1034,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="create-message",
-        description=" Creates a message the bot will send"
+        description="📈 Creates a message the bot will send"
     )
     @discord.app_commands.describe(
         channel="What channel to send the message/embed in",
