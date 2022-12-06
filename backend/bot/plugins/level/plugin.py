@@ -207,6 +207,7 @@ class LevelPlugin(AutoModPluginBlueprint):
             await self.bot.chunk_guild(msg.guild)
         
         if not await self.is_eligible_message(msg): return
+        if msg.author.bot == True: return # safety
         
         config = Object(self.db.configs.get(msg.guild.id, "lvl_sys"))
         if config.enabled == False: return
