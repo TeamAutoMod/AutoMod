@@ -206,6 +206,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         if not msg.guild.chunked:
             await self.bot.chunk_guild(msg.guild)
         
+        if not await self.is_eligible_message(msg): return
+        
         config = Object(self.db.configs.get(msg.guild.id, "lvl_sys"))
         if config.enabled == False: return
         if not self.exists(
@@ -213,8 +215,6 @@ class LevelPlugin(AutoModPluginBlueprint):
             msg.guild, 
             msg.author
         ): return
-
-        if not await self.is_eligible_message(msg): return
 
         pid = f"{msg.guild.id}-{msg.author.id}"
         if pid in self._processing: return
@@ -522,7 +522,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         -rank
         -rank paul#0009
         """
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
         if user == None: user = ctx.user
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
@@ -573,7 +573,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -leaderboard
         """
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
 
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
