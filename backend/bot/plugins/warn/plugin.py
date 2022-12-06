@@ -59,6 +59,11 @@ class WarnPlugin(AutoModPluginBlueprint):
         name="warn",
         description="🚩 Warns the user"
     )
+    @discord.app_commands.describe(
+        user="The user you want to warn",
+        warns="How many warns to add (default is 1)",
+        reason="An optional reason for the warn"
+    )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def warn(
         self, 
@@ -95,6 +100,11 @@ class WarnPlugin(AutoModPluginBlueprint):
     @discord.app_commands.command(
         name="unwarn",
         description="😇 Unwarns the user"
+    )
+    @discord.app_commands.describe(
+        user="The user you want to unwarn",
+        warns="How many warns to remove (default is 1)",
+        reason="An optional reason for the unwarn"
     )
     @discord.app_commands.default_permissions(ban_members=True)
     async def unwarn(
