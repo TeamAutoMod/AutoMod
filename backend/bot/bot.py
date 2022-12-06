@@ -191,14 +191,14 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self,
         shard_id: int
     ) -> None:
-        log.info("[Sharding] Shard has connected", extra={"loc":  f"Shard {shard_id}"})
+        log.info("[Sharding] Shard has connected", extra={"loc": f"Shard {shard_id}"})
 
 
     async def on_shard_disconnect(
         self,
         shard_id: int
     ) -> None:
-        log.error("[Sharding] Shard has disconnected", extra={"loc":  f"Shard {shard_id}"})
+        log.error("[Sharding] Shard has disconnected", extra={"loc": f"Shard {shard_id}"})
 
 
     async def on_shard_ready(
