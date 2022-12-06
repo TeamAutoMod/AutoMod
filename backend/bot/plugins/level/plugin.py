@@ -385,13 +385,11 @@ class LevelPlugin(AutoModPluginBlueprint):
         else:
             e = Embed(
                 ctx,
-                title="Role Rewards"
+                title="Role Rewards",
+                description="\n".join([
+                    f"**• Level {lvl}:** <@&{role}>" for lvl, role in dict(sorted(config.rewards.items(), key=lambda e: int(e[0]))).items()
+                ])
             )
-            for lvl, role in dict(sorted(config.rewards.items(), key=lambda e: int(e[0]))).items():
-                e.add_field(
-                    name=f"__**Level {lvl}**__",
-                    value=f"<@&{role}>"
-                )
             await ctx.response.send_message(embed=e)
 
 
@@ -558,6 +556,13 @@ class LevelPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(
             url=user.display_avatar
         )
+        
+        data = sorted(list(self.db.level.find({"guild": f"{ctx.guild.id}"})), key=lambda e: e["xp"], reverse=True)
+        e.set_footer(
+            text="Your rank: #{}".format(
+                data.index([x for x in data if int(x["id"].split("-")[-1]) == ctx.user.id][0]) + 1
+            )
+        )
         await ctx.response.send_message(embed=e)
 
 
@@ -579,6 +584,8 @@ class LevelPlugin(AutoModPluginBlueprint):
 
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
         if len(config.users) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0))
+
+        await ctx.response.defer(thinking=True)
 
         users = [Object(x) for x in self.db.level.find({"guild": f"{ctx.guild.id}"})][:25]
         data = sorted(users, key=lambda e: e.xp, reverse=True)
@@ -613,7 +620,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                 data.index([x for x in data if int(x.id.split("-")[-1]) == ctx.user.id][0]) + 1
             )
         )
-        await ctx.response.send_message(embed=e)
+        await ctx.followup.send(embed=e)
 
 
 async def setup(

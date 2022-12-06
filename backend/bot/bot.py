@@ -265,7 +265,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     except discord.HTTPException:
                         self.avatar_as_bytes = None
             
-            self.loop.create_task(self._activity_handler())
+            if "{user_count}" in self.config.custom_status or "{guild_count}" in self.config.custom_status:
+                self.loop.create_task(self._activity_handler())
             self.ready = True
 
     
