@@ -7,6 +7,7 @@ from discord import AuditLogAction
 import asyncio
 import topgg
 import discordspy
+import os
 from toolbox import S as Object
 from typing import Callable, List, Union, Tuple, TypeVar
 import logging; log = logging.getLogger()
