@@ -1203,6 +1203,7 @@ class InternalPlugin(AutoModPluginBlueprint):
     async def on_dbl_vote(self, data: dict) -> None:
         print(type(data))
         print(data)
+        log.info(data, extra={"loc": f"PID {os.getpid()}"})
 
 
 async def setup(
