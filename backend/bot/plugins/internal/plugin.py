@@ -1204,7 +1204,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         guild = self.bot.get_guild(int(self.config.support_server))
         if guild == None: return
 
-        channel = self.bot.get_channel(int(self.config.channel))
+        channel = self.bot.get_channel(int(self.config.vote_channel))
         if channel != None:
             try:
                 e = Embed(
