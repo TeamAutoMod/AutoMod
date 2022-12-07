@@ -10,6 +10,8 @@
     "token": "YOUR_BOT_TOKEN",
     "sentry_dsn": "",
     "top_gg_token": "",
+    "top_gg_password": "djajdajdklaf9akfkaf",
+    "top_gg_port": 3002,
     "discords_token": "",
     "support_invite": "https://discord.gg/S9BEBux",
     "web_url_base": "http://localhost:3000",
@@ -49,5 +51,7 @@
     ],
     "disabled_commands": [],
     "error_channel": 123456789,
-    "vote_channel": 123456789
+    "vote_channel": 123456789,
+    "vote_role": 123456789,
+    "support_server": 123456789
 }

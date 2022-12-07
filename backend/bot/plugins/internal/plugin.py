@@ -202,8 +202,8 @@ class InternalPlugin(AutoModPluginBlueprint):
                 autopost=True,
                 post_shard_count=True
             )
-            self.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/dblwebhook", self.config.top_gg_password)
-            self.topgg_webhook.run(self.config.top_gg_port)
+            self.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/dblwebhook", bot.config.top_gg_password)
+            self.topgg_webhook.run(bot.config.top_gg_port)
         if bot.config.discords_token != "":
             self.discords = discordspy.Client(
                 self.bot,
@@ -1201,9 +1201,20 @@ class InternalPlugin(AutoModPluginBlueprint):
 
     @AutoModPluginBlueprint.listener()
     async def on_dbl_vote(self, data: dict) -> None:
-        print(type(data))
-        print(data)
-        log.info(data, extra={"loc": f"PID {os.getpid()}"})
+        guild = self.bot.get_guild(int(self.config.support_server))
+        if guild == None: return
+
+        channel = self.bot.get_channel(int(self.config.channel))
+        if channel != None:
+            try:
+                e = Embed(
+                    None,
+                    description=f"{self.bot.emotes.get('PARTY')} Thanks for voting, <@{data.get('user')}>! \n\nhttps://top.gg/bot/{self.bot.user.id}/vote"
+                )
+                e.credits()
+                await channel.send(embed=e)
+            except Exception:
+                pass
 
 
 async def setup(
