@@ -109,7 +109,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                     end = "rd"
                 else:
                     end = "th"
-            return f"**__{i}{end}__** {user}"
+            return f"__{i}{end}__ {user}"
 
 
     def has_premium(

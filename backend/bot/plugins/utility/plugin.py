@@ -12,12 +12,12 @@ import datetime
 from PIL import Image
 from io import BytesIO
 from toolbox import S as Object
-from typing import Union, List, Literal
+from typing import Union, List, Literal, Tuple
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
-from ...types import Embed, Duration, E, Emote
-from ...views import AboutView, HelpView, SetupView
-from ...schemas import Slowmode
+from ...types import Embed, Duration, E
+from ...views import AboutView, HelpView, SetupView, HighlightDMView
+from ...schemas import Slowmode, Highlights
 from ...modals import EmbedBuilderModal
 
 
@@ -75,7 +75,7 @@ def get_help_embed(
         title=f"``{usage}``"
     )
     e.add_field(
-        name="**__Description__**", 
+        name="__Description__", 
         value=f"{help_message}"
     )
     
@@ -84,7 +84,7 @@ def get_help_embed(
         if len(examples) > 0:
             prefix = "/"
             e.add_field(
-                name="**__Examples__**",
+                name="__Examples__",
                 value="\n".join(
                     [
                         f"{prefix}{exmp}" for exmp in examples
@@ -93,7 +93,7 @@ def get_help_embed(
             )
     else:
         e.add_field(
-            name="**__Subcommands__**", 
+            name="__Subcommands__", 
             value="{}".format("\n".join([f"**•** </{x.qualified_name}:{plugin.bot.internal_cmd_store.get(cmd.name)}>" for x in cmd.commands]))
         )
 
@@ -361,7 +361,39 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 if has_commands:
                     viewable_plugins.append(p.qualified_name)
         return viewable_plugins
+    
 
+    def get_highlights(self, ctx: discord.Interaction) -> Tuple[list, dict]:
+        highlights_from_db: Union[dict, None] = self.db.highlights.get(f"{ctx.guild.id}", "highlights")
+        if highlights_from_db == None:
+            self.db.highlights.insert(Highlights(ctx))
+            return [], {f"{ctx.user.id}": []}
+        else:
+            return highlights_from_db.get(f"{ctx.user.id}", []), highlights_from_db
+        
+
+    def get_highlights_from_msg(self, msg: discord.Message) -> list:
+        highlights_from_db: Union[dict, None] = self.db.highlights.get(f"{msg.guild.id}", "highlights")
+        if highlights_from_db == None:
+            self.db.highlights.insert(Highlights(msg))
+            return {}
+        else:
+            return highlights_from_db
+        
+
+    def add_highlight(self, ctx: discord.Interaction, all_highlights: list, new_highlight: str) -> None:
+        all_highlights.update({
+            f"{ctx.user.id}": [*all_highlights.get(f"{ctx.user.id}", []), *[new_highlight]]
+        })
+        self.db.highlights.update(f"{ctx.guild.id}", "highlights", all_highlights)
+
+
+    def delete_highlight(self, guild: discord.Guild, user_id: int, all_highlights: list, old_highlight: str) -> None:
+        all_highlights.update({
+            f"{user_id}": [x for x in all_highlights.get(f"{user_id}", []) if x != old_highlight]
+        })
+        self.db.highlights.update(f"{guild.id}", "highlights", all_highlights)
+        
 
     @AutoModPluginBlueprint.listener()
     async def on_interaction(
@@ -418,8 +450,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         )
 
 
-    @AutoModPluginBlueprint.listener()
-    async def on_message(
+    @AutoModPluginBlueprint.listener(name="on_message")
+    async def on_slowmode(
         self, 
         msg: discord.Message
     ) -> None:
@@ -463,6 +495,47 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
             if needs_update == True:
                 self.db.slowmodes.update(_id, "users", data.users)
+
+    
+    @AutoModPluginBlueprint.listener(name="on_message")
+    async def on_highlight(self, msg: discord.Message) -> None:
+        if msg.guild == None: return
+        guild_highlights = self.get_highlights_from_msg(msg)
+
+        if len(guild_highlights) < 1: return
+        for uid, phrases in guild_highlights.items():
+            user: Union[discord.Member, None] = msg.guild.get_member(int(uid))
+            if (user != None \
+                and str(uid) != str(msg.author.id)  \
+                and msg.author.bot == False \
+                and str(msg.author.id) != str(self.bot.user.id) \
+            ):
+                for phrase in phrases:
+                    if phrase in msg.content.lower():
+                        e = Embed(
+                            None,
+                            title=f"Highlight in {msg.guild.name}",
+                            description="**• Phrase:** ``{}`` \n**• Channel:** {} \n**• Content:** \n```\n{}\n```".format(
+                                phrase, msg.channel.mention, msg.content
+                            )
+                        )
+                        view = HighlightDMView(
+                            self.bot, 
+                            int(uid),
+                            msg, 
+                            self.delete_highlight, 
+                            {
+                                "guild": msg.guild,
+                                "user_id": int(uid),
+                                "all_highlights": guild_highlights, 
+                                "old_highlight": phrase
+                            }
+                        )
+
+                        try:
+                            await user.send(embed=e, view=view)
+                        except Exception:
+                            pass
 
 
     @discord.app_commands.command(
@@ -520,7 +593,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
             {
-                "name": "**__Status__**",
+                "name": "__Status__",
                 "value": "**• Up:** {} \n**• Version:** {} \n**• Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
@@ -530,7 +603,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**__Stats__**",
+                "name": "__Stats__",
                 "value": "**• Guilds:** {0:,} \n**• Users:** {1:,} \n**• Shards:** {2:,}"\
                 .format(
                     len(self.bot.guilds),
@@ -540,7 +613,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**__Usage__**",
+                "name": "__Usage__",
                 "value": "**• Commands:** {} \n**• Custom:** {}"\
                 .format(
                     self.bot.used_commands,
@@ -577,57 +650,29 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if query == None:
             e = Embed(
                 ctx,
-                title="Command List",
-                description=self.locale.t(ctx.guild, "help_desc", prefix="/", cmd=f"</setup:{self.bot.internal_cmd_store.get('setup')}>")
+                title="AutoMod Help",
+                description=self.locale.t(ctx.guild, "help_desc")
             )
-            viewable_plugins = []
-            for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
-                if p != None:
-                    if p._requires_premium:
-                        if self.db.configs.get(ctx.guild.id, "premium") == False:
-                            continue
-                    cmds = []
-                    for cmd in (p.__cog_app_commands__ if p.qualified_name != "TagsPlugin" else p.__cog_app_commands__[::-1]): # Rather have commands before autoresponders
-                        if cmd.qualified_name not in self.bot.config.disabled_commands:
-                            if cmd.default_permissions != None:
-                                if ctx.user.guild_permissions >= cmd.default_permissions:
-                                    if isinstance(cmd, discord.app_commands.Group):
-                                        cmds.append(f"``/{cmd.qualified_name}*``")
-                                    else:
-                                        cmds.append(f"``/{cmd.qualified_name}``")
-                            else:
-                                if isinstance(cmd, discord.app_commands.Group):
-                                    cmds.append(f"``/{cmd.qualified_name}*``")
-                                else:
-                                    cmds.append(f"``/{cmd.qualified_name}``")
-                    
-                    if len(cmds) > 0:
-                        viewable_plugins.append(p.qualified_name)
-                        e.add_field(
-                            name=f"**__{ACTUAL_PLUGIN_NAMES[p.qualified_name]}__**",
-                            value="{}".format(
-                                ", ".join(cmds)
-                            ),
-                            inline=False
-                        )
-            
-            if len(viewable_plugins) > 0 and len(viewable_plugins) % 3 != 0:
-                e.add_fields([e.blank_field(inline=True) for _ in range((len(viewable_plugins) % 3) - 1)])
-
+            e.add_field(
+                name="__Additional Help__",
+                value=f"[Support Server]({self.bot.config.support_invite})"
+            )
             e.credits()
 
+            viewable_plugins = self.get_viewable_plugins(ctx)
             await ctx.response.send_message(
                 embed=e, 
-                view=HelpView(self.bot, show_buttons=False, viewable_plugins=viewable_plugins) if len(viewable_plugins) > 0 else None
+                view=HelpView(self.bot, show_buttons=False, viewable_plugins=viewable_plugins) if len(viewable_plugins) > 0 else None, 
+                ephemeral=True
             )
         else:
             query = "".join(query.splitlines())
 
             _help = get_command_help(self, ctx, query)
             if _help == None:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "invalid_command", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "invalid_command", _emote="NO"), 0), ephemeral=True)
             else:
-                await ctx.response.send_message(embed=_help, view=HelpView(self.bot, show_buttons=True))
+                await ctx.response.send_message(embed=_help, view=HelpView(self.bot, show_buttons=True), ephemeral=True)
 
 
     @discord.app_commands.command(
@@ -766,7 +811,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             url=user.display_avatar
         )
         e.add_field(
-            name="**__User Information__**",
+            name="__User Information__",
             value="**• ID:** {} \n**• Profile:** {} \n**• Badges:** {} \n**• Created at:** <t:{}>"\
             .format(
                 user.id,
@@ -779,7 +824,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             e.add_field(
-                name="**__Server Information__**",
+                name="__Server Information__",
                 value="**• Nickname:** {} \n**• Joined at:** <t:{}> \n**• Join position:** {} \n**• Status:** {} \n**• Roles:** {}"\
                 .format(
                     member.nick,
@@ -812,7 +857,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")    
 
         e.add_field(
-            name="**__Infractions__**",
+            name="__Infractions__",
             value="**• Total Cases:** {} \n**• Last 3 Cases:** {}"\
             .format(
                 len(cases),
@@ -841,13 +886,15 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
         e = Embed(ctx)
         if ctx.guild.icon != None:
-            e.set_thumbnail(
+            e.set_author(
+                name=f"{g.name}",
+                icon_url=ctx.guild.icon.url,
                 url=ctx.guild.icon.url
             )
         
         e.add_fields([
             {
-                "name": "**__Information__**",
+                "name": "__Information__",
                 "value": "**• ID:** {} \n**• Owner:** {} \n**• Created:** <t:{}> \n**• Invite Splash:** {} \n**• Banner:** {}"\
                 .format(
                     g.id, 
@@ -858,9 +905,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 ),
                 "inline": True
             },
-            e.blank_field(True),
+            e.blank_field(True, 6),
             {
-                "name": "**__Channels__**",
+                "name": "__Channels__",
                 "value": "**• Categories:** {} \n**• Text:** {} \n**• Voice:** {} \n**• Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
@@ -871,7 +918,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**__Members__**",
+                "name": "__Members__",
                 "value": "**• Total:** {} \n**• Users:** {} \n**• Bots:** {}"\
                 .format(
                     len(g.members), 
@@ -880,9 +927,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 ),
                 "inline": True
             },
-            e.blank_field(True),
+            e.blank_field(True, 6),
             {
-                "name": "**__Other__**",
+                "name": "__Other__",
                 "value": "**• Roles:** {} \n**• Emojis:** {} \n**• Boosters:** {}"\
                 .format(
                     len(g.roles), 
@@ -892,7 +939,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "**__Features__**",
+                "name": "__Features__",
                 "value": "{}"\
                 .format(
                     ", ".join([f"{x.replace('_', ' ').title()}" for x in g.features]) if len(g.features) > 0 else "None"
@@ -937,7 +984,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     channel = ctx.guild.get_channel(int(s["id"].split("-")[1]))
                     if channel != None:
                         e.add_field(
-                            name=f"**__#{channel.name}__**",
+                            name=f"__#{channel.name}__",
                             value="**• Time:** {} \n**• Mode:** {} \n**• Moderator:** {}"\
                                 .format(
                                     s["pretty"],
@@ -1124,121 +1171,84 @@ class UtilityPlugin(AutoModPluginBlueprint):
             try:
                 await channel.send(content=message)
             except Exception as ex:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
             else:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True)    
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True)      
 
 
-    # @discord.app_commands.command(
-    #     name="edit-message",
-    #     description="✍️ Edits a message created by the bot"
-    # )
-    # @discord.app_commands.describe(
-    #     message_id="The ID of the message you want to edit (right click message -> copy ID)",
-    #     message="The message sent together with the embed",
-    #     has_embed="Whether this message has an embed in general",
-    #     color="Color for the embed (e.g. 7289da, FF0000 or Blue)",
-    #     timestamp="Whether or not to show the timestamp in the footer",
-    #     image_url="URL to an image shown in the embed",
-    #     thumbnail_url="URL to an image used as the thumbnail in the right corner",
-    #     author_name="Text of the author field",
-    #     author_icon_url="URL to an image used as the small icon next to the author text",
-    #     author_url="Create a hyperlink for the author text",
-    #     footer_text="Text for the embed footer",
-    #     footer_icon_url="URL to an image used as the small icon next to the footer text"
-    # )
-    # @discord.app_commands.default_permissions(manage_messages=True)
-    # async def edit_message(
-    #     self,
-    #     ctx: discord.Interaction,
-    #     message_id: str,
-    #     message: str = None,
-    #     color: str = None,
-    #     has_embed: Literal[
-    #         "True",
-    #         "False"
-    #     ] = "False",
-    #     timestamp: Literal[
-    #         "True",
-    #         "False"
-    #     ] = "False",
-    #     image_url: str = None,
-    #     thumbnail_url: str = None,
-    #     author_name: str = None,
-    #     author_icon_url: str = None,
-    #     author_url: str = None,
-    #     footer_text: str = None,
-    #     footer_icon_url: str = None
-    # ) -> None:
-    #     """
-    #     edit_message_help
-    #     examples:
-    #     -edit-message 123456789 message:Hey
-    #     -edit-message 123456789 has_embed:True
-    #     -edit-message 123456789 message:Hey has_embed:True
-    #     """
-    #     try:
-    #         og_msg: discord.Message = await ctx.channel.fetch_message(int(message_id))
-    #     except Exception as ex:
-    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
-    #     else:
-    #         if og_msg == None: return ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "msg_not_found", _emote="NO"), 0))
-    #         if str(og_msg.author.id) != str(self.bot.user.id): return ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "msg_not_own", _emote="NO"), 0))
+    _highlights = discord.app_commands.Group(
+        name="highlights",
+        description="✨ Allows you to setup notifcations for specific phrases in a server"
+    )
+    @_highlights.command(
+        name="add", 
+        description="✨ Creates a new highlight for the given phrase"
+    )
+    @discord.app_commands.describe(
+        phrase="The phrase you want to be notified about when said in the server"
+    )
+    async def _add_highlight(self, ctx: discord.Interaction, phrase: str) -> None:
+        """
+        highlights_add_help
+        examples:
+        -highlights add paul
+        """
+        phrase = phrase.lower()
+        guild_highlights, all_highlights = self.get_highlights(ctx)
 
-    #         if message == None and has_embed.lower() == "false":
-    #             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0))
-            
-    #         if color != None: color = self.get_color(color)
+        if phrase in guild_highlights:
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_highlight", _emote="NO"), 0), ephemeral=True)
+        
+        self.add_highlight(ctx, all_highlights, phrase)
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "added_highlight", _emote="YES", phrase=phrase), 1), ephemeral=True)
 
-    #         if has_embed.lower() == "true":
-    #             async def callback(
-    #                 i: discord.Interaction
-    #             ) -> None:
-    #                 title, desc, fn1, fv1 = self.bot.extract_args(i, "title", "desc", "fn1", "fv1")
-                    
-    #                 e = Embed(
-    #                     None,
-    #                     title=title if title != "" else "None" if desc == "" else None,
-    #                     description=desc if desc != "" else "None" if title == "" else None,
-    #                     color=color,
-    #                     timestamp=datetime.datetime.now() if timestamp.lower() == "true" else None
-    #                 )
 
-    #                 if fn1 != "" or fv1 != "":
-    #                     e.add_field(name=fn1 if fn1 != "" else "None", value=fv1 if fv1 != "" else "None")
+    @_highlights.command(
+        name="delete", 
+        description="✨ Deletes a setup highlight"
+    )
+    @discord.app_commands.describe(
+        phrase="The phrase you want to delete as a highlight"
+    )
+    async def _delete_highlight(self, ctx: discord.Interaction, phrase: str) -> None:
+        """
+        highlights_delete_help
+        examples:
+        -highlights delete paul
+        """
+        phrase = phrase.lower()
+        guild_highlights, all_highlights = self.get_highlights(ctx)
 
-    #                 if image_url != None: e.set_image(url=image_url)
-    #                 if thumbnail_url != None: e.set_thumbnail(thumbnail_url)
-    #                 if author_name != None: e.set_author(name=author_name, url=author_url, icon_url=author_icon_url)
-    #                 if footer_text != None: e.set_footer(text=footer_text, icon_url=footer_icon_url)
+        if not phrase in guild_highlights:
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_highlight", _emote="NO"), 0), ephemeral=True)
+        
+        self.delete_highlight(ctx.guild, ctx.user.id, all_highlights, phrase)
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "deleted_highlight", _emote="YES", phrase=phrase), 1), ephemeral=True)
 
-    #                 try:
-    #                     await og_msg.edit(
-    #                         content=message if message != None else og_msg.content, 
-    #                         embed=e if has_embed.lower() == "true" else (og_msg.embeds[0] if len(og_msg.embeds) > 0 else None)
-    #                     )
-    #                 except Exception as ex:
-    #                     await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
-    #                 else:
-    #                     await i.response.send_message(embed=E(self.locale.t(i.guild, "edited_msg", _emote="YES"), 1), ephemeral=True) 
 
-    #             modal = EmbedBuilderModal(
-    #                 self.bot,
-    #                 "Embed Field Builder",
-    #                 callback=callback
-    #             )
-    #             await ctx.response.send_modal(modal)
-    #         else:
-    #             try:
-    #                 await og_msg.edit(
-    #                     content=message if message != None else og_msg.content, 
-    #                     embed=e if has_embed.lower() == "true" else (og_msg.embeds[0] if len(og_msg.embeds) > 0 else None)
-    #                 )
-    #             except Exception as ex:
-    #                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
-    #             else:
-    #                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "edited_msg", _emote="YES"), 1), ephemeral=True)         
+    @_highlights.command(
+        name="list", 
+        description="✨ Lists all your current highlights"
+    )
+    async def _list_highlight(self, ctx: discord.Interaction) -> None:
+        """
+        highlights_list_help
+        examples:
+        -highlights list
+        """
+        guild_highlights, _ = self.get_highlights(ctx)
 
+        if len(guild_highlights) < 1:
+            cmd = f"</highlights add:{self.bot.internal_cmd_store.get('highlights')}>"
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_highlights", _emote="NO", cmd=cmd), 0), ephemeral=True)
+        
+        e = Embed(
+            ctx, 
+            title=f"Hightlights in {ctx.guild.name}", 
+            description=", ".join([f"``{x}``" for x in guild_highlights])
+        )
+        await ctx.response.send_message(embed=e, ephemeral=True)
+        
 
 async def setup(
     bot: ShardedBotInstance

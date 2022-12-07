@@ -463,7 +463,8 @@ class ResponseEditModal(TextModalBase):
             "contains": "Triggers for the response, seperated by commas (checks anywhere within a message)",
             "regex": "RegEx that will trigger the response"
         }
-        self._vars_text = "{user} - The mention of the user, e.g. @paul \n{username} - The name of the user, e.g. paul \n{avatar} - The avatar URL of the user\n{channel} - The channel name \n{server} - The server name"
+        # self._vars_text = "{user} - The mention of the user, e.g. @paul \n{username} - The name of the user, e.g. paul \n{avatar} - The avatar URL of the user\n{channel} - The channel name \n{server} - The server name"
+        self._vars_text = self._vars_text = "You can use these optional variables in your response: \n{user} {username} {avatar} {channel} {server}"
 
         self.add_item(
             discord.ui.TextInput(

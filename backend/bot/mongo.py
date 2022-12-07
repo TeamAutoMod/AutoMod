@@ -125,5 +125,6 @@ class MongoDB(Database):
         self.tbans = MongoCollection(bot, self, "tbans")
         self.alerts = MongoCollection(bot, self, "alerts")
         self.responders = MongoCollection(bot, self, "responders")
+        self.highlights = MongoCollection(bot, self, "highlights")
         
         log.info("[Database] Connected to mongo", extra={"loc": f"PID {os.getpid()}"})

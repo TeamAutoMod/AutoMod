@@ -202,6 +202,8 @@ class InternalPlugin(AutoModPluginBlueprint):
                 autopost=True,
                 post_shard_count=True
             )
+            self.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/dblwebhook", self.config.top_gg_password)
+            self.topgg_webhook.run(self.config.top_gg_port)
         if bot.config.discords_token != "":
             self.discords = discordspy.Client(
                 self.bot,
@@ -1198,10 +1200,7 @@ class InternalPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_dbl_vote(
-        self, 
-        data
-    ) -> None:
+    async def on_dbl_vote(self, data: dict) -> None:
         print(type(data))
         print(data)
 

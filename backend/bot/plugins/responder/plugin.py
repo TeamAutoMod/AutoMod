@@ -213,7 +213,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 for i, (name, obj) in enumerate(responders.items()):
                     if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 5)])
                     e.add_field(
-                        name=f"**__{name}__**",
+                        name=f"__{name}__",
                         value="**• Search position:** {} \n**• Ignore mods:** {} \n**• Trigger:** {} \n**• Response:** \n```{}\n```".format(
                             {
                                 "startswith": "Starts with",

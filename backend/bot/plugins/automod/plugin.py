@@ -874,7 +874,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "**__Roles__**",
+                "name": "__Roles__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
@@ -886,7 +886,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "**__Channels__**",
+                "name": "__Channels__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
@@ -898,7 +898,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "**__Ignored__**",
+                "name": "__Ignored__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in ignored if x != None
@@ -1252,15 +1252,15 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         info_embed.add_fields([
             {
-                "name": "**__View current config__**",
+                "name": "__View current config__",
                 "value": f"</antispam:{self.bot.internal_cmd_store.get('antispam')}>"
             },
             {
-                "name": "**__Enable antispam__**",
+                "name": "__Enable antispam__",
                 "value": f"``{prefix}antispam <rate> <per> <warns>``"
             },
             {
-                "name": "**__Disable antispam__**",
+                "name": "__Disable antispam__",
                 "value": f"``{prefix}antispam rate:off``"
             }
         ])
@@ -1272,17 +1272,17 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**__Status__**",
+                    "name": "__Status__",
                     "value": "> Enabled" if config["enabled"] == True else "> Disabled",
                     "inline": False
                 },
                 {
-                    "name": "**__Threshold__**",
+                    "name": "__Threshold__",
                     "value": f"**• {config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "> N/A",
                     "inline": False
                 },
                 {
-                    "name": "**__Action__**",
+                    "name": "__Action__",
                     "value": f"**• {config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "> N/A",
                     "inline": False
                 }
@@ -1368,11 +1368,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "**__Roles__**",
+                    "name": "__Roles__",
                     "value": "{}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                 },
                 {
-                    "name": "**__Channels__**",
+                    "name": "__Channels__",
                     "value": "{}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                 }
             ])

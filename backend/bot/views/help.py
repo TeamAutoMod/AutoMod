@@ -37,7 +37,7 @@ class HelpView(View):
         if show_buttons == False:
             self.add_item(
                 Select(
-                    placeholder="Select a plugin",
+                    placeholder="Select Plugin",
                     options=[
                         discord.SelectOption(
                             label=v,

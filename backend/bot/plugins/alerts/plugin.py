@@ -219,7 +219,7 @@ class AlertsPlugin(AutoModPluginBlueprint):
         )
         for streamer, cid in active.items():
             e.add_field(
-                name=f"**__{streamer}__**",
+                name=f"__{streamer}__",
                 value=f"**• Channel:** <#{cid}>"
             )
         

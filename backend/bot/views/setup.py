@@ -23,7 +23,7 @@ class SetupView(View):
 
         self.add_item(
             Select(
-                placeholder="Select a feature",
+                placeholder="Select Feature",
                 options=[
                     discord.SelectOption(
                         label=e.title,

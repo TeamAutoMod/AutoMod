@@ -168,7 +168,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
                 if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 10)])
                 e.add_field(
-                    name=f"**__{msg}__**",
+                    name=f"__{msg}__",
                     value="{}".format(
                         f"**• Channel:** {f'<#{channel.id}>' if channel != None else '#unkown'}"
                     ) +

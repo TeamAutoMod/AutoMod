@@ -1,10 +1,11 @@
 # type: ignore
 
-from ast import Call
 import discord
 from discord.ui import Button
 
 from typing import Callable
+
+from ..types import E
 
 
 
@@ -128,3 +129,31 @@ class ActionedBtn(Button):
                 await interaction.response.defer(ephemeral=True)
         else:
             await interaction.response.defer(ephemeral=True)
+
+
+class DeleteHighlightBtn(Button):
+    def __init__(self, bot, check: Callable, delete_func: Callable, func_args: dict, *args, **kwargs) -> None:
+        super().__init__(
+            *args, 
+            label="Delete Highlight", 
+            style=discord.ButtonStyle.red, 
+            emoji=bot.emotes.get("TRASH"), 
+            **kwargs
+        )
+        self.bot = bot
+        self.check = check
+        self.delete_func = delete_func
+        self.func_args = func_args
+
+
+    async def callback(self, i: discord.Interaction) -> None:
+        if self.check(i.user.id):
+            guild: discord.Guild = self.func_args.get("guild")
+            try:
+                self.delete_func(**self.func_args)
+            except Exception as ex:
+                await i.response.edit_message(embed=E(self.bot.locale.t(guild, "fail", _emote="NO", exc=ex), 0), view=None)
+            else:
+                await i.response.edit_message(embed=E(self.bot.locale.t(guild, "deleted_highlight", _emote="YES", phrase=self.func_args.get("old_highlight")), 1), view=None)
+        else:
+            await i.response.defer(ephemeral=True)
