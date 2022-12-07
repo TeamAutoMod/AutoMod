@@ -1198,6 +1198,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
         if phrase in guild_highlights:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_highlight", _emote="NO"), 0), ephemeral=True)
+        if len(phrase) < 3: 
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "highlight_too_short", _emote="NO"), 0), ephemeral=True)
         
         self.add_highlight(ctx, all_highlights, phrase)
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "added_highlight", _emote="YES", phrase=phrase), 1), ephemeral=True)

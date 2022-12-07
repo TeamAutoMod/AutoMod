@@ -387,5 +387,6 @@
     "not_highlight": "{emote} No hightlight for this phrase exists",
     "added_highlight": "{emote} Hightlight for ``{phrase}`` has been created",
     "deleted_highlight": "{emote} Hightlight for ``{phrase}`` has been deleted",
-    "no_highlights": "{emote} You don't have any highlights for this server. Add one by using {cmd}"
+    "no_highlights": "{emote} You don't have any highlights for this server. Add one by using {cmd}",
+    "highlight_too_short": "{emote} Phrases need to be at least **3** characters long"
 }
