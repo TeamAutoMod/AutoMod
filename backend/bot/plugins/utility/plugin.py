@@ -1246,7 +1246,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
         e = Embed(
             ctx, 
-            title=f"Hightlights in {ctx.guild.name}", 
+            title=f"Highlights in {ctx.guild.name}", 
             description=", ".join([f"``{x}``" for x in guild_highlights])
         )
         await ctx.response.send_message(embed=e, ephemeral=True)
