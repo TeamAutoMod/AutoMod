@@ -309,7 +309,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         return viewable_plugins
     
 
-    def get_highlights(self, ctx: discord.Interaction) -> Tuple[list, dict]:
+    def get_highlights(self, ctx: discord.Interaction) -> Tuple[List[str], Dict[str, List[str]]]:
         highlights_from_db: Union[dict, None] = self.db.highlights.get(f"{ctx.guild.id}", "highlights")
         if highlights_from_db == None:
             self.db.highlights.insert(Highlights(ctx))
@@ -580,11 +580,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             e = Embed(
                 ctx,
                 title="AutoMod Help",
-                description=self.locale.t(ctx.guild, "help_desc")
-            )
-            e.add_field(
-                name="__Additional Help__",
-                value=f"[Support Server]({self.bot.config.support_invite})"
+                description=self.locale.t(ctx.guild, "help_desc", inv=self.bot.config.support_invite)
             )
             e.credits()
 

@@ -4,10 +4,10 @@ from .text import (
     FilterEditModal, 
     RegexEditModal, 
     CommandCreateModal, 
+    CommandEditModal,
     AutomodRuleModal, 
     DefaultReasonModal, 
     EmbedBuilderModal, 
     ResponseCreateModal,
     ResponseEditModal
 )
-from .select import ReactionRoleModal

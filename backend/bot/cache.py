@@ -24,7 +24,7 @@ class InternalCacheStore:
         )
 
 
-    def get(self, _id: Union[str, int], key) -> Optional[Union[str, int, Dict[Any, Any], List[Any]]]:
+    def get(self, _id: Union[str, int], key) -> Optional[Union[str, int, Dict[Union[str, int], Any], List[Any]]]:
         try:
             r = self.data[str(_id)].get(key, None)
         except KeyError:
@@ -41,7 +41,7 @@ class InternalCacheStore:
         return str(_id) in self.data
 
 
-    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Any, Any], List[Any], None]) -> None:
+    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Union[str, int], Any], List[Any], None]) -> None:
         if str(_id) in self.data:
             self.data[str(_id)].update({
                 key: value

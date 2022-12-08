@@ -1,5 +1,5 @@
 {
-    "help_desc": "Commands are slash commands and start with ``/``",
+    "help_desc": "Commands are slash commands and start with ``/`` \n\nFor additional help join the [support server]({inv})",
     "invalid_command": "{emote} This isn't a valid command",
     "no_reason": "No reason",
     "aborting": "Aborting",

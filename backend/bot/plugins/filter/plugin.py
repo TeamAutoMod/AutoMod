@@ -284,7 +284,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         -regex list
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
-        cmd = f"</reward add:{self.bot.internal_cmd_store.get('reward')}>"
+        cmd = f"</regex add:{self.bot.internal_cmd_store.get('regex')}>"
         if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO", cmd=cmd), 0))
 
         e = Embed(

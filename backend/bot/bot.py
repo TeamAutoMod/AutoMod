@@ -25,7 +25,7 @@ from .observer import Observer
 
 
 
-def prefix_callable(bot, msg: discord.Message) -> list:
+def prefix_callable(bot, msg: discord.Message) -> List[str]:
     default = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "] # when the bot is mentioned
     if msg.guild is None:
         default.append(bot.config.default_prefix)

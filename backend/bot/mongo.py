@@ -7,7 +7,6 @@ import logging; log = logging.getLogger(__name__)
 
 
 
-
 class MongoCollection(Collection):
     def __init__(self, bot, database: Database, name: str) -> None:
         super().__init__(
@@ -19,7 +18,7 @@ class MongoCollection(Collection):
         self.cached = name in bot.config.cache_options
 
 
-    def get(self, _id: Union[str, int], key: str) -> Optional[Union[str, int, Dict[Any, Any], List[Any]]]:
+    def get(self, _id: Union[str, int], key: str) -> Optional[Union[str, int, Dict[Union[str, int], Any], List[Any]]]:
         if self.cached:
             return (getattr(self.bot.cache, self.collection_name)).get(_id, key)
         else:
@@ -32,7 +31,7 @@ class MongoCollection(Collection):
             return super().get_doc(_id)
 
 
-    def get_from_db(self, _id: Union[str, int], key: str) -> Optional[Union[str, int, Dict[Any, Any], List[Any]]]:
+    def get_from_db(self, _id: Union[str, int], key: str) -> Optional[Union[str, int, Dict[Union[str, int], Any], List[Any]]]:
         return super().get(_id, key)
 
 
@@ -41,7 +40,7 @@ class MongoCollection(Collection):
         if self.cached: (getattr(self.bot.cache, self.collection_name)).insert(schema["id"], schema)
 
 
-    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Any, Any], List[Any], None]) -> None:
+    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Union[str, int], Any], List[Any], None]) -> None:
         super().update(_id, key, value)
         if self.cached: (getattr(self.bot.cache, self.collection_name)).update(_id, key, value)
 

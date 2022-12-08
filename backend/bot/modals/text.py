@@ -258,36 +258,66 @@ class CommandCreateModal(TextModalBase):
         callback: Callable
     ) -> None:
         super().__init__(bot, title, callback)
-    
+        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
 
-    name = discord.ui.TextInput(
-        custom_id="name",
-        label="Name",
-        style=discord.TextStyle.short,
-        placeholder="Name of the command",
-        required=True,
-        max_length=20
-    )
+        self.add_item(discord.ui.TextInput(
+            custom_id="name",
+            label="Name",
+            style=discord.TextStyle.short,
+            placeholder="Name of the command",
+            required=True,
+            max_length=20
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="content",
+            label="Reply",
+            style=discord.TextStyle.long,
+            placeholder="What the bot should reply with",
+            required=True,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="description",
+            label="Description",
+            style=discord.TextStyle.long,
+            placeholder="Command description displayed in the chat input",
+            required=True,
+            max_length=75
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="vars",
+            label="Variable Reference",
+            style=discord.TextStyle.long,
+            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+            default=self._vars_text,
+            required=False,
+            max_length=len(self._vars_text)
+        ))
 
 
-    content = discord.ui.TextInput(
-        custom_id="content",
-        label="Reply",
-        style=discord.TextStyle.long,
-        placeholder="What the bot should reply with",
-        required=True,
-        max_length=2000
-    )
+class CommandEditModal(TextModalBase):
+    def __init__(self, bot, title: str, content: str, callback: Callable) -> None:
+        super().__init__(bot, title, callback)
+        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
 
-
-    description = discord.ui.TextInput(
-        custom_id="description",
-        label="Description",
-        style=discord.TextStyle.long,
-        placeholder="Command description displayed in the chat input",
-        required=True,
-        max_length=75
-    )
+        self.add_item(discord.ui.TextInput(
+            custom_id="content",
+            label="Reply",
+            style=discord.TextStyle.long,
+            placeholder="What the bot should reply with",
+            default=content,
+            required=True,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="vars",
+            label="Variable Reference",
+            style=discord.TextStyle.long,
+            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+            default=self._vars_text,
+            required=False,
+            max_length=len(self._vars_text)
+        ))
 
 
 class AutomodRuleModal(TextModalBase):
@@ -401,7 +431,7 @@ class ResponseCreateModal(TextModalBase):
             "contains": "Triggers for the response, seperated by commas (checks anywhere within a message)",
             "regex": "RegEx that will trigger the response"
         }
-        self._vars_text = "{user} - The mention of the user, e.g. @paul \n{username} - The name of the user, e.g. paul \n{avatar} - The avatar URL of the user\n{channel} - The channel name \n{server} - The server name"
+        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
 
         self.add_item(
             discord.ui.TextInput(
@@ -436,7 +466,7 @@ class ResponseCreateModal(TextModalBase):
         self.add_item(
             discord.ui.TextInput(
                 custom_id="vars",
-                label="Variables for the response",
+                label="Variable Reference",
                 style=discord.TextStyle.long,
                 placeholder="Putting something here won't have any effects. This field is just to show the available variables",
                 default=self._vars_text,
@@ -463,8 +493,7 @@ class ResponseEditModal(TextModalBase):
             "contains": "Triggers for the response, seperated by commas (checks anywhere within a message)",
             "regex": "RegEx that will trigger the response"
         }
-        # self._vars_text = "{user} - The mention of the user, e.g. @paul \n{username} - The name of the user, e.g. paul \n{avatar} - The avatar URL of the user\n{channel} - The channel name \n{server} - The server name"
-        self._vars_text = self._vars_text = "You can use these optional variables in your response: \n{user} {username} {avatar} {channel} {server}"
+        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
 
         self.add_item(
             discord.ui.TextInput(
@@ -491,7 +520,7 @@ class ResponseEditModal(TextModalBase):
         self.add_item(
             discord.ui.TextInput(
                 custom_id="vars",
-                label="Variables for the response",
+                label="Variable Reference",
                 style=discord.TextStyle.long,
                 placeholder="Putting something here won't have any effects. This field is just to show the available variables",
                 default=self._vars_text,

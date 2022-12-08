@@ -4,15 +4,15 @@ import discord
 from discord.ext import commands
 
 from toolbox import S as Object
-import datetime
 from typing import Literal
+import datetime
 import re
 import logging; log = logging.getLogger()
 
 from .. import ShardedBotInstance
 from ...schemas import CustomCommand
 from ...types import Embed, E
-from ...modals import CommandCreateModal
+from ...modals import CommandCreateModal, CommandEditModal
 from ..responder.plugin import AutoResponderPlugin
 
 
@@ -327,7 +327,7 @@ class TagsPlugin(AutoResponderPlugin):
 
         modal = CommandCreateModal(self.bot, "Create Slash Command", callback)
         await ctx.response.send_modal(modal)
-
+    
 
     @_commands.command(
         name="delete",
@@ -367,45 +367,45 @@ class TagsPlugin(AutoResponderPlugin):
         description="🔀 Edits an existing custom slash command"
     )
     @discord.app_commands.describe(
-        name="Name of the custom command",
-        content="Content of the output",
-        ephemeral="Whether the response should be ephemeral, meaning only the user can see it"
+        name="Name of the custom command you want to edit",
+        ephemeral="Whether the command should respond with an ephemeral reply"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def editcom(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-        content: str,
-        ephemeral: Literal[
-            "True",
-            "False"
-        ] = None
-    ) -> None:
+    async def editcom(self, ctx: discord.Interaction, name: str, ephemeral: Literal["True", "False"] = "False") -> None:
         """
         commands_edit_help
         examples:
-        -custom-commands edit test_cmd This is the new content
+        -custom-commands edit test_cmd
         """
-        if len(content) > 1900:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
-
         name = name.lower()
+        
         cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
-                if ephemeral == None:
-                    ephemeral = self._tags[ctx.guild.id][name].get("ephemeral", False)
-                else:
-                    if ephemeral == "True":
-                        ephemeral = True
+                data = self._tags[ctx.guild.id][name]
+
+                async def callback(i: discord.Interaction) -> None:
+                    content, _ = self.bot.extract_args(i, "content", "vars")
+                    if ephemeral == None:
+                        _ephemeral = data.get("ephemeral", False)
                     else:
-                        ephemeral = False
+                        if ephemeral == "True":
+                            _ephemeral = True
+                        else:
+                            _ephemeral = False
+                    
+                    self.update_tag(i, name, content, _ephemeral)
+                    await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_updated", _emote="YES"), 1))
                 
-                self.update_tag(ctx, name, content, ephemeral)
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_updated", _emote="YES"), 1))
+                modal = CommandEditModal(
+                    self.bot, 
+                    f"Edit Commanad {name}", 
+                    data.get("content"),
+                    callback
+                )
+                await ctx.response.send_modal(modal)
         else:
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
 
