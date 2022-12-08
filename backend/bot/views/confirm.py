@@ -11,17 +11,10 @@ from .buttons import ConfirmBtn, CancelBtn
 
 
 class ConfirmView(View):
-    def __init__(
-        self, 
-        bot, 
-        guild_id: int, 
-        on_confirm: Callable, 
-        on_cancel: Callable, 
-        on_timeout: Callable, 
-        check: LambdaType, 
-        timeout: int = 30
-    ) -> None:
-        super().__init__(timeout=timeout)
+    def __init__(self, bot, guild_id: int, on_confirm: Callable, on_cancel: Callable, on_timeout: Callable, check: LambdaType, timeout: int = 30) -> None:
+        super().__init__(
+            timeout=timeout
+        )
         self.add_item(ConfirmBtn(bot))
         self.add_item(CancelBtn(bot))
 
@@ -33,44 +26,30 @@ class ConfirmView(View):
         self.check = check
 
 
-    async def on_timeout(
-        self
-    ) -> None:
+    async def on_timeout(self) -> None:
         await self.timeout_callback()
     
 
-    async def confirm_callback(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
-        if await self.exec_check(interaction):
-            await self.on_confirm(interaction)
+    async def confirm_callback(self, i: discord.Interaction) -> None:
+        if await self.exec_check(i):
+            await self.on_confirm(i)
             self.stop()
 
 
-    async def cancel_callback(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
-        if await self.exec_check(interaction):
-            await self.on_cancel(interaction)
+    async def cancel_callback(self, i: discord.Interaction) -> None:
+        if await self.exec_check(i):
+            await self.on_cancel(i)
             self.stop()
 
 
-    async def exec_check(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
+    async def exec_check(self, i: discord.Interaction) -> None:
         if not self.check:
             return True
-        if self.check(interaction):
+        if self.check(i):
             return True
-        await self.refuse(interaction)
+        await self.refuse(i)
         return False
 
 
-    async def refuse(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
-        interaction.response.send_message("Invalid interaction", ephemeral=True)
+    async def refuse(self, i: discord.Interaction) -> None:
+        i.response.send_message("Invalid interaction", ephemeral=True)

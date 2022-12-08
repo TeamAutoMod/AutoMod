@@ -11,22 +11,12 @@ from . import IntegerConverter
 
 
 class DiscordUser(commands.Converter):
-    def __init__(
-        self, 
-        id_only: bool = False
-    ) -> None:
+    def __init__(self, id_only: bool = False) -> None:
         super().__init__()
         self.id_only = id_only
 
 
-    async def convert(
-        self, 
-        ctx: discord.Interaction, 
-        argument: str
-    ) -> Union[
-        discord.User, 
-        Exception
-    ]:
+    async def convert(self, ctx: discord.Interaction, argument: str) -> Union[discord.User, Exception]:
         user = None
         try:
             match = (re.compile(r"<@!?([0-9]+)>")).match(argument)

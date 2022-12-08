@@ -1,11 +1,10 @@
 from .guild import GuildConfig
-from .tag import Tag
+from .command import CustomCommand
 from .warn import Warn
 from .case import Case
 from .mute import Mute
 from .slowmode import Slowmode
 from .tempban import Tempban
-from .alert import Alert
 from .responder import Responder
 from .highlights import Highlights
 

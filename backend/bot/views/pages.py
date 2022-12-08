@@ -17,15 +17,7 @@ def inject_bot_obj(bot):
     global bot_obj; bot_obj = bot
     
 
-async def get_cases_from_cache(
-    plugin: T,
-    i: discord.Interaction, 
-    diff: int
-) -> Tuple[
-    discord.Embed, 
-    int,
-    int
-]:
+async def get_cases_from_cache(plugin: T, i: discord.Interaction, diff: int) -> Tuple[discord.Embed, int,int]:
     _id = f"{i.guild.id}-{plugin._id_salt}"
     data = bot_obj.case_cmd_cache.get(_id, None)
     if data == None:
@@ -51,14 +43,10 @@ async def get_cases_from_cache(
 
 
 class MultiPageView(View):
-    def __init__(
-        self, 
-        user_id: int,
-        page: int, 
-        pages: int,
-        id_salt: int
-    ) -> None:
-        super().__init__(timeout=None)
+    def __init__(self, user_id: int, page: int, pages: int, id_salt: int) -> None:
+        super().__init__(
+            timeout=None
+        )
         self.id = ""
         self._id_salt = id_salt
         self.user_id = user_id
@@ -78,10 +66,7 @@ class MultiPageView(View):
             ))
 
     
-    async def first_page(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def first_page(self, i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(self, i, 100)
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(
@@ -90,10 +75,7 @@ class MultiPageView(View):
         )
 
 
-    async def prev_page(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def prev_page(self, i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(self, i, -1)
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(
@@ -102,26 +84,18 @@ class MultiPageView(View):
         )
 
 
-    async def delete(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def delete(self, i: discord.Interaction) -> None:
         await i.message.delete()
         if f"{i.guild.id}-{self._id_salt}" in bot_obj.case_cmd_cache:
             del bot_obj.case_cmd_cache[f"{i.guild.id}-{self._id_salt}"]
 
 
     @staticmethod
-    async def none(
-        _: discord.Interaction
-    ) -> None:
+    async def none(_: discord.Interaction) -> None:
         pass
 
     
-    async def next_page(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def next_page(self, i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(self, i, 1)
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(
@@ -130,10 +104,7 @@ class MultiPageView(View):
         )
 
 
-    async def last_page(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def last_page(self, i: discord.Interaction) -> None:
         embed, pages, page_count = await get_cases_from_cache(self, i, -100)
         if embed == None and pages == None and page_count == None: return
         await i.response.edit_message(

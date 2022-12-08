@@ -6,15 +6,11 @@ from discord.ui import View
 
 
 class RoleSelect(View):
-    def __init__(
-        self, 
-        min_v: int,
-        max_v: int,
-        cid: str, 
-        *args, 
-        **kwargs
-    ) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, min_v: int, max_v: int, cid: str, *args, **kwargs) -> None:
+        super().__init__(
+            *args, 
+            **kwargs
+        )
         self.add_item(discord.ui.RoleSelect(
             custom_id=cid,
             placeholder=f"Select role{'' if max_v == 1 else 's'}",

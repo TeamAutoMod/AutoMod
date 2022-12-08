@@ -25,10 +25,7 @@ from .observer import Observer
 
 
 
-def prefix_callable(
-    bot, 
-    msg: discord.Message
-) -> list:
+def prefix_callable(bot, msg: discord.Message) -> list:
     default = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "] # when the bot is mentioned
     if msg.guild is None:
         default.append(bot.config.default_prefix)
@@ -82,11 +79,8 @@ class ShardedBotInstance(commands.AutoShardedBot):
     )
     if hasattr(intents, "message_content"):
         intents.message_content = True
-    def __init__(
-        self, 
-        *args, 
-        **kwargs
-    ) -> None:
+        
+    def __init__(self, *args, **kwargs) -> None:
         self._start_text()
         with open("backend/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config = Object(json.load(config_file))
@@ -138,9 +132,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.message_cache = MessageCache()
 
 
-    def _start_text(
-        self
-    ) -> None:
+    def _start_text(self) -> None:
         log.critical("\33[1m\33[34m" + """
      _         _        __  __           _ 
     / \  _   _| |_ ___ |  \/  | ___   __| |
@@ -151,27 +143,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             """ + "\33[0m") # we use log.critical() here to have it being interpreted as a log message for linux pm2 logs
 
 
-    def _set_ngrok_url(
-        self
-    ) -> None:
-        active: List[ngrok.NgrokTunnel] = ngrok.get_tunnels()
-        if len(active) > 0:
-            for t in active:
-                try:
-                    ngrok.disconnect(t.public_url)
-                except Exception:
-                    pass
-        try:
-            ngrok_tunnel_url = ngrok.connect(self.ngrok_port, bind_tls=True).public_url
-        except Exception as ex:
-            log.warn(f"[ngrok] Failed to create ngrok tunnel URL - {ex}", extra={"loc": f"PID {os.getpid()}"}); ngrok_tunnel_url = ""
-        finally:
-            setattr(self.config, "twitch_callback_url", ngrok_tunnel_url)
-
-
-    async def _activity_handler(
-        self
-    ) -> None:
+    async def _activity_handler(self) -> None:
         while True:
             await asyncio.sleep(120)
             await self.change_presence(
@@ -187,37 +159,23 @@ class ShardedBotInstance(commands.AutoShardedBot):
             )
 
 
-    async def on_shard_connect(
-        self,
-        shard_id: int
-    ) -> None:
+    async def on_shard_connect(self, shard_id: int) -> None:
         log.info("[Sharding] Shard has connected", extra={"loc": f"Shard {shard_id}"})
 
 
-    async def on_shard_disconnect(
-        self,
-        shard_id: int
-    ) -> None:
+    async def on_shard_disconnect(self, shard_id: int) -> None:
         log.error("[Sharding] Shard has disconnected", extra={"loc": f"Shard {shard_id}"})
 
 
-    async def on_shard_ready(
-        self,
-        shard_id: int
-    ) -> None:
+    async def on_shard_ready(self, shard_id: int) -> None:
         log.info("[Sharding] Shard is ready", extra={"loc": f"Shard {shard_id}"})
 
 
-    async def on_shard_resumed(
-        self,
-        shard_id: int
-    ) -> None:
+    async def on_shard_resumed(self, shard_id: int) -> None:
         log.info("[Sharding] Shard has resumed session", extra={"loc":  f"Shard {shard_id}"})
 
 
-    async def on_ready(
-        self
-    ) -> None:
+    async def on_ready(self) -> None:
         if self.config.custom_status != "":
             if self.activity == None:
                 await self.change_presence(
@@ -270,10 +228,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             self.ready = True
 
     
-    async def on_message(
-        self, 
-        msg: discord.Message
-    ) -> None:
+    async def on_message(self, msg: discord.Message) -> None:
         if msg.author.bot or msg.guild is None:
             return
         else:
@@ -295,10 +250,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                             await self.invoke(ctx)
 
 
-    async def on_interaction(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def on_interaction(self, i: discord.Interaction) -> None:
         if i.type == discord.InteractionType.application_command:
             self.used_commands += 1
             if i.guild != None:
@@ -306,12 +258,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                     await self.chunk_guild(i.guild)
 
 
-    def dispatch(
-        self, 
-        event_name: str, 
-        *args, 
-        **kwargs
-    ) -> None:
+    def dispatch(self, event_name: str, *args, **kwargs) -> None:
         ev = event_name.lower()
         self.event_stats.update({
             ev: self.event_stats.get(ev, 0) + 1
@@ -322,9 +269,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             log.error(f"[Events] Error in {event_name} - {ex}", extra={"loc": f"PID {os.getpid()}"})
             
     
-    async def load_plugins(
-        self
-    ) -> None:
+    async def load_plugins(self) -> None:
         try:
             self.remove_command("help")
         except Exception:
@@ -346,17 +291,11 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 })
 
 
-    async def register_plugin(
-        self, 
-        plugin: commands.Cog
-    ) -> None:
+    async def register_plugin(self, plugin: commands.Cog) -> None:
         await super().add_cog(plugin)
 
 
-    async def load_plugin(
-        self, 
-        plugin: str
-    ) -> None:
+    async def load_plugin(self, plugin: str) -> None:
         try:
             await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
         except Exception:
@@ -365,10 +304,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             log.info(f"[Plugins] Successfully loaded {plugin}", extra={"loc": f"PID {os.getpid()}"})
 
     
-    async def reload_plugin(
-        self, 
-        plugin: str
-    ) -> None:
+    async def reload_plugin(self, plugin: str) -> None:
         if plugin == "mod":
             in_plugins_name = "ModerationPlugin"
         elif plugin == "rr":
@@ -395,10 +331,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 except Exception: raise
 
 
-    def get_plugin(
-        self, 
-        name: str
-    ) -> Union[
+    def get_plugin(self, name: str) -> Union[
         commands.Cog, 
         None
     ]:
@@ -408,19 +341,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return None
 
 
-    def handle_timeout(
-        self, 
-        mute: bool, 
-        guild: discord.Guild, 
-        user: Union[
-            discord.Member, 
-            discord.User
-        ], 
-        iso8601_ts: str
-    ) -> Union[
-        str, 
-        Exception
-    ]:
+    def handle_timeout(self, mute: bool, guild: discord.Guild, user: Union[discord.Member, discord.User], iso8601_ts: str) -> Union[str, Exception]:
         exc = ""
         try:
             resp = requests.patch(
@@ -439,10 +360,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return exc
 
 
-    def get_uptime(
-        self, 
-        split: bool = False
-    ) -> str:
+    def get_uptime(self, split: bool = False) -> str:
         raw = datetime.datetime.utcnow() - self.uptime
 
         hours, remainder = divmod(int(raw.total_seconds()), 3600)
@@ -455,15 +373,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return days, hours, minutes, seconds
 
 
-    async def register_user_info_ctx_menu(
-        self
-    ) -> None:
+    async def register_user_info_ctx_menu(self) -> None:
         @self.tree.context_menu(name="Userinfo")
         @discord.app_commands.default_permissions(manage_messages=True)
-        async def _(
-            i: discord.Interaction, 
-            user: discord.Member
-        ) -> None:
+        async def _(i: discord.Interaction, user: discord.Member) -> None:
             p = self.get_plugin("UtilityPlugin")
             try:
                 await p.whois._callback(p, i, user)
@@ -476,14 +389,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 )
                 
 
-    async def register_report_ctx_menu(
-        self
-    ) -> None:
+    async def register_report_ctx_menu(self) -> None:
         @self.tree.context_menu(name="Report")
-        async def _(
-            i: discord.Interaction, 
-            msg: discord.Message
-        ) -> None:
+        async def _(i: discord.Interaction, msg: discord.Message) -> None:
             p = self.get_plugin("ModerationPlugin")
             try:
                 await p.report(i, msg)
@@ -496,15 +404,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 )
 
 
-    async def register_infractions_ctx_menu(
-        self
-    ) -> None:
+    async def register_infractions_ctx_menu(self) -> None:
         @self.tree.context_menu(name="History")
         @discord.app_commands.default_permissions(manage_messages=True)
-        async def _(
-            i: discord.Interaction, 
-            user: discord.Member
-        ) -> None:
+        async def _(i: discord.Interaction, user: discord.Member) -> None:
             p = self.get_plugin("CasesPlugin")
             try:
                 await p.infractions._callback(p, i, str(user.id))
@@ -517,23 +420,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 )
 
 
-    async def post_stats(
-        self
-    ) -> None:
-        while True:
-            rc = self._post_stats()
-            if rc != 0:
-                if rc != 200:
-                    log.warn(f"[Events] Failed to post stats to website ({rc})", extra={"loc": f"PID {os.getpid()}"})
-                else:
-                    log.info("[Events] Posted stats to website", extra={"loc": f"PID {os.getpid()}"})
-            
-            await asyncio.sleep(3600) # once every hour
-
-
-    def _post_stats(
-        self
-    ) -> int:
+    def _post_stats(self) -> int:
         try:
             if self.config.web_url_base != "":
                 r = requests.post(
@@ -553,10 +440,19 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return r.status_code
 
 
-    async def chunk_guild(
-        self,
-        guild: discord.Guild
-    ) -> None:
+    async def post_stats(self) -> None:
+        while True:
+            rc = self._post_stats()
+            if rc != 0:
+                if rc != 200:
+                    log.warn(f"[Events] Failed to post stats to website ({rc})", extra={"loc": f"PID {os.getpid()}"})
+                else:
+                    log.info("[Events] Posted stats to website", extra={"loc": f"PID {os.getpid()}"})
+            
+            await asyncio.sleep(3600) # once every hour
+
+
+    async def chunk_guild(self, guild: discord.Guild) -> None:
         if not guild.chunked:
             try:
                 await guild.chunk(cache=True)
@@ -564,21 +460,14 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 self._post_stats()
     
 
-    async def join_thread(
-        self, 
-        thread: discord.Thread
-    ) -> None:
+    async def join_thread(self, thread: discord.Thread) -> None:
         try:
             await thread.add_user(self.user)
         except Exception:
             pass
 
     
-    def extract_args(
-        self,
-        i: discord.Interaction,
-        *args
-    ) -> tuple:
+    def extract_args(self, i: discord.Interaction, *args) -> tuple:
         return (
             i.data["components"][i.data["components"].index(
                 [_ for _ in i.data["components"] if _["components"][0]["custom_id"] == x][0]
@@ -586,14 +475,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
         )
 
 
-    def get_default_reason(
-        self,
-        guild: discord.Guild
-    ) -> str:
+    def get_default_reason(self, guild: discord.Guild) -> str:
         return self.db.configs.get(guild.id, "default_reason")
 
 
-    def run(
-        self
-    ) -> None:
+    def run(self) -> None:
         super().run(self.config.token, log_handler=None)

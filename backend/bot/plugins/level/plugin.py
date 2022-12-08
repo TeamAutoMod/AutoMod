@@ -381,7 +381,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
 
         if len(config.rewards) < 1:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rewards", _emote="NO"), 0))
+            cmd = f"</reward add:{self.bot.internal_cmd_store.get('reward')}>"
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rewards", _emote="INFO", cmd=cmd), 2))
         else:
             e = Embed(
                 ctx,

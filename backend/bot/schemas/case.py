@@ -11,15 +11,9 @@ from typing import Union
 def Case(
     case: int, 
     _type: str, 
-    msg: Union[
-        discord.Message,
-        discord.Interaction
-    ], 
+    msg: Union[discord.Message, discord.Interaction], 
     mod: discord.Member, 
-    user: Union[
-        discord.Member, 
-        discord.User
-    ], 
+    user: Union[discord.Member, discord.User], 
     reason: str, 
     ts: datetime.datetime, 
     warns_added: int = 0, 

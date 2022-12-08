@@ -157,7 +157,8 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             ).items() if self.bot.get_channel(int(v['channel'])) != None
         }
         if len(rrs) < 1:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="NO"), 0))
+            cmd = f"</reaction-roles add:{self.bot.internal_cmd_store.get('reaction-roles')}>"
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="INFO", cmd=cmd), 2))
         else:
             e = Embed(
                 ctx,
@@ -288,7 +289,8 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         """
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if len(rrs) < 1:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="NO"), 0), ephemeral=True)
+            cmd = f"</reaction-roles add:{self.bot.internal_cmd_store.get('reaction-roles')}>"
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="INFO", cmd=cmd), 2), ephemeral=True)
         else:
             if not f"{message_id}" in rrs:
                 return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_rr_msg", _emote="NO"), 0), ephemeral=True)

@@ -14,24 +14,13 @@ from ...types import E
 
 class WarnPlugin(AutoModPluginBlueprint):
     """Plugin for warn commands. This isn't being added seperately, instead the mod plugin will subclass from this"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
 
 
-    def can_act(
-        self, 
-        guild: discord.Guild, 
-        mod: discord.Member, 
-        target: Union[
-            discord.Member, 
-            discord.User
-        ]
-    ) -> bool:
+    def can_act(self, guild: discord.Guild, mod: discord.Member, target: Union[discord.Member, discord.User]) -> bool:
         if mod.id == target.id: return False
         if mod.id == guild.owner_id: return True
 
@@ -65,13 +54,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         reason="An optional reason for the warn"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def warn(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.Member, 
-        warns: int = 1, 
-        reason: str = None
-    ) -> None:
+    async def warn(self, ctx: discord.Interaction, user: discord.Member, warns: int = 1, reason: str = None) -> None:
         """
         warn_help
         examples:
@@ -107,13 +90,7 @@ class WarnPlugin(AutoModPluginBlueprint):
         reason="An optional reason for the unwarn"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def unwarn(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.Member, 
-        warns: int = 1, 
-        reason: str = None
-    ) -> None:
+    async def unwarn(self, ctx: discord.Interaction, user: discord.Member, warns: int = 1, reason: str = None) -> None:
         """
         unwarn_help
         examples:

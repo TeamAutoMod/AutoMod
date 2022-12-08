@@ -7,17 +7,7 @@ from typing import Union
 
 
 
-def Responder(
-    ctx: discord.Interaction, 
-    name: str, 
-    content: str,
-    trigger: Union[
-        str, 
-        list
-    ],
-    position: str,
-    ignore_mods: bool
-) -> dict:
+def Responder(ctx: discord.Interaction, name: str, content: str, trigger: Union[str, list], position: str, ignore_mods: bool) -> dict:
     return {
         "id": f"{ctx.guild.id}-{name}",
         "uses": 0,

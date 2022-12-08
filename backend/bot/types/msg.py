@@ -9,14 +9,7 @@ from typing import Union, Tuple, Optional
 
 
 class Message(commands.Converter):
-    async def convert(
-        self,
-        ctx: discord.Interaction,
-        argument: str
-    ) -> Union[
-        discord.Message,
-        Exception
-    ]:
+    async def convert(self, ctx: discord.Interaction, argument: str) -> Union[discord.Message, Exception]:
         guild_id, message_id, channel_id = PartialMessageConverter._get_id_matches(ctx, argument)
 
         message = ctx._client._connection._get_message(message_id)
@@ -37,16 +30,7 @@ class Message(commands.Converter):
 
 class PartialMessageConverter(commands.Converter):
     @staticmethod
-    def _get_id_matches(
-        ctx: discord.Interaction, 
-        argument: str
-        ) -> Tuple[
-            Optional[
-                int
-            ], 
-            int, 
-            int
-        ]:
+    def _get_id_matches(ctx: discord.Interaction, argument: str) -> Tuple[Optional[int], int, int]:
         id_regex = re.compile(r'(?:(?P<channel_id>[0-9]{15,20})-)?(?P<message_id>[0-9]{15,20})$')
         link_regex = re.compile(
             r'https?://(?:(ptb|canary|www)\.)?discord(?:app)?\.com/channels/'
@@ -74,20 +58,7 @@ class PartialMessageConverter(commands.Converter):
 
 
     @staticmethod
-    def _resolve_channel(
-        ctx: discord.Interaction, 
-        guild_id: Optional[
-            int
-        ], 
-        channel_id: Optional[
-            int
-        ]
-    ) -> Optional[
-        Union[
-            discord.TextChannel, 
-            discord.Thread
-        ]
-    ]:
+    def _resolve_channel(ctx: discord.Interaction, guild_id: Optional[int], channel_id: Optional[int]) -> Optional[Union[discord.TextChannel, discord.Thread]]:
         if channel_id is None:
             return ctx.channel
 
@@ -100,11 +71,7 @@ class PartialMessageConverter(commands.Converter):
         return ctx._client.get_channel(channel_id)
 
 
-    async def convert(
-        self, 
-        ctx: discord.Interaction, 
-        argument: str
-    ) -> discord.PartialMessage:
+    async def convert(self, ctx: discord.Interaction, argument: str) -> discord.PartialMessage:
         guild_id, message_id, channel_id = self._get_id_matches(ctx, argument)
         channel = self._resolve_channel(ctx, guild_id, channel_id)
 

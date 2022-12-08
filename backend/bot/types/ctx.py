@@ -3,32 +3,21 @@
 import discord
 from discord.ext import commands
 
-from typing import Optional, Union
+from typing import Optional
 
 from .embed import Embed
 
 
 
 class Context(commands.Context):
-    def __init__(
-        self, 
-        *args, 
-        **kwargs
-    ) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(
+            *args, 
+            **kwargs
+        )
 
 
-    async def send(
-        self, 
-        *args, 
-        embed: Union[
-            Embed, 
-            None
-        ] = None, 
-        **kwargs
-    ) -> Optional[
-        discord.Message
-    ]:
+    async def send(self, *args, embed: Optional[Embed] = None, **kwargs) -> Optional[discord.Message]:
         if embed != None:
             e: dict = embed.to_dict()
             if e.get("fields", None) != None:

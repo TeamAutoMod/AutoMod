@@ -309,13 +309,6 @@
 
     "plugins_desc": "> To enable a plugin, use: ``{prefix}plugins enable <plugin>`` \n> To disable a plugin, use: ``{prefix}plugins disable <plugin>``",
 
-    "no_replies": "{emote} This server doesn't have any auto replies",
-    "reply_exists": "{emote} A reply with that name already exists",
-    "added_reply": "{emote} Automated reply has been created",
-    "reply_doesnt_exist": "{emote} A reply with that name doesn't exist",
-    "removed_reply": "{emote} Automated reply has been removed",
-
-   
     "setup_desc": "This is a small guide for setting up the bot. If you need any further help, don't hesitate to join the support server: {inv}",
     "prefix_val": "You can configure the bots prefix for text & custom commands using the ``{prefix}prefix`` command. For example, if you want the prefix to be ``!!``, you'd use ``{prefix}prefix !!``",
     "log_val": "Logging allows you to keep track of what is happening in your server. Everything related to logging is configured using the ``{prefix}log`` command. The first command argument is always the option you want to configure, for example ``mod`` for mod logs. \n\nThe following are the available log options: \n> ``mod`` → For (auto-)mod logs like bans etc. \n> ``server`` → For server logs like channel & emoji events \n> ``messages`` → For message deletion/edit logs \n> ``joins`` → For member join/leave logs \n> ``voice`` → For voice join/leave/switch events \n> ``reports`` → For logging of reports via right-clicking on a message \n \nThe second command argument is either the channel you want the logs to be sent to, or ``True`` for the 'disable' parameter to disable the option. \n\nTwo examples would be: \n> ``{prefix}log mod #mod-logs`` → Enables mod logging and sends them to #mod-logs \n> ``{prefix}log mod disable:True`` → Disables mod logs",

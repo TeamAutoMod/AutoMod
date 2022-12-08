@@ -6,13 +6,7 @@ import datetime
 
 
 
-def Tag(
-    ctx: discord.Interaction, 
-    name: str, 
-    content: str,
-    ephemeral: bool,
-    description: str
-) -> dict:
+def CustomCommand(ctx: discord.Interaction, name: str, content: str, ephemeral: bool, description: str) -> dict:
     return {
         "id": f"{ctx.guild.id}-{name}",
         "uses": 0,

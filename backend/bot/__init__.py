@@ -27,7 +27,9 @@ if config.get("sentry_dsn", "") != "":
 
 class _Formatter(logging.Formatter):
     def __init__(self) -> None:
-        super().__init__(fmt="\033[92m{loc:<8} |\033[0m [{asctime}] \033[92m {levelname:<4} \033[0m: {message}", datefmt="%H:%M:%S", style="{")
+        super().__init__(
+            fmt="\033[92m{loc:<8} |\033[0m [{asctime}] \033[92m {levelname:<4} \033[0m: {message}", datefmt="%H:%M:%S", style="{"
+        )
 
     
     def format(self, record) -> str:

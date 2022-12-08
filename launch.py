@@ -14,10 +14,7 @@ from backend.bot import ShardedBotInstance
 
 
 
-async def _shutdown(
-    bot: ShardedBotInstance,
-    sig: str
-) -> None:
+async def _shutdown(bot: ShardedBotInstance, sig: str) -> None:
     log.info(f"[AutoMod] Shutting down (triggered by {sig})", extra={"loc": f"PID {os.getpid()}"})
     try: 
         await bot.close()

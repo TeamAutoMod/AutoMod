@@ -3,29 +3,23 @@
 import discord
 from discord.ui import View # pyright: reportMissingImports=false
 
-from typing import List
-
 from .buttons import CallbackBtn
 from ..types import Embed
 
 
 
 class ConfigView(View):
-    def __init__(
-        self, 
-        bot,
-        *args, 
-        **kwargs
-    ) -> None:
+    def __init__(self, bot, *args, **kwargs) -> None:
+        super().__init__(
+            *args, 
+            **kwargs
+        )
         self.bot = bot
-        super().__init__(*args, **kwargs)
 
         self.add_items()
 
     
-    def add_items(
-        self
-    ) -> None:
+    def add_items(self) -> None:
         for name in [
             "View Config",
             "Auto-Punishments",
@@ -42,10 +36,7 @@ class ConfigView(View):
             )
 
 
-    async def show_help(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def show_help(self, i: discord.Interaction) -> None:
         e = Embed(
             i,
             title=self.bot.locale.t(i.guild, f"{i.data['custom_id']}_title"),

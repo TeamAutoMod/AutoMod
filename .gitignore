@@ -131,9 +131,6 @@ dmypy.json
 
 /backend/bot/config.json
 /backend/bot/plugins/_processor/config.py
-/backend/bot/plugins/keywords
-/backend/bot/plugins/timers
-/backend/bot/plugins/prometheus
 /backend/frontend
 /js
 /configs

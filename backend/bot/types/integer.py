@@ -3,32 +3,17 @@
 import discord
 from discord.ext import commands
 
-from typing import Union
+from typing import Union, Optional
 
 
 
 class IntegerConverter(commands.Converter):
-    def __init__(
-        self, 
-        min: int = None, 
-        max: int = None
-    ) -> None:
+    def __init__(self, min: int = None, max: int = None) -> None:
         self.min = min
         self.max = max
 
 
-    async def convert(
-        self, 
-        _: discord.Interaction, 
-        argument: Union[
-            int, 
-            str, 
-            None
-        ]
-    ) -> Union[
-        int, 
-        Exception
-    ]:
+    async def convert(self, _: discord.Interaction, argument: Optional[Union[int, str]]) -> Union[int, Exception]:
         try:
             argument = int(argument)
         except ValueError:

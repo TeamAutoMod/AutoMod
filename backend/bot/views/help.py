@@ -17,22 +17,16 @@ ACTUAL_PLUGIN_NAMES = {
     "TagsPlugin": "Custom Commands & Responders",
     "CasesPlugin": "Case System",
     "ReactionRolesPlugin": "Reaction Roles"
-    #"AlertsPlugin": "👾 Twitch Alerts"
 }
 
 
 class HelpView(View):
-    def __init__(
-        self, 
-        bot, 
-        show_buttons: bool = False,
-        viewable_plugins: list = [],
-        current_select: str = None,
-        *args, 
-        **kwargs
-    ) -> None:
+    def __init__(self, bot, show_buttons: bool = False, viewable_plugins: list = [], current_select: str = None, *args, **kwargs) -> None:
         self.bot = bot
-        super().__init__(*args, **kwargs)
+        super().__init__(
+            *args,
+            **kwargs
+        )
 
         if show_buttons == False:
             self.add_item(

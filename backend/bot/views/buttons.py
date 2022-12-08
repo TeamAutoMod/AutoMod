@@ -10,76 +10,66 @@ from ..types import E
 
 
 class ConfirmBtn(Button):
-    def __init__(
-        self, 
-        bot
-    ) -> None:
-        super().__init__(style=discord.ButtonStyle.green, label="Confirm", emoji=bot.emotes.get("YES"))
+    def __init__(self, bot) -> None:
+        super().__init__(
+            style=discord.ButtonStyle.green, 
+            label="Confirm", 
+            emoji=bot.emotes.get("YES")
+        )
 
 
-    async def callback(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
+    async def callback(self, i: discord.Interaction) -> None:
         try:
-            await self.view.confirm_callback(interaction)
+            await self.view.confirm_callback(i)
         except discord.NotFound:
-            await interaction.response.defer(ephemeral=True)
+            await i.response.defer(ephemeral=True)
     
 
 class CancelBtn(Button):
-    def __init__(
-        self, 
-        bot
-    ) -> None:
-        super().__init__(style=discord.ButtonStyle.red, label="Cancel", emoji=bot.emotes.get("NO"))
+    def __init__(self, bot) -> None:
+        super().__init__(
+            style=discord.ButtonStyle.red, 
+            label="Cancel", 
+            emoji=bot.emotes.get("NO")
+        )
 
 
-    async def callback(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
+    async def callback(self, i: discord.Interaction) -> None:
         try:
-            await self.view.cancel_callback(interaction)
+            await self.view.cancel_callback(i)
         except discord.NotFound:
-            await interaction.response.defer(ephemeral=True)
+            await i.response.defer(ephemeral=True)
 
 
 class LinkBtn(Button):
-    def __init__(
-        self, 
-        _url: str, 
-        _label: str, 
-        *args, 
-        **kwargs
-    ) -> None:
-        super().__init__(*args, style=discord.ButtonStyle.link, url=_url, label=_label, **kwargs)
+    def __init__(self, _url: str, _label: str, *args, **kwargs) -> None:
+        super().__init__(
+            *args, 
+            style=discord.ButtonStyle.link, 
+            url=_url, 
+            label=_label, 
+            **kwargs
+        )
 
 
 class CallbackBtn(Button):
-    def __init__(
-        self, 
-        label: str, 
-        callback: Callable, 
-        check: Callable,
-        cid: str = None, 
-        disabled: bool = False, 
-        emoji: str = None, 
-        style=discord.ButtonStyle.blurple
-    ) -> None:
-        super().__init__(style=style, label=label, custom_id=cid, disabled=disabled, emoji=emoji)
+    def __init__(self, label: str, callback: Callable, check: Callable, cid: str = None, disabled: bool = False, emoji: str = None, style=discord.ButtonStyle.blurple) -> None:
+        super().__init__(
+            style=style, 
+            label=label, 
+            custom_id=cid, 
+            disabled=disabled, 
+            emoji=emoji
+        )
         self._callback = callback
         self.check = check
 
 
-    async def callback(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
-        if self.check(interaction.user.id):
-            await self._callback(interaction)
+    async def callback(self, i: discord.Interaction) -> None:
+        if self.check(i.user.id):
+            await self._callback(i)
         else:
-            await interaction.response.defer(ephemeral=True)
+            await i.response.defer(ephemeral=True)
 
 
 class DeleteBtn(Button):
@@ -107,28 +97,25 @@ class DeleteBtn(Button):
 
 
 class ActionedBtn(Button):
-    def __init__(
-        self, 
-        bot,
-        check: Callable,
-        *args, 
-        **kwargs
-    ) -> None:
-        super().__init__(*args, label="Actioned", style=discord.ButtonStyle.grey, emoji=bot.emotes.get("YES"), **kwargs)
+    def __init__(self, bot, check: Callable, *args, **kwargs) -> None:
+        super().__init__(
+            *args, 
+            label="Actioned", 
+            style=discord.ButtonStyle.grey, 
+            emoji=bot.emotes.get("YES"), 
+            **kwargs
+        )
         self.check = check
 
 
-    async def callback(
-        self, 
-        interaction: discord.Interaction
-    ) -> None:
-        if self.check(interaction.user.id):
+    async def callback(self, i: discord.Interaction) -> None:
+        if self.check(i.user.id):
             try:
-                await interaction.message.delete()
+                await i.message.delete()
             except discord.NotFound:
-                await interaction.response.defer(ephemeral=True)
+                await i.response.defer(ephemeral=True)
         else:
-            await interaction.response.defer(ephemeral=True)
+            await i.response.defer(ephemeral=True)
 
 
 class DeleteHighlightBtn(Button):

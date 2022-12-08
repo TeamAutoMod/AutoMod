@@ -68,8 +68,9 @@ class FilterPlugin(AutoModPluginBlueprint):
         examples:
         -filter list
         """
+        cmd = f"</filter add:{self.bot.internal_cmd_store.get('filter')}>"
         filters = self.db.configs.get(ctx.guild.id, "filters")
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="NO"), 0))
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2))
 
         e = Embed(
             ctx,
@@ -156,8 +157,9 @@ class FilterPlugin(AutoModPluginBlueprint):
         """
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
+        cmd = f"</filter add:{self.bot.internal_cmd_store.get('filter')}>"
 
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="NO"), 0))
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2))
         if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
 
         del filters[name]
@@ -282,7 +284,8 @@ class FilterPlugin(AutoModPluginBlueprint):
         -regex list
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
-        if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO"), 0))
+        cmd = f"</reward add:{self.bot.internal_cmd_store.get('reward')}>"
+        if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO", cmd=cmd), 0))
 
         e = Embed(
             ctx,

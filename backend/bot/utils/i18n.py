@@ -7,15 +7,12 @@ import json
 import asyncio
 import os
 
-from typing import Union
+from typing import Optional
 
 
 
-class Translator(object):
-    def __init__(
-        self, 
-        bot
-    ) -> None:
+class Translator:
+    def __init__(self, bot) -> None:
         self.bot = bot
 
         self._langs = {}
@@ -27,13 +24,7 @@ class Translator(object):
                 log.info(f"[AutoMod] Loaded strings for language {l}", extra={"loc": f"PID {os.getpid()}"})
     
     
-    def t(
-        self, 
-        guild: discord.Guild, 
-        key: str, 
-        _emote: str = None, 
-        **kwargs
-    ) -> str:
+    def t(self, guild: discord.Guild, key: str, _emote: str = None, **kwargs) -> str:
         if not guild.id in self._lang_cache:
             try:
                 lang = self.bot.db.configs.get(guild.id, "lang")
@@ -63,15 +54,7 @@ class Translator(object):
                 return str(string).format(**kwargs)
 
 
-    def get(
-        self, 
-        key: str, 
-        lang: str = "en_US", 
-        **kwargs
-    ) -> Union[
-        str, 
-        None
-    ]:
+    def get(self, key: str, lang: str = "en_US", **kwargs) -> Optional[str]:
         try:
             string = self._langs[lang][key]
         except KeyError:

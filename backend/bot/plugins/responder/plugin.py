@@ -203,6 +203,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         examples:
         -auto-responders list
         """
+        cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
         if ctx.guild.id in self._r:
             responders = self.get_responders(ctx.guild)
             if len(responders) > 0:
@@ -229,9 +230,9 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     )
                 await ctx.response.send_message(embed=e)
             else:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
 
     
     @_responders.command(
@@ -325,7 +326,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 self.remove_responder(ctx.guild, name)
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_removed", _emote="YES"), 1))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="NO"), 0))
+            cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
 
 
     @_responders.command(
@@ -375,7 +377,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 )
                 await ctx.response.send_modal(modal)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="NO"), 0))
+            cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
 
 
     @AutoModPluginBlueprint.listener()

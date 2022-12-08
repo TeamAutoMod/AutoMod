@@ -2,25 +2,20 @@
 
 import discord
 
-from typing import Union
+from typing import Optional
 import asyncio
 import logging; log = logging.getLogger(__name__)
 
 from ..schemas import GuildConfig
 
 
-class LogQueue(object):
-    def __init__(
-        self, 
-        bot
-    ) -> None:
+class LogQueue:
+    def __init__(self, bot) -> None:
         self.bot = bot
         self.db = bot.db
 
 
-    async def send_logs(
-        self
-    ) -> None:
+    async def send_logs(self) -> None:
         while True: 
             await asyncio.sleep(2)
             for g, opt in self.bot.log_queue.copy().items():
@@ -53,11 +48,7 @@ class LogQueue(object):
                                             self.db.configs.update(guild.id, channel_type, "")
 
 
-    async def default_log(
-        self, 
-        channel: discord.TextChannel, 
-        chunk: list
-    ) -> dict:
+    async def default_log(self, channel: discord.TextChannel, chunk: list) -> dict:
         msgs = {}
         for entry in chunk:
             msg = await channel.send(
@@ -73,13 +64,7 @@ class LogQueue(object):
         return msgs
 
 
-    async def fetch_webhook(
-        self, 
-        wid: int
-    ) -> Union[
-        discord.Webhook, 
-        None
-    ]:
+    async def fetch_webhook(self, wid: int) -> Optional[discord.Webhook]:
         try:
             w = await self.bot.fetch_webhook(wid)
         except Exception:
@@ -88,15 +73,7 @@ class LogQueue(object):
             return w
 
 
-    async def get_webhook(
-        self, 
-        guild: discord.Guild, 
-        wid: int, 
-        channel_type: str
-    ) -> Union[
-        discord.Webhook, 
-        None
-    ]:
+    async def get_webhook(self, guild: discord.Guild, wid: int, channel_type: str) -> Optional[discord.Webhook]:
         if not guild.id in self.bot.webhook_cache:
             w = await self.fetch_webhook(wid)
             if w == None: 
@@ -133,13 +110,7 @@ class LogQueue(object):
                     return w
         
         
-    async def _execute(
-        self, 
-        guild: discord.Guild, 
-        channel_type: str, 
-        log_channel: discord.TextChannel, 
-        chunk: dict
-    ) -> None:
+    async def _execute(self, guild: discord.Guild, channel_type: str, log_channel: discord.TextChannel, chunk: dict) -> None:
         log_messages = {}
         try:
             wid = self.bot.db.configs.get(guild.id, f"{channel_type}_webhook")

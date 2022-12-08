@@ -8,18 +8,12 @@ from typing import List
 
 
 class SetupView(View):
-    def __init__(
-        self, 
-        bot, 
-        embeds: List[
-            discord.Embed
-        ],
-        current_select: str = None,
-        *args, 
-        **kwargs
-    ) -> None:
+    def __init__(self, bot, embeds: List[discord.Embed], current_select: str = None, *args, **kwargs) -> None:
         self.bot = bot
-        super().__init__(*args, **kwargs)
+        super().__init__(
+            *args,
+            **kwargs
+        )
 
         self.add_item(
             Select(

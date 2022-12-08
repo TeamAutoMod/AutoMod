@@ -14,6 +14,13 @@ body {
     align-items: center;
     position: relative;
     background: #0e1015;
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+    overflow: scroll;
+}
+
+body::-webkit-scrollbar { 
+    display: none; 
 }
 
 .nav {
@@ -104,6 +111,13 @@ body {
     left: 50%;
     top: 55%;
     transform: translate(-50%, -50%);
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+    overflow: scroll;
+}
+
+.container::-webkit-scrollbar { 
+    display: none; 
 }
 
 .container .header {
@@ -186,7 +200,6 @@ body {
 
 .stats li #invite:hover {
     cursor: pointer;
-    transform: scale(1.01);
     transition: 0.05s ease-in-out;
     background-color: #1baafd;
     border: 1px solid #1baafd;
@@ -274,6 +287,107 @@ body {
     clear: left;
     text-align: left;
 }
+
+/* .root_wrapper {
+    max-width: 630px!important;
+}
+
+@keyframes horizontal {
+    0% {
+        transform: translate(0)
+    }
+
+    to {
+        transform: translate(-50%)
+    }
+}
+
+@keyframes vertical {
+    0% {
+        transform: translateY(0)
+    }
+
+    to {
+        transform: translateY(-50%)
+    }
+}
+
+.horizontal  {
+    display: inline-block;
+    white-space: nowrap
+}
+
+.vertical  {
+    display: block;
+    white-space: normal
+}
+
+.horizontal>* {
+    display: inline-block!important
+}
+
+.vertical>* {
+    display: block!important
+}
+
+.animate {
+    animation-timing-function: linear
+}
+
+.pausing:hover {
+    animation-play-state: paused
+}
+
+.animate.horizontal {
+    animation-name: horizontal
+}
+
+.animate.vertical {
+    animation-name: vertical
+}
+
+.server_show_wrapper {
+    display: block; 
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 40px 0;
+    z-index: 32
+}
+
+.fade_overlay {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    z-index: 33;
+}
+
+.all_servers {
+    display: flex;
+    row-gap: 10px;
+    width: 100%;
+    overflow: hidden;
+    z-index: 32;
+    height: 70px
+}
+
+.server {
+    display: flex!important;
+    align-items: center;
+    column-gap: 10px;
+    width: 305px;
+    height: 70px;
+    background: rgba(255,255,255,.1);
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: .95em
+}
+
+.all_servers .horizontal {
+    display: flex;
+    column-gap: 20px
+} */
 
 @media only screen and (max-width: 1000px) {
     .nav {

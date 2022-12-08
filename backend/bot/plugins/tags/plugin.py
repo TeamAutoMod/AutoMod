@@ -10,7 +10,7 @@ import re
 import logging; log = logging.getLogger()
 
 from .. import ShardedBotInstance
-from ...schemas import Tag
+from ...schemas import CustomCommand
 from ...types import Embed, E
 from ...modals import CommandCreateModal
 from ..responder.plugin import AutoResponderPlugin
@@ -91,7 +91,7 @@ class TagsPlugin(AutoResponderPlugin):
             else:
                 self._tags[ctx.guild.id].update(data)
 
-            self.db.tags.insert(Tag(ctx, name, content, ephemeral, description))
+            self.db.tags.insert(CustomCommand(ctx, name, content, ephemeral, description))
             return None
 
 
@@ -251,6 +251,7 @@ class TagsPlugin(AutoResponderPlugin):
         examples:
         -custom-commands list
         """
+        cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
         if ctx.guild.id in self._tags:
             tags = await self.get_tags(ctx.guild, self._tags[ctx.guild.id])
             if len(tags) > 0:
@@ -261,9 +262,9 @@ class TagsPlugin(AutoResponderPlugin):
                 )
                 await ctx.response.send_message(embed=e)
             else:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "", _emote="INFO", cmd=cmd), 2))
 
     
     @_commands.command(
@@ -358,7 +359,7 @@ class TagsPlugin(AutoResponderPlugin):
                     await self.bot.tree.sync(guild=ctx.guild)
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_removed", _emote="YES"), 1))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO"), 2))
 
 
     @_commands.command(
@@ -390,6 +391,7 @@ class TagsPlugin(AutoResponderPlugin):
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "content_too_long", _emote="NO"), 0))
 
         name = name.lower()
+        cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
@@ -405,7 +407,7 @@ class TagsPlugin(AutoResponderPlugin):
                 self.update_tag(ctx, name, content, ephemeral)
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_updated", _emote="YES"), 1))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
 
 
     @_commands.command(
@@ -427,6 +429,7 @@ class TagsPlugin(AutoResponderPlugin):
         -commands info test_cmd
         """
         name = name.lower()
+        cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
         if ctx.guild.id in self._tags:
             if not name in self._tags[ctx.guild.id]:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
@@ -479,7 +482,7 @@ class TagsPlugin(AutoResponderPlugin):
 
                 await ctx.response.send_message(embed=e)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
 
 
 async def setup(

@@ -12,7 +12,7 @@ import datetime
 from PIL import Image
 from io import BytesIO
 from toolbox import S as Object
-from typing import Union, List, Literal, Tuple
+from typing import Union, List, Dict, Literal, Tuple, Optional
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
@@ -42,14 +42,7 @@ MAX_NATIVE_SLOWMODE = 21600 # 6 hours
 MAX_BOT_SLOWMODE = 1209600 # 14 days
 
 
-def get_help_embed(
-    plugin: AutoModPluginBlueprint, 
-    ctx: discord.Interaction, 
-    cmd: Union[
-        discord.app_commands.AppCommand,
-        discord.app_commands.Group
-    ]
-) -> Embed:
+def get_help_embed(plugin: AutoModPluginBlueprint, ctx: discord.Interaction, cmd: Union[discord.app_commands.AppCommand,discord.app_commands.Group]) -> Embed:
     if isinstance(cmd, discord.app_commands.Group): 
         help_message = cmd.description if cmd.description[1] != " " else cmd.description[2:]
         usage = f"/{cmd.name}"
@@ -101,14 +94,7 @@ def get_help_embed(
     return e
 
 
-def get_command_help(
-    plugin: AutoModPluginBlueprint, 
-    ctx: discord.Interaction, 
-    query: str
-) -> Union[
-    Embed, 
-    None
-]:
+def get_command_help(plugin: AutoModPluginBlueprint, ctx: discord.Interaction, query: str) -> Optional[Embed]:
     for p in [plugin.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
         if p != None:
             cmds = {x.name.lower(): x for x in p.__cog_app_commands__ if x.name not in plugin.bot.config.disabled_commands}
@@ -141,18 +127,13 @@ def get_version() -> str:
         return VERSION
 
 
-def to_string(
-    char: str
-) -> str:
+def to_string(char: str) -> str:
     dig = f"{ord(char):x}"
     name = unicodedata.name(char, "Name not found")
     return f"\\U{dig:>08} | {name} | {char}"
 
 
-def get_user_badges(
-    bot: ShardedBotInstance, 
-    flags: discord.PublicUserFlags
-) -> str:
+def get_user_badges(bot: ShardedBotInstance, flags: discord.PublicUserFlags) -> str:
     badges = []
     if flags.staff: badges.append(bot.emotes.get("STAFF"))
     if flags.partner: badges.append(bot.emotes.get("PARTNER"))
@@ -174,21 +155,11 @@ def get_user_badges(
 
 class UtilityPlugin(AutoModPluginBlueprint):
     """Plugin for all utility commands"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
 
-    def get_log_for_case(
-        self, 
-        ctx: discord.Interaction, 
-        case: dict
-    ) -> Union[
-        str, 
-        None
-    ]:
+    def get_log_for_case(self, ctx: discord.Interaction, case: dict) -> Optional[str]:
         if not "log_id" in case: return None
 
         log_id = case["log_id"]
@@ -204,10 +175,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
 
-    def server_status_for(
-        self, 
-        user: discord.Member
-    ) -> str:
+    def server_status_for(self, user: discord.Member) -> str:
         perms: discord.Permissions = user.guild_permissions
         if (
             perms.administrator == True \
@@ -232,15 +200,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             return "User"
 
 
-    def can_act(
-        self, 
-        guild: discord.Guild, 
-        mod: discord.Member, 
-        target: Union[
-            discord.Member, 
-            discord.User
-        ]
-    ) -> bool:
+    def can_act(self, guild: discord.Guild, mod: discord.Member, target: Union[discord.Member, discord.User]) -> bool:
         if mod.id == target.id: return False
         if mod.id == guild.owner_id: return True
 
@@ -264,12 +224,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             return True
 
 
-    def get_features(
-        self,
-        guild: discord.Guild
-    ) -> List[
-        Embed
-    ]:
+    def get_features(self, guild: discord.Guild) -> List[Embed]:
         _prefix = "/"
         base = Embed(
             None,
@@ -301,13 +256,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         return embeds
 
 
-    def get_color(
-        self,
-        inp: str
-    ) -> Union[
-        int,
-        None
-    ]:
+    def get_color(self,inp: str) -> Optional[int]:
         base = {
             "red": "FF0000",
             "blue": "0000FF",
@@ -332,10 +281,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 return out
             
 
-    def get_viewable_plugins(
-        self,
-        ctx: discord.Interaction
-    ) -> list:
+    def get_viewable_plugins(self, ctx: discord.Interaction) -> List[str]:
         viewable_plugins = []
         for p in [self.bot.get_plugin(x) for x in ACTUAL_PLUGIN_NAMES.keys()]:
             if p != None:
@@ -372,7 +318,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             return highlights_from_db.get(f"{ctx.user.id}", []), highlights_from_db
         
 
-    def get_highlights_from_msg(self, msg: discord.Message) -> list:
+    def get_highlights_from_msg(self, msg: discord.Message) -> Dict[str, List[str]]:
         highlights_from_db: Union[dict, None] = self.db.highlights.get(f"{msg.guild.id}", "highlights")
         if highlights_from_db == None:
             self.db.highlights.insert(Highlights(msg))
@@ -396,10 +342,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
 
     @AutoModPluginBlueprint.listener()
-    async def on_interaction(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def on_interaction(self, i: discord.Interaction) -> None:
         if i.type == discord.InteractionType.component:
             cid = i.data.get("custom_id")
             if cid == "help-select":
@@ -451,10 +394,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener(name="on_message")
-    async def on_slowmode(
-        self, 
-        msg: discord.Message
-    ) -> None:
+    async def on_slowmode(self, msg: discord.Message) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await self.bot.chunk_guild(msg.guild)
         if not self.can_act(
@@ -542,10 +482,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="ping", 
         description="⏳ Shows the bot's latencies"
     )
-    async def ping(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def ping(self, ctx: discord.Interaction) -> None:
         """
         ping_help
         examples:
@@ -576,10 +513,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="about", 
         description="📈 Shows some information about the bot"
     )
-    async def about(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def about(self, ctx: discord.Interaction) -> None:
         """
         about_help
         examples:
@@ -633,12 +567,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     @discord.app_commands.describe(
         command="The (sub-)command you want to get help about (e.g. ban OR commands add)"
     )
-    async def help(
-        self, 
-        ctx: discord.Interaction, 
-        *, 
-        command: str = None
-    ) -> None:
+    async def help(self, ctx: discord.Interaction, *, command: str = None) -> None:
         """
         help_help
         examples:
@@ -683,15 +612,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         user="The user whose avatar you want to view",
         avatar_type="Whether to show the server avatar (if set) or the regular avatar"
     )
-    async def avatar(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.User = None,
-        avatar_type: Literal[
-            "Regular",
-            "Server"
-        ] = None
-    ) -> None:
+    async def avatar(self, ctx: discord.Interaction, user: discord.User = None, avatar_type: Literal["Regular", "Server"] = None) -> None:
         """
         avatar_help
         examples:
@@ -727,12 +648,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="jumbo", 
         description="😀 Shows a bigger version of the provided emotes"
     )
-    async def jumbo(
-        self, 
-        ctx: discord.Interaction, 
-        *, 
-        emotes: str
-    ) -> None:
+    async def jumbo(self, ctx: discord.Interaction, *, emotes: str) -> None:
         """
         jumbo_help
         examples:
@@ -784,11 +700,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         user="The user who you want to get more information about"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def whois(
-        self, 
-        ctx: discord.Interaction,
-        user: discord.User = None
-    ) -> None:
+    async def whois(self, ctx: discord.Interaction,user: discord.User = None) -> None:
         """
         whois_help
         examples:
@@ -873,10 +785,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         description="📚 Shows some information about the server"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def server(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def server(self, ctx: discord.Interaction) -> None:
         """ 
         server_help
         examples:
@@ -958,11 +867,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         time="5s, 10m, 3h, 1d (0 to disable)"
     )
     @discord.app_commands.default_permissions(manage_channels=True)
-    async def slowmode(
-        self, 
-        ctx: discord.Interaction, 
-        time: str = None
-    ) -> None:
+    async def slowmode(self, ctx: discord.Interaction, time: str = None) -> None:
         """
         slowmode_help
         examples:
@@ -974,7 +879,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if time == None:
             slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
             if len(slowmodes) < 1:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"), 0))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="INFO"), 2))
             else:
                 e = Embed(
                     ctx,
@@ -1062,12 +967,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="charinfo", 
         description="💱 Shows some information about the characters in the given string"
     )
-    async def charinfo(
-        self, 
-        ctx: discord.Interaction, 
-        *, 
-        chars: str
-    ) -> None:
+    async def charinfo(self, ctx: discord.Interaction, *, chars: str) -> None:
         """
         charinfo_help
         examples:
@@ -1104,14 +1004,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
         channel: discord.TextChannel,
         message: str = None,
         color: str = None,
-        has_embed: Literal[
-            "True",
-            "False"
-        ] = "False",
-        timestamp: Literal[
-            "True",
-            "False"
-        ] = "False",
+        has_embed: Literal["True", "False"] = "False",
+        timestamp: Literal["True", "False"] = "False",
         image_url: str = None,
         thumbnail_url: str = None,
         author_name: str = None,
@@ -1252,6 +1146,5 @@ class UtilityPlugin(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=e, ephemeral=True)
         
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(UtilityPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(UtilityPlugin(bot))
