@@ -690,6 +690,9 @@ class ModerationPlugin(WarnPlugin):
         name="unmute",
         description="🔊 Unmutes the user"
     )
+    @discord.app_commands.describe(
+        user="The user you want to unmute"
+    )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def unmute(
         self, 
@@ -798,7 +801,7 @@ class ModerationPlugin(WarnPlugin):
             i,
             color=0x2c2f33,
             description="{} **Message reported:** {} ({}) \n\n**Reporter:** {} ({}) \n**Link:** [Here]({})".format(
-                self.bot.emotes.get("ALARM"),
+                self.bot.emotes.get("REPORT"),
                 msg.author.mention,
                 msg.author.id,
                 i.user.mention,

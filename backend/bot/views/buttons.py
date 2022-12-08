@@ -124,7 +124,7 @@ class DeleteHighlightBtn(Button):
             *args, 
             label="Delete Highlight", 
             style=discord.ButtonStyle.red, 
-            emoji=bot.emotes.get("TRASH"), 
+            emoji="🗑️", 
             **kwargs
         )
         self.bot = bot
