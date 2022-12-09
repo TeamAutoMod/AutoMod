@@ -162,7 +162,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         else:
             e = Embed(
                 ctx,
-                title="Reaction roles"
+                title="Reaction Roles"
             )
             for i, (msg, data) in enumerate(rrs.items()):
                 channel = ctx.guild.get_channel(int(data["channel"]))
