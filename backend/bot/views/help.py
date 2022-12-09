@@ -8,15 +8,15 @@ from .buttons import LinkBtn
 
 
 ACTUAL_PLUGIN_NAMES = {
-    "ConfigPlugin": "Configuration",
-    "AutomodPlugin": "Automoderator",
-    "ModerationPlugin": "Moderation",
-    "FilterPlugin": "Filters & Regexes",
-    "UtilityPlugin": "Utility",
-    "LevelPlugin": "Level System",
-    "TagsPlugin": "Custom Commands & Responders",
-    "CasesPlugin": "Case System",
-    "ReactionRolesPlugin": "Reaction Roles"
+    "ConfigPlugin": "<:aConfig:1050619162889814086> Configuration",
+    "AutomodPlugin": "<:aMod:1050607461272399964> Automoderator",
+    "ModerationPlugin": "<:aBan:1050607129075142656> Moderation",
+    "FilterPlugin": "<:aNoEntry:1050607297719701615> Filters & Regexes",
+    "UtilityPlugin": "<:aUtility:1050609494448672808> Utility",
+    "LevelPlugin": "<:aLevel:1050609493223944252> Level System",
+    "TagsPlugin": "<:aCommands:1050609491974033469> Custom Commands & Responders",
+    "CasesPlugin": "<:aCase:1050609490678009927> Case System",
+    "ReactionRolesPlugin": "<:aRoles:1050609489532964934> Reaction Roles"
 }
 
 
@@ -34,7 +34,8 @@ class HelpView(View):
                     placeholder="Select Plugin",
                     options=[
                         discord.SelectOption(
-                            label=v,
+                            label=" ".join(v.split(" ")[1:]),
+                            emoji=v.split(" ")[0],
                             value=k,
                             default=False if current_select == None else True if current_select.lower() == k.lower() else False
                         ) for k, v in ACTUAL_PLUGIN_NAMES.items() if k in viewable_plugins

@@ -110,7 +110,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self.last_reload = datetime.datetime.utcnow().timestamp()
 
         self.used_commands = 0
-        self.used_tags = 0
+        self.used_customs = 0
 
         self.command_stats: Dict[str, int] = {}
         self.ignore_for_events: List[int] = []

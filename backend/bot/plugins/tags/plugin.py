@@ -194,7 +194,7 @@ class TagsPlugin(AutoResponderPlugin):
         self, 
         _id: str
     ) -> None:
-        self.bot.used_tags += 1
+        self.bot.used_customs += 1
         cur = self.db.tags.get(_id, "uses")
         if cur == None:
             self.db.tags.update(_id, "uses", 1)

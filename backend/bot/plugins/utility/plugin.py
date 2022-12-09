@@ -32,7 +32,6 @@ ACTUAL_PLUGIN_NAMES = {
     "TagsPlugin": "Custom Commands & Responders",
     "CasesPlugin": "Case System",
     "ReactionRolesPlugin": "Reaction Roles"
-    #"AlertsPlugin": "👾 Twitch Alerts"
 }
 
 EMOJI_RE = re.compile(r"<:(.+):([0-9]+)>")
@@ -527,7 +526,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
             {
-                "name": "__Status__",
+                "name": f"{self.bot.emotes.get('STATUS')} __Status__",
                 "value": "**• Up:** {} \n**• Version:** {} \n**• Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
@@ -537,7 +536,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "__Stats__",
+                "name": f"{self.bot.emotes.get('STATS')} __Stats__",
                 "value": "**• Guilds:** {0:,} \n**• Users:** {1:,} \n**• Shards:** {2:,}"\
                 .format(
                     len(self.bot.guilds),
@@ -547,11 +546,11 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "__Usage__",
+                "name": f"{self.bot.emotes.get('USERS')} __Usage__",
                 "value": "**• Commands:** {} \n**• Custom:** {}"\
                 .format(
                     self.bot.used_commands,
-                    self.bot.used_tags
+                    self.bot.used_customs
                 ),
                 "inline": True
             }

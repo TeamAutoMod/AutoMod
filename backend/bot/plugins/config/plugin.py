@@ -336,7 +336,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "__General__",
+                "name": f"{self.bot.emotes.get('CONFIG')} __General__",
                 "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Can mute:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Join Role:** {}"\
                 .format(
                     "/",
@@ -350,7 +350,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "__Logging__",
+                "name": f"{self.bot.emotes.get('LOG')} __Logging__",
                 "value": "**• Mod Log:** {} \n**• Message Log:** {}\n**• Server Log:** {}\n**• Join Log:** {} \n**• Member Log:** {} \n**• Voice Log:** {} \n**• Report Log:** {}"\
                 .format(
                     no if config.mod_log == "" else f"<#{config.mod_log}>",
@@ -365,7 +365,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": "__Automod Rules__",
+                "name": f"{self.bot.emotes.get('SWORDS')} __Automod Rules__",
                 "value": "**• Max Mentions:** {} \n**• Max Newlines:** {} \n**• Max Emotes:** {} \n**• Max Repetitions:** {} \n**• Links:** {} \n**• Invites:** {} \n**• Bad Files:** {} \n**• Zalgo:** {} \n**• CAPS:** {} \n**• Spam:** {}"\
                 .format(
                     no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
@@ -382,7 +382,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "__Punishments__",
+                "name": f"{self.bot.emotes.get('PUNISHMENT')} __Punishments__",
                 "value": "\n".join([
                     f"**• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1][0]}" \
                     for x, y in dict(
@@ -396,29 +396,29 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": "__Ignored Roles (automod)__",
+                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (automod)__",
                 "value": f"{no}" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             {
-                "name": "__Ignored Channels (automod)__",
+                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (automod)__",
                 "value":  f"{no}" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             e.dash_field(dash_length),
             {
-                "name": "__Ignored Roles (logging)__",
+                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (logging)__",
                 "value":  f"{no}" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
-                "name": "__Ignored Channels (logging)__",
+                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (logging)__",
                 "value": f"{no}" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
             e.dash_field(dash_length),
             {
-                "name": "__Help & Support__",
+                "name": f"{self.bot.emotes.get('HELP')} __Help & Support__",
                 "value": f"Use </setup:{c.get('setup')}> or </help:{c.get('help')}> for information about setting up the bot. If you still need help, feel free to join our [support server]({self.bot.config.support_invite})",
                 "inline": False
             }
