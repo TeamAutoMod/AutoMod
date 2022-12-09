@@ -718,7 +718,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             url=user.display_avatar
         )
         e.add_field(
-            name="__User Information__",
+            name=f"{self.bot.emotes.get('INFO')} __User Information__",
             value="**• ID:** {} \n**• Profile:** {} \n**• Badges:** {} \n**• Created at:** <t:{}>"\
             .format(
                 user.id,
@@ -731,7 +731,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             e.add_field(
-                name="__Server Information__",
+                name=f"{self.bot.emotes.get('SERVER')} __Server Information__",
                 value="**• Nickname:** {} \n**• Joined at:** <t:{}> \n**• Join position:** {} \n**• Status:** {} \n**• Roles:** {}"\
                 .format(
                     member.nick,
@@ -764,7 +764,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")    
 
         e.add_field(
-            name="__Infractions__",
+            name=f"{self.bot.emotes.get('CASE')} __Infractions__",
             value="**• Total Cases:** {} \n**• Last 3 Cases:** {}"\
             .format(
                 len(cases),
@@ -798,8 +798,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
         e.add_fields([
             {
-                "name": "__Information__",
-                "value": "**• ID:** {} \n**• Owner:** {} \n**• Created:** <t:{}> \n**• Invite Splash:** {} \n**• Banner:** {}"\
+                "name": f"{self.bot.emotes.get('INFO')} __Information__",
+                "value": "**• ID:** {} \n**• Owner:** {} \n**• Created:** <t:{}:d> \n**• Invite Splash:** {} \n**• Banner:** {}"\
                 .format(
                     g.id, 
                     g.owner, 
@@ -809,9 +809,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 ),
                 "inline": True
             },
-            e.blank_field(True, 6),
+            e.blank_field(True, 8),
             {
-                "name": "__Channels__",
+                "name": f"{self.bot.emotes.get('CHANNEL')} __Channels__",
                 "value": "**• Categories:** {} \n**• Text:** {} \n**• Voice:** {} \n**• Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
@@ -822,7 +822,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "__Members__",
+                "name": f"{self.bot.emotes.get('USERS')} __Members__",
                 "value": "**• Total:** {} \n**• Users:** {} \n**• Bots:** {}"\
                 .format(
                     len(g.members), 
@@ -831,9 +831,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 ),
                 "inline": True
             },
-            e.blank_field(True, 6),
+            e.blank_field(True, 8),
             {
-                "name": "__Other__",
+                "name": f"{self.bot.emotes.get('EXTRA')} __Other__",
                 "value": "**• Roles:** {} \n**• Emojis:** {} \n**• Boosters:** {}"\
                 .format(
                     len(g.roles), 
@@ -843,7 +843,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": "__Features__",
+                "name": f"{self.bot.emotes.get('FEATURE')} __Features__",
                 "value": "{}"\
                 .format(
                     ", ".join([f"{x.replace('_', ' ').title()}" for x in g.features]) if len(g.features) > 0 else "None"

@@ -391,29 +391,29 @@ class ConfigPlugin(AutoModPluginBlueprint):
                             key=lambda x: int(x[0])
                         )
                     ).items()
-                ]) if len(config.punishments.items()) > 0 else f"{no}",
+                ]) if len(config.punishments.items()) > 0 else f"None, use </punishments add:{c.get('punishments')}> for configration",
                 "inline": True
             },
             e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (automod)__",
-                "value": f"{no}" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
+                "value": f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configration" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (automod)__",
-                "value":  f"{no}" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
+                "value":  f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configration" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (logging)__",
-                "value":  f"{no}" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
+                "value":  f"None, use </ignore-log add:{c.get('ignore-log')}> for configration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (logging)__",
-                "value": f"{no}" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
+                "value": f"None, use </ignore-log add:{c.get('ignore-log')}> for configration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
             e.dash_field(dash_length),
