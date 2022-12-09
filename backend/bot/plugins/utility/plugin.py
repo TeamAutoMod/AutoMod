@@ -788,11 +788,12 @@ class UtilityPlugin(AutoModPluginBlueprint):
         """
         g: discord.Guild = ctx.guild
 
-        e = Embed(ctx)
+        e = Embed(
+            ctx,
+            title=f"{g.name}"
+        )
         if ctx.guild.icon != None:
-            e.set_author(
-                name=f"{g.name}",
-                icon_url=ctx.guild.icon.url,
+            e.set_thumbnail(
                 url=ctx.guild.icon.url
             )
         
