@@ -227,25 +227,25 @@ class UtilityPlugin(AutoModPluginBlueprint):
         _prefix = "/"
         base = Embed(
             None,
-            title="Setup Guide",
+            title=f"Setup Guide",
             description=self.locale.t(guild, "setup_desc", inv=self.bot.config.support_invite)
         )
 
         log = Embed(
             None,
-            title="📁 Logging",
+            title=f"Logging",
             description=self.locale.t(guild, "log_val", prefix=_prefix, cmd=f"</log:{self.bot.internal_cmd_store.get('log')}>")
         )
 
         am = Embed(
             None,
-            title="⚔️ Automoderator",
+            title=f"Automoderator",
             description=self.locale.t(guild, "automod_val", prefix=_prefix, cmd=f"</automod:{self.bot.internal_cmd_store.get('automod')}>")
         )
 
         pun = Embed(
             None,
-            title="🔨 Punishments",
+            title=f"Punishments",
             description=self.locale.t(guild, "pun_val", prefix=_prefix, cmd=f"</punishments add:{self.bot.internal_cmd_store.get('punishments')}>")
         )
         
@@ -384,8 +384,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
             elif cid == "setup-select":
                 embeds = self.get_features(i.guild)
 
-                for e in embeds:
-                    if e.title[2:].lower() == i.data.get("values")[0]:
+                for e in embeds[1:]:
+                    if e.title.lower() == i.data.get("values")[0]:
                         await i.response.edit_message(
                             embed=e, 
                             view=SetupView(self.bot, embeds=embeds, current_select=i.data.get("values")[0])

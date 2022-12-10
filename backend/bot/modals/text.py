@@ -528,3 +528,65 @@ class ResponseEditModal(TextModalBase):
                 max_length=len(self._vars_text)
             )
         )
+
+
+class AutomodResponseModal(TextModalBase):
+    def __init__(
+        self, 
+        bot, 
+        title: str,
+        msg: str,
+        embed_title: str,
+        embed_desc: str,
+        callback: Callable
+    ) -> None:
+        super().__init__(bot, title, callback)
+        self.msg = msg
+        self.embed_title = embed_title
+        self.embed_desc = embed_desc
+
+        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{channel}  ━ The channel name \n{server}  ━ The server name \n{rule}  ━ The rule that was triggered"
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="msg",
+                label="Message",
+                style=discord.TextStyle.long,
+                placeholder="A regular message to send when the rule is triggered",
+                default=msg,
+                required=False,
+                max_length=2000
+            )
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="title",
+                label="Embed Title",
+                style=discord.TextStyle.long,
+                placeholder="An optional title for the response embed",
+                default=self.embed_title,
+                required=False,
+                max_length=200
+            )
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="desc",
+                label="Embed Description",
+                style=discord.TextStyle.long,
+                placeholder="An optional description for the response embed",
+                default=self.embed_desc,
+                required=False,
+                max_length=2000
+            )
+        )
+        self.add_item(
+            discord.ui.TextInput(
+                custom_id="vars",
+                label="Variable Reference",
+                style=discord.TextStyle.long,
+                placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+                default=self._vars_text,
+                required=False,
+                max_length=len(self._vars_text)
+            )
+        )

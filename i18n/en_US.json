@@ -383,10 +383,14 @@
     "response_removed": "{emote} Auto responder has been deleted",
     "response_edited": "{emote} Auto responder **{name}** has been updated",
 
-    "alr_highlight": "{emote} A hightlight for this phrase already exists",
-    "not_highlight": "{emote} No hightlight for this phrase exists",
-    "added_highlight": "{emote} Hightlight for ``{phrase}`` has been created",
-    "deleted_highlight": "{emote} Hightlight for ``{phrase}`` has been deleted",
+    "alr_highlight": "{emote} A highlight for this phrase already exists",
+    "not_highlight": "{emote} No highlight for this phrase exists",
+    "added_highlight": "{emote} Highlight for ``{phrase}`` has been created",
+    "deleted_highlight": "{emote} Highlight for ``{phrase}`` has been deleted",
     "no_highlights": "{emote} You don't have any highlights for this server. Add one by using {cmd}",
-    "highlight_too_short": "{emote} Phrases need to be at least **3** characters long"
+    "highlight_too_short": "{emote} Phrases need to be at least **3** characters long",
+
+    "no_response": "{emote} Response for the **{rule}** rule has been removed",
+    "response_req": "{emote} At  least one of ``message``, ``title`` and ``description`` is required",
+    "set_response": "{emote} New response for the **{rule}** rule has been set"
 }

@@ -6,7 +6,7 @@ from discord.ext import commands
 import re
 from toolbox import S as Object
 from urllib.parse import urlparse
-from typing import TypeVar, Literal, List
+from typing import TypeVar, Literal, Optional, List
 import logging; log = logging.getLogger()
 from typing import Union, Tuple
 
@@ -14,7 +14,7 @@ from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed, E
 from ...views import RoleChannelSelect
-from ...modals import AutomodRuleModal
+from ...modals import AutomodRuleModal, AutomodResponseModal
 
 
 
@@ -477,6 +477,54 @@ class AutomodPlugin(AutoModPluginBlueprint):
         for c in ILLEGAL_CHARS:
             content = content.replace(c, "")
         return content
+    
+
+    def replace_vars(self, msg: discord.Message, inp: str, rule: str) -> str:
+        vars = {
+            "{user}": f"{msg.author.mention}",
+            "{username}": f"{msg.author.name}",
+            "{channel}": f"{msg.channel.mention}",
+            "{server}": f"{msg.guild.name}",
+            "{rule}": rule.title()
+        }
+        out = ""
+        for k, v in vars.items():
+            out.replace(k, v)
+        return out
+    
+
+    async def send_response(self, msg: discord.Message, rule: str) -> None:
+        cfg = self.db.configs.get(msg.guild.id, "automod")
+        rcfg = Object(
+            cfg.get(rule, {})
+            .get("response", {
+                "msg": None, 
+                "embed": {
+                    "title": None, 
+                    "description": None
+                }
+            })
+        )
+
+        if rcfg.msg == None and rcfg.embed.title == None and rcfg.embed.description == None:
+            return
+        
+        if rcfg.embed.title != None or rcfg.embed.description != None:
+            embed = Embed(
+                ctx,
+                title=self.replace_vars(msg, rcfg.embed.title, rule) if rcfg.embed.title != None else None,
+                description=self.replace_vars(msg, rcfg.embed.description, rule) if rcfg.embed.description != None else None,
+            )
+        else:
+            embed = None
+
+        try:
+            await msg.channel.send(
+                content=self.replace_vars(msg, rcfg.msg, rule) if rcf.msg != None else None, 
+                embed=embed
+            )
+        except Exception:
+            pass
         
 
     async def delete_msg(
@@ -501,6 +549,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         else:
             self.bot.ignore_for_events.append(msg.id)
         finally:
+            # await self.send_response(msg, rule) 
             data = Object(LOG_DATA[rule])
             if warns > 0:
                 await self.action_processor.execute(
@@ -1414,6 +1463,108 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         view = RoleChannelSelect("automod_remove")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=2), view=view, ephemeral=True)
+
+
+    # @discord.app_commands.command(
+    #     name="automod-response",
+    #     description="_ Manage the responses for automod rules",
+    # )
+    # @discord.app_commands.describe(
+    #     rule="The rule for which you want to edit the response",
+    #     response="Whether you want to set a new response, remove the old one or view the current one"
+    # )
+    # @discord.app_commands.default_permissions(manage_guild=True)
+    # async def automod_responses(
+    #     self, 
+    #     ctx: discord.Interaction, 
+    #     rule: Literal["Invites", "Links", "Files", "Mentions", "Lines", "Emotes", "Repeat", "Zalgo", "Caps"],
+    #     response: Literal["Custom", "None", "View"]
+    # ) -> None:
+    #     """
+    #     automod_response_help
+    #     examples:
+    #     -automod-response Links Custom
+    #     -automod-response Mentions None
+    #     """
+    #     rule = rule.lower()
+    #     cfg = self.db.configs.get(ctx.guild.id, "automod")
+    #     data = AUTOMOD_RULES[rule]
+
+    #     if response.lower() == "none":
+    #         cfg.update({
+    #             rule: {
+    #                 "response": {}
+    #             }
+    #         })
+    #         self.db.configs.update(ctx.guild.id, "automod", cfg)
+    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_response", _emote="YES", rule=rule.title()), 1))
+    #     elif response.lower() == "view":
+    #         rcfg = Object(
+    #             cfg.get(rule, {})
+    #             .get("response", {
+    #                 "msg": None, 
+    #                 "embed": {
+    #                     "title": None, 
+    #                     "description": None
+    #                 }
+    #             })
+    #         )
+    #         e = Embed(
+    #             ctx,
+    #             title=f"Response {rule.title()}"
+    #         )
+    #         e.add_fields([
+    #             {
+    #                 "name": "__Message__",
+    #                 "value": f"```\n{rcfg.msg}\n```" if rcfg.msg != None else f"{self.bot.emotes.get('NO')}",
+    #             },
+    #             {
+    #                 "name": "__Embed Title__",
+    #                 "value": f"```\n{rcfg.embed.title}\n```" if rcfg.embed.title != None else f"{self.bot.emotes.get('NO')}",
+    #             },
+    #             {
+    #                 "name": "__Embed Description__",
+    #                 "value": f"```\n{rcfg.embed.description}\n```" if rcfg.embed.description else f"{self.bot.emotes.get('NO')}",
+    #             }
+    #         ])
+    #         await ctx.response.send_message(embed=e)
+    #     else:
+    #         async def callback(i: discord.Interaction) -> None:
+    #             msg, title, desc, _ = self.bot.extract_args(i, "msg", "title", "desc", "vars")
+
+    #             if msg == "" and title == "" and desc == "":
+    #                 return await i.response.send_message(embed=E(self.locale.t(i.guild, "response_req", _emote="NO"), 0))
+
+    #             cfg.update({
+    #                 rule: {
+    #                     "response": {
+    #                         "msg": msg if msg != "" else None,
+    #                         "embed": {
+    #                             "title": title if title != "" else None,
+    #                             "description": desc if desc != "" else None
+    #                         }
+    #                     }
+    #                 }
+    #             })
+    #             self.db.configs.update(i.guild.id, "automod", cfg)
+    #             await i.response.send_message(embed=E(self.locale.t(i.guild, "set_response", _emote="YES", rule=rule.title()), 1))
+            
+    #         if not rule in cfg:
+    #             msg, embed_title, embed_desc = None, None, None
+    #         else:
+    #             msg: Optional[str] = cfg[rule].get("response", {}).get("msg", None)
+    #             embed_title: Optional[str] = cfg[rule].get("response", {}).get("embed", {}).get("title", None)
+    #             embed_desc: Optional[str] = cfg[rule].get("response", {}).get("embed", {}).get("description", None)
+            
+    #         modal = AutomodResponseModal(
+    #             self.bot,
+    #             f"Response for {rule.title()} rule",
+    #             msg,
+    #             embed_title,
+    #             embed_desc,
+    #             callback
+    #         )
+    #         await ctx.response.send_modal(modal)
 
 
 async def setup(
