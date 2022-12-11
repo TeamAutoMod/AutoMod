@@ -260,9 +260,16 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     def dispatch(self, event_name: str, *args, **kwargs) -> None:
         ev = event_name.lower()
-        self.event_stats.update({
-            ev: self.event_stats.get(ev, 0) + 1
-        })
+        if not "socket" in ev:
+            self.event_stats.update({
+                ev: self.event_stats.get(ev, 0) + 1
+            })
+        
+        if ev == "interaction":
+            if args[0].guild != None:
+                if not args[0].guild.chunked:
+                    asyncio.run(self.chunk_guild(args[0].guild))
+                    
         try:
             super().dispatch(event_name, *args, **kwargs)
         except Exception as ex:

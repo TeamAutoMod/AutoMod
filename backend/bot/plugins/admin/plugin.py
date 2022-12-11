@@ -193,18 +193,21 @@ class AdminPlugin(AutoModPluginBlueprint):
         -stats
         """
         msg = []
-        for k, v in dict(
+        for i, (k, v) in enumerate(dict(
             sorted(
                 self.bot.event_stats.items(), 
                 key=lambda i: i[1],
                 reverse=True
             )
-        ).items():
-            msg.append(
-                f"{k}{' ' * abs(len(k) - max([len(x) for x, _ in self.bot.event_stats.items()]))} | {v}"
-            )
+        ).items()):
+            if i == 0:
+                msg.append(
+                    f" EVENT{' ' * abs(len('EVENT') - max([len(x) for x, _ in self.bot.event_stats.items()]))} | COUNT" + \
+                    f"\n{'-------' + '-' * abs(len('EVENT') - max([len(x) for x, _ in self.bot.event_stats.items()]))}|{'-' * 15}"
+                )
+            msg.append(f" {k}{' ' * abs(len(k) - max([len(x) for x, _ in self.bot.event_stats.items()]))} | {v}")
         
-        await ctx.send("```py\n{}\n```".format(
+        await ctx.send("```js\n{}\n```".format(
             "\n".join(msg)
         ))
 
