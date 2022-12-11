@@ -208,7 +208,7 @@ class AdminPlugin(AutoModPluginBlueprint):
             msg.append(f" {k}{' ' * abs(len(k) - max([len(x) for x, _ in self.bot.event_stats.items()]))} | {v}")
         
         await ctx.send("```js\n{}\n```".format(
-            "\n".join(msg)
+            "\n".join(msg[0:10])
         ))
 
     
