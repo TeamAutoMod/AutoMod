@@ -309,7 +309,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     
 
     def get_highlights(self, ctx: discord.Interaction) -> Tuple[List[str], Dict[str, List[str]]]:
-        highlights_from_db: Union[dict, None] = self.db.highlights.get(f"{ctx.guild.id}", "highlights")
+        highlights_from_db: Optional[Dict[str, List[Dict[str, str]]]] = self.db.highlights.get(f"{ctx.guild.id}", "highlights")
         if highlights_from_db == None:
             self.db.highlights.insert(Highlights(ctx))
             return [], {f"{ctx.user.id}": []}
@@ -318,7 +318,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
 
     def get_highlights_from_msg(self, msg: discord.Message) -> Dict[str, List[str]]:
-        highlights_from_db: Union[dict, None] = self.db.highlights.get(f"{msg.guild.id}", "highlights")
+        highlights_from_db: Optional[Dict[str, List[Dict[str, str]]]]  = self.db.highlights.get(f"{msg.guild.id}", "highlights")
         if highlights_from_db == None:
             self.db.highlights.insert(Highlights(msg))
             return {}
@@ -443,7 +443,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
 
         if len(guild_highlights) < 1: return
         for uid, phrases in guild_highlights.items():
-            user: Union[discord.Member, None] = msg.guild.get_member(int(uid))
+            user: Optional[discord.Member] = msg.guild.get_member(int(uid))
             if (user != None \
                 and str(uid) != str(msg.author.id)  \
                 and msg.author.bot == False \
@@ -707,7 +707,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if user == None:
             user = member = ctx.user
         else:
-            member: Union[discord.Member, None] = ctx.guild.get_member(user.id)
+            member: Optional[discord.Member] = ctx.guild.get_member(user.id)
         
         await ctx.response.defer(thinking=True, ephemeral=(True if ctx.data.get("type") == 2 else False) if ctx.data != None else False)
         e = Embed(

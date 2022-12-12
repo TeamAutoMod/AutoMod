@@ -3,10 +3,11 @@
 import discord
 
 import datetime
+from typing import Dict, Union
 
 
 
-def CustomCommand(ctx: discord.Interaction, name: str, content: str, ephemeral: bool, description: str) -> dict:
+def CustomCommand(ctx: discord.Interaction, name: str, content: str, ephemeral: bool, description: str) -> Dict[str, Union[str, bool]]:
     return {
         "id": f"{ctx.guild.id}-{name}",
         "uses": 0,

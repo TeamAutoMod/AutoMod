@@ -3,11 +3,11 @@
 import discord
 
 import datetime
-from typing import Union
+from typing import Union, Dict
 
 
 
-def Responder(ctx: discord.Interaction, name: str, content: str, trigger: Union[str, list], position: str, ignore_mods: bool) -> dict:
+def Responder(ctx: discord.Interaction, name: str, content: str, trigger: Union[str, list], position: str, ignore_mods: bool) -> Dict[str, Union[str, int, datetime.datetime]]:
     return {
         "id": f"{ctx.guild.id}-{name}",
         "uses": 0,

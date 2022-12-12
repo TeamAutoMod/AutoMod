@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 
-from typing import Union
+from typing import Union, Dict
 
 
 
@@ -66,7 +66,7 @@ class Embed(discord.Embed):
                     )
 
 
-    def blank_field(self, inline: bool = False, length: int = 2) -> dict:
+    def blank_field(self, inline: bool = False, length: int = 2) -> Dict[str, str]:
         self._add_color()
         return {
             "name": "⠀" * length, # This is a U+2800 char
@@ -75,7 +75,7 @@ class Embed(discord.Embed):
         }
 
     
-    def dash_field(self, length: int = 29) -> dict:
+    def dash_field(self, length: int = 29) -> Dict[str, str]:
         self._add_color()
         return {
             "name": "​", # This is a U+200b char

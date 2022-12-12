@@ -2,6 +2,7 @@
 
 import discord
 
+from typing import Dict
 from toolbox import S as Object
 import logging; log = logging.getLogger(__name__)
 
@@ -239,20 +240,12 @@ LOG_TYPES = {
 
 
 class LogProcessor(object):
-    def __init__(
-        self, 
-        bot
-    ) -> None:
+    def __init__(self, bot) -> None:
         self.bot = bot
         self.db = bot.db
 
 
-    async def execute(
-        self, 
-        guild: discord.Guild, 
-        log_type: str, 
-        **log_kwargs
-    ) -> None:
+    async def execute(self, guild: discord.Guild, log_type: str, **log_kwargs) -> None:
         if not guild.id in self.bot.log_queue: 
             self.bot.log_queue[guild.id] = {
                 "mod_log": [],
@@ -304,11 +297,7 @@ class LogProcessor(object):
         )
 
 
-    def resolve_kwargs(
-        self,
-        e: Embed,
-        **kwargs
-    ) -> Embed:
+    def resolve_kwargs(self, e: Embed, **kwargs) -> Embed:
         out = []
         for k, v in {
             x: y for x, y in kwargs.items() if y != None
@@ -332,12 +321,7 @@ class LogProcessor(object):
         return e
 
 
-    def create_field(
-        self,
-        name: str,
-        value: str,
-        inline: bool = False
-    ) -> dict:
+    def create_field(self, name: str, value: str, inline: bool = False) -> Dict[str, str]:
         return {
             "name": name,
             "value": value,

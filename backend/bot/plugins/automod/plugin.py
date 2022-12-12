@@ -315,10 +315,7 @@ CHANNEL_OR_ROLE_T = TypeVar("CHANNEL_OR_ROLE_T", discord.Role, discord.TextChann
 
 class AutomodPlugin(AutoModPluginBlueprint):
     """Plugin for enforcing automoderator rules"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
@@ -327,15 +324,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         self.score_cache = {}
 
 
-    def can_act(
-        self, 
-        guild: discord.Guild,  
-        mod: discord.Member, 
-        target: Union[
-            discord.Member, 
-            discord.User
-        ]
-    ) -> bool:
+    def can_act(self, guild: discord.Guild, mod: discord.Member, target: Union[discord.Member, discord.User]) -> bool:
         if mod.id == target.id: return False
         if mod.id == guild.owner_id: return True
 
@@ -356,15 +345,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
     
 
-    def can_ignore(
-        self,
-        guild: discord.Guild,
-        channel: discord.TextChannel,
-        target: Union[
-            discord.Member,
-            discord.User
-        ]
-    ) -> bool:
+    def can_ignore(self, guild: discord.Guild, channel: discord.TextChannel, target: Union[discord.Member, discord.User]) -> bool:
         roles, channels = self.get_ignored_roles_channels(guild)
         if channels == None:
             self.db.configs.update(guild.id, "ignored_channels_automod", [])
@@ -375,13 +356,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         return False
 
 
-    def parse_filter(
-        self, 
-        words: list
-    ) -> Union[
-        re.Pattern, 
-        None
-    ]:
+    def parse_filter(self, words: list) -> Optional[re.Pattern]:
         normal = []
         wildcards = []
 
@@ -398,13 +373,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             return None
 
 
-    def parse_regex(
-        self, 
-        regex: str
-    ) -> Union[
-        re.Pattern, 
-        None
-    ]:
+    def parse_regex(self, regex: str) -> Optional[re.Pattern]:
         try:
             parsed = re.compile(regex, re.IGNORECASE)
         except Exception:
@@ -413,10 +382,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             return parsed
 
 
-    def validate_regex(
-        self, 
-        regex: str
-    ) -> bool:
+    def validate_regex(self, regex: str) -> bool:
         try:
             re.compile(regex)
         except re.error:
@@ -425,10 +391,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             return True
 
 
-    def safe_parse_url(
-        self, 
-        url: str
-    ) -> str:
+    def safe_parse_url(self, url: str) -> str:
         url = url.lower()
         if not (
             url.startswith("https://") or
@@ -446,12 +409,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         return url
 
 
-    def parse_channels(
-        self,
-        channels: str
-    ) -> List[
-        int
-    ]:
+    def parse_channels(self, channels: str) -> List[int]:
         final = []
         for s in channels.split(", "):
             if s.isdigit():
@@ -459,21 +417,12 @@ class AutomodPlugin(AutoModPluginBlueprint):
         return final
 
 
-    def get_ignored_roles_channels(
-        self, 
-        guild: discord.Guild
-    ) -> Tuple[
-        list, 
-        list
-    ]:
+    def get_ignored_roles_channels(self, guild: discord.Guild) -> Tuple[List[str], List[str]]:
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_automod"), self.db.configs.get(guild.id, "ignored_channels_automod")
         return roles, channels
 
 
-    def sanitize_content(
-        self,
-        content: str
-    ) -> None:
+    def sanitize_content(self, content: str) -> None:
         for c in ILLEGAL_CHARS:
             content = content.replace(c, "")
         return content
@@ -527,18 +476,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             pass
         
 
-    async def delete_msg(
-        self, 
-        rule: str, 
-        found: str, 
-        msg: discord.Message, 
-        warns: int, 
-        reason: str, 
-        pattern_or_filter: Union[
-            str, 
-            None
-        ] = None
-    ) -> None:
+    async def delete_msg(self, rule: str, found: str, msg: discord.Message, warns: int, reason: str, pattern_or_filter: Optional[str] = None) -> None:
         try:
             await msg.delete()
         except (
@@ -611,10 +549,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     )
 
 
-    async def enforce_rules(
-        self, 
-        msg: discord.Message
-    ) -> None:
+    async def enforce_rules(self, msg: discord.Message) -> None:
         content = self.sanitize_content(msg.content)
 
         config = Object(self.db.configs.get_doc(msg.guild.id))
@@ -840,10 +775,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_message(
-        self, 
-        msg: discord.Message
-    ) -> None:
+    async def on_message(self, msg: discord.Message) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await self.bot.chunk_guild(msg.guild)
         if not self.can_act(msg.guild, msg.guild.me, msg.author): return
@@ -852,11 +784,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_message_edit(
-        self, 
-        _, 
-        msg: discord.Message
-    ) -> None:
+    async def on_message_edit(self, _, msg: discord.Message) -> None:
         if msg.guild == None: return
         if not msg.guild.chunked: await self.bot.chunk_guild(msg.guild)
         if not self.can_act(msg.guild, msg.guild.me, msg.author): return
@@ -865,10 +793,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_interaction(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def on_interaction(self, i: discord.Interaction) -> None:
         cid = i.data.get("custom_id", "").lower()
         parts = cid.split(":")
 
@@ -975,22 +900,8 @@ class AutomodPlugin(AutoModPluginBlueprint):
     async def automod(
         self, 
         ctx: discord.Interaction, 
-        rule: Literal[
-            "Invites",
-            "Links",
-            "Files",
-            "Mentions",
-            "Lines",
-            "Emotes",
-            "Repeat",
-            "Zalgo",
-            "Caps"
-        ],
-        action: Literal[
-            "Enable",
-            "Disable",
-            "Edit"
-        ]
+        rule: Literal["Invites", "Links", "Files", "Mentions", "Lines", "Emotes", "Repeat", "Zalgo", "Caps"],
+        action: Literal["Enable", "Disable", "Edit"]
     ) -> None:
         """
         automod_help
@@ -1068,10 +979,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         description="🔗 Shows all currently allowed invite links"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def show_inv(
-        self, 
-        ctx: discord.Interaction,
-    ) -> None:
+    async def show_inv(self, ctx: discord.Interaction,) -> None:
         """
         allowed_invites_help
         examples:
@@ -1093,11 +1001,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         description="✅ Adds a guild to the allowed invite list"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def add_inv(
-        self, 
-        ctx: discord.Interaction, 
-        guild_id: str
-    ) -> None:
+    async def add_inv(self, ctx: discord.Interaction, guild_id: str) -> None:
         """
         allowed_invites_add_help
         examples:
@@ -1117,11 +1021,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         description="❌ Removes a guild from the allowed invite list"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def remove_inv(
-        self, 
-        ctx: discord.Interaction, 
-        guild_id: str
-    ) -> None:
+    async def remove_inv(self, ctx: discord.Interaction, guild_id: str) -> None:
         """
         allowed_invites_remove_help
         examples:
@@ -1149,14 +1049,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         type="What list type to check"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def show_link(
-        self, 
-        ctx: discord.Interaction,
-        type: Literal[
-            "Blacklist",
-            "Whitelist"
-        ]
-    ) -> None:
+    async def show_link(self, ctx: discord.Interaction,type: Literal["Blacklist", "Whitelist"]) -> None:
         """
         link_blacklist_help
         examples:
@@ -1193,15 +1086,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         url="The URl to add to the list (e.g. google.com)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def add_link(
-        self, 
-        ctx: discord.Interaction,
-        type: Literal[
-            "Blacklist",
-            "Whitelist"
-        ],
-        url: str
-    ) -> None:
+    async def add_link(self, ctx: discord.Interaction, type: Literal["Blacklist", "Whitelist"], url: str) -> None:
         """
         link_blacklist_add_help
         examples:
@@ -1235,15 +1120,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         url="The URl to remove from the list (e.g. google.com)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def remove_link(
-        self, 
-        ctx: discord.Interaction, 
-        type: Literal[
-            "Blacklist",
-            "Whitelist"
-        ],
-        url: str
-    ) -> None:
+    async def remove_link(self, ctx: discord.Interaction, type: Literal["Blacklist", "Whitelist"], url: str) -> None:
         """
         link_blacklist_remove_help
         examples:
@@ -1278,13 +1155,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         warns="Amount of warns users should receive when spam is detected"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def antispam(
-        self, 
-        ctx: discord.Interaction, 
-        rate: str = None,
-        per: int = None, 
-        warns: int = None
-    ) -> None:
+    async def antispam(self, ctx: discord.Interaction, rate: str = None, per: int = None, warns: int = None) -> None:
         """
         antispam_help
         examples:
@@ -1397,10 +1268,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         description="🔒 Shows the current list of ignored roles & channels for the automoderator"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def show(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def show(self, ctx: discord.Interaction) -> None:
         """
         ignore_automod_help
         examples:
@@ -1434,10 +1302,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         description="✅ Adds the given role or channel as ignored for the automoderator"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def add(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def add(self, ctx: discord.Interaction) -> None:
         """
         ignore_automod_add_help
         examples:
@@ -1452,10 +1317,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         description="❌ Removes the given role or channel as ignored for the automoderator"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def remove(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def remove(self, ctx: discord.Interaction) -> None:
         """
         ignore_automod_remove_help
         examples:
@@ -1567,6 +1429,5 @@ class AutomodPlugin(AutoModPluginBlueprint):
     #         await ctx.response.send_modal(modal)
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(AutomodPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(AutomodPlugin(bot))

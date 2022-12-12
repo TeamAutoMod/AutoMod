@@ -2,9 +2,11 @@
 
 import discord
 
+from typing import Union, Optional, Dict, List, Any
 
 
-def GuildConfig(guild: discord.Guild, prefix: str) -> dict:
+
+def GuildConfig(guild: discord.Guild, prefix: str) -> Dict[str, Union[str, int, bool, List[Any], Dict[str, Any], Optional[Any]]]:
     return {
         "id": f"{guild.id}", 
         "premium": False,

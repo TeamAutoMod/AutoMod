@@ -16,11 +16,7 @@ T = TypeVar("T")
 
 
 class PostParseError(commands.BadArgument):
-    def __init__(
-        self, 
-        type: T, 
-        error: Exception
-    ) -> None:
+    def __init__(self, type: T, error: Exception) -> None:
         super().__init__(None)
         self.type = type
         self.error = error
@@ -28,19 +24,12 @@ class PostParseError(commands.BadArgument):
 
 class ErrorPlugin(AutoModPluginBlueprint):
     """Plugin to handle command/event errors"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_command_error(
-        self, 
-        ctx: discord.Interaction, 
-        error: T
-    ) -> None:
+    async def on_command_error(self, ctx: discord.Interaction, error: Exception) -> None:
         if isinstance(error, commands.CommandNotFound):
             return
         
@@ -245,6 +234,5 @@ class ErrorPlugin(AutoModPluginBlueprint):
                         self.bot.error_log = None
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(ErrorPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(ErrorPlugin(bot))

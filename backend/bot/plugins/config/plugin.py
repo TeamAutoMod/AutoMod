@@ -5,7 +5,7 @@ from discord.ext import commands
 
 import logging; log = logging.getLogger()
 from toolbox import S as Object
-from typing import Tuple, Literal
+from typing import Tuple, Literal, List
 import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
@@ -49,10 +49,7 @@ LOG_OPTIONS = {
 
 class ConfigPlugin(AutoModPluginBlueprint):
     """Plugin for all configuration commands"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
         self._names = {
             "mod": "Moderation Logs",
@@ -67,9 +64,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         self.bot.loop.create_task(self.create_webhooks())
 
 
-    async def create_webhooks(
-        self
-    ) -> None:
+    async def create_webhooks(self) -> None:
         while True:
             await asyncio.sleep(1)
             if len(self.webhook_queue) > 0:
@@ -82,12 +77,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     )
 
 
-    async def create_log_webhook(
-        self, 
-        ctx: discord.Interaction, 
-        option: str, 
-        channel: discord.TextChannel
-    ) -> None:
+    async def create_log_webhook(self, ctx: discord.Interaction, option: str, channel: discord.TextChannel) -> None:
         wid = self.bot.db.configs.get(ctx.guild.id, f"{option}_webhook")
         if wid != "":
             try:
@@ -132,11 +122,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                         self.bot.webhook_cache[ctx.guild.id][option] = w
 
 
-    async def delete_webhook(
-        self, 
-        ctx: discord.Interaction, 
-        option: str
-    ) -> None:
+    async def delete_webhook(self, ctx: discord.Interaction, option: str) -> None:
         if ctx.guild.id in self.bot.webhook_cache:
             if self.bot.webhook_cache[ctx.guild.id][option] != None:
                 try:
@@ -158,22 +144,12 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 await ow.delete()
 
 
-    def get_ignored_roles_channels(
-        self, 
-        guild: discord.Guild
-    ) -> Tuple[
-        list, 
-        list
-    ]:
+    def get_ignored_roles_channels(self, guild: discord.Guild) -> Tuple[List[str], List[str]]:
         roles, channels = self.db.configs.get(guild.id, "ignored_roles_log"), self.db.configs.get(guild.id, "ignored_channels_log")
         return roles, channels
 
     
-    def parse_emote(
-        self, 
-        guild: discord.Guild, 
-        emote: str
-    ) -> str:
+    def parse_emote(self, guild: discord.Guild, emote: str) -> str:
         if not emote.isnumeric(): 
             return emote
         else:
@@ -185,10 +161,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_interaction(
-        self,
-        i: discord.Interaction
-    ) -> None:
+    async def on_interaction(self, i: discord.Interaction) -> None:
         cid = i.data.get("custom_id", "").lower()
         parts = cid.split(":")
 
@@ -303,10 +276,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="🌐 Shows the current server config"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def config(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def config(self, ctx: discord.Interaction) -> None:
         """
         config_help
         examples:
@@ -318,7 +288,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         rrs = {k: v for k, v in config.reaction_roles.items() if self.bot.get_channel(int(v['channel'])) != None}
         role = "role"
         emote = "emote"
-        tags = self.bot.get_plugin("TagsPlugin")._tags
+        tags = self.bot.get_plugin("TagsPlugin")._commands
         no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
         c = self.bot.internal_cmd_store
 
@@ -442,17 +412,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         time="10m, 2h, 1d (the 'Mute' action requires this, while the 'Ban' option can have a duration)"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def add_punishment(
-        self, 
-        ctx: discord.Interaction, 
-        warns: int, 
-        action: Literal[
-            "Kick",
-            "Ban",
-            "Mute"
-        ], 
-        time: str = None
-    ) -> None:
+    async def add_punishment(self, ctx: discord.Interaction, warns: int, action: Literal["Kick", "Ban", "Mute"], time: str = None) -> None:
         """
         punishment_add_help
         examples:
@@ -540,11 +500,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         warns="The amount of warns the punishment was set for",
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def delete_punishment(
-        self, 
-        ctx: discord.Interaction, 
-        warns: int, 
-    ) -> None:
+    async def delete_punishment(self, ctx: discord.Interaction, warns: int, ) -> None:
         """
         punishment_delete_help
         examples:
@@ -566,10 +522,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="💣 Shows all current automatic punishments"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def list_punishment(
-        self, 
-        ctx: discord.Interaction, 
-    ) -> None:
+    async def list_punishment(self, ctx: discord.Interaction, ) -> None:
         """
         punishment_list_help
         examples:
@@ -609,19 +562,9 @@ class ConfigPlugin(AutoModPluginBlueprint):
     async def _log(
         self, 
         ctx: discord.Interaction, 
-        option: Literal[
-            "Mod",
-            "Server",
-            "Messages",
-            "Joins & Leaves",
-            "Members",
-            "Voice",
-            "Reports"
-        ], 
+        option: Literal["Mod", "Server", "Messages", "Joins & Leaves", "Members", "Voice", "Reports"], 
         channel: discord.TextChannel = None,
-        disable: Literal[
-            "True"
-        ] = None
+        disable: Literal["True"] = None
     ) -> None:
         """
         log_help
@@ -680,10 +623,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="🔒 Shows the current list of ignored roles & channels for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def show(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def show(self, ctx: discord.Interaction) -> None:
         """
         ignore_log_help
         examples:
@@ -717,10 +657,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="✅ Adds the given role and/or channel as ignored for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def add(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def add(self, ctx: discord.Interaction) -> None:
         """
         ignore_log_add_help
         examples:
@@ -735,10 +672,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="❌ Removes the given role and/or channel as ignored for logging"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def remove(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def remove(self, ctx: discord.Interaction) -> None:
         """
         ignore_log_remove_help
         examples:
@@ -753,14 +687,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="🚪 Configure the join role (role users automatically get when joining the server)"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
-    async def join_role(
-        self,
-        ctx: discord.Interaction,
-        disable: Literal[
-            "True",
-            "False"
-        ] = None
-    ) -> None:
+    async def join_role(self, ctx: discord.Interaction, disable: Literal["True", "False"] = None) -> None:
         """
         join_role_help
         examples:
@@ -782,10 +709,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="📑 Configure a default reason used when none is used in commands"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def default_reason(
-        self,
-        ctx: discord.Interaction
-    ) -> None:
+    async def default_reason(self, ctx: discord.Interaction) -> None:
         """
         reason_help
         examples:
@@ -814,10 +738,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="📐 Guide for setting up the bot"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def setup(
-        self,
-        ctx: discord.Interaction
-    ) -> None:
+    async def setup(self, ctx: discord.Interaction) -> None:
         """
         setup_help
         examples:
@@ -829,6 +750,5 @@ class ConfigPlugin(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=embeds[0], view=v)
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(ConfigPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(ConfigPlugin(bot))

@@ -18,25 +18,13 @@ MAX_BONUS_XP = 500000
 
 class LevelPlugin(AutoModPluginBlueprint):
     """Plugin for all level system commands"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance,
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot, requires_premium=False) # set this to true for now (testing etc)
         self._processing = []
         self._cooldowns = []
 
 
-    def exists(
-        self, 
-        config: Object, 
-        guild: discord.Guild, 
-        user: Union[
-            discord.Member,
-            discord.User
-        ], 
-        insert: bool = True
-    ) -> bool:
+    def exists(self, config: Object, guild: discord.Guild, user: Union[discord.Member, discord.User], insert: bool = True) -> bool:
         if not str(user.id) in config.users:
             if insert == True:
                 config.users.append(str(user.id))
@@ -55,41 +43,18 @@ class LevelPlugin(AutoModPluginBlueprint):
             return True
 
 
-    def get_user_data(
-        self, 
-        guild: discord.Guild, 
-        user: Union[
-            discord.Member,
-            discord.User
-        ], 
-    ) -> Object:
+    def get_user_data(self, guild: discord.Guild, user: Union[discord.Member, discord.User]) -> Object:
         return Object(self.db.level.get_doc(f"{guild.id}-{user.id}"))
 
 
-    def update_user_data(
-        self, 
-        guild: discord.Guild, 
-        user: Union[
-            discord.Member,
-            discord.User
-        ],
-        xp: int, 
-        lvl: int
-    ) -> None:
+    def update_user_data(self, guild: discord.Guild, user: Union[discord.Member,discord.User], xp: int, lvl: int) -> None:
         self.db.level.multi_update(f"{guild.id}-{user.id}", {
             "xp": xp,
             "lvl": lvl
         })
 
 
-    def lb_pos(
-        self, 
-        i: int,
-        user: Union[
-            str,
-            discord.Member
-        ]
-    ) -> str:
+    def lb_pos(self, i: int,user: Union[str,discord.Member]) -> str:
         i = (i+1)
         if i == 1:
             return f"🏆 {user}"
@@ -112,27 +77,18 @@ class LevelPlugin(AutoModPluginBlueprint):
             return f"__{i}{end}__ {user}"
 
 
-    def has_premium(
-        self,
-        guild: discord.Guild
-    ) -> None:
+    def has_premium(self, guild: discord.Guild) -> None:
         return self.db.configs.get(guild.id, "premium")
 
 
-    def get_xp_for_next_lvl(
-        self,
-        lvl: int
-    ):
+    def get_xp_for_next_lvl(self, lvl: int) -> int:
         if lvl > 1:
             return int((50 * ((lvl - 1) ** 2)) + (50 * (lvl - 1)))
         else:
             return 50
         
 
-    async def is_eligible_message(
-        self,
-        msg: discord.Message,
-    ) -> bool:
+    async def is_eligible_message(self, msg: discord.Message) -> bool:
         ctx = await self.bot.get_context(msg)
         return (
             len(msg.content) > 3 \
@@ -148,13 +104,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         
 
 
-    async def add_reward(
-        self,
-        guild: discord.Guild,
-        user: discord.Member,
-        level: int,
-        config: Object
-    ) -> None:
+    async def add_reward(self, guild: discord.Guild, user: discord.Member, level: int, config: Object) -> None:
         if not hasattr(config, "rewards"):
             cur = self.db.configs.get(guild.id, "lvl_sys")
             for k, v in {"rewards": {}, "reward_mode": "stack"}.items():
@@ -197,10 +147,7 @@ class LevelPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_message(
-        self, 
-        msg: discord.Message
-    ) -> None:
+    async def on_message(self, msg: discord.Message) -> None:
         # if not self.has_premium(msg.guild): return
         if msg.guild == None: return
         if not msg.guild.chunked:
@@ -289,19 +236,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         notifications="Where users should be notified when leveling up"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def lvlsys(
-        self,
-        ctx: discord.Interaction,
-        enabled: Literal[
-            "True",
-            "False"
-        ] = None,
-        notifications: Literal[
-            "Channel",
-            "DM",
-            "None"
-        ] = None
-    ) -> None:
+    async def lvlsys(self, ctx: discord.Interaction, enabled: Literal["True", "False"] = None, notifications: Literal["Channel", "DM", "None"] = None) -> None:
         # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
@@ -337,11 +272,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         description="🔮 Resets a user back to level one"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def reset(
-        self,
-        ctx: discord.Interaction,
-        user: discord.Member
-    ) -> None:
+    async def reset(self, ctx: discord.Interaction, user: discord.Member) -> None:
         """
         reset_help
         examples:
@@ -366,10 +297,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         name="rewards",
         description="🌱 Shows the current role rewards"
     )
-    async def role_reward_show(
-        self,
-        ctx: discord.Interaction
-    ) -> None:
+    async def role_reward_show(self, ctx: discord.Interaction) -> None:
         """
         role_reward_show_help
         examples:
@@ -408,16 +336,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         role="The role to assign the user"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def role_reward_add(
-        self,
-        ctx: discord.Interaction,
-        level: discord.app_commands.Range[
-            int,
-            1,
-            100
-        ],
-        role: discord.Role
-    ) -> None:
+    async def role_reward_add(self, ctx: discord.Interaction, level: discord.app_commands.Range[int, 1, 100], role: discord.Role) -> None:
         """
         rol_reward_add_help
         examples:
@@ -449,15 +368,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         level="The level for which you want to remove to reward",
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def role_reward_remove(
-        self,
-        ctx: discord.Interaction,
-        level: discord.app_commands.Range[
-            int,
-            1,
-            100
-        ]
-    ) -> None:
+    async def role_reward_remove(self, ctx: discord.Interaction, level: discord.app_commands.Range[int, 1, 100]) -> None:
         """
         role_reward_remove_help
         examples:
@@ -484,14 +395,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         mode="The mod for assgning rewards (stack roles or always only allow the highest one) "
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def role_reward_mode(
-        self,
-        ctx: discord.Interaction,
-        mode: Literal[
-            "Stack",
-            "Single"
-        ]
-    ) -> None:
+    async def role_reward_mode(self, ctx: discord.Interaction, mode: Literal["Stack", "Single"]) -> None:
         """
         role_reward_mode_help
         examples:
@@ -511,11 +415,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         name="rank",
         description="⭐ View your server rank"
     )
-    async def rank(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.Member = None
-    ) -> None:
+    async def rank(self, ctx: discord.Interaction, user: discord.Member = None) -> None:
         """
         rank_help
         examples:
@@ -571,10 +471,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         name="leaderboard",
         description="📜 View the server's leaderboard"
     )
-    async def leaderboard(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def leaderboard(self, ctx: discord.Interaction) -> None:
         """
         leaderboard_help
         examples:
@@ -624,6 +521,5 @@ class LevelPlugin(AutoModPluginBlueprint):
         await ctx.followup.send(embed=e)
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(LevelPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(LevelPlugin(bot))

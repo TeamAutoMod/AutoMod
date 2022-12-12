@@ -4,7 +4,7 @@ from datetime import datetime
 import discord
 
 import datetime
-from typing import Union
+from typing import Union, Dict
 
 
 
@@ -18,7 +18,7 @@ def Case(
     ts: datetime.datetime, 
     warns_added: int = 0, 
     until: datetime.datetime = None
-) -> dict:
+) -> Dict[str, str]:
     return {
         "id": f"{msg.guild.id}-{case}",
         "case": f"{case}",

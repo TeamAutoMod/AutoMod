@@ -40,7 +40,7 @@ class MongoCollection(Collection):
         if self.cached: (getattr(self.bot.cache, self.collection_name)).insert(schema["id"], schema)
 
 
-    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Union[str, int], Any], List[Any], None]) -> None:
+    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Union[str, int], Any], List[Any]]) -> None:
         super().update(_id, key, value)
         if self.cached: (getattr(self.bot.cache, self.collection_name)).update(_id, key, value)
 

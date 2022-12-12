@@ -11,10 +11,7 @@ from ...bot import ShardedBotInstance
 
 
 class DMProcessor(object):
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         self.bot = bot
         self.colors = {
             "kick": 0xf79554,
@@ -28,9 +25,7 @@ class DMProcessor(object):
         self.bot.loop.create_task(self.dm_users())
 
 
-    async def dm_users(
-        self
-    ) -> None:
+    async def dm_users(self) -> None:
         while True:
             await asyncio.sleep(0.3)
             if len(self.queue) > 0:
@@ -39,19 +34,7 @@ class DMProcessor(object):
                     await self.actual_execute(**kw)
 
     
-    def execute(
-        self, 
-        msg: Union[
-            discord.Message,
-            discord.Interaction
-        ], 
-        _type: str, 
-        _user: Union[
-            discord.Member, 
-            discord.User
-        ], 
-        **opt
-    ) -> None:
+    def execute(self, msg: Union[discord.Message, discord.Interaction], _type: str, _user: Union[discord.Member, discord.User], **opt) -> None:
         self.queue.append(
             {
                 "msg": msg,
@@ -62,19 +45,7 @@ class DMProcessor(object):
         )
 
     
-    async def actual_execute(
-        self, 
-        msg: Union[
-            discord.Member, 
-            discord.User
-        ],  
-        _type: str, 
-        _user: Union[
-            discord.Member, 
-            discord.User
-        ], 
-        **opt
-    ) -> None:
+    async def actual_execute(self, msg: Union[discord.Member, discord.User],  _type: str, _user: Union[discord.Member, discord.User], **opt) -> None:
         try:
             e = Embed(
                 None,

@@ -7,7 +7,7 @@ import datetime
 from typing import Union
 from toolbox import S as Object
 import logging; log = logging.getLogger()
-from typing import Union
+from typing import Union, Optional
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, E
@@ -18,24 +18,11 @@ from .._processor.log import LOG_TYPES
 
 class CasesPlugin(AutoModPluginBlueprint):
     """Plugin for internal/log events"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
 
-    def case_embed(
-        self, 
-        opt: str, 
-        user: Union[
-            discord.Member, 
-            discord.User
-        ], 
-        last_24_hours: int, 
-        last_7_days: int, 
-        total: int
-    ) -> Embed:
+    def case_embed(self, opt: str, user: Union[discord.Member, discord.User], last_24_hours: int, last_7_days: int, total: int) -> Embed:
         e = Embed(
             None,
             description=""
@@ -72,22 +59,11 @@ class CasesPlugin(AutoModPluginBlueprint):
         return e
 
 
-    def update_case_embed(
-        self, 
-        embed: Embed, 
-        inp: str
-    ) -> None:
+    def update_case_embed(self, embed: Embed, inp: str) -> None:
         embed.description = f"{embed.description}\n{inp}"
 
 
-    def get_log_for_case(
-        self, 
-        ctx: discord.Interaction, 
-        case: dict
-    ) -> Union[
-        None, 
-        str
-    ]:
+    def get_log_for_case(self, ctx: discord.Interaction, case: dict) -> Optional[str]:
         if not "log_id" in case: return None
 
         log_id = case["log_id"]
@@ -103,17 +79,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         return f"https://discord.com/channels/{ctx.guild.id}/{log_channel_id}/{log_id}"
 
     
-    async def ban_data(
-        self, 
-        ctx: discord.Interaction, 
-        user: Union[
-            discord.Member, 
-            discord.User
-        ]
-    ) -> Union[
-        discord.guild.BanEntry, 
-        None
-    ]:
+    async def ban_data(self, ctx: discord.Interaction, user: Union[discord.Member, discord.User]) -> Optional[discord.guild.BanEntry]:
         try:
             data = await ctx.guild.fetch_ban(user)
         except discord.NotFound:
@@ -130,11 +96,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         user="The user whose cases you want to view"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def infractions(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.User = None
-    ) -> None:
+    async def infractions(self, ctx: discord.Interaction, user: discord.User = None) -> None:
         """
         infractions_help
         examples:
@@ -282,11 +244,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         case="The number of the case you want to to view"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def case(
-        self, 
-        ctx: discord.Interaction, 
-        case: str
-    ) -> None:
+    async def case(self, ctx: discord.Interaction, case: str) -> None:
         """
         case_help
         examples:
@@ -354,11 +312,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         user="The user you want to check"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def check(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.User
-    ) -> None:
+    async def check(self, ctx: discord.Interaction, user: discord.User) -> None:
         """
         check_help
         examples:
@@ -401,6 +355,5 @@ class CasesPlugin(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=e)
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(CasesPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(CasesPlugin(bot))

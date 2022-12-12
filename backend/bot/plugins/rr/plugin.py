@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 
-from typing import Union
+from typing import Optional
 import logging; log = logging.getLogger()
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
@@ -13,22 +13,12 @@ from ...types import Embed, Emote, Message, E
 
 class ReactionRolesPlugin(AutoModPluginBlueprint):
     """Plugin for reaction roles"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
         self.msg_cache = {}
 
 
-    async def get_message(
-        self,
-        channel_id: int,
-        msg_id: int
-    ) -> Union[
-        discord.Message,
-        None
-    ]:
+    async def get_message(self,channel_id: int,msg_id: int) -> Optional[discord.Message]:
         if msg_id in self.msg_cache:
             return self.msg_cache[msg_id]
         else:
@@ -44,10 +34,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_raw_reaction_add(
-        self, 
-        payload: discord.RawReactionActionEvent
-    ) -> None: 
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None: 
         if f"{payload.user_id}" == f"{self.bot.user.id}": return
         if payload.member.bot == True: return
 
@@ -80,10 +67,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_raw_reaction_remove(
-        self, 
-        payload: discord.RawReactionActionEvent
-    ) -> None:
+    async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent) -> None:
         if f"{payload.user_id}" == f"{self.bot.user.id}": return
 
         rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
@@ -119,10 +103,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_raw_message_delete(
-        self, 
-        payload: discord.RawMessageDeleteEvent
-    ) -> None:
+    async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent) -> None:
         if payload.guild_id == None: return
         rrs = self.db.configs.get(payload.guild_id, "reaction_roles")
         if not f"{payload.message_id}" in rrs: return
@@ -141,10 +122,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         description="🎭 Shows a list of active reaction roles"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
-    async def show(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def show(self, ctx: discord.Interaction) -> None:
         """
         reaction_roles_help
         examples:
@@ -198,13 +176,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         role="The role users should receive when reacting"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
-    async def add(
-        self, 
-        ctx: discord.Interaction, 
-        message_id: str, 
-        emote: str, 
-        role: discord.Role
-    ) -> None:
+    async def add(self, ctx: discord.Interaction, message_id: str, emote: str, role: discord.Role) -> None:
         """
         reaction_roles_add_help
         examples:
@@ -276,12 +248,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         role="The role you want to remove"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
-    async def remove(
-        self, 
-        ctx: discord.Interaction, 
-        message_id: str, 
-        role: discord.Role
-    ) -> None:
+    async def remove(self, ctx: discord.Interaction, message_id: str, role: discord.Role) -> None:
         """
         reaction_roles_remove_help
         examples:
@@ -319,6 +286,5 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_rr", _emote="YES"), 1), ephemeral=True)
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(ReactionRolesPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(ReactionRolesPlugin(bot))

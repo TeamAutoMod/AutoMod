@@ -17,19 +17,11 @@ from ...modals import FilterCreateModal, RegexCreateModal, FilterEditModal, Rege
 
 class FilterPlugin(AutoModPluginBlueprint):
     """Plugin for all filter commands"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
     
-    def parse_channels(
-        self,
-        channels: str
-    ) -> List[
-        int
-    ]:
+    def parse_channels(self, channels: str) -> List[int]:
         final = []
         for s in channels.split(", "):
             if s.isdigit():
@@ -37,10 +29,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         return final
 
 
-    def validate_regex(
-        self, 
-        regex: str
-    ) -> bool:
+    def validate_regex(self, regex: str) -> bool:
         try:
             re.compile(regex)
         except re.error:
@@ -59,10 +48,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         description="⛔️ Shows all active word filters"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def show_filter(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def show_filter(self, ctx: discord.Interaction) -> None:
         """
         filter_show_help
         examples:
@@ -99,10 +85,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         description="✅ Creates a new word filter"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def add_filter(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def add_filter(self, ctx: discord.Interaction) -> None:
         """
         filter_add_help
         examples:
@@ -145,11 +128,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         name="Name of the filter",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def remove_filter(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
+    async def remove_filter(self, ctx: discord.Interaction, name: str) -> None:
         """
         filter_remove_help
         examples:
@@ -176,11 +155,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         name="Name of the filter",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def edit_filter(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-    ) -> None:
+    async def edit_filter(self, ctx: discord.Interaction, name: str) -> None:
         """
         filter_edit_help
         examples:
@@ -232,15 +207,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         seperator="Whether to seperate each word by a comma or by a line split"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def export_filter(
-        self, 
-        ctx: discord.Interaction, 
-        name: str,
-        seperator: Literal[
-            "Comma (,)",
-            "Line Split"
-        ] = "Comma (,)"
-    ) -> None:
+    async def export_filter(self, ctx: discord.Interaction, name: str, seperator: Literal["Comma (,)", "Line Split"] = "Comma (,)") -> None:
         """
         filter_export_help
         examples:
@@ -274,11 +241,8 @@ class FilterPlugin(AutoModPluginBlueprint):
         description="⛔️ Shows a list of active regex filters"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def show_regex(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
-        r"""
+    async def show_regex(self, ctx: discord.Interaction) -> None:
+        """
         regex_help
         examples:
         -regex list
@@ -313,11 +277,9 @@ class FilterPlugin(AutoModPluginBlueprint):
         name="add",
         description="✅ Adds a new regex filter with the given name, warns, pattern and channels"
     )
-    async def add_regex(
-        self, 
-        ctx: discord.Interaction, 
-    ) -> None:
-        r"""
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def add_regex(self, ctx: discord.Interaction, ) -> None:
+        """
         regex_add_help
         examples:
         -regex add
@@ -361,11 +323,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         name="Name of the filter",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def remove_regex(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
+    async def remove_regex(self, ctx: discord.Interaction, name: str) -> None:
         """
         regex_remove_help
         examples:
@@ -390,12 +348,8 @@ class FilterPlugin(AutoModPluginBlueprint):
         name="Name of the regex filter you want to edit",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def edit_regex(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
-        r"""
+    async def edit_regex(self, ctx: discord.Interaction, name: str) -> None:
+        """
         regex_edit_help
         examples:
         -regex edit test_regex
@@ -439,6 +393,5 @@ class FilterPlugin(AutoModPluginBlueprint):
         await ctx.response.send_modal(modal)
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(FilterPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(FilterPlugin(bot))

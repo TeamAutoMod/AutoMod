@@ -4,6 +4,7 @@ import discord
 
 from typing import Optional
 import asyncio
+from typing import Dict
 import logging; log = logging.getLogger(__name__)
 
 from ..schemas import GuildConfig
@@ -48,7 +49,7 @@ class LogQueue:
                                             self.db.configs.update(guild.id, channel_type, "")
 
 
-    async def default_log(self, channel: discord.TextChannel, chunk: list) -> dict:
+    async def default_log(self, channel: discord.TextChannel, chunk: list) -> Dict[bool, discord.Message]:
         msgs = {}
         for entry in chunk:
             msg = await channel.send(

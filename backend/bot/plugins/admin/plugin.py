@@ -19,17 +19,11 @@ from ...views import DeleteView
 
 class AdminPlugin(AutoModPluginBlueprint):
     """Plugin for all bot admin commands/events"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
 
     
-    def insert_returns(
-        self, 
-        body: str
-    ) -> None:
+    def insert_returns(self, body: str) -> None:
         if isinstance(body[-1], ast.Expr):
             body[-1] = ast.Return(body[-1].value)
             ast.fix_missing_locations(body[-1])
@@ -42,10 +36,7 @@ class AdminPlugin(AutoModPluginBlueprint):
             self.insert_returns(body[-1].body)
 
 
-    def parse_shard_info(
-        self, 
-        shard: discord.ShardInfo
-    ) -> str:
+    def parse_shard_info(self, shard: discord.ShardInfo) -> str:
         guilds = len(list(filter(lambda x: x.shard_id == shard.id, self.bot.guilds)))
         if not shard.is_closed():
             text = "+ {}: CONNECTED ~ {} guilds".format(shard.id, guilds)
@@ -55,11 +46,7 @@ class AdminPlugin(AutoModPluginBlueprint):
 
     
     @AutoModPluginBlueprint.listener()
-    async def on_member_udpate(
-        self,
-        b: discord.Member,
-        a: discord.Member
-    ) -> None:
+    async def on_member_udpate(self, b: discord.Member, a: discord.Member) -> None:
         if a.roles != b.roles:
             r = b.guild.get_role(self.config.premium_role)
             if not r in b.roles and r in a.roles:
@@ -68,12 +55,7 @@ class AdminPlugin(AutoModPluginBlueprint):
 
     @commands.command()
     @commands.is_owner()
-    async def eval(
-        self, 
-        ctx: commands.Context, 
-        *, 
-        cmd: str
-    ) -> None:
+    async def eval(self, ctx: commands.Context, *, cmd: str) -> None:
         """
         eval_help
         examples:
@@ -119,10 +101,7 @@ class AdminPlugin(AutoModPluginBlueprint):
 
     @commands.command()
     @commands.is_owner()
-    async def debug(
-        self, 
-        ctx: commands.Context
-    ) -> None:
+    async def debug(self, ctx: commands.Context) -> None:
         """
         debug_help
         examples:
@@ -156,11 +135,7 @@ class AdminPlugin(AutoModPluginBlueprint):
 
     @commands.command()
     @commands.is_owner()
-    async def mutuals(
-        self,
-        ctx: commands.Context,
-        user: discord.User
-    ) -> None:
+    async def mutuals(self, ctx: commands.Context, user: discord.User) -> None:
         """
         mutuals_help
         examples:
@@ -183,10 +158,7 @@ class AdminPlugin(AutoModPluginBlueprint):
 
     @commands.command()
     @commands.is_owner()
-    async def stats(
-        self,
-        ctx: commands.Context
-    ) -> None:
+    async def stats(self, ctx: commands.Context) -> None:
         """
         stats_help
         examples:
@@ -214,10 +186,7 @@ class AdminPlugin(AutoModPluginBlueprint):
     
     @commands.group()
     @commands.is_owner()
-    async def premium(
-        self,
-        ctx: commands.Context
-    ) -> None:
+    async def premium(self, ctx: commands.Context) -> None:
         """
         premium_help
         examples:
@@ -244,11 +213,7 @@ class AdminPlugin(AutoModPluginBlueprint):
 
     @premium.command()
     @commands.is_owner()
-    async def add(
-        self,
-        ctx: commands.Context,
-        guild_id: int
-    ) -> None:
+    async def add(self, ctx: commands.Context, guild_id: int) -> None:
         """
         premium_add_help
         examples:
@@ -266,11 +231,7 @@ class AdminPlugin(AutoModPluginBlueprint):
 
     @premium.command()
     @commands.is_owner()
-    async def remove(
-        self,
-        ctx: commands.Context,
-        guild_id: int
-    ) -> None:
+    async def remove(self, ctx: commands.Context, guild_id: int) -> None:
         """
         premium_remove_help
         examples:
@@ -286,6 +247,5 @@ class AdminPlugin(AutoModPluginBlueprint):
             await ctx.send(embed=E(self.locale.t(ctx.guild, "disabled_premium", _emote="YES"), 1))
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(AdminPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(AdminPlugin(bot))

@@ -1,11 +1,11 @@
 # type: ignore
 import discord
 
-from typing import Union
+from typing import Union, Dict
 
 
 
-def Highlights(obj: Union[discord.Interaction, discord.Message]) -> dict:
+def Highlights(obj: Union[discord.Interaction, discord.Message]) -> Dict[str, Union[str, Dict[str, list]]]:
     return {
         "id": f"{obj.guild.id}",
         "highlights": {

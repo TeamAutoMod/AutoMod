@@ -5,7 +5,7 @@ import discord
 from collections import OrderedDict
 import datetime
 
-from typing import Union
+from typing import Union, Optional
 
 from ...bot import ShardedBotInstance
 from ...schemas import Warn, Case, Mute, Tempban
@@ -14,11 +14,8 @@ from .dm import DMProcessor
 
 
 
-class ActionProcessor(object):
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ):
+class ActionProcessor:
+    def __init__(self, bot: ShardedBotInstance):
         self.bot = bot
         self.warns = self.bot.db.warns
         self.executors = {
@@ -34,15 +31,9 @@ class ActionProcessor(object):
     def new_case(
         self, 
         _type: str, 
-        msg: Union[
-            discord.Message, 
-            discord.Interaction
-        ], 
+        msg: Union[discord.Message, discord.Interaction], 
         mod: discord.Member, 
-        user: Union[
-            discord.Member, 
-            discord.User
-        ], 
+        user: Union[discord.Member, discord.User], 
         reason: str, 
         warns_added: int = 0, 
         until: datetime.datetime = None
@@ -72,15 +63,9 @@ class ActionProcessor(object):
 
     async def execute(
         self, 
-        msg: Union[
-            discord.Message,
-            discord.Interaction
-        ],
+        msg: Union[discord.Message, discord.Interaction],
         mod: discord.Member, 
-        user: Union[
-            discord.Member, 
-            discord.User
-        ], 
+        user: Union[discord.Member, discord.User], 
         warns: int, 
         reason: str, 
         **special_log_kwargs
@@ -180,21 +165,12 @@ class ActionProcessor(object):
 
     async def ban(
         self, 
-        msg: Union[
-            discord.Message, 
-            discord.Interaction
-        ], 
+        msg: Union[discord.Message, discord.Interaction], 
         _mod: discord.Member, 
-        _user: Union[
-            discord.Member, 
-            discord.User
-        ], 
+        _user: Union[discord.Member, discord.User], 
         _reason: str, 
         **log_kwargs
-    ) -> Union[
-        None, 
-        Exception
-    ]:
+    ) -> Optional[Exception]:
         mod, user, reason = _mod, _user, _reason
         if msg.guild.get_member(user.id) == None: return "User not found"
         if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already banning user"
@@ -231,21 +207,12 @@ class ActionProcessor(object):
 
     async def kick(
         self, 
-        msg: Union[
-            discord.Message, 
-            discord.Interaction
-        ], 
+        msg: Union[discord.Message, discord.Interaction], 
         _mod: discord.Member, 
-        _user: Union[
-            discord.Member, 
-            discord.User
-        ], 
+        _user: Union[discord.Member, discord.User], 
         _reason: str, 
         **log_kwargs
-    ) -> Union[
-        None, 
-        Exception
-    ]:
+    ) -> Optional[Exception]:
         mod, user, reason = _mod, _user, _reason
         if msg.guild.get_member(user.id) == None: return "User not found"
         if f"{msg.guild.id}-{user.id}" in self.bot.auto_processing: return "Already kicking user"
@@ -282,21 +249,12 @@ class ActionProcessor(object):
 
     async def mute(
         self, 
-        msg: Union[
-            discord.Message, 
-            discord.Interaction
-        ], 
+        msg: Union[discord.Message, discord.Interaction], 
         _mod: discord.Member, 
-        _user: Union[
-            discord.Member, 
-            discord.User
-        ], 
+        _user: Union[discord.Member, discord.User], 
         _reason: str, 
         **log_kwargs
-    ) -> Union[
-        None, 
-        Exception
-    ]:
+    ) -> Optional[Exception]:
         mod, user, reason = _mod, _user, _reason
         user = msg.guild.get_member(user.id)
         if user == None: return "User not found"
@@ -346,21 +304,12 @@ class ActionProcessor(object):
     
     async def tempban(
         self, 
-        msg: Union[
-            discord.Message, 
-            discord.Interaction
-        ], 
+        msg: Union[discord.Message, discord.Interaction], 
         _mod: discord.Member, 
-        _user: Union[
-            discord.Member, 
-            discord.User
-        ], 
+        _user: Union[discord.Member, discord.User], 
         _reason: str, 
         **log_kwargs
-    ) -> Union[
-        None, 
-        Exception
-    ]:
+    ) -> Optional[Exception]:
         mod, user, reason = _mod, _user, _reason
         user = msg.guild.get_member(user.id);
         if user == None: return "User not found"

@@ -3,9 +3,8 @@
 import discord
 from discord.ext import commands
 
-from toolbox import S as Object
 import datetime
-from typing import Literal, Union
+from typing import Literal, Union, Dict, Any
 import re
 import logging; log = logging.getLogger()
 
@@ -21,10 +20,7 @@ MAX_RESPONDERS_PER_GUILD = 15
 
 class AutoResponderPlugin(AutoModPluginBlueprint):
     """Plugin for autoresponders"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
         self._r = {}
         self._position_funcs = {
@@ -44,18 +40,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         self.bot.loop.create_task(self.cache_responders())
         
 
-    def add_responder(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-        content: str,
-        trigger: Union[
-            str,
-            list
-        ],
-        position: str,
-        ignore_mods: bool
-    ) -> None:
+    def add_responder(self, ctx: discord.Interaction, name: str, content: str, trigger: Union[str,list], position: str, ignore_mods: bool) -> None:
         data = {
             name: {
                 "content": content,
@@ -74,23 +59,13 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         return None
 
 
-    def remove_responder(
-        self, 
-        guild: discord.Guild, 
-        name: str
-    ) -> None:
+    def remove_responder(self, guild: discord.Guild, name: str) -> None:
         self._r[guild.id].pop(name)
         self.db.responders.delete(f"{guild.id}-{name}")
         return None
 
 
-    def update_responder(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-        content: str,
-        trigger: str
-    ) -> None:
+    def update_responder(self, ctx: discord.Interaction, name: str, content: str,trigger: str) -> None:
         self._r[ctx.guild.id][name].update({
             "content": content,
             "trigger": trigger
@@ -103,9 +78,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         })
 
 
-    async def cache_responders(
-        self
-    ) -> None:
+    async def cache_responders(self) -> None:
         _ = True
         while _:
             _ = False
@@ -128,10 +101,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                         self._r[_id].update(data)
 
 
-    def update_uses(
-        self, 
-        _id: str
-    ) -> None:
+    def update_uses(self, _id: str) -> None:
         self.bot.used_customs += 1
         cur = self.db.responders.get(_id, "uses")
         if cur == None:
@@ -140,10 +110,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             self.db.responders.update(_id, "uses", cur+1)
 
 
-    def validate_name(
-        self,
-        name: str
-    ) -> bool:
+    def validate_name(self, name: str) -> bool:
         for c in name:
             if c == "-" or c == "_":
                 pass
@@ -155,10 +122,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         return True
     
 
-    def validate_regex(
-        self, 
-        regex: str
-    ) -> bool:
+    def validate_regex(self, regex: str) -> bool:
         try:
             re.compile(regex)
         except re.error:
@@ -167,17 +131,11 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             return True
 
 
-    def get_responders(
-        self,
-        guild: discord.Guild,
-    ) -> dict:
+    def get_responders(self, guild: discord.Guild,) -> Dict[str, Any]:
         return self._r[guild.id]
     
 
-    def is_mod(
-        self,
-        user: discord.Member
-    ) -> bool:
+    def is_mod(self, user: discord.Member) -> bool:
         return (
             user.guild_permissions.ban_members == True \
             or user.guild_permissions.kick_members == False \
@@ -194,10 +152,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         name="list",
         description="📝 Shows a list of all auto responders"
     )
-    async def auto_responders(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def auto_responders(self, ctx: discord.Interaction) -> None:
         """
         autoresponders_show_help
         examples:
@@ -247,16 +202,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
     async def addresponder(
         self, 
         ctx: discord.Interaction,
-        position: Literal[
-            "Starts with",
-            "Ends with",
-            "Contains",
-            "RegEx"
-        ],
-        ignore_mods: Literal[
-            "True",
-            "False"
-        ] = "True"
+        position: Literal["Starts with", "Ends with", "Contains", "RegEx"],
+        ignore_mods: Literal["True", "False"] = "True"
     ) -> None:
         """
         autoresponders_add_help
@@ -308,11 +255,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         name="Name of the auto responder",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def delresponder(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
+    async def delresponder(self, ctx: discord.Interaction, name: str) -> None:
         """
         autoresponders_delete_help
         examples:
@@ -338,11 +281,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         name="Name of the auto responder"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def editresponder(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-    ) -> None:
+    async def editresponder(self, ctx: discord.Interaction, name: str) -> None:
         """
         autoresponder_edit_help
         examples:
@@ -382,10 +321,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_message(
-        self,
-        msg: discord.Message
-    ) -> None:
+    async def on_message(self, msg: discord.Message) -> None:
         if msg.author.bot == True: return
         if msg.guild == None: return
         if not msg.guild.id in self._r: return

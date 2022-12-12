@@ -41,7 +41,7 @@ class InternalCacheStore:
         return str(_id) in self.data
 
 
-    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Union[str, int], Any], List[Any], None]) -> None:
+    def update(self, _id: Union[str, int], key: str, value: Union[str, int, Dict[Union[str, int], Any], List[Any]]) -> None:
         if str(_id) in self.data:
             self.data[str(_id)].update({
                 key: value

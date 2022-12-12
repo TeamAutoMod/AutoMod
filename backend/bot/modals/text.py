@@ -8,41 +8,22 @@ from typing import Callable
 
 
 class TextModalBase(Modal):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        callback: Callable, 
-        *args, 
-        **kwargs
-    ) -> None:
+    def __init__(self, bot, title: str, callback: Callable, *args, **kwargs) -> None:
         super().__init__(*args, title=title, **kwargs)
         self.bot = bot
         self.callback = callback
 
 
-    async def on_submit(
-        self, 
-        i: discord.Interaction
-    ) -> None:
+    async def on_submit(self, i: discord.Interaction) -> None:
         await self.callback(i)
 
     
-    async def on_error(
-        self, 
-        i: discord.Interaction,
-        exc: Exception
-    ) -> None:
+    async def on_error(self, i: discord.Interaction, exc: Exception) -> None:
         await i.response.send_message(self.bot.locale.t(i.guild, "fail", _emote="NO", exc=exc))
 
 
 class FilterCreateModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
     
 
@@ -87,12 +68,7 @@ class FilterCreateModal(TextModalBase):
 
 
 class RegexCreateModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
     
 
@@ -137,15 +113,7 @@ class RegexCreateModal(TextModalBase):
 
 
 class FilterEditModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str,
-        warns: int, 
-        words: str,
-        channels: str,
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, warns: int, words: str, channels: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
         self.warns = warns
         self.words = words
@@ -153,56 +121,40 @@ class FilterEditModal(TextModalBase):
         self.add_items()
 
 
-    def add_items(
-        self
-    ) -> None:
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="warns",
-                default=str(self.warns),
-                label="Warns",
-                style=discord.TextStyle.long,
-                placeholder="Warns given upon violation. Use 0 to just have the message deleted",
-                required=True,
-                max_length=3
-            )
-        )
+    def add_items(self) -> None:
+        self.add_item(discord.ui.TextInput(
+            custom_id="warns",
+            default=str(self.warns),
+            label="Warns",
+            style=discord.TextStyle.long,
+            placeholder="Warns given upon violation. Use 0 to just have the message deleted",
+            required=True,
+            max_length=3
+        ))
 
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="words",
-                default=self.words,
-                label="Words",
-                style=discord.TextStyle.long,
-                placeholder="Words and phrases for this filter, seperated by commas",
-                required=True,
-                max_length=2000
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="words",
+            default=self.words,
+            label="Words",
+            style=discord.TextStyle.long,
+            placeholder="Words and phrases for this filter, seperated by commas",
+            required=True,
+            max_length=2000
+        ))
 
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="channels",
-                default=self.channels,
-                label="Channels",
-                style=discord.TextStyle.long,
-                placeholder="IDs of channels this filter should be active in. Leave blank for server-wide enforcement",
-                required=False,
-                max_length=3000
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="channels",
+            default=self.channels,
+            label="Channels",
+            style=discord.TextStyle.long,
+            placeholder="IDs of channels this filter should be active in. Leave blank for server-wide enforcement",
+            required=False,
+            max_length=3000
+        ))
 
 
 class RegexEditModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        warns: int, 
-        pattern: str,
-        channels: str,
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, warns: int, pattern: str, channels: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
         self.warns = warns
         self.pattern = pattern
@@ -210,53 +162,40 @@ class RegexEditModal(TextModalBase):
         self.add_items()
 
 
-    def add_items(
-        self
-    ) -> None:
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="warns",
-                default=str(self.warns),
-                label="Warns",
-                style=discord.TextStyle.long,
-                placeholder="Warns given upon violation. Use 0 to just have the message deleted",
-                required=True,
-                max_length=2
-            )
-        )
+    def add_items(self) -> None:
+        self.add_item(discord.ui.TextInput(
+            custom_id="warns",
+            default=str(self.warns),
+            label="Warns",
+            style=discord.TextStyle.long,
+            placeholder="Warns given upon violation. Use 0 to just have the message deleted",
+            required=True,
+            max_length=2
+        ))
 
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="pattern",
-                default=self.pattern,
-                label="Regex Pattern",
-                style=discord.TextStyle.long,
-                placeholder="The regex pattern for this filter",
-                required=True,
-                max_length=500
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="pattern",
+            default=self.pattern,
+            label="Regex Pattern",
+            style=discord.TextStyle.long,
+            placeholder="The regex pattern for this filter",
+            required=True,
+            max_length=500
+        ))
 
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="channels",
-                default=self.channels,
-                label="Channels",
-                style=discord.TextStyle.long,
-                placeholder="IDs of channels this filter should be active in. Leave blank for server-wide enforcement",
-                required=False,
-                max_length=3000
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="channels",
+            default=self.channels,
+            label="Channels",
+            style=discord.TextStyle.long,
+            placeholder="IDs of channels this filter should be active in. Leave blank for server-wide enforcement",
+            required=False,
+            max_length=3000
+        ))
 
 
 class CommandCreateModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
         self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
 
@@ -321,58 +260,36 @@ class CommandEditModal(TextModalBase):
 
 
 class AutomodRuleModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str,
-        _type: str,
-        default: str,
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, _type: str, default: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="amount",
-                label=_type.capitalize(),
-                style=discord.TextStyle.short,
-                default=default,
-                placeholder="Warns upon violation (0 to just delete the message)" if _type == "warns" else "Max allowed amount for this rule",
-                required=True,
-                max_length=2
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="amount",
+            label=_type.capitalize(),
+            style=discord.TextStyle.short,
+            default=default,
+            placeholder="Warns upon violation (0 to just delete the message)" if _type == "warns" else "Max allowed amount for this rule",
+            required=True,
+            max_length=2
+        ))
 
 
 class DefaultReasonModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str,
-        default: str,
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, default: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="reason",
-                label=title,
-                style=discord.TextStyle.long,
-                default=default,
-                placeholder="The default reason when none is given in commands",
-                required=True,
-                max_length=250,
-                min_length=4
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="reason",
+            label=title,
+            style=discord.TextStyle.long,
+            default=default,
+            placeholder="The default reason when none is given in commands",
+            required=True,
+            max_length=250,
+            min_length=4
+        ))
 
 
 class EmbedBuilderModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
     
         
@@ -417,13 +334,7 @@ class EmbedBuilderModal(TextModalBase):
 
 
 class ResponseCreateModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        position: str,
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, position: str,callback: Callable) -> None:
         super().__init__(bot, title, callback)
         self._placeholders = {
             "startswith": "Triggers for the response, seperated by commas (checks beginning of a message)",
@@ -433,59 +344,43 @@ class ResponseCreateModal(TextModalBase):
         }
         self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
 
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="name",
-                label="Name",
-                style=discord.TextStyle.short,
-                placeholder="Name of the auto responder",
-                required=True,
-                max_length=20
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="trigger",
-                label="Trigger",
-                style=discord.TextStyle.long,
-                placeholder=self._placeholders[position],
-                required=True,
-                max_length=200 if position == "regex" else 1500
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="content",
-                label="Response",
-                style=discord.TextStyle.long,
-                placeholder="What the bot should respond with",
-                required=True,
-                max_length=2000
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="vars",
-                label="Variable Reference",
-                style=discord.TextStyle.long,
-                placeholder="Putting something here won't have any effects. This field is just to show the available variables",
-                default=self._vars_text,
-                required=False,
-                max_length=len(self._vars_text)
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="name",
+            label="Name",
+            style=discord.TextStyle.short,
+            placeholder="Name of the auto responder",
+            required=True,
+            max_length=20
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="trigger",
+            label="Trigger",
+            style=discord.TextStyle.long,
+            placeholder=self._placeholders[position],
+            required=True,
+            max_length=200 if position == "regex" else 1500
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="content",
+            label="Response",
+            style=discord.TextStyle.long,
+            placeholder="What the bot should respond with",
+            required=True,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="vars",
+            label="Variable Reference",
+            style=discord.TextStyle.long,
+            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+            default=self._vars_text,
+            required=False,
+            max_length=len(self._vars_text)
+        ))
 
 
 class ResponseEditModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str, 
-        position: str,
-        trigger: str,
-        response: str,
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, position: str, trigger: str, response: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
         self._placeholders = {
             "startswith": "Triggers for the response, seperated by commas (checks beginning of a message)",
@@ -495,98 +390,76 @@ class ResponseEditModal(TextModalBase):
         }
         self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
 
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="trigger",
-                label="Trigger",
-                style=discord.TextStyle.long,
-                placeholder=self._placeholders[position],
-                default=trigger,
-                required=True,
-                max_length=200 if position == "regex" else 1500
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="content",
-                label="Response",
-                style=discord.TextStyle.long,
-                placeholder="What the bot should respond with",
-                default=response,
-                required=True,
-                max_length=2000
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="vars",
-                label="Variable Reference",
-                style=discord.TextStyle.long,
-                placeholder="Putting something here won't have any effects. This field is just to show the available variables",
-                default=self._vars_text,
-                required=False,
-                max_length=len(self._vars_text)
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="trigger",
+            label="Trigger",
+            style=discord.TextStyle.long,
+            placeholder=self._placeholders[position],
+            default=trigger,
+            required=True,
+            max_length=200 if position == "regex" else 1500
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="content",
+            label="Response",
+            style=discord.TextStyle.long,
+            placeholder="What the bot should respond with",
+            default=response,
+            required=True,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="vars",
+            label="Variable Reference",
+            style=discord.TextStyle.long,
+            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+            default=self._vars_text,
+            required=False,
+            max_length=len(self._vars_text)
+        ))
 
 
 class AutomodResponseModal(TextModalBase):
-    def __init__(
-        self, 
-        bot, 
-        title: str,
-        msg: str,
-        embed_title: str,
-        embed_desc: str,
-        callback: Callable
-    ) -> None:
+    def __init__(self, bot, title: str, msg: str, embed_title: str, embed_desc: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
         self.msg = msg
         self.embed_title = embed_title
         self.embed_desc = embed_desc
 
         self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{channel}  ━ The channel name \n{server}  ━ The server name \n{rule}  ━ The rule that was triggered"
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="msg",
-                label="Message",
-                style=discord.TextStyle.long,
-                placeholder="A regular message to send when the rule is triggered",
-                default=msg,
-                required=False,
-                max_length=2000
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="title",
-                label="Embed Title",
-                style=discord.TextStyle.long,
-                placeholder="An optional title for the response embed",
-                default=self.embed_title,
-                required=False,
-                max_length=200
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="desc",
-                label="Embed Description",
-                style=discord.TextStyle.long,
-                placeholder="An optional description for the response embed",
-                default=self.embed_desc,
-                required=False,
-                max_length=2000
-            )
-        )
-        self.add_item(
-            discord.ui.TextInput(
-                custom_id="vars",
-                label="Variable Reference",
-                style=discord.TextStyle.long,
-                placeholder="Putting something here won't have any effects. This field is just to show the available variables",
-                default=self._vars_text,
-                required=False,
-                max_length=len(self._vars_text)
-            )
-        )
+        self.add_item(discord.ui.TextInput(
+            custom_id="msg",
+            label="Message",
+            style=discord.TextStyle.long,
+            placeholder="A regular message to send when the rule is triggered",
+            default=msg,
+            required=False,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="title",
+            label="Embed Title",
+            style=discord.TextStyle.long,
+            placeholder="An optional title for the response embed",
+            default=self.embed_title,
+            required=False,
+            max_length=200
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="desc",
+            label="Embed Description",
+            style=discord.TextStyle.long,
+            placeholder="An optional description for the response embed",
+            default=self.embed_desc,
+            required=False,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="vars",
+            label="Variable Reference",
+            style=discord.TextStyle.long,
+            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+            default=self._vars_text,
+            required=False,
+            max_length=len(self._vars_text)
+        ))

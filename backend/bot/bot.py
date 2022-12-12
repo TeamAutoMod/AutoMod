@@ -9,8 +9,7 @@ import requests
 import datetime
 import asyncio
 from toolbox import S as Object
-from typing import Union, Dict, List, Tuple
-from pyngrok import ngrok
+from typing import Union, Tuple, Optional, Dict, List
 import random
 import os
 import logging; log = logging.getLogger()
@@ -253,12 +252,9 @@ class ShardedBotInstance(commands.AutoShardedBot):
     async def on_interaction(self, i: discord.Interaction) -> None:
         if i.type == discord.InteractionType.application_command:
             self.used_commands += 1
-            if i.guild != None:
-                if not i.guild.chunked:
-                    await self.chunk_guild(i.guild)
 
 
-    def dispatch(self, event_name: str, *args, **kwargs) -> None:
+    def dispatch(self, event_name: str, *args: Optional[discord.Interaction], **kwargs) -> None:
         ev = event_name.lower()
         if not "socket" in ev:
             self.event_stats.update({
@@ -268,7 +264,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         if ev == "interaction":
             if args[0].guild != None:
                 if not args[0].guild.chunked:
-                    asyncio.run(self.chunk_guild(args[0].guild))
+                    asyncio.run_coroutine_threadsafe(self.chunk_guild(args[0].guild), loop=self.loop)
                     
         try:
             super().dispatch(event_name, *args, **kwargs)
@@ -338,10 +334,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 except Exception: raise
 
 
-    def get_plugin(self, name: str) -> Union[
-        commands.Cog, 
-        None
-    ]:
+    def get_plugin(self, name: str) -> Optional[commands.Cog]:
         try:
             return super().get_cog(name)
         except Exception:

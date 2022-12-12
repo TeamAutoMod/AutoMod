@@ -41,10 +41,7 @@ ACTIONS = {
 
 class ModerationPlugin(WarnPlugin):
     """Plugin for all moderation commands"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
         self.log_processor = LogProcessor(bot)
         self.action_processor = ActionProcessor(bot)
@@ -52,9 +49,7 @@ class ModerationPlugin(WarnPlugin):
         for f in ["unmutes", "unbans"]: self.bot.loop.create_task((getattr(self, f"handle_{f}"))())
 
 
-    async def handle_unmutes(
-        self
-    ) -> None:
+    async def handle_unmutes(self) -> None:
         while True:
             await asyncio.sleep(10)
             if len(list(self.db.mutes.find({}))) > 0:
@@ -82,9 +77,7 @@ class ModerationPlugin(WarnPlugin):
                         self.db.mutes.delete(mute["id"])
 
 
-    async def handle_unbans(
-        self
-    ) -> None:
+    async def handle_unbans(self) -> None:
         while True:
             await asyncio.sleep(10)
             if len(list(self.db.tbans.find({}))) > 0:
@@ -124,18 +117,9 @@ class ModerationPlugin(WarnPlugin):
         ctx: discord.Interaction, 
         amount: int, 
         check: Callable, 
-        before: Union[
-            datetime.datetime, 
-            discord.Message
-        ] = None, 
-        after: Union[
-            datetime.datetime, 
-            discord.Message
-        ] = None
-    ) -> Union[
-        str, 
-        Exception
-    ]: 
+        before: Union[datetime.datetime, discord.Message] = None, 
+        after: Union[datetime.datetime, discord.Message] = None
+    ) -> Union[str, Exception]: 
         try:
             msgs = [
                 m async for m in ctx.channel.history(
@@ -154,17 +138,7 @@ class ModerationPlugin(WarnPlugin):
                 return self.locale.t(ctx.guild, "cleaned", _emote="YES", amount=len(msgs), plural="" if len(msgs) == 1 else "s"), {}
 
 
-    async def kick_or_ban(
-        self, 
-        action: str, 
-        ctx: discord.Interaction, 
-        user: Union[
-            discord.Member, 
-            discord.User
-        ], 
-        reason: str, 
-        **extra_kwargs
-    ) -> None:
+    async def kick_or_ban(self, action: str, ctx: discord.Interaction, user: Union[discord.Member, discord.User], reason: str, **_) -> None:
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if action != "hackban":
@@ -222,13 +196,7 @@ class ModerationPlugin(WarnPlugin):
         reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def ban(
-        self, 
-        ctx: discord.Interaction,
-        user: discord.User, 
-        *, 
-        reason: str = None
-    ) -> None:
+    async def ban(self, ctx: discord.Interaction,user: discord.User, *, reason: str = None) -> None:
         """
         ban_help
         examples:
@@ -253,13 +221,7 @@ class ModerationPlugin(WarnPlugin):
         reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def unban(
-        self,
-        ctx: discord.Interaction, 
-        user: discord.User, 
-        *, 
-        reason: str = None
-    ) -> None:
+    async def unban(self, ctx: discord.Interaction, user: discord.User, *, reason: str = None) -> None:
         """
         unban_help
         examples:
@@ -303,13 +265,7 @@ class ModerationPlugin(WarnPlugin):
         reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def softban(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.User, 
-        *, 
-        reason: str = None
-    ) -> None:
+    async def softban(self, ctx: discord.Interaction, user: discord.User, *, reason: str = None) -> None:
         """
         softban_help
         examples:
@@ -334,13 +290,7 @@ class ModerationPlugin(WarnPlugin):
         reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def hackban(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.User,
-        *, 
-        reason: str = None
-    ) -> None:
+    async def hackban(self, ctx: discord.Interaction, user: discord.User, *, reason: str = None) -> None:
         """
         hackban_help
         examples:
@@ -366,14 +316,7 @@ class ModerationPlugin(WarnPlugin):
         reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def tempban(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.User, 
-        length: str, 
-        *, 
-        reason: str = None
-    ) -> None:
+    async def tempban(self, ctx: discord.Interaction, user: discord.User, length: str, *, reason: str = None) -> None:
         """
         tempban_help
         examples:
@@ -517,13 +460,7 @@ class ModerationPlugin(WarnPlugin):
         reason="An optional reason for the ban"
     )
     @discord.app_commands.default_permissions(kick_members=True)
-    async def kick(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.User, 
-        *, 
-        reason: str = None
-    ) -> None:
+    async def kick(self, ctx: discord.Interaction, user: discord.User, *, reason: str = None) -> None:
         """
         kick_help
         examples:
@@ -544,17 +481,12 @@ class ModerationPlugin(WarnPlugin):
         description="🔇 Temporarily mutes the user"
     )
     @discord.app_commands.describe(
-        length="10m, 2h, 1d"
+        user="The user you want to mute",
+        length="10m, 2h, 1d",
+        reason="An optional reason for the mute"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def mute(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.Member, 
-        length: str, 
-        *, 
-        reason: str = None
-    ) -> None:
+    async def mute(self, ctx: discord.Interaction, user: discord.Member, length: str, *, reason: str = None) -> None:
         """
         mute_help
         examples:
@@ -694,11 +626,7 @@ class ModerationPlugin(WarnPlugin):
         user="The user you want to unmute"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def unmute(
-        self, 
-        ctx: discord.Interaction, 
-        user: discord.Member
-    ) -> None:
+    async def unmute(self, ctx: discord.Interaction, user: discord.Member) -> None:
         """
         unmute_help
         examples:
@@ -740,13 +668,7 @@ class ModerationPlugin(WarnPlugin):
         content="Only checks for messages with the given content"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def clean_call(
-        self, 
-        ctx: discord.Interaction, 
-        amount: int = 10,
-        user: discord.User = None,
-        content: str = None
-    ) -> None:
+    async def clean_call(self, ctx: discord.Interaction, amount: int = 10, user: discord.User = None, content: str = None) -> None:
         """
         clean_all_help
         examples:
@@ -779,11 +701,7 @@ class ModerationPlugin(WarnPlugin):
             except Exception: pass
 
 
-    async def report(
-        self,
-        i: discord.Interaction,
-        msg: discord.Message
-    ) -> None:
+    async def report(self, i: discord.Interaction, msg: discord.Message) -> None:
         if not self.can_act(
             msg.guild,
             i.user,
@@ -834,6 +752,5 @@ class ModerationPlugin(WarnPlugin):
         )
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(ModerationPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(ModerationPlugin(bot))

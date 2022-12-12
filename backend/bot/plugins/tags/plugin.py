@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from toolbox import S as Object
-from typing import Literal
+from typing import Literal, Dict, Any
 import datetime
 import re
 import logging; log = logging.getLogger()
@@ -19,22 +19,16 @@ from ..responder.plugin import AutoResponderPlugin
 
 class TagsPlugin(AutoResponderPlugin):
     """Plugin for tags (custom commands)"""
-    def __init__(
-        self, 
-        bot: ShardedBotInstance
-    ) -> None:
+    def __init__(self, bot: ShardedBotInstance) -> None:
         super().__init__(bot)
-        self._tags = {}
+        self._commands = {}
         self._cached_from_api = {}
-        self.bot.loop.create_task(self.cache_tags())
+        self.bot.loop.create_task(self.cache_commands())
 
 
-    async def custom_callback(
-        self,
-        ctx: discord.Interaction
-    ) -> None:
-        if ctx.guild_id in self._tags:
-            data = self._tags[ctx.guild_id].get(
+    async def custom_callback(self, ctx: discord.Interaction) -> None:
+        if ctx.guild_id in self._commands:
+            data = self._commands[ctx.guild_id].get(
                 ctx.command.qualified_name.lower(),
                 None
             )
@@ -58,14 +52,7 @@ class TagsPlugin(AutoResponderPlugin):
                 )
         
 
-    def add_tag(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-        content: str,
-        description: str,
-        ephemeral: bool
-    ) -> None:
+    def add_command(self, ctx: discord.Interaction, name: str, content: str, description: str, ephemeral: bool) -> None:
         try:
             self.bot.tree.add_command(
                 discord.app_commands.Command(
@@ -86,20 +73,16 @@ class TagsPlugin(AutoResponderPlugin):
                     "description": description
                 }
             }
-            if not ctx.guild.id in self._tags:
-                self._tags[ctx.guild.id] = data
+            if not ctx.guild.id in self._commands:
+                self._commands[ctx.guild.id] = data
             else:
-                self._tags[ctx.guild.id].update(data)
+                self._commands[ctx.guild.id].update(data)
 
             self.db.tags.insert(CustomCommand(ctx, name, content, ephemeral, description))
             return None
 
 
-    def remove_tag(
-        self, 
-        guild: discord.Guild, 
-        name: str
-    ) -> None:
+    def remove_command(self, guild: discord.Guild, name: str) -> None:
         try:
             self.bot.tree.remove_command(
                 name,
@@ -108,19 +91,13 @@ class TagsPlugin(AutoResponderPlugin):
         except Exception as ex:
             return ex
         else:
-            self._tags[guild.id].pop(name)
+            self._commands[guild.id].pop(name)
             self.db.tags.delete(f"{guild.id}-{name}")
             return None
 
 
-    def update_tag(
-        self, 
-        ctx: discord.Interaction, 
-        name: str, 
-        content: str,
-        ephemeral: bool
-    ) -> None:
-        self._tags[ctx.guild.id][name].update({
+    def update_command(self, ctx: discord.Interaction, name: str, content: str, ephemeral: bool ) -> None:
+        self._commands[ctx.guild.id][name].update({
             "content": content,
             "ephemeral": ephemeral
         })
@@ -132,9 +109,7 @@ class TagsPlugin(AutoResponderPlugin):
         })
 
 
-    async def cache_tags(
-        self
-    ) -> None:
+    async def cache_commands(self) -> None:
         _ = True
         while _:
             _ = False
@@ -161,10 +136,10 @@ class TagsPlugin(AutoResponderPlugin):
                     }
                 
                 if self.validate_name(list(data.keys())[0]):
-                    if not _id in self._tags:
-                        self._tags[_id] = data
+                    if not _id in self._commands:
+                        self._commands[_id] = data
                     else:
-                        self._tags[_id].update(data)
+                        self._commands[_id].update(data)
                     
                     try:
                         self.bot.tree.add_command(
@@ -190,10 +165,7 @@ class TagsPlugin(AutoResponderPlugin):
                 except Exception: pass
 
 
-    def update_uses(
-        self, 
-        _id: str
-    ) -> None:
+    def update_uses(self, _id: str) -> None:
         self.bot.used_customs += 1
         cur = self.db.tags.get(_id, "uses")
         if cur == None:
@@ -202,10 +174,7 @@ class TagsPlugin(AutoResponderPlugin):
             self.db.tags.update(_id, "uses", cur+1)
 
 
-    def validate_name(
-        self,
-        name: str
-    ) -> bool:
+    def validate_name(self, name: str) -> bool:
         for c in name:
             if c == "-" or c == "_":
                 pass
@@ -217,11 +186,7 @@ class TagsPlugin(AutoResponderPlugin):
         return True
 
 
-    async def get_tags(
-        self,
-        guild: discord.Guild,
-        raw: dict
-    ) -> dict:
+    async def get_tags(self, guild: discord.Guild, raw: dict) -> Dict[str, Any]:
         pre_cached = self._cached_from_api.get(guild.id, [])
         for e in raw:
             if e not in pre_cached:
@@ -242,18 +207,15 @@ class TagsPlugin(AutoResponderPlugin):
         name="list",
         description="📝 Shows a list of all custom commands"
     )
-    async def custom_commands(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def custom_commands(self, ctx: discord.Interaction) -> None:
         """
         commands_show_help
         examples:
         -custom-commands list
         """
         cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
-        if ctx.guild.id in self._tags:
-            tags = await self.get_tags(ctx.guild, self._tags[ctx.guild.id])
+        if ctx.guild.id in self._commands:
+            tags = await self.get_tags(ctx.guild, self._commands[ctx.guild.id])
             if len(tags) > 0:
                 e = Embed(
                     ctx,
@@ -272,10 +234,7 @@ class TagsPlugin(AutoResponderPlugin):
         description="✅ Creates a new custom slash command"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def addcom(
-        self, 
-        ctx: discord.Interaction
-    ) -> None:
+    async def addcom(self, ctx: discord.Interaction) -> None:
         """
         commands_add_help
         examples:
@@ -293,7 +252,7 @@ class TagsPlugin(AutoResponderPlugin):
             if self.validate_name(name.lower()) == False:
                 return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_name", _emote="NO"), 0))
 
-            if len(self._tags.get(i.guild_id, [])) > 40:
+            if len(self._commands.get(i.guild_id, [])) > 40:
                 return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_commands", _emote="NO"), 0))
 
             name = name.lower()
@@ -314,11 +273,11 @@ class TagsPlugin(AutoResponderPlugin):
                         if cmd.qualified_name.lower() == name:
                             return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_has_cmd_name", _emote="NO"), 0))
 
-            if i.guild.id in self._tags:
-                if name in self._tags[i.guild.id]:
+            if i.guild.id in self._commands:
+                if name in self._commands[i.guild.id]:
                     return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_alr_exists", _emote="NO"), 0))
 
-            r = self.add_tag(i, name, content, description, False)
+            r = self.add_command(i, name, content, description, False)
             if r != None:
                 await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=r), 0))
             else:
@@ -337,22 +296,18 @@ class TagsPlugin(AutoResponderPlugin):
         name="Name of the custom command",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def delcom(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
+    async def delcom(self, ctx: discord.Interaction, name: str) -> None:
         """
         commands_delete_help
         examples:
         -custom-commands delete test_command
         """
         name = name.lower()
-        if ctx.guild.id in self._tags:
-            if not name in self._tags[ctx.guild.id]:
+        if ctx.guild.id in self._commands:
+            if not name in self._commands[ctx.guild.id]:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
-                r = self.remove_tag(ctx.guild, name)
+                r = self.remove_command(ctx.guild, name)
                 if r != None:
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r), 0))
                 else:
@@ -380,11 +335,11 @@ class TagsPlugin(AutoResponderPlugin):
         name = name.lower()
         
         cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
-        if ctx.guild.id in self._tags:
-            if not name in self._tags[ctx.guild.id]:
+        if ctx.guild.id in self._commands:
+            if not name in self._commands[ctx.guild.id]:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
-                data = self._tags[ctx.guild.id][name]
+                data = self._commands[ctx.guild.id][name]
 
                 async def callback(i: discord.Interaction) -> None:
                     content, _ = self.bot.extract_args(i, "content", "vars")
@@ -396,7 +351,7 @@ class TagsPlugin(AutoResponderPlugin):
                         else:
                             _ephemeral = False
                     
-                    self.update_tag(i, name, content, _ephemeral)
+                    self.update_command(i, name, content, _ephemeral)
                     await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_updated", _emote="YES"), 1))
                 
                 modal = CommandEditModal(
@@ -418,11 +373,7 @@ class TagsPlugin(AutoResponderPlugin):
         name="Name of the custom command",
     )
     @discord.app_commands.default_permissions(manage_messages=True)
-    async def infocom(
-        self, 
-        ctx: discord.Interaction, 
-        name: str
-    ) -> None:
+    async def infocom(self, ctx: discord.Interaction, name: str) -> None:
         """
         commands_info_help
         examples:
@@ -430,8 +381,8 @@ class TagsPlugin(AutoResponderPlugin):
         """
         name = name.lower()
         cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
-        if ctx.guild.id in self._tags:
-            if not name in self._tags[ctx.guild.id]:
+        if ctx.guild.id in self._commands:
+            if not name in self._commands[ctx.guild.id]:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
             else:
                 data = Object(self.db.tags.get_doc(f"{ctx.guild.id}-{name}"))
@@ -485,6 +436,5 @@ class TagsPlugin(AutoResponderPlugin):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
 
 
-async def setup(
-    bot: ShardedBotInstance
-) -> None: await bot.register_plugin(TagsPlugin(bot))
+async def setup(bot: ShardedBotInstance) -> None: 
+    await bot.register_plugin(TagsPlugin(bot))
