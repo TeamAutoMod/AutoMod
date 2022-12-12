@@ -356,7 +356,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         return False
 
 
-    def parse_filter(self, words: list) -> Optional[re.Pattern]:
+    def parse_filter(self, words: List[str]) -> Optional[re.Pattern]:
         normal = []
         wildcards = []
 

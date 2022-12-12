@@ -3,7 +3,7 @@
 import discord
 from discord.ui import View
 
-from typing import Callable
+from typing import Callable, Dict, Any, List
 
 from .buttons import DeleteBtn, ActionedBtn, DeleteHighlightBtn, LinkBtn
 
@@ -19,7 +19,7 @@ class DeleteView(View):
 
 
 class ChoiceView(View):
-    def __init__(self, placeholder: str, guild: discord.Guild, opt: list, *args, **kwargs) -> None:
+    def __init__(self, placeholder: str, guild: discord.Guild, opt: List[str], *args, **kwargs) -> None:
         super().__init__(
             *args, 
             **kwargs
@@ -48,7 +48,7 @@ class ActionedView(View):
 
 
 class HighlightDMView(View):
-    def __init__(self, bot,user_id: int, msg: discord.Message, delete_func: Callable, func_args: dict, *args, **kwargs) -> None:
+    def __init__(self, bot,user_id: int, msg: discord.Message, delete_func: Callable, func_args: Dict[str, Any], *args, **kwargs) -> None:
         super().__init__(
             *args, 
             **kwargs

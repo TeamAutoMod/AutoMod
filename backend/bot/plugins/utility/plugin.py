@@ -12,7 +12,7 @@ import datetime
 from PIL import Image
 from io import BytesIO
 from toolbox import S as Object
-from typing import Union, List, Dict, Literal, Tuple, Optional
+from typing import Union, Literal, Tuple, Optional, List, Dict, Any
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
@@ -158,7 +158,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         super().__init__(bot)
 
 
-    def get_log_for_case(self, ctx: discord.Interaction, case: dict) -> Optional[str]:
+    def get_log_for_case(self, ctx: discord.Interaction, case: Dict[str, Any]) -> Optional[str]:
         if not "log_id" in case: return None
 
         log_id = case["log_id"]
@@ -326,14 +326,14 @@ class UtilityPlugin(AutoModPluginBlueprint):
             return highlights_from_db
         
 
-    def add_highlight(self, ctx: discord.Interaction, all_highlights: list, new_highlight: str) -> None:
+    def add_highlight(self, ctx: discord.Interaction, all_highlights: List[Dict[str, Any]], new_highlight: str) -> None:
         all_highlights.update({
             f"{ctx.user.id}": [*all_highlights.get(f"{ctx.user.id}", []), *[new_highlight]]
         })
         self.db.highlights.update(f"{ctx.guild.id}", "highlights", all_highlights)
 
 
-    def delete_highlight(self, guild: discord.Guild, user_id: int, all_highlights: list, old_highlight: str) -> None:
+    def delete_highlight(self, guild: discord.Guild, user_id: int, all_highlights: List[Dict[str, Any]], old_highlight: str) -> None:
         all_highlights.update({
             f"{user_id}": [x for x in all_highlights.get(f"{user_id}", []) if x != old_highlight]
         })

@@ -48,7 +48,7 @@ class InternalCacheStore:
             })
 
 
-    def insert(self, _id: Union[str, int], schema: dict) -> None:
+    def insert(self, _id: Union[str, int], schema: Dict[str, Any]) -> None:
         if not str(_id) in self.data:
             self.data[str(_id)] = schema
 

@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from .embed import Embed
 
@@ -19,7 +19,7 @@ class Context(commands.Context):
 
     async def send(self, *args, embed: Optional[Embed] = None, **kwargs) -> Optional[discord.Message]:
         if embed != None:
-            e: dict = embed.to_dict()
+            e: Dict[str, Any] = embed.to_dict()
             if e.get("fields", None) != None:
                 for field in e.get("fields"):
                     field["value"] = field["value"][:1023]

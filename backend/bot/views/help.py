@@ -3,6 +3,8 @@
 import discord
 from discord.ui import View, Select # pyright: reportMissingImports=false
 
+from typing import List
+
 from .buttons import LinkBtn
 
 
@@ -21,7 +23,7 @@ ACTUAL_PLUGIN_NAMES = {
 
 
 class HelpView(View):
-    def __init__(self, bot, show_buttons: bool = False, viewable_plugins: list = [], current_select: str = None, *args, **kwargs) -> None:
+    def __init__(self, bot, show_buttons: bool = False, viewable_plugins: List[str] = [], current_select: str = None, *args, **kwargs) -> None:
         self.bot = bot
         super().__init__(
             *args,

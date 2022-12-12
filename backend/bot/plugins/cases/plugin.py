@@ -7,7 +7,7 @@ import datetime
 from typing import Union
 from toolbox import S as Object
 import logging; log = logging.getLogger()
-from typing import Union, Optional
+from typing import Union, Optional, Dict, Any
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, E
@@ -63,7 +63,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         embed.description = f"{embed.description}\n{inp}"
 
 
-    def get_log_for_case(self, ctx: discord.Interaction, case: dict) -> Optional[str]:
+    def get_log_for_case(self, ctx: discord.Interaction, case: Dict[str, Any]) -> Optional[str]:
         if not "log_id" in case: return None
 
         log_id = case["log_id"]

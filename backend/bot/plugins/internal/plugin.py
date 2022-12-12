@@ -9,7 +9,7 @@ import topgg
 import discordspy
 import os
 from toolbox import S as Object
-from typing import Callable, Union, Tuple, TypeVar, Optional, List
+from typing import Callable, Union, Tuple, TypeVar, Optional, List, Dict
 import logging; log = logging.getLogger()
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
@@ -1049,7 +1049,7 @@ class InternalPlugin(AutoModPluginBlueprint):
 
 
     @AutoModPluginBlueprint.listener()
-    async def on_dbl_vote(self, data: dict) -> None:
+    async def on_dbl_vote(self, data: Dict[str, str]) -> None:
         guild = self.bot.get_guild(int(self.config.support_server))
         if guild == None: return
 

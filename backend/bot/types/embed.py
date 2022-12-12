@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 
-from typing import Union, Dict
+from typing import Union, Dict, List
 
 
 
@@ -52,7 +52,7 @@ class Embed(discord.Embed):
         )
 
     
-    def add_fields(self, fields: list) -> None:
+    def add_fields(self, fields: List[Dict[str, Union[str, bool]]]) -> None:
         self._add_color()
         for field in fields:
             if not isinstance(field, dict):

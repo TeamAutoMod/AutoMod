@@ -3,7 +3,7 @@
 import discord
 from discord.ui import Button
 
-from typing import Callable
+from typing import Callable, Dict, Any
 
 from ..types import E
 
@@ -119,7 +119,7 @@ class ActionedBtn(Button):
 
 
 class DeleteHighlightBtn(Button):
-    def __init__(self, bot, check: Callable, delete_func: Callable, func_args: dict, *args, **kwargs) -> None:
+    def __init__(self, bot, check: Callable, delete_func: Callable, func_args: Dict[str, Any], *args, **kwargs) -> None:
         super().__init__(
             *args, 
             label="Delete Highlight", 

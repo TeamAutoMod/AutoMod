@@ -186,7 +186,7 @@ class TagsPlugin(AutoResponderPlugin):
         return True
 
 
-    async def get_tags(self, guild: discord.Guild, raw: dict) -> Dict[str, Any]:
+    async def get_tags(self, guild: discord.Guild, raw: Dict[str, Any]) -> Dict[str, Any]:
         pre_cached = self._cached_from_api.get(guild.id, [])
         for e in raw:
             if e not in pre_cached:

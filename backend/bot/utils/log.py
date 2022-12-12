@@ -4,7 +4,7 @@ import discord
 
 from typing import Optional
 import asyncio
-from typing import Dict
+from typing import Dict, Any, List
 import logging; log = logging.getLogger(__name__)
 
 from ..schemas import GuildConfig
@@ -49,7 +49,7 @@ class LogQueue:
                                             self.db.configs.update(guild.id, channel_type, "")
 
 
-    async def default_log(self, channel: discord.TextChannel, chunk: list) -> Dict[bool, discord.Message]:
+    async def default_log(self, channel: discord.TextChannel, chunk: List[Dict[str, Any]]) -> Dict[bool, discord.Message]:
         msgs = {}
         for entry in chunk:
             msg = await channel.send(
@@ -111,7 +111,7 @@ class LogQueue:
                     return w
         
         
-    async def _execute(self, guild: discord.Guild, channel_type: str, log_channel: discord.TextChannel, chunk: dict) -> None:
+    async def _execute(self, guild: discord.Guild, channel_type: str, log_channel: discord.TextChannel, chunk: Dict[str, Any]) -> None:
         log_messages = {}
         try:
             wid = self.bot.db.configs.get(guild.id, f"{channel_type}_webhook")

@@ -35,7 +35,7 @@ class MongoCollection(Collection):
         return super().get(_id, key)
 
 
-    def insert(self, schema: dict) -> None:
+    def insert(self, schema: Dict[str, Any]) -> None:
         super().insert_one(schema)
         if self.cached: (getattr(self.bot.cache, self.collection_name)).insert(schema["id"], schema)
 
@@ -45,7 +45,7 @@ class MongoCollection(Collection):
         if self.cached: (getattr(self.bot.cache, self.collection_name)).update(_id, key, value)
 
 
-    def multi_update(self, _id: Union[str, int], updates: dict) -> None:
+    def multi_update(self, _id: Union[str, int], updates: Dict[str, Any]) -> None:
         for k, v in updates.items():
             self.update(_id, k, v)
 
@@ -55,7 +55,7 @@ class MongoCollection(Collection):
         if self.cached: (getattr(self.bot.cache, self.collection_name)).delete(_id)
 
 
-    def multi_delete(self,  _filter: dict) -> None:
+    def multi_delete(self,  _filter: Dict[Any, Any]) -> None:
         super().delete_many(_filter)
         if self.cached:
             data = (getattr(self.bot.cache, self.collection_name)).data
