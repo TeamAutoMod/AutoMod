@@ -21,7 +21,10 @@ class TypeHintedToolboxObject:
                     return cls({k: cls.nested(data[k]) for k in data})
 
         for k, v in _.nested(data).items():
-            setattr(self, str(k), v)
+            if str(k).isdigit():
+                raise Exception(f"Keys have to be strict strings, not possible integers - Error with: {k}")
+            else:
+                setattr(self, str(k), v)
     
 
     def __len__(self) -> int:

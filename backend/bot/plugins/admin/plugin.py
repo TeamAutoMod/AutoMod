@@ -174,10 +174,15 @@ class AdminPlugin(AutoModPluginBlueprint):
         ).items()):
             if i == 0:
                 msg.append(
-                    f" EVENT{' ' * abs(len('EVENT') - max([len(x) for x, _ in self.bot.event_stats.items()]))} | COUNT" + \
-                    f"\n{'-------' + '-' * abs(len('EVENT') - max([len(x) for x, _ in self.bot.event_stats.items()]))}|{'-' * 15}"
+                    f" EVENT{' ' * abs(len('EVENT') - max([len(x) for x, _ in self.bot.event_stats.items()]))} | COUNT{' ' * 8} | PER MINUTE" + \
+                    f"\n{'-------' + '-' * abs(len('EVENT') - max([len(x) for x, _ in self.bot.event_stats.items()]))}|{'-' * 15}|{'-' * 15}"
                 )
-            msg.append(f" {k}{' ' * abs(len(k) - max([len(x) for x, _ in self.bot.event_stats.items()]))} | {v}")
+            
+            times = round(int(v) / round(self.bot.get_raw_uptime().total_seconds() / 60))
+            space_len = abs(len(k) - max([len(x) for x, _ in self.bot.event_stats.items()]))
+            msg.append(
+                f" {k}{' ' * space_len} | {v}{' ' * abs(len(str(v)) - 14)}| {times}"
+            )
         
         await ctx.send("```js\n{}\n```".format(
             "\n".join(msg[0:max(min(20, len(msg)), 1)])

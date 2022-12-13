@@ -373,6 +373,10 @@ class ShardedBotInstance(commands.AutoShardedBot):
             return "{}d, {}h & {}m".format(days, hours, minutes)
         else:
             return days, hours, minutes, seconds
+        
+
+    def get_raw_uptime(self) -> datetime.timedelta:
+        return datetime.datetime.utcnow() - self.uptime
 
 
     async def register_user_info_ctx_menu(self) -> None:
