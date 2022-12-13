@@ -16,7 +16,7 @@ import logging; log = logging.getLogger()
 from .__obj__ import TypeHintedToolboxObject as Object
 from .cache import InternalCache
 from .mongo import MongoDB
-from .schemas import GuildConfig
+from .schemas import GuildConfig, Stats
 from .utils import Translator, Emotes, LogQueue, MessageCache
 from .types import embed, Context
 from .views import pages
@@ -253,6 +253,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     async def on_interaction(self, i: discord.Interaction) -> None:
         if i.type == discord.InteractionType.application_command:
             self.used_commands += 1
+            self.update_command_stats()
 
 
     def dispatch(self, event_name: str, *args: Optional[discord.Interaction], **kwargs) -> None:
@@ -430,6 +431,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                         "guilds": len(self.guilds),
                         "users": sum([x.member_count for x in self.guilds]),
                         "shards": self.shard_count,
+                        "used_commands": self.get_command_stats(),
                         "token": self.config.token
                     }
                 )
@@ -478,6 +480,23 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     def get_default_reason(self, guild: discord.Guild) -> str:
         return self.db.configs.get(guild.id, "default_reason")
+    
+
+    def update_command_stats(self) -> None:
+        cur = self.db.stats.get(self.user.id, "used_commands")
+        if cur == None:
+            self.db.stats.insert(Stats(self.user.id))
+        else:
+            self.db.stats.update(self.user.id, "used_commands", cur + 1)
+
+
+    def get_command_stats(self) -> int:
+        cur = self.db.stats.get(self.user.id, "used_commands")
+        if cur == None:
+            self.db.stats.insert(Stats(self.user.id))
+            return 0
+        else:
+            return cur
 
 
     def run(self) -> None:

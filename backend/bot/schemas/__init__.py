@@ -7,6 +7,7 @@ from .slowmode import Slowmode
 from .tempban import Tempban
 from .responder import Responder
 from .highlights import Highlights
+from .stats import Stats
 
 import os
 if os.path.exists("backend/bot/schemas/level.py"): from .level import UserLevel # pyright: reportMissingImports=false
