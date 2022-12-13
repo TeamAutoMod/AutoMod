@@ -8,7 +8,7 @@ import asyncio
 import topgg
 import discordspy
 import os
-from toolbox import S as Object
+from ...__obj__ import TypeHintedToolboxObject as Object
 from typing import Callable, Union, Tuple, TypeVar, Optional, List, Dict
 import logging; log = logging.getLogger()
 

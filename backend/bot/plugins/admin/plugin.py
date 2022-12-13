@@ -9,7 +9,7 @@ import traceback
 import ast
 import psutil
 import datetime
-from toolbox import S as Object
+from ...__obj__ import TypeHintedToolboxObject as Object
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, E

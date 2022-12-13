@@ -5,7 +5,7 @@ from discord.ext import commands
 
 import datetime
 from typing import Union
-from toolbox import S as Object
+from ...__obj__ import TypeHintedToolboxObject as Object
 import logging; log = logging.getLogger()
 from typing import Union, Optional, Dict, Any
 

@@ -3,7 +3,7 @@
 import discord
 
 from typing import Dict
-from toolbox import S as Object
+from ...__obj__ import TypeHintedToolboxObject as Object
 import logging; log = logging.getLogger(__name__)
 
 from ...types import Embed
@@ -239,7 +239,7 @@ LOG_TYPES = {
 }
 
 
-class LogProcessor(object):
+class LogProcessor:
     def __init__(self, bot) -> None:
         self.bot = bot
         self.db = bot.db

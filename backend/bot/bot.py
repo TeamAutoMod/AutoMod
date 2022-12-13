@@ -8,12 +8,12 @@ import traceback
 import requests
 import datetime
 import asyncio
-from toolbox import S as Object
 from typing import Union, Tuple, Optional, Dict, List
 import random
 import os
 import logging; log = logging.getLogger()
 
+from .__obj__ import TypeHintedToolboxObject as Object
 from .cache import InternalCache
 from .mongo import MongoDB
 from .schemas import GuildConfig
@@ -82,7 +82,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs) -> None:
         self._start_text()
         with open("backend/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
-            self.config = Object(json.load(config_file))
+            self.config: Object = Object(json.load(config_file))
             if self.config.twitch_app_id != "" and self.config.twitch_secret != "":
                 self.ngrok_port = random.randint(1024, 65535)
                 #self._set_ngrok_url()
@@ -123,6 +123,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
         if self.config.watch == True:
             self.observer = Observer(self)
+
         self.db = MongoDB(self)
         self.cache = InternalCache(self)
         self.emotes = Emotes(self)

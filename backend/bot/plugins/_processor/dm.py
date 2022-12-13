@@ -10,7 +10,7 @@ from ...bot import ShardedBotInstance
 
 
 
-class DMProcessor(object):
+class DMProcessor:
     def __init__(self, bot: ShardedBotInstance) -> None:
         self.bot = bot
         self.colors = {

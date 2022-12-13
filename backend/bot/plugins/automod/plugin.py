@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 import re
-from toolbox import S as Object
+from ...__obj__ import TypeHintedToolboxObject as Object
 from urllib.parse import urlparse
 from typing import TypeVar, Literal, Optional, List
 import logging; log = logging.getLogger()

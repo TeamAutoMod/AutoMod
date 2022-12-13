@@ -11,7 +11,7 @@ import subprocess
 import datetime
 from PIL import Image
 from io import BytesIO
-from toolbox import S as Object
+from ...__obj__ import TypeHintedToolboxObject as Object
 from typing import Union, Literal, Tuple, Optional, List, Dict, Any
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance

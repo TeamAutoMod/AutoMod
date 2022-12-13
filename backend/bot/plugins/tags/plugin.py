@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 
-from toolbox import S as Object
+from ...__obj__ import TypeHintedToolboxObject as Object
 from typing import Literal, Dict, Any
 import datetime
 import re
