@@ -436,5 +436,55 @@ class TagsPlugin(AutoResponderPlugin):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
 
 
+    # @_commands.command(
+    #     name="disable",
+    #     description="📌 Disables the given command"
+    # )
+    # @discord.app_commands.describe(
+    #     name="Name of the custom command",
+    # )
+    # @discord.app_commands.default_permissions(manage_messages=True)
+    # async def disablecom(self, ctx: discord.Interaction, name: str) -> None:
+    #     """
+    #     commands_disable_help
+    #     examples:
+    #     -commands disable test_cmd
+    #     """
+    #     name = name.lower()
+    #     if ctx.guild.id in self._commands:
+    #         if not name in self._commands[ctx.guild.id]:
+    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
+    #         else:
+    #             self.disable_command(ctx, name)
+    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_tag", _emote="YES", cmd=name), 1))
+    #     else:
+    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+
+
+    # @_commands.command(
+    #     name="enable",
+    #     description="📌 Enables the given command"
+    # )
+    # @discord.app_commands.describe(
+    #     name="Name of the custom command",
+    # )
+    # @discord.app_commands.default_permissions(manage_messages=True)
+    # async def enablecom(self, ctx: discord.Interaction, name: str) -> None:
+    #     """
+    #     commands_disable_help
+    #     examples:
+    #     -commands enable test_cmd
+    #     """
+    #     name = name.lower()
+    #     if ctx.guild.id in self._commands:
+    #         if not name in self._commands[ctx.guild.id]:
+    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
+    #         else:
+    #             self.disable_command(ctx, name)
+    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_tag", _emote="YES", cmd=name), 1))
+    #     else:
+    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+
+
 async def setup(bot: ShardedBotInstance) -> None: 
     await bot.register_plugin(TagsPlugin(bot))

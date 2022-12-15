@@ -681,6 +681,15 @@ class InternalPlugin(AutoModPluginBlueprint):
                     new = "NSFW disabled"
                 if len(change) < 1: change += new
                 else: change += f" & {new}"
+
+        if hasattr(b, "topic") and hasattr(b, "topic"):
+            if b.topic != a.topic:
+                new = f"Topic (``{}`` → ``{}``)".format(
+                    a.topic, 
+                    b.topic
+                )
+                if len(change) < 1: change += new
+                else: change += f" & {new}"
         
         if len(change) < 1: return
 

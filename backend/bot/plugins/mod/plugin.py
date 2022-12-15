@@ -680,14 +680,14 @@ class ModerationPlugin(WarnPlugin):
         if amount > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "amount_too_big", _emote="NO"), 0))
         
         if user == None and content == None:
-            func = lambda _: True
+            func = lambda _: _.pinned == False
         else:
             if user != None and content != None:
-                func = lambda x: x.author.id == user.id and x.content.lower() == content.lower()
+                func = lambda x: x.author.id == user.id and x.content.lower() == content.lower() and x.pinned == False
             elif user != None and content == None:
-                func = lambda x: x.author.id == user.id
+                func = lambda x: x.author.id == user.id and x.pinned == False
             else:
-                func = lambda x: x.content.lower() == content.lower()
+                func = lambda x: x.content.lower() == content.lower() and x.pinned == False
             
         await ctx.response.defer(thinking=True)
         msg, kwargs = await self.clean_messages(

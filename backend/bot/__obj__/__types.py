@@ -21,9 +21,7 @@ from discord.app_commands import (
 
 from typing import (
     Union, 
-    Optional, 
     Iterable,
-    Literal,
     List, 
     Dict, 
     Set, 

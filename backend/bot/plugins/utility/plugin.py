@@ -643,6 +643,9 @@ class UtilityPlugin(AutoModPluginBlueprint):
         name="jumbo", 
         description="😀 Shows a bigger version of the provided emotes"
     )
+    @discord.app_commands.describe(
+        emotes="The emotes you want to show"
+    )
     async def jumbo(self, ctx: discord.Interaction, *, emotes: str) -> None:
         """
         jumbo_help
