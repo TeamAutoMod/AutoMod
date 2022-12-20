@@ -226,7 +226,7 @@ class TagsPlugin(AutoResponderPlugin):
             else:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
 
     
     @_commands.command(
