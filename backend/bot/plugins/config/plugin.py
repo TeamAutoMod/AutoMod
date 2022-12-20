@@ -556,7 +556,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         description="🚸 Enables a logging option"
     )
     @discord.app_commands.describe(
-        option="Logging option you want to configure enable",
+        option="Logging option you want to enable",
         channel="Channel where actions from the log option will be sent to",
     )
     @discord.app_commands.default_permissions(manage_guild=True)
