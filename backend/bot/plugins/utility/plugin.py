@@ -581,6 +581,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 title="AutoMod Help",
                 description=self.locale.t(ctx.guild, "help_desc", inv=self.bot.config.support_invite)
             )
+            e.set_thumbnail(url=self.bot.user.display_avatar)
             e.credits()
 
             viewable_plugins = self.get_viewable_plugins(ctx)
@@ -671,7 +672,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             try:
                 r.raise_for_status()
             except requests.HTTPError:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "http_error", _emote="NO"), 0))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "http_error", _emote="NO"), 0), ephemeral=True)
 
             img = Image.open(BytesIO(r.content))
             height = img.height if img.height > height else height
@@ -878,7 +879,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if time == None:
             slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
             if len(slowmodes) < 1:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="INFO"), 2))
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="INFO"), 2), ephemeral=True)
             else:
                 e = Embed(
                     ctx,
@@ -897,7 +898,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 )
                         )
                 if len(e._fields) < 1:
-                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"), 0))
+                    return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="NO"), 0), ephemeral=True)
                 else:
                     return await ctx.response.send_message(embed=e)
         else:
@@ -923,7 +924,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 slowmode_delay=seconds
                             )
                         except Exception as ex:
-                            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+                            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
                         else:
                             self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "native"))
                             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", time=str(time), mode="native slowmode"), 1))
@@ -934,7 +935,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                     slowmode_delay=MAX_NATIVE_SLOWMODE
                                 )
                             except Exception as ex:
-                                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0))
+                                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
                             else:
                                 if self.db.slowmodes.exists(_id):
                                     self.db.slowmodes.multi_update(_id, {
@@ -1021,7 +1022,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         -create-message #test message:Hey has_embed:True
         """
         if message == None and has_embed.lower() == "false":
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "embed_req", _emote="NO"), 0), ephemeral=True)
         
         if color != None: color = self.get_color(color)
 
@@ -1050,7 +1051,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 try:
                     await channel.send(content=message, embed=e)
                 except Exception as ex:
-                    await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0))
+                    await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
                 else:
                     await i.response.send_message(embed=E(self.locale.t(i.guild, "send_msg", _emote="YES", channel=channel), 1), ephemeral=True) 
 

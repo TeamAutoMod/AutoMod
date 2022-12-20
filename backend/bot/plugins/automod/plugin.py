@@ -926,14 +926,14 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 try:
                     amount = int(amount)
                 except Exception:
-                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "num_req", _emote="NO", arg="amount"), 0))
+                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "num_req", _emote="NO", arg="amount"), 0), ephemeral=True)
 
                 if rule in ["mentions", "lines", "emotes", "repeat"]:
-                    if amount < 5: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
-                    if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")), 0))
+                    if amount < 5: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")), 0), ephemeral=True)
+                    if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")), 0), ephemeral=True)
                 else:
-                    if amount < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-                    if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
+                    if amount < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0), ephemeral=True)
+                    if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
                 current.update({
                     rule: {
@@ -986,7 +986,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         -allowed_invites list
         """
         allowed = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-        if len(allowed) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix="/"), 0))
+        if len(allowed) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_allowed", _emote="NO", prefix="/"), 0), ephemeral=True)
         
         e = Embed(
             ctx,
@@ -1008,7 +1008,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         -allowed_invites add 701507539589660793
         """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-        if str(guild_id) in allowed: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"), 0))
+        if str(guild_id) in allowed: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_allowed", _emote="NO"), 0), ephemeral=True)
         
         allowed.append(str(guild_id))
         self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
@@ -1028,7 +1028,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         -allowed_invites remove 701507539589660793
         """
         allowed = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "allowed_invites")]
-        if not str(guild_id) in allowed: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_allowed", _emote="NO"), 0))
+        if not str(guild_id) in allowed: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_allowed", _emote="NO"), 0), ephemeral=True)
         
         allowed.remove(str(guild_id))
         self.db.configs.update(ctx.guild.id, "allowed_invites", allowed)
@@ -1057,7 +1057,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         """
         if type.lower() == "blacklist":
             links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-            if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"), 0))
+            if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links", _emote="NO", prefix="/"), 0), ephemeral=True)
             
             e = Embed(
                 ctx,
@@ -1067,7 +1067,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=e)
         else:
             links = [f"``{x.strip().lower()}``" for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-            if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"), 0))
+            if len(links) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_links2", _emote="NO", prefix="/"), 0), ephemeral=True)
             
             e = Embed(
                 ctx,
@@ -1095,7 +1095,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
         if type.lower() == "blacklist":
             links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-            if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link", _emote="NO"), 0))
+            if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link", _emote="NO"), 0), ephemeral=True)
             
             links.append(url)
             self.db.configs.update(ctx.guild.id, "black_listed_links", links)
@@ -1103,7 +1103,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "allowed_link", _emote="YES"), 1))
         else:
             links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-            if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link2", _emote="NO"), 0))
+            if str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_link2", _emote="NO"), 0), ephemeral=True)
             
             links.append(url)
             self.db.configs.update(ctx.guild.id, "white_listed_links", links)
@@ -1129,7 +1129,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         url = self.safe_parse_url(url)
         if type.lower() == "blacklist":
             links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "black_listed_links")]
-            if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link", _emote="NO"), 0))
+            if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link", _emote="NO"), 0), ephemeral=True)
             
             links.remove(url)
             self.db.configs.update(ctx.guild.id, "black_listed_links", links)
@@ -1137,7 +1137,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link", _emote="YES"), 1))
         else:
             links = [x.strip().lower() for x in self.db.configs.get(ctx.guild.id, "white_listed_links")]
-            if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link2", _emote="NO"), 0))
+            if not str(url) in links: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_link2", _emote="NO"), 0), ephemeral=True)
             
             links.remove(url)
             self.db.configs.update(ctx.guild.id, "white_listed_links", links)
@@ -1230,14 +1230,14 @@ class AutomodPlugin(AutoModPluginBlueprint):
             except Exception:
                 return await ctx.response.send_message(embed=info_embed)
             else:
-                if rate < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_rate", _emote="NO"), 0))
-                if rate > 21: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rate", _emote="NO"), 0))
+                if rate < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_rate", _emote="NO"), 0), ephemeral=True)
+                if rate > 21: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rate", _emote="NO"), 0), ephemeral=True)
 
-                if per < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_per", _emote="NO"), 0))
-                if per > 20: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_per", _emote="NO"), 0))
+                if per < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_per", _emote="NO"), 0), ephemeral=True)
+                if per > 20: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_per", _emote="NO"), 0), ephemeral=True)
 
-                if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
-                if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
+                if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0), ephemeral=True)
+                if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0), ephemeral=True)
 
                 config.update({
                     "enabled": True,
@@ -1255,7 +1255,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     )
                 })
                 self.db.configs.update(ctx.guild.id, "antispam", config)
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns), 0), ephemeral=True)
 
 
     ignore_automod = discord.app_commands.Group(
@@ -1277,7 +1277,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         if (len(roles) + len(channels)) < 1:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_ignored_am", _emote="NO"), 0), ephemeral=True)
         else:
             e = Embed(
                 ctx,

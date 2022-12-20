@@ -237,7 +237,7 @@ class LevelPlugin(AutoModPluginBlueprint):
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def lvlsys(self, ctx: discord.Interaction, enabled: Literal["True", "False"] = None, notifications: Literal["Channel", "DM", "None"] = None) -> None:
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         if enabled == None and notifications == None:
@@ -278,10 +278,10 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -reset @paul#0009
         """
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
         if self.exists(config, ctx.guild, user):
             self.update_user_data(
@@ -303,14 +303,14 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -rewards
         """
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
         if len(config.rewards) < 1:
             cmd = f"</reward add:{self.bot.internal_cmd_store.get('reward')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rewards", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rewards", _emote="INFO", cmd=cmd), 2), ephemeral=True)
         else:
             e = Embed(
                 ctx,
@@ -343,15 +343,15 @@ class LevelPlugin(AutoModPluginBlueprint):
         -reward add 5 @Level5
         -reward add 10 @Advanced
         """
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
-        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
-        if len(config["rewards"]) >= 15: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rewards", _emote="NO"), 0))
+        if len(config["rewards"]) >= 15: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rewards", _emote="NO"), 0), ephemeral=True)
 
         if str(role.id) in list(config["rewards"].values()):
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_reward", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_reward", _emote="NO"), 0), ephemeral=True)
         else:
             config["rewards"].update({
                 str(level): str(role.id)
@@ -374,13 +374,13 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -reward remove 5
         """
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
-        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
         if not str(level) in list(config["rewards"].keys()):
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_reward", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_reward", _emote="NO"), 0), ephemeral=True)
         else:
             del config["rewards"][str(level)]
             self.db.configs.update(ctx.guild.id, "lvl_sys", config)
@@ -401,10 +401,10 @@ class LevelPlugin(AutoModPluginBlueprint):
         examples:
         -reward mode Stack
         """
-        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0))
+        # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
-        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
         
         config["reward_mode"] = mode.lower()
         self.db.configs.update(ctx.guild.id, "lvl_sys", config)
@@ -426,14 +426,14 @@ class LevelPlugin(AutoModPluginBlueprint):
         if user == None: user = ctx.user
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
         if not self.exists(
             config, 
             ctx.guild, 
             user,
             insert=False
-        ): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_ranked", _emote="NO"), 0))
+        ): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_ranked", _emote="NO"), 0), ephemeral=True)
 
         data = self.get_user_data(
             ctx.guild, 
@@ -480,8 +480,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
 
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0))
-        if len(config.users) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0))
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        if len(config.users) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0), ephemeral=True)
 
         await ctx.response.defer(thinking=True)
 

@@ -186,9 +186,9 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     )
                 await ctx.response.send_message(embed=e)
             else:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
     
     @_responders.command(
@@ -220,21 +220,21 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             name, content, trigger, _ = self.bot.extract_args(i, "name", "content", "trigger", "vars")
 
             if self.validate_name(name.lower()) == False:
-                return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_name", _emote="NO"), 0))
+                return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_name", _emote="NO"), 0), ephemeral=True)
 
             if position == "regex":
                 if self.validate_regex(trigger) == False:
-                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex_responder", _emote="NO"), 0))
+                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex_responder", _emote="NO"), 0), ephemeral=True)
             else:
                 trigger = trigger.split(", ")
 
             if len(self._r.get(i.guild_id, [])) > MAX_RESPONDERS_PER_GUILD:
-                return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_responders", _emote="NO", max_responders=MAX_RESPONDERS_PER_GUILD), 0))
+                return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_responders", _emote="NO", max_responders=MAX_RESPONDERS_PER_GUILD), 0), ephemeral=True)
 
             name = name.lower()
             if i.guild.id in self._r:
                 if name in self._r[i.guild.id]:
-                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "response_alr_exists", _emote="NO"), 0))
+                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "response_alr_exists", _emote="NO"), 0), ephemeral=True)
             
             if ignore_mods == "true":
                 _ignore_mods = True
@@ -265,13 +265,13 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         name = name.lower()
         if ctx.guild.id in self._r:
             if not name in self._r[ctx.guild.id]:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_doesnt_exists", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_doesnt_exists", _emote="NO"), 0), ephemeral=True)
             else:
                 self.remove_responder(ctx.guild, name)
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_removed", _emote="YES"), 1))
         else:
             cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
 
     @_responders.command(
@@ -291,7 +291,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         name = name.lower()
         if ctx.guild.id in self._r:
             if not name in self._r[ctx.guild.id]:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_doesnt_exists", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_doesnt_exists", _emote="NO"), 0), ephemeral=True)
             else:
                 obj = self._r[ctx.guild.id][name]
                 async def callback(
@@ -300,7 +300,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     content, trigger, _ = self.bot.extract_args(i, "content", "trigger", "vars")
                     if obj["position"] == "regex":
                         if self.validate_regex(trigger) == False:
-                            return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex_responder", _emote="NO"), 0))
+                            return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex_responder", _emote="NO"), 0), ephemeral=True)
                     else:
                         trigger = trigger.split(", ")
 
@@ -318,7 +318,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_modal(modal)
         else:
             cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
 
     @AutoModPluginBlueprint.listener()

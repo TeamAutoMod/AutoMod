@@ -169,10 +169,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
             if "".join(parts) == "join_role":
                 role = i.guild.get_role(int(i.data.get("values", [1])[0]))
                 if role == None:
-                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_not_found", _emote="NO"), 0))
+                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_not_found", _emote="NO"), 0), ephemeral=True)
 
                 if role.position >= i.guild.me.top_role.position: 
-                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_too_high", _emote="NO"), 0))
+                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_too_high", _emote="NO"), 0), ephemeral=True)
                 elif role.is_default() == True:
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_default_role", _emote="NO"), 0), ephemeral=True)
                 elif role.is_assignable() == False:
@@ -420,8 +420,8 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         action = action.lower()
 
-        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
-        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0), ephemeral=True)
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
         if time != None:
             try:
@@ -468,7 +468,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             text = self.locale.t(ctx.guild, f"set_{key}", _emote="YES", **kwargs)
 
         else:
-            if time == None: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "time_needed", _emote="NO"), 0))
+            if time == None: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "time_needed", _emote="NO"), 0), ephemeral=True)
 
             try:
                 sec = time.to_seconds(ctx)
@@ -506,7 +506,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         current = self.db.configs.get(ctx.guild.id, "punishments")
         cmd = f"</punishments list:{self.bot.internal_cmd_store.get('punishments')}>"
         if not str(warns) in [str(_) for _ in current.keys()]:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_punishment", _emote="NO", cmd=cmd), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_punishment", _emote="NO", cmd=cmd), 0), ephemeral=True)
 
         current = {k: v for k, v in current.items() if str(k) != str(warns)}    
         self.db.configs.update(ctx.guild.id, "punishments", current)
@@ -528,7 +528,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         current = self.db.configs.get(ctx.guild.id, "punishments")
         cmd = f"</punishments list:{self.bot.internal_cmd_store.get('punishments')}>"
         if len(current) < 1:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_punishments", _emote="NO", cmd=cmd), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_punishments", _emote="NO", cmd=cmd), 0), ephemeral=True)
         
         e = Embed(
             ctx,
@@ -642,7 +642,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
         if (len(roles) + len(channels)) < 1:
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_ignored_log", _emote="NO"), 0), ephemeral=True)
         else:
             e = Embed(
                 ctx,
@@ -723,7 +723,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         reason_help
         examples:
-        -default_reason
+        -default-reason
         """
         async def callback(
             i: discord.Interaction

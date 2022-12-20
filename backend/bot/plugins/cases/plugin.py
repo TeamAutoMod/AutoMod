@@ -254,7 +254,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         case = case.replace("#", "")
         
         raw = self.db.cases.get_doc(f"{ctx.guild.id}-{case}")
-        if raw == None: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "case_not_found", _emote="NO"), 0))
+        if raw == None: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "case_not_found", _emote="NO"), 0), ephemeral=True)
 
         data = Object(raw)
         log_msg_url = self.get_log_for_case(ctx, raw)

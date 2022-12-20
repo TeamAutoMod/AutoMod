@@ -10,15 +10,15 @@ from .buttons import LinkBtn
 
 
 ACTUAL_PLUGIN_NAMES = {
-    "ConfigPlugin": "<:aConfig:1050619162889814086> Configuration",
-    "AutomodPlugin": "<:aMod:1050607461272399964> Automoderator",
-    "ModerationPlugin": "<:aBan:1050607129075142656> Moderation",
-    "FilterPlugin": "<:aNoEntry:1050607297719701615> Filters & Regexes",
-    "UtilityPlugin": "<:aUtility:1050609494448672808> Utility",
-    "LevelPlugin": "<:aLevel:1050609493223944252> Level System",
-    "TagsPlugin": "<:aCommands:1050609491974033469> Custom Commands & Responders",
-    "CasesPlugin": "<:aCase:1050609490678009927> Case System",
-    "ReactionRolesPlugin": "<:aRoles:1050609489532964934> Reaction Roles"
+    "ConfigPlugin": "<:aConfig:1054890378916016139> Configuration",
+    "AutomodPlugin": "<:aMod:1054889663220949094> Automoderator",
+    "ModerationPlugin": "<:aBan:1054889458446630942> Moderation",
+    "FilterPlugin": "<:aDenied:1054890383340994650>Filters & Regexes",
+    "UtilityPlugin": "<:aUtility:1054890965527179335> Utility",
+    "LevelPlugin": "<:aTrophy:1054890963962703994> Level System",
+    "TagsPlugin": "<:aCommand:1054890962989621259> Custom Commands & Responders",
+    "CasesPlugin": "<:aCase:1054890959382528142> Case System",
+    "ReactionRolesPlugin": "<:aRole:1054890960737288242> Reaction Roles"
 }
 
 

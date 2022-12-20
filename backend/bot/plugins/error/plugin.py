@@ -183,7 +183,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
             log.error(f"[Commands] Error in command {ctx.command} - {''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))}", extra={"loc": f"Shard {ctx.guild.shard_id}"})
 
             try:
-                await ctx.response.send_message(embed=E(self.bot.locale.t(ctx.guild, "fail", _emote="NO", exc=error), 0))
+                await ctx.response.send_message(embed=E(self.bot.locale.t(ctx.guild, "fail", _emote="NO", exc=error), 0), ephemeral=True)
             except Exception:
                 pass
             finally:

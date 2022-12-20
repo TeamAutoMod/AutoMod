@@ -19,7 +19,7 @@ class DMProcessor:
             "tempban": 0xf04a47,
             "mute": 0xffdc5c,
             "warn": 0xffdc5c,
-            "automod_rule_triggered": 0x2b80b8
+            "automod_rule_triggered": 0x131313
         }
         self.queue = []
         self.bot.loop.create_task(self.dm_users())

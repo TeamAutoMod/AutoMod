@@ -136,7 +136,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         }
         if len(rrs) < 1:
             cmd = f"</reaction-roles add:{self.bot.internal_cmd_store.get('reaction-roles')}>"
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="INFO", cmd=cmd), 2))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="INFO", cmd=cmd), 2), ephemeral=True)
         else:
             e = Embed(
                 ctx,

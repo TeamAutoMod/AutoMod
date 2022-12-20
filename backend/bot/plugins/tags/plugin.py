@@ -225,9 +225,9 @@ class TagsPlugin(AutoResponderPlugin):
                 )
                 await ctx.response.send_message(embed=e)
             else:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
     
     @_commands.command(
@@ -246,15 +246,15 @@ class TagsPlugin(AutoResponderPlugin):
         ) -> None:
             name, content, description = self.bot.extract_args(i, "name", "content", "description")
 
-            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "name_too_long", _emote="NO"), 0))
-            if len(content) > 1900: return await i.response.send_message(embed=E(self.locale.t(i.guild, "content_too_long", _emote="NO"), 0))
-            if len(description) > 50: return await i.response.send_message(embed=E(self.locale.t(i.guild, "description_too_long", _emote="NO"), 0))
+            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "name_too_long", _emote="NO"), 0), ephemeral=True)
+            if len(content) > 1900: return await i.response.send_message(embed=E(self.locale.t(i.guild, "content_too_long", _emote="NO"), 0), ephemeral=True)
+            if len(description) > 50: return await i.response.send_message(embed=E(self.locale.t(i.guild, "description_too_long", _emote="NO"), 0), ephemeral=True)
 
             if self.validate_name(name.lower()) == False:
-                return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_name", _emote="NO"), 0))
+                return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_name", _emote="NO"), 0), ephemeral=True)
 
             if len(self._commands.get(i.guild_id, [])) > 40:
-                return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_commands", _emote="NO"), 0))
+                return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_commands", _emote="NO"), 0), ephemeral=True)
 
             name = name.lower()
             for p in [
@@ -272,15 +272,15 @@ class TagsPlugin(AutoResponderPlugin):
                 if p != None:
                     for cmd in p.__cog_app_commands__:
                         if cmd.qualified_name.lower() == name:
-                            return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_has_cmd_name", _emote="NO"), 0))
+                            return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_has_cmd_name", _emote="NO"), 0), ephemeral=True)
 
             if i.guild.id in self._commands:
                 if name in self._commands[i.guild.id]:
-                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_alr_exists", _emote="NO"), 0))
+                    return await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_alr_exists", _emote="NO"), 0), ephemeral=True)
 
             r = self.add_command(i, name, content, description, False)
             if r != None:
-                await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=r), 0))
+                await i.response.send_message(embed=E(self.locale.t(i.guild, "fail", _emote="NO", exc=r), 0), ephemeral=True)
             else:
                 await self.bot.tree.sync(guild=i.guild)
                 await i.response.send_message(embed=E(self.locale.t(i.guild, "tag_added", _emote="YES", tag=name), 1))
@@ -306,16 +306,16 @@ class TagsPlugin(AutoResponderPlugin):
         name = name.lower()
         if ctx.guild.id in self._commands:
             if not name in self._commands[ctx.guild.id]:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0), ephemeral=True)
             else:
                 r = self.remove_command(ctx.guild, name)
                 if r != None:
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r), 0))
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=r), 0), ephemeral=True)
                 else:
                     await self.bot.tree.sync(guild=ctx.guild)
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_removed", _emote="YES"), 1))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO"), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO"), 2), ephemeral=True)
 
 
     @_commands.command(
@@ -338,7 +338,7 @@ class TagsPlugin(AutoResponderPlugin):
         cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
         if ctx.guild.id in self._commands:
             if not name in self._commands[ctx.guild.id]:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0), ephemeral=True)
             else:
                 data = self._commands[ctx.guild.id][name]
 
@@ -363,7 +363,7 @@ class TagsPlugin(AutoResponderPlugin):
                 )
                 await ctx.response.send_modal(modal)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
 
     @_commands.command(
@@ -384,7 +384,7 @@ class TagsPlugin(AutoResponderPlugin):
         cmd = f"</custom-commands add:{self.bot.internal_cmd_store.get('custom-commands')}>"
         if ctx.guild.id in self._commands:
             if not name in self._commands[ctx.guild.id]:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0), ephemeral=True)
             else:
                 data = Object(self.db.tags.get_doc(f"{ctx.guild.id}-{name}"))
                 y = self.bot.emotes.get("YES")
@@ -434,7 +434,7 @@ class TagsPlugin(AutoResponderPlugin):
 
                 await ctx.response.send_message(embed=e)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
 
     # @_commands.command(
@@ -454,7 +454,7 @@ class TagsPlugin(AutoResponderPlugin):
     #     name = name.lower()
     #     if ctx.guild.id in self._commands:
     #         if not name in self._commands[ctx.guild.id]:
-    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
+    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0), ephemeral=True)
     #         else:
     #             self.disable_command(ctx, name)
     #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_tag", _emote="YES", cmd=name), 1))
@@ -479,7 +479,7 @@ class TagsPlugin(AutoResponderPlugin):
     #     name = name.lower()
     #     if ctx.guild.id in self._commands:
     #         if not name in self._commands[ctx.guild.id]:
-    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0))
+    #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_doesnt_exists", _emote="NO"), 0), ephemeral=True)
     #         else:
     #             self.disable_command(ctx, name)
     #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_tag", _emote="YES", cmd=name), 1))

@@ -127,13 +127,13 @@ LOG_TYPES = {
     },
 
     "automod": {
-        "color": 0x2b80b8
+        "color": 0x131313
     },
     "filter": {
-        "color": 0x2b80b8
+        "color": 0x131313
     },
     "regex": {
-        "color": 0x2b80b8
+        "color": 0x131313
     },
 
     "message_deleted": {
@@ -214,21 +214,21 @@ LOG_TYPES = {
     "automod_rule_triggered": {
         "channel": "mod_log",
         "key": "log_automod",
-        "color": 0x2b80b8,
+        "color": 0x131313,
         "emote": "SWORDS",
         "action": "Automod rule triggered"
     },
     "regex_triggered": {
         "channel": "mod_log",
         "key": "log_regex",
-        "color": 0x2b80b8,
+        "color": 0x131313,
         "emote": "NO_ENTRY",
         "action": "Regex filter triggered"
     },
     "filter_triggered": {
         "channel": "mod_log",
         "key": "log_filter",
-        "color": 0x2b80b8,
+        "color": 0x131313,
         "emote": "NO_ENTRY",
         "action": "Word filter triggered"
     },

@@ -56,7 +56,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         """
         cmd = f"</filter add:{self.bot.internal_cmd_store.get('filter')}>"
         filters = self.db.configs.get(ctx.guild.id, "filters")
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2))
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
         e = Embed(
             ctx,
@@ -99,14 +99,14 @@ class FilterPlugin(AutoModPluginBlueprint):
             name = name.lower()
             filters = self.db.configs.get(i.guild.id, "filters")
 
-            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_name_too_long", _emote="NO"), 0))
-            if name in filters: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_exists", _emote="NO"), 0))
+            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_name_too_long", _emote="NO"), 0), ephemeral=True)
+            if name in filters: return await i.response.send_message(embed=E(self.locale.t(i.guild, "filter_exists", _emote="NO"), 0), ephemeral=True)
             
             try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0), ephemeral=True)
 
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0), ephemeral=True)
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
             filters[name] = {
                 "warns": warns,
@@ -138,8 +138,8 @@ class FilterPlugin(AutoModPluginBlueprint):
         filters = self.db.configs.get(ctx.guild.id, "filters")
         cmd = f"</filter add:{self.bot.internal_cmd_store.get('filter')}>"
 
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2))
-        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0), ephemeral=True)
 
         del filters[name]
         self.db.configs.update(ctx.guild.id, "filters", filters)
@@ -164,8 +164,8 @@ class FilterPlugin(AutoModPluginBlueprint):
         name = name.lower()
         filters = self.db.configs.get(ctx.guild.id, "filters")
 
-        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"), 0))
-        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
+        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "filter_name_too_long", _emote="NO"), 0), ephemeral=True)
+        if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0), ephemeral=True)
 
         async def callback(
             i: discord.Interaction
@@ -173,10 +173,10 @@ class FilterPlugin(AutoModPluginBlueprint):
             warns, words, channels = self.bot.extract_args(i, "warns", "words", "channels")
 
             try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0), ephemeral=True)
 
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0), ephemeral=True)
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
             filters[name] = {
                 "warns": warns,
@@ -217,7 +217,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         filters = self.db.configs.get(ctx.guild.id, "filters")
 
         if not name in filters: 
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0), ephemeral=True)
         else:
             await ctx.response.defer(thinking=True)
 
@@ -249,7 +249,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         """
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         cmd = f"</regex add:{self.bot.internal_cmd_store.get('regex')}>"
-        if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO", cmd=cmd), 0))
+        if len(regexes) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_regexes", _emote="NO", cmd=cmd), 0), ephemeral=True)
 
         e = Embed(
             ctx,
@@ -291,16 +291,16 @@ class FilterPlugin(AutoModPluginBlueprint):
             regexes = self.db.configs.get(i.guild.id, "regexes")
             name = name.lower()
 
-            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_name_too_long", _emote="NO"), 0))
-            if name in regexes: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_exists", _emote="NO"), 0))
+            if len(name) > 30: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_name_too_long", _emote="NO"), 0), ephemeral=True)
+            if name in regexes: return await i.response.send_message(embed=E(self.locale.t(i.guild, "regex_exists", _emote="NO"), 0), ephemeral=True)
 
             try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0), ephemeral=True)
 
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0), ephemeral=True)
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
-            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0))
+            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0), ephemeral=True)
 
             regexes[name] = {
                 "warns": warns,
@@ -332,7 +332,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
         name = name.lower()
 
-        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0))
+        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0), ephemeral=True)
 
         del regexes[name]
         self.db.configs.update(ctx.guild.id, "regexes", regexes)
@@ -357,8 +357,8 @@ class FilterPlugin(AutoModPluginBlueprint):
         name = name.lower()
         regexes = self.db.configs.get(ctx.guild.id, "regexes")
 
-        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"), 0))
-        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0))
+        if len(name) > 30: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_name_too_long", _emote="NO"), 0), ephemeral=True)
+        if not name in regexes: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "regex_doesnt_exist", _emote="NO"), 0), ephemeral=True)
 
         async def callback(
             i: discord.Interaction
@@ -366,12 +366,12 @@ class FilterPlugin(AutoModPluginBlueprint):
             warns, regex, channels = self.bot.extract_args(i, "warns", "pattern", "channels")
 
             try: warns = int(warns)
-            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0))
+            except Exception as ex: return await i.response.send_message(embed=E(self.locale.t(i.guild, "must_be_int", _emote="NO", arg="warns"), 0), ephemeral=True)
 
-            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0))
-            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0))
+            if warns < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0), ephemeral=True)
+            if warns > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
-            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0))
+            if self.validate_regex(regex) == False: return await i.response.send_message(embed=E(self.locale.t(i.guild, "invalid_regex", _emote="NO"), 0), ephemeral=True)
 
             regexes[name] = {
                 "warns": warns,

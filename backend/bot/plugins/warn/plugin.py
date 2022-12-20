@@ -67,15 +67,15 @@ class WarnPlugin(AutoModPluginBlueprint):
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None: warns = 1
-        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
-        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0), ephemeral=True)
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
         if not self.can_act(ctx.guild, ctx.user, user):
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_act", _emote="NO"), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_act", _emote="NO"), 0), ephemeral=True)
 
         exc = await self.action_processor.execute(ctx, ctx.user, user, warns, reason)
         if exc != None:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=exc), 0), ephemeral=True)
         else:
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "warned", _emote="YES", user=user, reason=reason), 1))
 
@@ -103,19 +103,19 @@ class WarnPlugin(AutoModPluginBlueprint):
         if not ctx.guild.chunked: await self.bot.chunk_guild(ctx.guild)
 
         if warns == None: warns = 1
-        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0))
-        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0))
+        if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0), ephemeral=True)
+        if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
         if not self.can_act(ctx.guild, ctx.user, user):
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_act", _emote="NO"), 0))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_act", _emote="NO"), 0), ephemeral=True)
 
         _id = f"{ctx.guild.id}-{user.id}"
         if not self.db.warns.exists(_id):
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_warns", _emote="NO"), 0))
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_warns", _emote="NO"), 0), ephemeral=True)
         else:
             cur = self.db.warns.get(_id, "warns")
             if cur < 1: 
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_warns", _emote="NO"), 0))
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_warns", _emote="NO"), 0), ephemeral=True)
             else:
                 new = max(0, cur - warns)
                 self.db.warns.update(_id, "warns", new)
