@@ -285,9 +285,6 @@ class ConfigPlugin(AutoModPluginBlueprint):
         config = Object(self.db.configs.get_doc(ctx.guild.id))
         rules = config.automod
 
-        rrs = {k: v for k, v in config.reaction_roles.items() if self.bot.get_channel(int(v['channel'])) != None}
-        role = "role"
-        emote = "emote"
         tags = self.bot.get_plugin("TagsPlugin")._commands
         no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
         c = self.bot.internal_cmd_store
@@ -378,12 +375,12 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (logging)__",
-                "value":  f"None, use </ignore-log add:{c.get('ignore-log')}> for configration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
+                "value":  f"None, use </s add:{c.get('ignore-logs')}> for configration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (logging)__",
-                "value": f"None, use </ignore-log add:{c.get('ignore-log')}> for configration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
+                "value": f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
             e.dash_field(dash_length),
@@ -549,72 +546,85 @@ class ConfigPlugin(AutoModPluginBlueprint):
         await ctx.response.send_message(embed=e)
 
 
-    @discord.app_commands.command(
-        name="log",
-        description="🚸 Configure logging (use /setup for more info)"
+    _log_command = discord.app_commands.Group(
+        name="logs",
+        description="🚸 Configure logging (use /setup for more info)",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @_log_command.command(
+        name="enable",
+        description="🚸 Enables a logging option"
     )
     @discord.app_commands.describe(
-        option="Logging option you want to configure (use /setup for more info)",
+        option="Logging option you want to configure enable",
         channel="Channel where actions from the log option will be sent to",
-        disable="Wheter you want to disable the logging option"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def _log(
+    async def log_enable(
         self, 
         ctx: discord.Interaction, 
         option: Literal["Mod", "Server", "Messages", "Joins & Leaves", "Members", "Voice", "Reports"], 
-        channel: discord.TextChannel = None,
-        disable: Literal["True"] = None
+        channel: discord.TextChannel,
     ) -> None:
         """
-        log_help
+        log_enable_help
         examples:
-        -log mod #mod-log
-        -log joins 960832535867306044
-        -log server True
+        -log enabale Mod #mod-log
+        -log enable Joins & Leaves 960832535867306044
         """
         option = option.lower()
         if option == "joins & leaves": option = "joins"
         data = Object(LOG_OPTIONS[option])
-        if disable == "True":
-            self.db.configs.update(ctx.guild.id, data.db_field, "")
-            await self.delete_webhook(
-                ctx,
-                data.db_field
-            )
+        cur = self.db.configs.get(ctx.guild.id, data.db_field)
 
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type), 1))
-        else:
-            if channel == None:
-                prefix = "/"
-                e = Embed(
-                    ctx,
-                    description=self.locale.t(ctx.guild, "invalid_log_channel", _emote="NO", prefix=prefix, option=option)
-                )
-                e.add_fields([
-                    {
-                        "name": "__Enable this option__",
-                        "value": f"``{prefix}log {option} #channel``"
-                    },
-                    {
-                        "name": "__Disable this option__",
-                        "value": f"``{prefix}log {option} disable:True``"
-                    }
-                ])
-                return await ctx.response.send_message(embed=e)
-            else:
-                self.db.configs.update(ctx.guild.id, data.db_field, f"{channel.id}")
-                self.webhook_queue.append({
-                    "ctx": ctx,
-                    "option": data.db_field,
-                    "channel": channel
-                })
+        if cur != "" and cur == f"{channel.id}":
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_alr_on", _emote="INFO", _type=data.i18n_type.capitalize()), 2))
 
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention), 1))
+        self.db.configs.update(ctx.guild.id, data.db_field, f"{channel.id}")
+        self.webhook_queue.append({
+            "ctx": ctx,
+            "option": data.db_field,
+            "channel": channel
+        })
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_on", _emote="YES", _type=data.i18n_type, channel=channel.mention), 1))
+
+
+    @_log_command.command(
+        name="disable",
+        description="🚸 Disables a logging option"
+    )
+    @discord.app_commands.describe(
+        option="Logging option you want to disable",
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def log_disable(
+        self, 
+        ctx: discord.Interaction, 
+        option: Literal["Mod", "Server", "Messages", "Joins & Leaves", "Members", "Voice", "Reports"]
+    ) -> None:
+        """
+        log_disable_help
+        examples:
+        -log disable Mod
+        -log disable Joins & Leaves
+        """
+        option = option.lower()
+        if option == "joins & leaves": option = "joins"
+        data = Object(LOG_OPTIONS[option])
+
+        if self.db.configs.get(ctx.guild.id, data.db_field) == "":
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_alr_off", _emote="INFO", _type=data.i18n_type.capitalize()), 2))
+
+        self.db.configs.update(ctx.guild.id, data.db_field, "")
+        await self.delete_webhook(
+            ctx,
+            data.db_field
+        )
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_off", _emote="YES", _type=data.i18n_type), 1))
 
 
     ignore_log = discord.app_commands.Group(
-        name="ignore-log",
+        name="ignore-logs",
         description="🔀 Manage ignored roles & channels for logging",
         default_permissions=discord.Permissions(manage_guild=True)
     )
@@ -627,7 +637,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         ignore_log_help
         examples:
-        -ignore-log list
+        -ignore-logs list
         """
         roles, channels = self.get_ignored_roles_channels(ctx.guild)
 
@@ -661,7 +671,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         ignore_log_add_help
         examples:
-        -ignore-log add
+        -ignore-logs add
         """
         view = RoleChannelSelect("log_add")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_add"), color=2), view=view, ephemeral=True)
@@ -676,7 +686,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         """
         ignore_log_remove_help
         examples:
-        -ignore-log remove
+        -ignore-logs remove
         """
         view = RoleChannelSelect("log_remove")
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=2), view=view, ephemeral=True)

@@ -234,7 +234,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         log = Embed(
             None,
             title=f"Logging",
-            description=self.locale.t(guild, "log_val", prefix=_prefix, cmd=f"</log:{self.bot.internal_cmd_store.get('log')}>")
+            description=self.locale.t(guild, "log_val", prefix=_prefix, cmd=f"</logs enable:{self.bot.internal_cmd_store.get('logs')}>")
         )
 
         am = Embed(
@@ -549,8 +549,8 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "name": f"{self.bot.emotes.get('USERS')} __Usage__",
                 "value": "**• Commands:** {} \n**• Custom:** {}"\
                 .format(
-                    self.bot.used_commands,
-                    self.bot.used_customs
+                    self.bot.get_command_stats(),
+                    self.bot.get_custom_stats()
                 ),
                 "inline": True
             }

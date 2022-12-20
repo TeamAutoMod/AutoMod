@@ -103,6 +103,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
 
     def update_uses(self, _id: str) -> None:
         self.bot.used_customs += 1
+        self.bot.update_custom_stats()
         cur = self.db.responders.get(_id, "uses")
         if cur == None:
             self.db.responders.update(_id, "uses", 1)

@@ -489,7 +489,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def update_command_stats(self) -> None:
         cur = self.db.stats.get(self.user.id, "used_commands")
         if cur == None:
-            self.db.stats.insert(Stats(self.user.id))
+            self.db.stats.insert(Stats(self.user.id, 1, 0))
         else:
             self.db.stats.update(self.user.id, "used_commands", cur + 1)
 
@@ -497,7 +497,24 @@ class ShardedBotInstance(commands.AutoShardedBot):
     def get_command_stats(self) -> int:
         cur = self.db.stats.get(self.user.id, "used_commands")
         if cur == None:
-            self.db.stats.insert(Stats(self.user.id))
+            self.db.stats.insert(Stats(self.user.id, 1, 0))
+            return 0
+        else:
+            return cur
+        
+    
+    def update_custom_stats(self) -> None:
+        cur = self.db.stats.get(self.user.id, "used_customs")
+        if cur == None:
+            self.db.stats.insert(Stats(self.user.id, 0, 1))
+        else:
+            self.db.stats.update(self.user.id, "used_customs", cur + 1)
+
+
+    def get_custom_stats(self) -> int:
+        cur = self.db.stats.get(self.user.id, "used_customs")
+        if cur == None:
+            self.db.stats.insert(Stats(self.user.id, 0, 1))
             return 0
         else:
             return cur
