@@ -375,7 +375,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (logging)__",
-                "value":  f"None, use </s add:{c.get('ignore-logs')}> for configration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
+                "value":  f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
