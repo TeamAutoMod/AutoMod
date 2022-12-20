@@ -96,7 +96,7 @@ body {
 }
 
 .nav ul li #link:hover {
-    color: #3e98f7;
+    color: #a1abbb;
     transition: 0.05s ease-in-out;
 }
 
@@ -144,11 +144,11 @@ body {
 
 .main a {
     text-decoration: none;
-    color: #3e98f7;
+    color: #a1abbb;
 }
 
 .main a:hover {
-    color: #1384fc
+    color: #a1abbb
 }
 
 @media only screen and (max-width: 1000px) {
@@ -201,7 +201,7 @@ body {
     }
     
     .nav ul li #link:hover {
-        color: #3e98f7;
+        color: #a1abbb;
         transition: 0.05s ease-in-out;
     }
 
@@ -266,7 +266,7 @@ body {
     }
     
     .nav ul li #link:hover {
-        color: #3e98f7;
+        color: #a1abbb;
         transition: 0.05s ease-in-out;
     }
 

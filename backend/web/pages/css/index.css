@@ -99,7 +99,7 @@ body::-webkit-scrollbar {
 }
 
 .nav ul li #link:hover {
-    color: #6b50ff;
+    color: #a1abbb;
     transition: 0.05s ease-in-out;
 }
 
@@ -144,7 +144,7 @@ body::-webkit-scrollbar {
 }
 
 .main_text h1 {
-    background: -webkit-linear-gradient(#4624ff, #6b50ff);
+    background: -webkit-linear-gradient(#EDF2F4, #6C7B95);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;
@@ -190,8 +190,8 @@ body::-webkit-scrollbar {
 }
 
 .stats li #invite {
-    border: 1px solid #5865f2;
-    background-color: #5865f2;
+    border: 1px solid #6C7B95;
+    background-color: #6C7B95;
     font-style: bold;
     font-size: 15px;
     border-radius: 4px;
@@ -201,8 +201,8 @@ body::-webkit-scrollbar {
 .stats li #invite:hover {
     cursor: pointer;
     transition: 0.05s ease-in-out;
-    background-color: #6b50ff;
-    border: 1px solid #6b50ff;
+    background-color: #8896ad;
+    border: 1px solid #8896ad;
 }
 
 .stats li h1 {
@@ -224,7 +224,7 @@ body::-webkit-scrollbar {
 }
 
 .features h2 {
-    background: -webkit-linear-gradient(#4624ff, #6b50ff);
+    background: -webkit-linear-gradient(#EDF2F4, #6C7B95);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;
@@ -337,7 +337,7 @@ body::-webkit-scrollbar {
     }
     
     .nav ul li #link:hover {
-        color: #6b50ff;
+        color: #a1abbb;
         transition: 0.05s ease-in-out;
     }
 
@@ -401,7 +401,7 @@ body::-webkit-scrollbar {
     }
     
     .nav ul li #link:hover {
-        color: #6b50ff;
+        color: #a1abbb;
         transition: 0.05s ease-in-out;
     }
 

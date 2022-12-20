@@ -96,7 +96,7 @@ body {
 }
 
 .nav ul li #link:hover {
-    color: #3e98f7;
+    color: #a1abbb;
     transition: 0.05s ease-in-out;
 }
 
@@ -115,7 +115,7 @@ body {
     width: 80%;
     height: 200px;
     background-size: cover;
-    color: -webkit-linear-gradient(#009FFD, #2A2A72);
+    color: -webkit-linear-gradient(#EDF2F4, #6C7B95);
 }
 
 @media only screen and (max-width: 1000px) {
@@ -168,7 +168,7 @@ body {
     }
     
     .nav ul li #link:hover {
-        color: #3e98f7;
+        color: #a1abbb;
         transition: 0.05s ease-in-out;
     }
 

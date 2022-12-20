@@ -96,7 +96,7 @@ body {
 }
 
 .nav ul li #link:hover {
-    color: #3e98f7;
+    color: #a1abbb;
     transition: 0.05s ease-in-out;
 }
 
@@ -191,7 +191,7 @@ body {
     }
     
     .nav ul li #link:hover {
-        color: #3e98f7;
+        color: #a1abbb;
         transition: 0.05s ease-in-out;
     }
 
@@ -288,7 +288,7 @@ body {
     }
     
     .nav ul li #link:hover {
-        color: #3e98f7;
+        color: #a1abbb;
         transition: 0.05s ease-in-out;
     }
 
