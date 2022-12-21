@@ -123,7 +123,21 @@ class CasesPlugin(AutoModPluginBlueprint):
             else:
                 opt = "user"
         else:
-            opt = "guild"
+            if isinstance(user, str):
+                user = self.bot.get_user(int(user))
+                if user == None:
+                    return await ctx.followup.send(embed=E(self.locale.t(ctx.guild, "no_cases", _emote="NO"), 0), ephemeral=True if ctx.data.get("type") == 2 else False)
+                else: 
+                    m = ctx.guild.get_member(user.id)
+                    if m == None:
+                        opt = "user"
+                    elif m.guild_permissions.kick_members:
+                        opt = "mod"
+                    else:
+                        opt = "user"
+            else:
+                opt = "guild"
+
 
         found = sorted(
             [
