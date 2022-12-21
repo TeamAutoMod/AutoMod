@@ -139,8 +139,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
     def is_mod(self, user: discord.Member) -> bool:
         return (
             user.guild_permissions.ban_members == True \
-            or user.guild_permissions.kick_members == False \
-            or user.guild_permissions.manage_messages == False
+            or user.guild_permissions.kick_members == True \
+            or user.guild_permissions.manage_messages == True
         )
 
     
@@ -333,7 +333,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         for name, obj in self.get_responders(msg.guild).items():
             if obj.get("ignore_mods", True) == True:
                 if self.is_mod(msg.author): continue
-                
+            
             if (self._position_funcs[obj["position"]])(msg.content, obj["trigger"]) == True:
                 content = str(obj["content"])
                 
