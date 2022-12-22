@@ -99,7 +99,7 @@ body::-webkit-scrollbar {
 }
 
 .nav ul li #link:hover {
-    color: #a1abbb;
+    color: #5865F2;
     transition: 0.05s ease-in-out;
 }
 
@@ -190,8 +190,8 @@ body::-webkit-scrollbar {
 }
 
 .stats li #invite {
-    border: 1px solid #6C7B95;
-    background-color: #6C7B95;
+    border: 1px solid #5865F2;
+    background-color: #5865F2;
     font-style: bold;
     font-size: 15px;
     border-radius: 4px;
@@ -201,8 +201,8 @@ body::-webkit-scrollbar {
 .stats li #invite:hover {
     cursor: pointer;
     transition: 0.05s ease-in-out;
-    background-color: #8896ad;
-    border: 1px solid #8896ad;
+    background-color: #6d79fc;
+    border: 1px solid #6d79fc;
 }
 
 .stats li h1 {

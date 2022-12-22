@@ -9,7 +9,6 @@ import requests
 import datetime
 import asyncio
 from typing import Union, Tuple, Optional, Dict, List
-import random
 import os
 import logging; log = logging.getLogger()
 
@@ -83,9 +82,6 @@ class ShardedBotInstance(commands.AutoShardedBot):
         self._start_text()
         with open("backend/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config: Object = Object(json.load(config_file))
-            if self.config.twitch_app_id != "" and self.config.twitch_secret != "":
-                self.ngrok_port = random.randint(1024, 65535)
-                #self._set_ngrok_url()
         super().__init__(
             command_prefix=prefix_callable, 
             intents=self.intents, 
