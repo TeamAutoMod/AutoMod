@@ -189,7 +189,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="ban",
-        description="🔨 Bans the user from the server"
+        description="🔨 Bans a user from the server"
     )
     @discord.app_commands.describe(
         user="The user you want to ban",
@@ -214,7 +214,7 @@ class ModerationPlugin(WarnPlugin):
     
     @discord.app_commands.command(
         name="unban",
-        description="🔓 Unbans the user from the server"
+        description="🔓 Unbans a user from the server"
     )
     @discord.app_commands.describe(
         user="The user you want to unban",
@@ -258,7 +258,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="softban",
-        description="🔨 Softbans the user from the server (ban & unban)"
+        description="🔨 Softbans a user from the server (ban & unban)"
     )
     @discord.app_commands.describe(
         user="The user you want to ban",
@@ -283,7 +283,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="forceban",
-        description="🔨 Bans the user from the server (even if they aren't in the server)"
+        description="🔨 Bans a user from the server (even if they aren't in the server)"
     )
     @discord.app_commands.describe(
         user="The user you want to ban",
@@ -308,7 +308,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="tempban",
-        description="🔨 Temporarily bans the user from the server"
+        description="🔨 Temporarily bans a user from the server"
     )
     @discord.app_commands.describe(
         user="The user you want to ban",
@@ -453,7 +453,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="kick",
-        description="👢 Kicks the user from the server"
+        description="👢 Kicks a user from the server"
     )
     @discord.app_commands.describe(
         user="The user you want to kick",
@@ -478,7 +478,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="mute",
-        description="🔇 Temporarily mutes the user"
+        description="🔇 Temporarily mutes a user"
     )
     @discord.app_commands.describe(
         user="The user you want to mute",
@@ -620,7 +620,7 @@ class ModerationPlugin(WarnPlugin):
 
     @discord.app_commands.command(
         name="unmute",
-        description="🔊 Unmutes the user"
+        description="🔊 Unmutes a user"
     )
     @discord.app_commands.describe(
         user="The user you want to unmute"

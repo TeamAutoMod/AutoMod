@@ -693,7 +693,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
     
     @discord.app_commands.command(
         name="whois", 
-        description="📌 Shows some information about the user"
+        description="📌 Shows some information about a user"
     )
     @discord.app_commands.describe(
         user="The user who you want to get more information about"
@@ -864,19 +864,21 @@ class UtilityPlugin(AutoModPluginBlueprint):
         description="🕒 Edits the channel's slowmode or shows all active bot-set slowmodes"
     )
     @discord.app_commands.describe(
-        time="5s, 10m, 3h, 1d (0 to disable)"
+        duration="5s, 10m, 3h, 1d (0 to disable)",
+        channel="Where to set the slowmode (current channel by default)"
     )
     @discord.app_commands.default_permissions(manage_channels=True)
-    async def slowmode(self, ctx: discord.Interaction, time: str = None) -> None:
+    async def slowmode(self, ctx: discord.Interaction, duration: str = None, channel: discord.TextChannel = None) -> None:
         """
         slowmode_help
         examples:
         -slowmode 20m
-        -slowmode 1d
+        -slowmode 1d #test
         -slowmode 0
         -slowmode
         """
-        if time == None:
+        if channel == None: channel = ctx.channel
+        if duration == None:
             slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
             if len(slowmodes) < 1:
                 return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="INFO"), 2), ephemeral=True)
@@ -903,12 +905,12 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     return await ctx.response.send_message(embed=e)
         else:
             try:
-                time = await Duration().convert(ctx, time)
+                time = await Duration().convert(ctx, duration)
             except Exception as ex:
                 return self.error(ctx, ex)
             else:
                 if time.unit == None: time.unit = "m"
-                _id = f"{ctx.guild.id}-{ctx.channel.id}"
+                _id = f"{ctx.guild.id}-{channel.id}"
                 
                 try:
                     seconds = time.to_seconds(ctx)
@@ -920,18 +922,18 @@ class UtilityPlugin(AutoModPluginBlueprint):
                         if self.db.slowmodes.exists(_id):
                             self.db.slowmodes.delete(_id)
                         try:
-                            await ctx.channel.edit(
+                            await channel.edit(
                                 slowmode_delay=seconds
                             )
                         except Exception as ex:
                             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
                         else:
-                            self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "native"))
+                            self.db.slowmodes.insert(Slowmode(ctx.guild, channel, ctx.user, seconds, f"{time}", "native"))
                             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", time=str(time), mode="native slowmode"), 1))
                     else:
                         if seconds <= MAX_BOT_SLOWMODE:
                             try:
-                                await ctx.channel.edit(
+                                await channel.edit(
                                     slowmode_delay=MAX_NATIVE_SLOWMODE
                                 )
                             except Exception as ex:
@@ -943,15 +945,15 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                         "pretty": f"{time}"
                                     })
                                 else:
-                                    self.db.slowmodes.insert(Slowmode(ctx.guild, ctx.channel, ctx.user, seconds, f"{time}", "bot-maintained"))
+                                    self.db.slowmodes.insert(Slowmode(ctx.guild, channel, ctx.user, seconds, f"{time}", "bot-maintained"))
                                 
                                 return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "set_slowmode", _emote="YES", time=str(time),mode="bot-maintained slowmode"), 1))
                         else:
                             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_slowmode", _emote="YES", mode="bot-maintained slowmode"), 1))
                 else:
-                    if ctx.channel.slowmode_delay > 0:
+                    if channel.slowmode_delay > 0:
                         try:
-                            await ctx.channel.edit(
+                            await channel.edit(
                                 slowmode_delay=0
                             )
                         except Exception as ex:

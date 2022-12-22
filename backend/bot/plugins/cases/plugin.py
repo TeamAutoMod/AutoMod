@@ -320,7 +320,7 @@ class CasesPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="check",
-        description="🩺 Checks the users moderation status"
+        description="🩺 Checks a users moderation status"
     )
     @discord.app_commands.describe(
         user="The user you want to check"

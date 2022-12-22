@@ -46,7 +46,7 @@ class WarnPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="warn",
-        description="🚩 Warns the user"
+        description="🚩 Warns a user"
     )
     @discord.app_commands.describe(
         user="The user you want to warn",
@@ -82,7 +82,7 @@ class WarnPlugin(AutoModPluginBlueprint):
 
     @discord.app_commands.command(
         name="unwarn",
-        description="😇 Unwarns the user"
+        description="😇 Unwarns a user"
     )
     @discord.app_commands.describe(
         user="The user you want to unwarn",
