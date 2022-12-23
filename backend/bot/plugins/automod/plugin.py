@@ -8,13 +8,13 @@ from ...__obj__ import TypeHintedToolboxObject as Object
 from urllib.parse import urlparse
 from typing import TypeVar, Literal, Optional, List
 import logging; log = logging.getLogger()
-from typing import Union, Tuple
+from typing import Union, Tuple, Dict
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from .._processor import ActionProcessor, LogProcessor, DMProcessor
 from ...types import Embed, E
 from ...views import RoleChannelSelect
-from ...modals import AutomodRuleModal, AutomodResponseModal
+from ...modals import AutomodRuleModal
 
 
 
@@ -320,8 +320,30 @@ class AutomodPlugin(AutoModPluginBlueprint):
         self.action_processor = ActionProcessor(bot)
         self.log_processor = LogProcessor(bot)
         self.dm_processor = DMProcessor(bot)
-        self.spam_cache = {}
-        self.score_cache = {}
+        self.spam_cache: Dict[int, commands.CooldownMapping] = {}
+        self.recent_messages: Dict[int, Dict[int, List[discord.Message]]] = {}
+
+
+    def update_recent_messages(self, msg: discord.Message) -> None:
+        if not msg.author.id in self.recent_messages:
+            self.recent_messages[msg.guild.id] = [msg]
+        else:
+            last_ten = self.recent_messages[msg.author.id].get(msg.guild.id, [])
+            if len(last_ten) == 10:
+                last_ten[-1] = msg
+            else:
+                last_ten.append(msg)
+            
+            self.recent_messages[msg.author.id].update({
+                msg.guild.id: last_ten
+            })
+    
+
+    def get_recent_messages(self, msg: discord.Message) -> List[Optional[discord.Message]]:
+        if not msg.author.id in self.recent_messages:
+            return []
+        else:
+            return self.recent_messages[msg.author.id].get(msg.guild.id, [])
 
 
     def can_act(self, guild: discord.Guild, mod: discord.Member, target: Union[discord.Member, discord.User]) -> bool:
@@ -436,46 +458,23 @@ class AutomodPlugin(AutoModPluginBlueprint):
             "{server}": f"{msg.guild.name}",
             "{rule}": rule.title()
         }
-        out = ""
+
         for k, v in vars.items():
-            out.replace(k, v)
-        return out
+            inp.replace(k, v)
+        return inp
     
 
     async def send_response(self, msg: discord.Message, rule: str) -> None:
         cfg = self.db.configs.get(msg.guild.id, "automod")
-        rcfg = Object(
-            cfg.get(rule, {})
-            .get("response", {
-                "msg": None, 
-                "embed": {
-                    "title": None, 
-                    "description": None
-                }
-            })
-        )
+        if rule.lower() in cfg:
+            response: Optional[str] = cfg[rule].get("response", None)
+            if response != None and response != "":
+                try:
+                    await msg.channel.send(content=self.replace_vars(msg, response, rule))
+                except Exception:
+                    pass
 
-        if rcfg.msg == None and rcfg.embed.title == None and rcfg.embed.description == None:
-            return
         
-        if rcfg.embed.title != None or rcfg.embed.description != None:
-            embed = Embed(
-                ctx,
-                title=self.replace_vars(msg, rcfg.embed.title, rule) if rcfg.embed.title != None else None,
-                description=self.replace_vars(msg, rcfg.embed.description, rule) if rcfg.embed.description != None else None,
-            )
-        else:
-            embed = None
-
-        try:
-            await msg.channel.send(
-                content=self.replace_vars(msg, rcfg.msg, rule) if rcf.msg != None else None, 
-                embed=embed
-            )
-        except Exception:
-            pass
-        
-
     async def delete_msg(self, rule: str, found: str, msg: discord.Message, warns: int, reason: str, pattern_or_filter: Optional[str] = None) -> None:
         try:
             await msg.delete()
@@ -487,8 +486,9 @@ class AutomodPlugin(AutoModPluginBlueprint):
         else:
             self.bot.ignore_for_events.append(msg.id)
         finally:
-            # await self.send_response(msg, rule) 
+            await self.send_response(msg, rule) 
             data = Object(LOG_DATA[rule])
+
             if warns > 0:
                 await self.action_processor.execute(
                     msg, 
@@ -549,6 +549,16 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     )
 
 
+    def get_automod_reason(self, rule: Object, default: str) -> str:
+        if hasattr(rule, "reason"):
+            if rule.reason != None: 
+                return rule.reason
+            else:
+                return default
+        else:
+            return default
+
+
     async def enforce_rules(self, msg: discord.Message) -> None:
         content = self.sanitize_content(msg.content)
 
@@ -574,13 +584,22 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
                 users = mapping.get_bucket(msg)
                 if users.update_rate_limit(now):
+                    to_delete = self.get_recent_messages(msg)
+                    if len(to_delete) > 0:
+                        try:
+                            await msg.channel.delete_messages(to_delete)
+                        except Exception:
+                            pass
+
                     return await self.delete_msg(
                         "antispam",
                         f"**``{users.rate}/{round(users.per, 0)}``**",
                         msg, 
                         antispam.warns, 
-                        f"Spam detected"
+                        "Spam detected"
                     )
+                else:
+                    self.update_recent_messages(msg)
 
 
         if len(filters) > 0:
@@ -596,7 +615,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                                 ", ".join([f"**``{x}``**" for x in found]),
                                 msg, 
                                 int(f["warns"]), 
-                                f"Blacklisted spam",
+                                "Blacklisted spam",
                                 name
                             )
         
@@ -612,7 +631,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                                 ", ".join([f"**``{x}``**" for x in found]),
                                 msg, 
                                 int(data["warns"]), 
-                                f"Blacklisted spam",
+                                "Blacklisted spam",
                                 name
                             )
         
@@ -635,7 +654,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                             f"**``{inv}``**",
                             msg, 
                             rules.invites.warns, 
-                            f"Sending Discord invite link or equivalent redirect"
+                            self.get_automod_reason(
+                                rules.invites, 
+                                "Sending Discord invite link or equivalent redirect"
+                            )
                         )
                     if invite.guild == None:
                         return await self.delete_msg(
@@ -643,7 +665,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                             f"**``{inv}``**",
                             msg, 
                             rules.invites.warns, 
-                            f"Sending Discord invite link or equivalent redirect"
+                            self.get_automod_reason(
+                                rules.invites, 
+                                "Sending Discord invite link or equivalent redirect"
+                            )
                         )
                     else:
                         if invite.guild == None \
@@ -656,7 +681,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                                     f"**``{inv}``**",
                                     msg, 
                                     rules.invites.warns, 
-                                    f"Sending Discord invite link or equivalent redirect"
+                                    self.get_automod_reason(
+                                rules.invites, 
+                                "Sending Discord invite link or equivalent redirect"
+                            )
                                 )
         
         if hasattr(rules, "links"):
@@ -670,7 +698,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                             f"**``{url.hostname}``**",
                             msg, 
                             rules.links.warns, 
-                            f"Posting a link without permission"
+                            self.get_automod_reason(
+                                rules.links, 
+                                "Posting a link without permission"
+                            )
                         )
                     else:
                         if not url.hostname in config.white_listed_links:
@@ -679,7 +710,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                                 f"**``{url.hostname}``**",
                                 msg, 
                                 rules.links.warns, 
-                                f"Posting a link without permission"
+                                self.get_automod_reason(
+                                rules.links, 
+                                "Posting a link without permission"
+                            )
                             )
 
         if hasattr(rules, "files"):
@@ -697,7 +731,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                         ", ".join([f"**``{x}``**" for x in forbidden]), 
                         msg, 
                         rules.files.warns, 
-                        f"Posting forbidden attachment type"
+                        self.get_automod_reason(
+                            rules.files, 
+                            "Posting forbidden attachment type"
+                        )
                     )
 
         if hasattr(rules, "zalgo"):
@@ -708,7 +745,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     f"``{found.group()}``", 
                     msg, 
                     rules.zalgo.warns, 
-                    f"Excessive or/and unwanted use of symbols"
+                    self.get_automod_reason(
+                        rules.zalgo, 
+                        "Excessive or/and unwanted use of symbolse"
+                    )
                 )
 
         if hasattr(rules, "mentions"):
@@ -719,7 +759,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     f"**``{found}``**", 
                     msg, 
                     0 if (found - rules.mentions.threshold) == 1 else 1, 
-                    f"Excessive use of mentions"
+                    self.get_automod_reason(
+                        rules.mentions, 
+                        "Excessive use of mentionse"
+                    )
                 )
 
         if hasattr(rules, "lines"):
@@ -730,7 +773,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     f"**``{found}``**", 
                     msg, 
                     0 if (found - rules.lines.threshold) == 1 else 1, 
-                    f"Message too long"
+                    self.get_automod_reason(
+                        rules.lines, 
+                        "Message too long"
+                    )
                 )
 
         if hasattr(rules, "emotes"):
@@ -741,7 +787,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     f"**``{found}``**", 
                     msg, 
                     0 if (found - rules.emotes.threshold) == 1 else 1, 
-                    f"Excessive use of emotes"
+                    self.get_automod_reason(
+                        rules.emotes, 
+                        "Excessive use of emotes"
+                    )
                 )
 
         if hasattr(rules, "repeat"):
@@ -758,7 +807,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                             f"**``{k} ({v}x)``**", 
                             msg, 
                             0 if (v - rules.repeat.threshold) == 1 else 1, 
-                            f"Duplicated text"
+                            self.get_automod_reason(
+                                rules.repeat, 
+                                "Duplicated text"
+                            )
                         )
         
         if hasattr(rules, "caps"):
@@ -770,7 +822,10 @@ class AutomodPlugin(AutoModPluginBlueprint):
                         f"**``{perc_caps}% in {len(content)} chars``**", 
                         msg, 
                         rules.caps.warns, 
-                        f"Excessive use of CAPS"
+                        self.get_automod_reason(
+                            rules.caps, 
+                            "Excessive use of CAPS"
+                        )
                     )
 
 
@@ -915,13 +970,14 @@ class AutomodPlugin(AutoModPluginBlueprint):
         data = Object(AUTOMOD_RULES[rule])
 
         if action.lower() == "disable":
-            self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type), 1))
+            if rule not in current:
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_automod_off", _emote="NO", _type=data.i18n_type.title()), 0))
+            else:
+                self.db.configs.update(ctx.guild.id, "automod", {k: v for k, v in current.items() if k != rule})
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "automod_off", _emote="YES", _type=data.i18n_type.title()), 1))
         else:
-            async def callback(
-                i: discord.Interaction
-            ) -> None:
-                amount, = self.bot.extract_args(i, "amount")
+            async def callback(i: discord.Interaction) -> None:
+                amount, response, reason, _ = self.bot.extract_args(i, "amount", "response", "reason", "vars")
 
                 try:
                     amount = int(amount)
@@ -937,7 +993,9 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
                 current.update({
                     rule: {
-                        data.int_field_name: int(amount)
+                        data.int_field_name: int(amount),
+                        "response": response if response != "" else None,
+                        "reason": reason if reason != "" else None
                     }
                 })
                 self.db.configs.update(i.guild.id, "automod", current)
@@ -958,12 +1016,14 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     else:
                         text = self.locale.t(i.guild, data.i18n_key, _emote="YES", amount=amount, plural="" if amount == 1 else "s")
                 await i.response.send_message(embed=E(text, 1))
-        
+
             modal = AutomodRuleModal(
                 self.bot, 
                 f"Configure {rule.title()} Rule", 
                 "threshold" if rule in ["mentions", "lines", "emotes", "repeat"] else "warns",
                 current.get(rule, {}).get(data.int_field_name, None),
+                current.get(rule, {}).get("response", None),
+                current.get(rule, {}).get("reason", None),
                 callback
             )
             await ctx.response.send_modal(modal)

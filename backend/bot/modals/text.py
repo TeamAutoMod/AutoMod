@@ -3,7 +3,7 @@
 import discord
 from discord.ui import Modal
 
-from typing import Callable
+from typing import Callable, Optional
 
 
 
@@ -260,16 +260,45 @@ class CommandEditModal(TextModalBase):
 
 
 class AutomodRuleModal(TextModalBase):
-    def __init__(self, bot, title: str, _type: str, default: str, callback: Callable) -> None:
+    def __init__(self, bot, title: str, _type: str, amount: str, response: Optional[str], reason: Optional[str], callback: Callable) -> None:
         super().__init__(bot, title, callback)
+        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{channel}  ━ The channel name \n{server}  ━ The server name"
+
         self.add_item(discord.ui.TextInput(
             custom_id="amount",
             label=_type.capitalize(),
             style=discord.TextStyle.short,
-            default=default,
+            default=str(amount),
             placeholder="Warns upon violation (0 to just delete the message)" if _type == "warns" else "Max allowed amount for this rule",
             required=True,
             max_length=2
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="response",
+            label="Custom Response",
+            style=discord.TextStyle.long,
+            default=response,
+            placeholder="An optional response the bot will send (leave blank for no response at all)",
+            required=False,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="reason",
+            label="Custom Reason",
+            style=discord.TextStyle.long,
+            default=reason,
+            placeholder="An optional custom reason for logs (leave blank for default reason for this rule)",
+            required=False,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="vars",
+            label="Variable Reference",
+            style=discord.TextStyle.long,
+            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+            default=self._vars_text,
+            required=False,
+            max_length=len(self._vars_text)
         ))
 
 
@@ -406,52 +435,6 @@ class ResponseEditModal(TextModalBase):
             placeholder="What the bot should respond with",
             default=response,
             required=True,
-            max_length=2000
-        ))
-        self.add_item(discord.ui.TextInput(
-            custom_id="vars",
-            label="Variable Reference",
-            style=discord.TextStyle.long,
-            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
-            default=self._vars_text,
-            required=False,
-            max_length=len(self._vars_text)
-        ))
-
-
-class AutomodResponseModal(TextModalBase):
-    def __init__(self, bot, title: str, msg: str, embed_title: str, embed_desc: str, callback: Callable) -> None:
-        super().__init__(bot, title, callback)
-        self.msg = msg
-        self.embed_title = embed_title
-        self.embed_desc = embed_desc
-
-        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{channel}  ━ The channel name \n{server}  ━ The server name \n{rule}  ━ The rule that was triggered"
-        self.add_item(discord.ui.TextInput(
-            custom_id="msg",
-            label="Message",
-            style=discord.TextStyle.long,
-            placeholder="A regular message to send when the rule is triggered",
-            default=msg,
-            required=False,
-            max_length=2000
-        ))
-        self.add_item(discord.ui.TextInput(
-            custom_id="title",
-            label="Embed Title",
-            style=discord.TextStyle.long,
-            placeholder="An optional title for the response embed",
-            default=self.embed_title,
-            required=False,
-            max_length=200
-        ))
-        self.add_item(discord.ui.TextInput(
-            custom_id="desc",
-            label="Embed Description",
-            style=discord.TextStyle.long,
-            placeholder="An optional description for the response embed",
-            default=self.embed_desc,
-            required=False,
             max_length=2000
         ))
         self.add_item(discord.ui.TextInput(

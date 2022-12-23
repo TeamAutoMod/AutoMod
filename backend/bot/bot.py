@@ -470,7 +470,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             pass
 
     
-    def extract_args(self, i: discord.Interaction, *args) -> tuple:
+    def extract_args(self, i: discord.Interaction, *args) -> Tuple[str, ...]:
         return (
             i.data["components"][i.data["components"].index(
                 [_ for _ in i.data["components"] if _["components"][0]["custom_id"] == x][0]

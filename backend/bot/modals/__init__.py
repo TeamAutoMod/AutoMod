@@ -9,6 +9,5 @@ from .text import (
     DefaultReasonModal, 
     EmbedBuilderModal, 
     ResponseCreateModal,
-    ResponseEditModal,
-    AutomodResponseModal
+    ResponseEditModal
 )

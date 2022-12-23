@@ -335,16 +335,16 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "name": f"{self.bot.emotes.get('SWORDS')} __Automod Rules__",
                 "value": "**• Max Mentions:** {} \n**• Max Newlines:** {} \n**• Max Emotes:** {} \n**• Max Repetitions:** {} \n**• Links:** {} \n**• Invites:** {} \n**• Bad Files:** {} \n**• Zalgo:** {} \n**• CAPS:** {} \n**• Spam:** {}"\
                 .format(
-                    no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold}",
-                    no if not hasattr(rules, "lines") else f"{rules.lines.threshold}",
-                    no if not hasattr(rules, "emotes") else f"{rules.emotes.threshold}",
-                    no if not hasattr(rules, "repeat") else f"{rules.repeat.threshold}",
-                    no if not hasattr(rules, "links") else f"{rules.links.warns} warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "delete message",
-                    no if not hasattr(rules, "invites") else f"{rules.invites.warns} warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "delete message",
-                    no if not hasattr(rules, "files") else f"{rules.files.warns} warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "delete message",
-                    no if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "delete message",
-                    no if not hasattr(rules, "caps") else f"{rules.caps.warns} warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "delete message",
-                    no if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} warn{'' if config.antispam.warns == 1 else 's'})"
+                    no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold} Mentions",
+                    no if not hasattr(rules, "lines") else f"{rules.lines.threshold} Line Splits",
+                    no if not hasattr(rules, "emotes") else f"{rules.emotes.threshold} Emotes",
+                    no if not hasattr(rules, "repeat") else f"{rules.repeat.threshold} Repetitions",
+                    no if not hasattr(rules, "links") else f"{rules.links.warns} Warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "Delete Message",
+                    no if not hasattr(rules, "invites") else f"{rules.invites.warns} Warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "Delete Message",
+                    no if not hasattr(rules, "files") else f"{rules.files.warns} Warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "Delete Message",
+                    no if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} Warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "Delete Message",
+                    no if not hasattr(rules, "caps") else f"{rules.caps.warns} Warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "Delete Message",
+                    no if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} Warn{'' if config.antispam.warns == 1 else 's'})"
                 ),
                 "inline": True
             },
