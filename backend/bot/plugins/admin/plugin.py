@@ -37,11 +37,11 @@ class AdminPlugin(AutoModPluginBlueprint):
 
 
     def parse_shard_info(self, shard: discord.ShardInfo) -> str:
-        guilds = len(list(filter(lambda x: x.shard_id == shard.id, self.bot.guilds)))
+        guilds = list(filter(lambda x: x.shard_id == shard.id, self.bot.guilds))
         if not shard.is_closed():
-            text = "+ {}: CONNECTED ~ {} guilds".format(shard.id, guilds)
+            text = "+ {}: CONNECTED ~ {} guilds ~ {} users".format(shard.id, len(guilds), sum([len(x.members) for x in guilds]))
         else:
-            text = "- {}: DISCONNECTED ~ {} guilds".format(shard.id, guilds)
+            text = "- {}: DISCONNECTED ~ {} guilds ~ {} users".format(shard.id, len(guilds), sum([len(x.members) for x in guilds]))
         return text
 
     
