@@ -333,7 +333,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('SWORDS')} __Automod Rules__",
-                "value": "**• Max Mentions:** {} \n**• Max Newlines:** {} \n**• Max Emotes:** {} \n**• Max Repetitions:** {} \n**• Links:** {} \n**• Invites:** {} \n**• Bad Files:** {} \n**• Zalgo:** {} \n**• CAPS:** {} \n**• Spam:** {}"\
+                "value": "**• Mentions Filter:** {} \n**• Length Filter:** {} \n**• Emotes Filter:** {} \n**• Repetition Filter:** {} \n**• Links Filter:** {} \n**• Invites Filter:** {} \n**• Attachment Filter:** {} \n**• Zalgo Filter:** {} \n**• Caps Filter:** {} \n**• Spam Filter:** {}"\
                 .format(
                     no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold} Mentions",
                     no if not hasattr(rules, "lines") else f"{rules.lines.threshold} Line Splits",
@@ -344,7 +344,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     no if not hasattr(rules, "files") else f"{rules.files.warns} Warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "Delete Message",
                     no if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} Warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "Delete Message",
                     no if not hasattr(rules, "caps") else f"{rules.caps.warns} Warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "Delete Message",
-                    no if config.antispam.enabled == False else f"{config.antispam.rate} per {config.antispam.per} ({config.antispam.warns} Warn{'' if config.antispam.warns == 1 else 's'})"
+                    no if config.antispam.enabled == False else f"{config.antispam.rate} Messages per {config.antispam.per} seconds ({config.antispam.warns} Warn{'' if config.antispam.warns == 1 else 's'})"
                 ),
                 "inline": True
             },

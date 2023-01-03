@@ -268,7 +268,7 @@ class AutomodRuleModal(TextModalBase):
             custom_id="amount",
             label=_type.capitalize(),
             style=discord.TextStyle.short,
-            default=str(amount),
+            default=amount if amount == None else str(amount),
             placeholder="Warns upon violation (0 to just delete the message)" if _type == "warns" else "Max allowed amount for this rule",
             required=True,
             max_length=2

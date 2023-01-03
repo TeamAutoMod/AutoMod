@@ -1,3 +1,5 @@
+#type: ignore
+
 import sentry_sdk
 import json
 import logging

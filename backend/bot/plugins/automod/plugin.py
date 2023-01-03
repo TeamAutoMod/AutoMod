@@ -955,17 +955,37 @@ class AutomodPlugin(AutoModPluginBlueprint):
     async def automod(
         self, 
         ctx: discord.Interaction, 
-        rule: Literal["Invites", "Links", "Files", "Mentions", "Lines", "Emotes", "Repeat", "Zalgo", "Caps"],
+        rule: Literal[
+            "Invites filter", 
+            "Links filter", 
+            "Attachments filter", 
+            "Mentions filter", 
+            "Length filter", 
+            "Emotes filter", 
+            "Repetition filter", 
+            "Zalgo filter", 
+            "Caps filter"
+        ],
         action: Literal["Enable", "Disable", "Edit"]
     ) -> None:
         """
         automod_help
         examples:
-        -automod Invites Enable
-        -automod Mentions Disable
-        -aautomod Links Edit
+        -automod Invites filter Enable
+        -automod Mentions filter Disable
+        -aautomod Links filter Edit
         """  
-        rule = rule.lower()
+        rule = {
+            "invites filter": "invites", 
+            "links filter": "links", 
+            "attachments filter": "files", 
+            "mentions filter": "mentions", 
+            "length filter": "lines", 
+            "emotes filter": "emotes", 
+            "repetition filter": "repeat", 
+            "zalgo filter": "zalgo", 
+            "caps filter": "caps"
+        }.get(rule.lower())
         current = self.db.configs.get(ctx.guild.id, "automod")
         data = Object(AUTOMOD_RULES[rule])
 
@@ -1211,117 +1231,77 @@ class AutomodPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "unallowed_link2", _emote="YES"), 1))
 
 
-    @discord.app_commands.command(
+    antispam_command = discord.app_commands.Group(
         name="antispam",
-        description="🔄 Configure the antispam filter"
+        description="🔄 Configure the spam filter",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @antispam_command.command(
+        name="enable",
+        description="🔄 Enable the spam filter"
     )
     @discord.app_commands.describe(
-        rate="Allowed amount of messages (put 'off' here to disable the antispam filter)",
+        rate="Allowed amount of messages",
         per="Timeframe the amount messages are allowed to be sent in",
         warns="Amount of warns users should receive when spam is detected"
     )
     @discord.app_commands.default_permissions(manage_guild=True)
-    async def antispam(self, ctx: discord.Interaction, rate: str = None, per: int = None, warns: int = None) -> None:
+    async def antispam(
+        self, 
+        ctx: discord.Interaction, 
+        rate: discord.app_commands.Range[int, 3, 21], 
+        per: discord.app_commands.Range[int, 3, 20], 
+        warns: discord.app_commands.Range[int, 1, 100]
+    ) -> None:
         """
         antispam_help
         examples:
         -antispam
-        -antispam 12 per:10 3
-        -antispam off
+        -antispam 12 10 3
         """
         config = self.db.configs.get(ctx.guild.id, "antispam")
+        config.update({
+            "enabled": True,
+            "rate": rate,
+            "per": per,
+            "warns": warns
+        })
 
-        prefix = "/"
-        info_embed = Embed(
-            ctx,
-            description=self.locale.t(ctx.guild, "antispam_info", _emote="NO")
-        )
-        info_embed.add_fields([
-            {
-                "name": "__View current config__",
-                "value": f"</antispam:{self.bot.internal_cmd_store.get('antispam')}>"
-            },
-            {
-                "name": "__Enable antispam__",
-                "value": f"``{prefix}antispam <rate> <per> <warns>``"
-            },
-            {
-                "name": "__Disable antispam__",
-                "value": f"``{prefix}antispam rate:off``"
-            }
-        ])
-
-        if rate == None and per == None and warns == None:
-            e = Embed(
-                ctx,
-                title="Antispam Config"
+        am_plugin = self.bot.get_plugin("AutomodPlugin")
+        am_plugin.spam_cache.update({
+            ctx.guild.id: commands.CooldownMapping.from_cooldown(
+                rate,
+                float(per),
+                commands.BucketType.user
             )
-            e.add_fields([
-                {
-                    "name": "__Status__",
-                    "value": "> Enabled" if config["enabled"] == True else "> Disabled",
-                    "inline": False
-                },
-                {
-                    "name": "__Threshold__",
-                    "value": f"**• {config['rate']}** messages per **{config['per']}** seconds" if config["enabled"] == True else "> N/A",
-                    "inline": False
-                },
-                {
-                    "name": "__Action__",
-                    "value": f"**• {config['warns']}** warn{'' if config['warns'] == 1 else 's'}" if config["enabled"] == True else "> N/A",
-                    "inline": False
-                }
-            ])
+        })
+        self.db.configs.update(ctx.guild.id, "antispam", config)
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns), 1))
 
-            await ctx.response.send_message(embed=e)
-        elif per == None and warns == None:
-            if not rate.isdigit():
-                if rate.lower() == "off":
-                    config.update({
-                        "enabled": False
-                    })
-                    self.db.configs.update(ctx.guild.id, "antispam", config)
-                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"), 1))
-                else:
-                    await ctx.response.send_message(embed=info_embed)
-            else:
-                await ctx.response.send_message(embed=info_embed)
-        elif warns == None:
-            await ctx.response.send_message(embed=info_embed)
-        else:
-            try:
-                rate = int(rate)
-                per = int(per)
-            except Exception:
-                return await ctx.response.send_message(embed=info_embed)
-            else:
-                if rate < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_rate", _emote="NO"), 0), ephemeral=True)
-                if rate > 21: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rate", _emote="NO"), 0), ephemeral=True)
 
-                if per < 3: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_per", _emote="NO"), 0), ephemeral=True)
-                if per > 20: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_per", _emote="NO"), 0), ephemeral=True)
+    @antispam_command.command(
+        name="disable",
+        description="🔄 Disable the spam filter"
+    )
+    @discord.app_commands.default_permissions(manage_guild=True)
+    async def antispam(
+        self, 
+        ctx: discord.Interaction
+    ) -> None:
+        """
+        antispam_help
+        examples:
+        -antispam disable
+        """
+        config = self.db.configs.get(ctx.guild.id, "antispam")
+        if config["enabled"] == False:
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "antispam_alr_disabled", _emote="NO"), 0), ephemeral=True)
 
-                if warns < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0), ephemeral=True)
-                if warns > 100: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "min_warns", _emote="NO"), 0), ephemeral=True)
-
-                config.update({
-                    "enabled": True,
-                    "rate": rate,
-                    "per": per,
-                    "warns": warns
-                })
-
-                am_plugin = self.bot.get_plugin("AutomodPlugin")
-                am_plugin.spam_cache.update({
-                    ctx.guild.id: commands.CooldownMapping.from_cooldown(
-                        rate,
-                        float(per),
-                        commands.BucketType.user
-                    )
-                })
-                self.db.configs.update(ctx.guild.id, "antispam", config)
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "enabled_antispam", _emote="YES", rate=rate, per=per, warns=warns), 0), ephemeral=True)
+        config.update({
+            "enabled": False
+        })
+        self.db.configs.update(ctx.guild.id, "antispam", config)
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_antispam", _emote="YES"), 1))
 
 
     ignore_automod = discord.app_commands.Group(
