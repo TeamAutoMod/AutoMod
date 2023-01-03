@@ -5,7 +5,7 @@ from discord.ext import commands
 
 from ...__obj__ import TypeHintedToolboxObject as Object
 from random import randint
-from typing import OrderedDict, Union, Literal
+from typing import OrderedDict, List, Union, Literal
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...schemas import UserLevel
@@ -52,6 +52,33 @@ class LevelPlugin(AutoModPluginBlueprint):
             "xp": xp,
             "lvl": lvl
         })
+
+
+    def delete_entry(self, entry: Object) -> None:
+        self.db.level.delete(entry.id)
+        cfg = self.db.configs.get(entry.id.split("-")[0], "lvl_sys")
+        if cfg != None:
+            cfg["users"] = [x for x in cfg["users"] if str(x) != str(entry.id.split("-")[1])]
+            self.db.configs.update(entry.id.split("-")[0], "lvl_sys", cfg)
+
+
+    def construct_leaderboard_data(self, ctx: discord.Interaction, init_data: List[Object]) -> List[Object]:
+        final = []
+        for entry in init_data[:10]:
+            user = ctx.guild.get_member(int(entry.id.split("-")[-1]))
+            if user == None: 
+                self.delete_entry(entry)
+            else: 
+                final.append(entry)
+        return final
+    
+
+    def user_set(self, inp: List[Object]) -> List[Object]:
+        final = []
+        for entry in inp:
+            if not entry.id in [_.id for _ in final]:
+                final.append(entry)
+        return final
 
 
     def lb_pos(self, i: int,user: Union[str,discord.Member]) -> str:
@@ -101,7 +128,6 @@ class LevelPlugin(AutoModPluginBlueprint):
             ])) \
             and not any([x.bot for x in msg.mentions if hasattr(x, "bot")])
         )
-        
 
 
     async def add_reward(self, guild: discord.Guild, user: discord.Member, level: int, config: Object) -> None:
@@ -485,8 +511,8 @@ class LevelPlugin(AutoModPluginBlueprint):
 
         await ctx.response.defer(thinking=True)
 
-        users = [Object(x) for x in self.db.level.find({"guild": f"{ctx.guild.id}"})][:25]
-        data = sorted(users, key=lambda e: e.xp, reverse=True)
+        users = self.user_set([Object(x) for x in self.db.level.find({"guild": f"{ctx.guild.id}"})][:25])
+        data = sorted(set(users), key=lambda e: e.xp, reverse=True)
 
         e = Embed(
             ctx,
@@ -495,23 +521,23 @@ class LevelPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(
             url=ctx.guild.icon.url
         )
-        for i, entry in enumerate(data[:10]):
+
+        final_data = self.construct_leaderboard_data(ctx, data)
+        for i, entry in enumerate(final_data):
             user = ctx.guild.get_member(int(entry.id.split("-")[-1]))
             if user == None: 
-                user = "Unknown#0000"
+                self.delete_entry(entry)
             else:
-                user = f"{user.name}#{user.discriminator}"
-
-            if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 10)])
-            e.add_field(
-                name=f"{self.lb_pos(i, user)}",
-                value="**• Level:** {} \n**• Total XP:** {} \n⠀"\
-                    .format(
-                        entry.lvl,
-                        entry.xp
-                    ),
-                inline=True
-            )
+                if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 10)])
+                e.add_field(
+                    name=f"{self.lb_pos(i, user)}",
+                    value="**• Level:** {} \n**• Total XP:** {} \n⠀"\
+                        .format(
+                            entry.lvl,
+                            entry.xp
+                        ),
+                    inline=True
+                )
         
         e.set_footer(
             text="Your rank: #{}".format(
