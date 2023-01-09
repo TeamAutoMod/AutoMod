@@ -15,10 +15,10 @@ class DMProcessor:
         self.bot = bot
         self.colors = {
             "kick": 0xf79554,
-            "ban": 0xf04a47,
-            "tempban": 0xf04a47,
-            "mute": 0xffdc5c,
-            "warn": 0xffdc5c,
+            "ban": 0xff6464,
+            "tempban": 0xff6464,
+            "mute": 0xfaa81a,
+            "warn": 0xfaa81a,
             "automod_rule_triggered": 0x131313
         }
         self.queue = []

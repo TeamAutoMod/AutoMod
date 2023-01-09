@@ -268,6 +268,12 @@ class ShardedBotInstance(commands.AutoShardedBot):
             super().dispatch(event_name, *args, **kwargs)
         except Exception as ex:
             log.error(f"[Events] Error in {event_name} - {ex}", extra={"loc": f"PID {os.getpid()}"})
+
+    
+    def modify_to_guild_only(self, cmd: discord.app_commands.Command) -> discord.app_commands.Command:
+        if hasattr(cmd, "guild_only"):
+            cmd.guild_only = True
+        return cmd
             
     
     async def load_plugins(self) -> None:
@@ -286,6 +292,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                 except Exception:
                     pass
             
+            self.tree._global_commands = {k: self.modify_to_guild_only(v) for k, v in self.tree._global_commands.items()}
             for cmd in await self.tree.fetch_commands():
                 self.internal_cmd_store.update({
                     cmd.name: cmd.id

@@ -107,7 +107,7 @@ LOG_TYPES = {
     "warn": {
         "channel": "mod_log",
         "key": "log_warn",
-        "color": 0xffdc5c,
+        "color": 0xfaa81a,
         "emote": "FLAG",
         "action": "User warned"
     },

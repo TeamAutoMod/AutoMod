@@ -13,7 +13,7 @@ ACTUAL_PLUGIN_NAMES = {
     "ConfigPlugin": "<:aConfig:1054890378916016139> Configuration",
     "AutomodPlugin": "<:aMod:1054889663220949094> Automoderator",
     "ModerationPlugin": "<:aBan:1054889458446630942> Moderation",
-    "FilterPlugin": "<:aDenied:1054890383340994650>Filters & Regexes",
+    "FilterPlugin": "<:aDenied:1054890383340994650> Filters & Regexes",
     "UtilityPlugin": "<:aUtility:1054890965527179335> Utility",
     "LevelPlugin": "<:aTrophy:1054890963962703994> Level System",
     "TagsPlugin": "<:aCommand:1054890962989621259> Custom Commands & Responders",

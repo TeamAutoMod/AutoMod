@@ -39,7 +39,7 @@ class TypeHintedToolboxObject:
         try:
             return self._raw[k]
         except KeyError:
-            raise
+            return None
     
 
     def _new(self, new=None) -> None:

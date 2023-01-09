@@ -307,7 +307,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Can mute:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Join Role:** {}"\
                 .format(
                     "/",
-                    yes if config.premium == True else no,
+                    f"{yes} (unlimited)" if config.premium == True else no,
                     mute_perm,
                     len(config.filters),
                     len(config.regexes),
@@ -332,7 +332,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": f"{self.bot.emotes.get('SWORDS')} __Automod Rules__",
+                "name": f"{self.bot.emotes.get('SWORDS')} __Automoderator__",
                 "value": "**• Mentions Filter:** {} \n**• Length Filter:** {} \n**• Emotes Filter:** {} \n**• Repetition Filter:** {} \n**• Links Filter:** {} \n**• Invites Filter:** {} \n**• Attachment Filter:** {} \n**• Zalgo Filter:** {} \n**• Caps Filter:** {} \n**• Spam Filter:** {}"\
                 .format(
                     no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold} Mentions",

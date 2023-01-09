@@ -189,7 +189,7 @@ class ErrorPlugin(AutoModPluginBlueprint):
             finally:
                 e = Embed(
                     ctx,
-                    color=0xf04a47,
+                    color=0xff6464,
                     title="Uncaught error",
                     description="```py\n{}\n```".format(("".join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__)))[:4000])
                 )
