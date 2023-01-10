@@ -168,6 +168,7 @@
     "role_too_high": "{emote} This role is above my highest role. Please put it below my highest role, so I can add it to users",
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
     "already_tempbanned_description": "User is already tempbanned. Do you want to extend their tempban?",
+    "cant_assign_role": "{emote} I won't be able to assign this role any users",
 
     "amount_too_small": "{emote} Too few messages (<1)",
     "amount_too_big": "{emote} Too many messages (>100)",
