@@ -1,12 +1,12 @@
 import json
 
-from .__types import _PY_TYPES_DISCORD_POSSIBLE_ITER
-from typing import Dict
+from .__types import _PY_TYPES_DISCORD
+from typing import Dict, Optional
 
 
 
 class TypeHintedToolboxObject:
-    def __init__(self, data: Dict[str, _PY_TYPES_DISCORD_POSSIBLE_ITER] = {}) -> None:
+    def __init__(self, data: Dict[str, _PY_TYPES_DISCORD] = {}) -> None:
         self._raw = data
         class _(dict):
             def __init__(self, *args, **kwargs):
@@ -35,7 +35,7 @@ class TypeHintedToolboxObject:
         return json.dumps(self._raw, separators=(',', ':'))
     
 
-    def __getattr__(self, k: str) -> _PY_TYPES_DISCORD_POSSIBLE_ITER:
+    def __getattr__(self, k: str) -> Optional[_PY_TYPES_DISCORD]:
         try:
             return self._raw[k]
         except KeyError:

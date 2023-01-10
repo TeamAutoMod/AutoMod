@@ -336,11 +336,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     no if not hasattr(rules, "lines") else f"{rules.lines.threshold} Line Splits",
                     no if not hasattr(rules, "emotes") else f"{rules.emotes.threshold} Emotes",
                     no if not hasattr(rules, "repeat") else f"{rules.repeat.threshold} Repetitions",
-                    no if not hasattr(rules, "links") else f"{rules.links.warns} Warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "Delete Message",
-                    no if not hasattr(rules, "invites") else f"{rules.invites.warns} Warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "Delete Message",
-                    no if not hasattr(rules, "files") else f"{rules.files.warns} Warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "Delete Message",
-                    no if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} Warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "Delete Message",
-                    no if not hasattr(rules, "caps") else f"{rules.caps.warns} Warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "Delete Message",
+                    no if not hasattr(rules, "links") else f"{rules.links.warns} Warn{'' if rules.links.warns == 1 else 's'}" if rules.links.warns > 0 else "Only delete",
+                    no if not hasattr(rules, "invites") else f"{rules.invites.warns} Warn{'' if rules.invites.warns == 1 else 's'}" if rules.invites.warns > 0 else "Only delete",
+                    no if not hasattr(rules, "files") else f"{rules.files.warns} Warn{'' if rules.files.warns == 1 else 's'}" if rules.files.warns > 0 else "Only delete",
+                    no if not hasattr(rules, "zalgo") else f"{rules.zalgo.warns} Warn{'' if rules.zalgo.warns == 1 else 's'}" if rules.zalgo.warns > 0 else "Only delete",
+                    no if not hasattr(rules, "caps") else f"{rules.caps.warns} Warn{'' if rules.caps.warns == 1 else 's'}" if rules.caps.warns > 0 else "Only delete",
                     no if config.antispam.enabled == False else f"{config.antispam.rate} Messages per {config.antispam.per} seconds ({config.antispam.warns} Warn{'' if config.antispam.warns == 1 else 's'})"
                 ),
                 "inline": True
