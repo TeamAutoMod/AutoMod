@@ -10,7 +10,7 @@ import asyncio
 
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
-from ...views import SetupView, RoleChannelSelect, RoleSelect
+from ...views import SetupView, RoleChannelSelect, RoleSelect, ConfigView
 from ...modals import DefaultReasonModal
 
 
@@ -282,19 +282,16 @@ class ConfigPlugin(AutoModPluginBlueprint):
         examples:
         -config
         """
+        await ctx.response.defer(thinking=True)
         config = Object(self.db.configs.get_doc(ctx.guild.id))
         rules = config.automod
 
-        tags = self.bot.get_plugin("TagsPlugin")._commands
+        auto_plugin = self.bot.get_plugin("TagsPlugin")
+        tags = auto_plugin._commands
+        responders = auto_plugin._r
+
         no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
         c = self.bot.internal_cmd_store
-
-        mute_perm = no
-        if (ctx.guild.me.guild_permissions.value & 0x10000000000) != 0x10000000000:
-            if ctx.guild.me.guild_permissions.administrator == True: 
-                mute_perm = yes
-        else:
-            mute_perm = yes
 
         dash_length = 34
         e = Embed(
@@ -304,14 +301,14 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": f"{self.bot.emotes.get('CONFIG')} __General__",
-                "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Can mute:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Join Role:** {}"\
+                "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Join Role:** {}"\
                 .format(
                     "/",
                     f"{yes} (unlimited)" if config.premium == True else no,
-                    mute_perm,
                     len(config.filters),
                     len(config.regexes),
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
+                    len(responders.get(ctx.guild.id, {})) if ctx.guild.id in responders else 0,
                     no if config.join_role == "" else f"<@&{config.join_role}>"
                 ),
                 "inline": True
@@ -367,31 +364,28 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "value": f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
+            e.blank_field(inline=True),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (automod)__",
                 "value":  f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
-            e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (logging)__",
                 "value":  f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
+            e.blank_field(inline=True),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (logging)__",
                 "value": f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
-            },
-            e.dash_field(dash_length),
-            {
-                "name": f"{self.bot.emotes.get('HELP')} __Help & Support__",
-                "value": f"Use </setup:{c.get('setup')}> or </help:{c.get('help')}> for information about setting up the bot. If you still need help, feel free to join our [support server]({self.bot.config.support_invite})",
-                "inline": False
             }
         ])
+        e.credits()
 
-        await ctx.response.send_message(embed=e)
+        view = ConfigView(self.bot)
+        await ctx.followup.send(embed=e, view=view)
 
 
     auto_punishments = discord.app_commands.Group(

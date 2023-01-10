@@ -171,12 +171,12 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         description="✅ Adds a new reaction role"
     )
     @discord.app_commands.describe(
-        message_id="The message the reaction should be added to",
+        message="Link or ID for the message the reaction should be added to",
         emote="The emote of the reaction (custom or default emotes)",
         role="The role users should receive when reacting"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
-    async def add(self, ctx: discord.Interaction, message_id: str, emote: str, role: discord.Role) -> None:
+    async def add(self, ctx: discord.Interaction, message: str, emote: str, role: discord.Role) -> None:
         """
         reaction_roles_add_help
         examples:
@@ -188,25 +188,25 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             return self.error(ctx, ex)
         
         try:
-            message = await Message().convert(ctx, message_id)
+            _message = await Message().convert(ctx, message)
         except Exception as ex:
             return self.error(ctx, ex)
         else:
-            if message == None: return self.error(ctx, commands.BadArgument("Message not found"))
-            if not message.id in self.msg_cache: self.msg_cache[message_id] = message
+            if _message == None: return self.error(ctx, commands.BadArgument("Message not found"))
+            if not _message.id in self.msg_cache: self.msg_cache[_message.id] = _message
 
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
-        if f"{message.id}" in rrs:
-            data = rrs[f"{message.id}"]
+        if f"{_message.id}" in rrs:
+            data = rrs[f"{_message.id}"]
         else:
             data = {
-                "channel": f"{message.channel.id}",
+                "channel": f"{_message.channel.id}",
                 "pairs": []
             }
         if len(data["pairs"]) > 10:
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr", _emote="NO"), 0), ephemeral=True)
         else:
-            if len(message.reactions) > 10:
+            if len(_message.reactions) > 10:
                 return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rr_reactions", _emote="NO"), 0), ephemeral=True)
             else:
                 if role.position >= ctx.guild.me.top_role.position:
@@ -221,7 +221,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "rr_role_alr_bound", _emote="NO"), 0), ephemeral=True)
                 else:
                     try:
-                        await message.add_reaction(
+                        await _message.add_reaction(
                             emote
                         )
                     except Exception as ex:
@@ -232,7 +232,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
                             "role": f"{role.id}"
                         })
                         rrs.update({
-                            f"{message.id}": data
+                            f"{_message.id}": data
                         })
                         self.db.configs.update(ctx.guild.id, "reaction_roles", rrs)
 
@@ -244,11 +244,11 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         description="❌ Removes an exisitng reaction role"
     )
     @discord.app_commands.describe(
-        message_id="The message of the reaction role",
+        message="Link or ID for the message the reaction belongs to",
         role="The role you want to remove"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
-    async def remove(self, ctx: discord.Interaction, message_id: str, role: discord.Role) -> None:
+    async def remove(self, ctx: discord.Interaction, message: str, role: discord.Role) -> None:
         """
         reaction_roles_remove_help
         examples:
@@ -259,14 +259,17 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
             cmd = f"</reaction-roles add:{self.bot.internal_cmd_store.get('reaction-roles')}>"
             return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="INFO", cmd=cmd), 2), ephemeral=True)
         else:
-            if not f"{message_id}" in rrs:
+            if message.startswith("https://"):
+                message = message.split("/")[-1]
+
+            if not f"{message}" in rrs:
                 return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "not_rr_msg", _emote="NO"), 0), ephemeral=True)
             else:
-                data = rrs[f"{message_id}"]
+                data = rrs[f"{message}"]
                 if len([x for x in data["pairs"] if list(x.values())[1] == f"{role.id}"]) < 1:
                     return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr_role", _emote="NO"), 0), ephemeral=True)
                 else:
-                    msg = await self.get_message(int(data["channel"]), int(message_id))
+                    msg = await self.get_message(int(data["channel"]), int(message))
                     if msg != None:
                         try:
                             await msg.remove_reaction(
@@ -278,9 +281,9 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
 
                     data["pairs"] = [x for x in data["pairs"] if list(x.values())[1] != f"{role.id}"]
                     if len(data["pairs"]) > 0:
-                        rrs[f"{message_id}"] = data
+                        rrs[f"{message}"] = data
                     else:
-                        del rrs[f"{message_id}"]
+                        del rrs[f"{message}"]
                     self.db.configs.update(ctx.guild.id, "reaction_roles", rrs)
 
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_rr", _emote="YES"), 1), ephemeral=True)
