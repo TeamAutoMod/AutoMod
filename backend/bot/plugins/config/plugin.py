@@ -171,10 +171,9 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 if role == None:
                     return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_not_found", _emote="NO"), 0))
 
-                if i.guild.me.top_role != None:
-                    if role.position >= i.guild.me.top_role.position: 
-                        return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_too_high", _emote="NO"), 0))
-                if role.is_default() == True:
+                if role.position >= i.guild.me.top_role.position: 
+                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_too_high", _emote="NO"), 0))
+                elif role.is_default() == True:
                     return await i.response.edit_message(embed=E(self.locale.t(i.guild, "no_default_role", _emote="NO"), 0))
                 elif role.is_assignable() == False:
                     return await i.response.edit_message(embed=E(self.locale.t(i.guild, "cant_assign_role", _emote="NO"), 0))
@@ -359,29 +358,29 @@ class ConfigPlugin(AutoModPluginBlueprint):
                             key=lambda x: int(x[0])
                         )
                     ).items()
-                ]) if len(config.punishments.items()) > 0 else f"None, use </punishments add:{c.get('punishments')}> for configration",
+                ]) if len(config.punishments.items()) > 0 else f"None, use </punishments add:{c.get('punishments')}> for configuration",
                 "inline": True
             },
             e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (automod)__",
-                "value": f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configration" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
+                "value": f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (automod)__",
-                "value":  f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configration" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
+                "value":  f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             e.dash_field(dash_length),
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (logging)__",
-                "value":  f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
+                "value":  f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             {
                 "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (logging)__",
-                "value": f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
+                "value": f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             },
             e.dash_field(dash_length),

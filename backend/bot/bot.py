@@ -270,7 +270,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
             log.error(f"[Events] Error in {event_name} - {ex}", extra={"loc": f"PID {os.getpid()}"})
 
     
-    def modify_to_guild_only(self, cmd: discord.app_commands.Command) -> discord.app_commands.Command:
+    def modify_to_guild_only(self, cmd: Union[discord.app_commands.Command, discord.app_commands.Group]) -> Union[discord.app_commands.Command, discord.app_commands.Group]:
         if hasattr(cmd, "guild_only"):
             cmd.guild_only = True
         return cmd
