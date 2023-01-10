@@ -290,7 +290,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         tags = auto_plugin._commands
         responders = auto_plugin._r
 
-        no, yes = self.bot.emotes.get("NO"), self.bot.emotes.get("YES")
+        no = "``OFF``"
         c = self.bot.internal_cmd_store
 
         dash_length = 34
@@ -304,12 +304,12 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Join Role:** {}"\
                 .format(
                     "/",
-                    f"{yes} (unlimited)" if config.premium == True else no,
+                    "unlimited" if config.premium == True else no,
                     len(config.filters),
                     len(config.regexes),
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
                     len(responders.get(ctx.guild.id, {})) if ctx.guild.id in responders else 0,
-                    no if config.join_role == "" else f"<@&{config.join_role}>"
+                    "``NONE``" if config.join_role == "" else f"<@&{config.join_role}>"
                 ),
                 "inline": True
             },
