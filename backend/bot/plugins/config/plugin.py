@@ -169,15 +169,15 @@ class ConfigPlugin(AutoModPluginBlueprint):
             if "".join(parts) == "join_role":
                 role = i.guild.get_role(int(i.data.get("values", [1])[0]))
                 if role == None:
-                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_not_found", _emote="NO"), 0), ephemeral=True)
+                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_not_found", _emote="NO"), 0))
 
                 if i.guild.me.top_role != None:
                     if role.position >= i.guild.me.top_role.position: 
-                        return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_too_high", _emote="NO"), 0), ephemeral=True)
+                        return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_too_high", _emote="NO"), 0))
                 if role.is_default() == True:
-                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "no_default_role", _emote="NO"), 0), ephemeral=True)
+                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "no_default_role", _emote="NO"), 0))
                 elif role.is_assignable() == False:
-                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "cant_assign_role", _emote="NO"), 0), ephemeral=True)
+                    return await i.response.edit_message(embed=E(self.locale.t(i.guild, "cant_assign_role", _emote="NO"), 0))
 
                 self.db.configs.update(i.guild.id, "join_role", f"{role.id}")
                 return await i.response.edit_message(embed=E(self.locale.t(i.guild, "join_role_on", _emote="YES", role=role.name), 1))
