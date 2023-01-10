@@ -60,19 +60,19 @@ class FilterPlugin(AutoModPluginBlueprint):
 
         e = Embed(
             ctx,
-            title="Filters"
+            title="Word Filters"
         )
         for indx, name in enumerate(dict(itertools.islice(filters.items(), 10))):
             i = filters[name]
-            action = str(i["warns"]) + " warn" if i["warns"] == 1 else str(i["warns"]) + " warns" if i["warns"] > 0 else "delete message"
-            channels = "all channels" if len(i["channels"]) < 1 else ", ".join([f'#{ctx.guild.get_channel(int(x))}' for x in i["channels"]])
+            action = str(i["warns"]) + " warn" if i["warns"] == 1 else str(i["warns"]) + " warns" if i["warns"] > 0 else "Only delete"
+            channels = "All channels" if len(i["channels"]) < 1 else ", ".join([f'#{ctx.guild.get_channel(int(x))}' for x in i["channels"]])
 
             e.add_field(
                 name=f"__{name}__",
                 value=f"**• Action:** {action} \n**• Channels:** {channels} \n**• Words:** \n```\n{', '.join([f'{x}' for x in i['words']])}\n```",
                 inline=True
             )
-            if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
+            if indx % 2 == 0: e.add_fields([e.blank_field(True, 5)])
 
             footer = f"And {len(filters)-len(dict(itertools.islice(filters.items(), 10)))} more filters" if len(filters) > 10 else None
             if footer != None: e.set_footer(text=footer)
@@ -253,19 +253,19 @@ class FilterPlugin(AutoModPluginBlueprint):
 
         e = Embed(
             ctx,
-            title="Regexes"
+            title="Regex Filters"
         )
         for indx, name in enumerate(dict(itertools.islice(regexes.items(), 10))):
             data = regexes[name]
-            action = str(data["warns"]) + " warn" if data["warns"] == 1 else str(data["warns"]) + " warns" if data["warns"] > 0 else "delete message"
-            channels = "all channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
+            action = str(data["warns"]) + " warn" if data["warns"] == 1 else str(data["warns"]) + " warns" if data["warns"] > 0 else "Only delete"
+            channels = "All channels" if len(data["channels"]) < 1 else ", ".join([f"#{ctx.guild.get_channel(int(x))}" for x in data["channels"]])
 
             e.add_field(
                 name=f"__{name}__",
                 value=f"**• Action:** {action} \n**• Channels:** {channels} \n**• Pattern:** \n```\n{data['regex']}\n```",
                 inline=True
             )
-            if indx % 2 == 0: e.add_fields([e.blank_field(True, 2)])
+            if indx % 2 == 0: e.add_fields([e.blank_field(True, 5)])
 
             footer = f"And {len(regexes)-len(dict(itertools.islice(regexes.items(), 10)))} more filters" if len(regexes) > 10 else None
         if footer != None: e.set_footer(text=footer)

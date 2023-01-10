@@ -21,7 +21,6 @@ from discord.app_commands import (
 
 from typing import (
     Union, 
-    Iterable,
     List, 
     Dict, 
     Set, 
@@ -54,4 +53,3 @@ S = Union[range, complex, float]
 # Final
 _PY_TYPES = Union[DEFAULT, LIST, DICT, SET, FROZENSET, Any]
 _PY_TYPES_DISCORD = Union[_PY_TYPES, DISCORD, S]
-_PY_TYPES_DISCORD_POSSIBLE_ITER = Iterable[_PY_TYPES_DISCORD]

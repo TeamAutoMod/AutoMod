@@ -14,7 +14,7 @@ LOG_TYPES = {
     "ban": {
         "channel": "mod_log",
         "key": "log_ban",
-        "color": 0xf04a47,
+        "color": 0xff5c5c,
         "emote": "HAMMER",
         "action": "User banned"
     },
@@ -28,7 +28,7 @@ LOG_TYPES = {
     "hackban": {
         "channel": "mod_log",
         "key": "log_ban",
-        "color": 0xf04a47,
+        "color": 0xff5c5c,
         "emote": "HAMMER",
         "action": "User forcebanned"
     },
@@ -42,35 +42,35 @@ LOG_TYPES = {
     "tempban": {
         "channel": "mod_log",
         "key": "log_tempban",
-        "color": 0xf04a47,
+        "color": 0xff5c5c,
         "emote": "HAMMER",
         "action": "User tempbanned"
     },
     "tempban_extended": {
         "channel": "mod_log",
         "key": "log_tempban_extended",
-        "color": 0xf04a47,
+        "color": 0xff5c5c,
         "emote": "MORE",
         "action": "Tempban extended"
     },
     "unban": {
         "channel": "mod_log",
         "key": "log_unban",
-        "color": 0x43b582,
+        "color": 0x4cff4c,
         "emote": "UNLOCK",
         "action": "User unbanned"
     },
     "manual_unban": {
         "channel": "mod_log",
         "key": "log_manual_unban",
-        "color": 0x43b582,
+        "color": 0x4cff4c,
         "emote": "UNLOCK",
         "action": "User manually unbanned"
     },
     "manual_ban": {
         "channel": "mod_log",
         "key": "log_manual_ban",
-        "color": 0xf04a47,
+        "color": 0xff5c5c,
         "emote": "HAMMER",
         "action": "User manually banned"
     },
@@ -92,14 +92,14 @@ LOG_TYPES = {
     "unmute": {
         "channel": "mod_log",
         "key": "log_unmute",
-        "color": 0x43b582,
+        "color": 0x4cff4c,
         "emote": "UNMUTE",
         "action": "User unmuted"
     },
     "tempunban": {
         "channel": "mod_log",
         "key": "log_tempunban",
-        "color": 0x43b582,
+        "color": 0x4cff4c,
         "emote": "UNLOCK",
         "action": "User unbanned"
     },
@@ -114,14 +114,14 @@ LOG_TYPES = {
     "unwarn": {
         "channel": "mod_log",
         "key": "log_unwarn",
-        "color": 0x43b582,
+        "color": 0x4cff4c,
         "emote": "WHITE_FLAG",
         "action": "User unwarned"
     },
     "manual_unmute": {
         "channel": "mod_log",
         "key": "log_manual_unmute",
-        "color": 0x43b582,
+        "color": 0x4cff4c,
         "emote": "UNMUTE",
         "action": "User manually unmuted"
     },
