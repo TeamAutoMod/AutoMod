@@ -31,7 +31,7 @@ SERVER_LOG_EVENTS = {
     },
     "role_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.role_delete,
         "text": "Role deleted"
     },
@@ -52,7 +52,7 @@ SERVER_LOG_EVENTS = {
     },
     "channel_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.channel_delete,
         "text": "Channel deleted",
         "extra_text": "**Type:** {_type}"
@@ -73,7 +73,7 @@ SERVER_LOG_EVENTS = {
     },
     "thread_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.thread_delete,
         "text": "Thread deleted"
     },
@@ -94,7 +94,7 @@ SERVER_LOG_EVENTS = {
     },
     "emoji_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.emoji_delete,
         "text": "Emoji deleted"
     },
@@ -108,7 +108,7 @@ SERVER_LOG_EVENTS = {
     },
     "sticker_deleted": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.sticker_delete,
         "text": "Sticker deleted"
     },
@@ -122,7 +122,7 @@ SERVER_LOG_EVENTS = {
     },
     "nick_removed": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.member_update,
         "text": "Nickname removed",
         "extra_text": "**Old:** {change}"
@@ -143,7 +143,7 @@ SERVER_LOG_EVENTS = {
     },
     "removed_role": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.member_role_update,
         "text": "Role removed",
         "extra_text": "**Role:** {change}"
@@ -165,7 +165,7 @@ SERVER_LOG_EVENTS = {
     },
     "left_voice": {
         "emote": "DELETE",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "audit_log_action": AuditLogAction.member_move,
         "text": "Left voice channel",
         "extra_text": "**Channel:** <#{channel}>"
@@ -381,7 +381,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         content = msg.content
         e = Embed(
             None,
-            color=0xff5c5c,
+            color=0xf04a47,
             description=content[:4096] if content != None or content != "" else None
         )
         e.add_field(

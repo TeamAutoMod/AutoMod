@@ -903,7 +903,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "__Roles__",
+                "name": "❯ __Roles__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
@@ -915,7 +915,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "__Channels__",
+                "name": "❯ __Channels__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
@@ -927,7 +927,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "__Ignored__",
+                "name": "❯ __Ignored__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in ignored if x != None
@@ -1331,11 +1331,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "__Roles__",
+                    "name": "❯ __Roles__",
                     "value": "{}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                 },
                 {
-                    "name": "__Channels__",
+                    "name": "❯ __Channels__",
                     "value": "{}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                 }
             ])

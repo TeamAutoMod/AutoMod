@@ -196,7 +196,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         description="✅ Creates a new auto responder"
     )
     @discord.app_commands.describe(
-        position="Where or how  to search messages for triggers",
+        position="Where or how to search messages for triggers",
         ignore_mods="Whether to ignore mods for this responder"
     )
     @discord.app_commands.default_permissions(manage_messages=True)

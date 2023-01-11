@@ -67,7 +67,7 @@ def get_help_embed(plugin: AutoModPluginBlueprint, ctx: discord.Interaction, cmd
         title=f"``{usage}``"
     )
     e.add_field(
-        name="__Description__", 
+        name="❯ __Description__", 
         value=f"{help_message}"
     )
     
@@ -76,7 +76,7 @@ def get_help_embed(plugin: AutoModPluginBlueprint, ctx: discord.Interaction, cmd
         if len(examples) > 0:
             prefix = "/"
             e.add_field(
-                name="__Examples__",
+                name="❯ __Examples__",
                 value="\n".join(
                     [
                         f"{prefix}{exmp}" for exmp in examples
@@ -85,7 +85,7 @@ def get_help_embed(plugin: AutoModPluginBlueprint, ctx: discord.Interaction, cmd
             )
     else:
         e.add_field(
-            name="__Subcommands__", 
+            name="❯ __Subcommands__", 
             value="{}".format("\n".join([f"**•** </{x.qualified_name}:{plugin.bot.internal_cmd_store.get(cmd.name)}>" for x in cmd.commands]))
         )
 
@@ -362,13 +362,14 @@ class UtilityPlugin(AutoModPluginBlueprint):
                                 cmds.append(cmd)
 
                     for cmd in cmds:
+                        sig = "{}".format(
+                            f"/{cmd.qualified_name} " \
+                            f"{' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''}" \
+                            f"{' ' if len([_ for _, v in cmd._params.items() if v.required] if hasattr(cmd, '_params') else []) > 0 else ''}{' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}" \
+                            f"{'(*)' if isinstance(cmd, discord.app_commands.Group) else ''}"
+                        )
                         e.add_field(
-                            name="``{}``".format(
-                                f"/{cmd.qualified_name} " \
-                                f"{' '.join([f'<{x}>' for x, y in cmd._params.items() if y.required]) if hasattr(cmd, '_params') else ''}" \
-                                f"{' ' if len([_ for _, v in cmd._params.items() if v.required] if hasattr(cmd, '_params') else []) > 0 else ''}{' '.join([f'[{x}]' for x, y in cmd._params.items() if not y.required]) if hasattr(cmd, '_params') else ''}" \
-                                f"{'(*)' if isinstance(cmd, discord.app_commands.Group) else ''}"
-                            ),
+                            name=f"``{sig}``" if sig[-1] != " " else f"``{sig[0:-1]}``",
                             value="> {}".format(
                                 cmd.description if cmd.description[1] != " " else cmd.description[2:]
                             ),
@@ -526,7 +527,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         e.set_thumbnail(url=ctx.guild.me.display_avatar)
         e.add_fields([
             {
-                "name": f"{self.bot.emotes.get('STATUS')} __Status__",
+                "name": f"❯ __Status__",
                 "value": "**• Up:** {} \n**• Version:** {} \n**• Latency:** {}ms"\
                 .format(
                     self.bot.get_uptime(),
@@ -536,7 +537,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"{self.bot.emotes.get('STATS')} __Stats__",
+                "name": f"❯ __Stats__",
                 "value": "**• Guilds:** {0:,} \n**• Users:** {1:,} \n**• Shards:** {2:,}"\
                 .format(
                     len(self.bot.guilds),
@@ -546,7 +547,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"{self.bot.emotes.get('USERS')} __Usage__",
+                "name": f"❯ __Usage__",
                 "value": "**• Commands:** {} \n**• Custom:** {}"\
                 .format(
                     self.bot.get_command_stats(),
@@ -722,7 +723,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             url=user.display_avatar
         )
         e.add_field(
-            name=f"{self.bot.emotes.get('INFO')} __User Information__",
+            name=f"❯ __User Information__",
             value="**• ID:** {} \n**• Profile:** {} \n**• Badges:** {} \n**• Created at:** <t:{}>"\
             .format(
                 user.id,
@@ -735,7 +736,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             roles = [r.mention for r in reversed(member.roles) if r != ctx.guild.default_role]
 
             e.add_field(
-                name=f"{self.bot.emotes.get('SERVER')} __Server Information__",
+                name=f"❯ __Server Information__",
                 value="**• Nickname:** {} \n**• Joined at:** <t:{}> \n**• Join position:** {} \n**• Status:** {} \n**• Roles:** {}"\
                 .format(
                     member.nick,
@@ -768,7 +769,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                     last_3.append(f"[{c['type'].capitalize()} (#{c['case']})]({log_url})")    
 
         e.add_field(
-            name=f"{self.bot.emotes.get('CASE')} __Infractions__",
+            name=f"❯ __Infractions__",
             value="**• Total Cases:** {} \n**• Last 3 Cases:** {}"\
             .format(
                 len(cases),
@@ -803,7 +804,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         
         e.add_fields([
             {
-                "name": f"{self.bot.emotes.get('INFO')} __Information__",
+                "name": f"❯ __Information__",
                 "value": "**• ID:** {} \n**• Owner:** {} \n**• Created:** <t:{}:d> \n**• Invite Splash:** {} \n**• Banner:** {}"\
                 .format(
                     g.id, 
@@ -816,7 +817,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True, 8),
             {
-                "name": f"{self.bot.emotes.get('CHANNEL')} __Channels__",
+                "name": f"❯ __Channels__",
                 "value": "**• Categories:** {} \n**• Text:** {} \n**• Voice:** {} \n**• Threads:** {}"\
                 .format(
                     len([x for x in g.channels if isinstance(x, discord.CategoryChannel)]),
@@ -827,7 +828,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"{self.bot.emotes.get('USERS')} __Members__",
+                "name": f"❯ __Members__",
                 "value": "**• Total:** {} \n**• Users:** {} \n**• Bots:** {}"\
                 .format(
                     len(g.members), 
@@ -838,7 +839,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             },
             e.blank_field(True, 8),
             {
-                "name": f"{self.bot.emotes.get('EXTRA')} __Other__",
+                "name": f"❯ __Other__",
                 "value": "**• Roles:** {} \n**• Emojis:** {} \n**• Boosters:** {}"\
                 .format(
                     len(g.roles), 
@@ -848,7 +849,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"{self.bot.emotes.get('FEATURE')} __Features__",
+                "name": f"❯ __Features__",
                 "value": "{}"\
                 .format(
                     ", ".join([f"{x.replace('_', ' ').title()}" for x in g.features]) if len(g.features) > 0 else "None"

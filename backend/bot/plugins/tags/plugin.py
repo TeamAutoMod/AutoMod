@@ -396,28 +396,28 @@ class TagsPlugin(AutoResponderPlugin):
                 )
                 e.add_fields([
                     {
-                        "name": "__Content__",
+                        "name": "❯ __Content__",
                         "value": f"```\n{data.content}\n```",
                         "inline": False
                     },
                     {
-                        "name": "__Description__",
+                        "name": "❯ __Description__",
                         "value": f"```\n{data.description}\n```",
                         "inline": False
                     },
                     {
-                        "name": "__Ephemeral__",
+                        "name": "❯ __Ephemeral__",
                         "value": f"{y if data.ephemeral == True else n}",
                         "inline": True
                     },
                     e.blank_field(True, 6),
                     {
-                        "name": "__Uses__",
+                        "name": "❯ __Uses__",
                         "value": f"{data.uses}",
                         "inline": True
                     },
                     {
-                        "name": "__Creator__",
+                        "name": "❯ __Creator__",
                         "value": f"<@{data.author}> \n(<t:{round(data.created.timestamp())}>)",
                         "inline": True
                     }
@@ -426,7 +426,7 @@ class TagsPlugin(AutoResponderPlugin):
                     e.add_fields([
                         e.blank_field(True),
                         {
-                            "name": "__Editor__",
+                            "name": "❯ __Editor__",
                             "value": f"<@{data.editor}> \n(<t:{round(data.edited.timestamp())}>)",
                             "inline": True
                         }

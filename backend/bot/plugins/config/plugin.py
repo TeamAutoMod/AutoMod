@@ -231,7 +231,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "__Roles__",
+                "name": "❯ __Roles__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
@@ -243,7 +243,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "__Channels__",
+                "name": "❯ __Channels__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
@@ -255,7 +255,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "__Ignored__",
+                "name": "❯ __Ignored__",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in ignored if x != None
@@ -300,7 +300,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": f"{self.bot.emotes.get('CONFIG')} __General__",
+                "name": f"❯ __General__",
                 "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Join Role:** {}"\
                 .format(
                     "/",
@@ -314,7 +314,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"{self.bot.emotes.get('LOG')} __Logging__",
+                "name": f"❯ __Logging__",
                 "value": "**• Mod Log:** {} \n**• Message Log:** {}\n**• Server Log:** {}\n**• Join Log:** {} \n**• Member Log:** {} \n**• Voice Log:** {} \n**• Report Log:** {}"\
                 .format(
                     no if config.mod_log == "" else f"<#{config.mod_log}>",
@@ -329,7 +329,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": f"{self.bot.emotes.get('SWORDS')} __Automoderator__",
+                "name": f"❯ __Automoderator__",
                 "value": "**• Mentions Filter:** {} \n**• Length Filter:** {} \n**• Emotes Filter:** {} \n**• Repetition Filter:** {} \n**• Links Filter:** {} \n**• Invites Filter:** {} \n**• Attachment Filter:** {} \n**• Zalgo Filter:** {} \n**• Caps Filter:** {} \n**• Spam Filter:** {}"\
                 .format(
                     no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold} Mentions",
@@ -346,7 +346,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"{self.bot.emotes.get('PUNISHMENT')} __Punishments__",
+                "name": f"❯ __Punishments__",
                 "value": "\n".join([
                     f"**• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1][0]}" \
                     for x, y in dict(
@@ -360,24 +360,24 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (automod)__",
+                "name": f"❯ __Ignored Roles (automod)__",
                 "value": f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             e.blank_field(inline=True),
             {
-                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (automod)__",
+                "name": f"❯ __Ignored Channels (automod)__",
                 "value":  f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             {
-                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Roles (logging)__",
+                "name": f"❯ __Ignored Roles (logging)__",
                 "value":  f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             e.blank_field(inline=True),
             {
-                "name": f"{self.bot.emotes.get('IGNORE')} __Ignored Channels (logging)__",
+                "name": f"❯ __Ignored Channels (logging)__",
                 "value": f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             }
@@ -644,11 +644,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "__Roles__",
+                    "name": "❯ __Roles__",
                     "value": "{}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                 },
                 {
-                    "name": "__Channels__",
+                    "name": "❯ __Channels__",
                     "value": "{}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                 }
             ])

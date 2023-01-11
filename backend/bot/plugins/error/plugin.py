@@ -103,11 +103,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "__Usage__",
+                    "name": "❯ __Usage__",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "__Info__",
+                    "name": "❯ __Info__",
                     "value": f"``{info}``"
                 }
             ])
@@ -134,11 +134,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "__Usage__",
+                    "name": "❯ __Usage__",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "__Info__",
+                    "name": "❯ __Info__",
                     "value": f"``{info}``"
                 }
             ])
@@ -162,11 +162,11 @@ class ErrorPlugin(AutoModPluginBlueprint):
             e = Embed(ctx)
             e.add_fields([
                 {
-                    "name": "__Usage__",
+                    "name": "❯ __Usage__",
                     "value": f"``{usage}``"
                 },
                 {
-                    "name": "__Info__",
+                    "name": "❯ __Info__",
                     "value": f"``{info}``"
                 }
             ])
@@ -195,12 +195,12 @@ class ErrorPlugin(AutoModPluginBlueprint):
                 )
                 e.add_fields([
                     {
-                        "name": "__Command__",
+                        "name": "❯ __Command__",
                         "value": f"**•** {ctx.command.qualified_name}" if ctx.command != None else "Unknown",
                         "inline": True
                     },
                     {
-                        "name": "__Location__",
+                        "name": "❯ __Location__",
                         "value": f"**•** {ctx.guild.name} ({ctx.guild.id})" if ctx.guild != None else "Unknown",
                         "inline": True
                     }
