@@ -352,5 +352,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     pass
                 else:
                     self.update_uses(f"{msg.guild.id}-{name}")
+                finally:
+                    return
 
         
