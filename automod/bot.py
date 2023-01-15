@@ -80,7 +80,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
         
     def __init__(self, *args, **kwargs) -> None:
         self._start_text()
-        with open("backend/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
+        with open("automod/config.json", "r", encoding="utf8", errors="ignore") as config_file:
             self.config: Object = Object(json.load(config_file))
         super().__init__(
             command_prefix=prefix_callable, 
@@ -305,7 +305,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
 
     async def load_plugin(self, plugin: str) -> None:
         try:
-            await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
+            await super().load_extension(f"automod.plugins.{plugin}.plugin")
         except Exception:
             log.error(f"[Plugins] Failed to load {plugin} - {traceback.format_exc()}", extra={"loc": f"PID {os.getpid()}"})
         else:
@@ -327,15 +327,15 @@ class ShardedBotInstance(commands.AutoShardedBot):
             in_plugins_name = f"{plugin.capitalize()}Plugin"
         
         if in_plugins_name not in self.plugins:
-            try: await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
+            try: await super().load_extension(f"automod.plugins.{plugin}.plugin")
             except Exception: raise
 
         else:
-            try: await super().unload_extension(f"backend.bot.plugins.{plugin}.plugin")
+            try: await super().unload_extension(f"automod.plugins.{plugin}.plugin")
             except Exception: raise
 
             else:
-                try: await super().load_extension(f"backend.bot.plugins.{plugin}.plugin")
+                try: await super().load_extension(f"automod.plugins.{plugin}.plugin")
                 except Exception: raise
 
 

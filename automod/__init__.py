@@ -1,4 +1,4 @@
-#type: ignore
+# type: ignore
 
 import sentry_sdk
 import json
@@ -16,7 +16,7 @@ else:
     VERSION = str(_V).replace("b'", "")[:7]
 
 
-with open("backend/bot/config.json", "r", encoding="utf8", errors="ignore") as config_file:
+with open("automod/config.json", "r", encoding="utf8", errors="ignore") as config_file:
     config = json.load(config_file)
 
 

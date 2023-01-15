@@ -10,4 +10,4 @@ from .highlights import Highlights
 from .stats import Stats
 
 import os
-if os.path.exists("backend/bot/schemas/level.py"): from .level import UserLevel # pyright: reportMissingImports=false
+if os.path.exists("automod/schemas/level.py"): from .level import UserLevel # pyright: reportMissingImports=false

@@ -15,8 +15,8 @@ class DMProcessor:
         self.bot = bot
         self.colors = {
             "kick": 0xf79554,
-            "ban": 0xff5c5c,
-            "tempban": 0xff5c5c,
+            "ban": 0xf04a47,
+            "tempban": 0xf04a47,
             "mute": 0xffdc5c,
             "warn": 0xffdc5c,
             "automod_rule_triggered": 0x131313

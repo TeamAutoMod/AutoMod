@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
     volumes:
       - env:/usr/local/lib/python3.10/site-packages
-      - .:/bot
+      - .:/automod
     network_mode: "host"
     working_dir: /bot
     entrypoint: [ "/bin/sh", "-c" ]

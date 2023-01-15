@@ -942,14 +942,14 @@ class AutomodPlugin(AutoModPluginBlueprint):
 
         await i.response.edit_message(embed=e)
 
-
+    
     @discord.app_commands.command(
         name="automod", 
         description="🔰 Configure the automoderator (use /setup for more info)"
     )
     @discord.app_commands.describe(
-        rule="The rule you want to configure (use /setup for more info)", 
-        action="Whether to enable, disable or edit this rule",
+        rule="The rule you want to configure", 
+        action="Whether to enable, disable or edit the rule",
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def automod(
@@ -973,7 +973,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         examples:
         -automod Invites filter Enable
         -automod Mentions filter Disable
-        -aautomod Links filter Edit
+        -automod Links filter Edit
         """  
         rule = {
             "invites filter": "invites", 
@@ -989,7 +989,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         current = self.db.configs.get(ctx.guild.id, "automod")
         data = Object(AUTOMOD_RULES[rule])
 
-        if action.lower() == "disable":
+        if action.lower() == "enable":
             if rule not in current:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_automod_off", _emote="NO", _type=data.i18n_type.title()), 0))
             else:

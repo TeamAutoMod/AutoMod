@@ -14,7 +14,7 @@ LOG_TYPES = {
     "ban": {
         "channel": "mod_log",
         "key": "log_ban",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "emote": "HAMMER",
         "action": "User banned"
     },
@@ -28,7 +28,7 @@ LOG_TYPES = {
     "hackban": {
         "channel": "mod_log",
         "key": "log_ban",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "emote": "HAMMER",
         "action": "User forcebanned"
     },
@@ -42,14 +42,14 @@ LOG_TYPES = {
     "tempban": {
         "channel": "mod_log",
         "key": "log_tempban",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "emote": "HAMMER",
         "action": "User tempbanned"
     },
     "tempban_extended": {
         "channel": "mod_log",
         "key": "log_tempban_extended",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "emote": "MORE",
         "action": "Tempban extended"
     },
@@ -70,7 +70,7 @@ LOG_TYPES = {
     "manual_ban": {
         "channel": "mod_log",
         "key": "log_manual_ban",
-        "color": 0xff5c5c,
+        "color": 0xf04a47,
         "emote": "HAMMER",
         "action": "User manually banned"
     },

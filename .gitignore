@@ -129,9 +129,9 @@ dmypy.json
 .pyre/
 /node_modules
 
-/backend/bot/config.json
-/backend/bot/plugins/_processor/config.py
-/backend/frontend
+/automod/config.json
+/automod/plugins/_processor/config.py
+/frontend
 /js
 /configs
 

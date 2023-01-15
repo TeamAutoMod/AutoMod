@@ -10,7 +10,7 @@ import signal as sig_lib
 import os
 import logging; log = logging.getLogger(__name__)
 
-from backend.bot import ShardedBotInstance
+from automod import ShardedBotInstance
 
 
 

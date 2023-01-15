@@ -15,11 +15,11 @@ class Observer:
         self.bot = bot
         self.stamp_cache = {}
         for p in self.bot.config.plugins:
-            path = f"backend/bot/plugins/{p}/plugin.py"
+            path = f"automod/plugins/{p}/plugin.py"
             self.add_stamp_cache(p, path)
         
         for ext, f in {
-            "bot_config": "backend/bot/config.json",
+            "bot_config": "automod/config.json",
             "locale": "i18n/en_US.json"
         }.items():
             self.add_stamp_cache(ext, f)
@@ -72,7 +72,7 @@ class Observer:
                     
                     if content != data["content"]:
                         self.stamp_cache[f]["data"] = content
-                        if "/".join(data["file"].split("/")[:3]) == "backend/bot/plugins":
+                        if "/".join(data["file"].split("/")[:3]) == "automod/plugins":
                             await self.hot_reload(
                                 f,
                                 content,

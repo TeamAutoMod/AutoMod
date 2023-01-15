@@ -24,6 +24,7 @@ class MongoCollection(Collection):
         else:
             return super().get(_id, key)
 
+
     def get_doc(self, _id: Union[str, int]) -> Optional[dict]:
         if self.cached:
             return (getattr(self.bot.cache, self.collection_name)).get_all(_id)
@@ -70,7 +71,6 @@ class MongoDB(Database):
             name=bot.config.db_name, 
             host=bot.config.mongo_url
         )
-
         # Only doing this to have type hints
         self.configs = MongoCollection(bot, self, "configs")
         self.tags = MongoCollection(bot, self, "tags")
