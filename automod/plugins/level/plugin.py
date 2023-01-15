@@ -34,7 +34,9 @@ class LevelPlugin(AutoModPluginBlueprint):
                     {
                         "enabled": config.enabled,
                         "notif_mode": config.notif_mode,
-                        "users": config.users
+                        "users": config.users,
+                        "rewards": config.rewards,
+                        "reward_mode": config.reward_mode
                     }
                 )
                 self.db.level.insert(UserLevel(guild, user))
@@ -106,6 +108,14 @@ class LevelPlugin(AutoModPluginBlueprint):
 
     def has_premium(self, guild: discord.Guild) -> None:
         return self.db.configs.get(guild.id, "premium")
+    
+
+    def add_missing_attrs(self, guild: discord.Guild, doc: dict) -> None:
+        if "rewards" not in doc:
+            doc["rewards"] = {}
+        if "reward_mode" not in doc:
+            doc["reward_mode"] = "stack"
+        self.db.configs.update(guild.id, "lvl_sys", doc)
 
 
     def get_xp_for_next_lvl(self, lvl: int) -> int:
@@ -331,7 +341,10 @@ class LevelPlugin(AutoModPluginBlueprint):
         """
         # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
-        config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
+        raw = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        self.add_missing_attrs(ctx.guild, raw)
+
+        config = Object(raw)
         if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
         if len(config.rewards) < 1:
@@ -370,8 +383,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         -reward add 10 @Advanced
         """
         # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
-
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        self.add_missing_attrs(ctx.guild, config)
+
         if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
         if len(config["rewards"]) >= 15: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rewards", _emote="NO"), 0), ephemeral=True)
@@ -401,8 +415,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         -reward remove 5
         """
         # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
-
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        self.add_missing_attrs(ctx.guild, config)
+
         if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
 
         if not str(level) in list(config["rewards"].keys()):
@@ -428,8 +443,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         -reward mode Stack
         """
         # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
-
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
+        self.add_missing_attrs(ctx.guild, config)
+
         if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
         
         config["reward_mode"] = mode.lower()
