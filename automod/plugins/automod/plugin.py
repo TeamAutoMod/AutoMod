@@ -460,7 +460,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         }
 
         for k, v in vars.items():
-            inp.replace(k, v)
+            inp = inp.replace(k, v)
         return inp
     
 
