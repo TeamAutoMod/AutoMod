@@ -474,6 +474,16 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 except Exception:
                     pass
 
+    
+    def get_automod_reason(self, rule: Object, default: str) -> str:
+        if hasattr(rule, "reason"):
+            if rule.reason != None: 
+                return rule.reason
+            else:
+                return default
+        else:
+            return default
+
         
     async def delete_msg(self, rule: str, found: str, msg: discord.Message, warns: int, reason: str, pattern_or_filter: Optional[str] = None) -> None:
         try:
@@ -549,14 +559,8 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     )
 
 
-    def get_automod_reason(self, rule: Object, default: str) -> str:
-        if hasattr(rule, "reason"):
-            if rule.reason != None: 
-                return rule.reason
-            else:
-                return default
-        else:
-            return default
+    async def execute_punishment(self, rule: str, found: str, msg: discord.Message, warns: int, reason: str, pattern_or_filter: Optional[str] = None) -> None:
+        pass
 
 
     async def enforce_rules(self, msg: discord.Message) -> None:
@@ -711,9 +715,9 @@ class AutomodPlugin(AutoModPluginBlueprint):
                                 msg, 
                                 rules.links.warns, 
                                 self.get_automod_reason(
-                                rules.links, 
-                                "Posting a link without permission"
-                            )
+                                    rules.links, 
+                                    "Posting a link without permission"
+                                )
                             )
 
         if hasattr(rules, "files"):
@@ -747,7 +751,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     rules.zalgo.warns, 
                     self.get_automod_reason(
                         rules.zalgo, 
-                        "Excessive or/and unwanted use of symbolse"
+                        "Excessive or/and unwanted use of symbols"
                     )
                 )
 
@@ -761,7 +765,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     0 if (found - rules.mentions.threshold) == 1 else 1, 
                     self.get_automod_reason(
                         rules.mentions, 
-                        "Excessive use of mentionse"
+                        "Excessive use of mentions"
                     )
                 )
 
