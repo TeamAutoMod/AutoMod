@@ -993,7 +993,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         current = self.db.configs.get(ctx.guild.id, "automod")
         data = Object(AUTOMOD_RULES[rule])
 
-        if action.lower() == "enable":
+        if action.lower() == "disable":
             if rule not in current:
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_automod_off", _emote="NO", _type=data.i18n_type.title()), 0))
             else:
