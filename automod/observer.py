@@ -72,7 +72,7 @@ class Observer:
                     
                     if content != data["content"]:
                         self.stamp_cache[f]["data"] = content
-                        if "/".join(data["file"].split("/")[:3]) == "automod/plugins":
+                        if "/".join(data["file"].split("/")[:2]) == "automod/plugins":
                             await self.hot_reload(
                                 f,
                                 content,
@@ -81,12 +81,13 @@ class Observer:
                             )
                         else:
                             if f == "bot_config": f = "config"
-                            await self.hot_reload(
-                                f,
-                                content,
-                                getattr(self.bot, f).__init__,
-                                self.bot if f != "config" else to_json(content)
-                            )
+                            if hasattr(self.bot, f):
+                                await self.hot_reload(
+                                    f,
+                                    content,
+                                    getattr(self.bot, f).__init__,
+                                    self.bot if f != "config" else to_json(content)
+                                )
 
 
     async def start(self) -> None:

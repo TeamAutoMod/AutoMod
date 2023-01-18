@@ -240,7 +240,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         am = Embed(
             None,
             title=f"Automoderator",
-            description=self.locale.t(guild, "automod_val", prefix=_prefix, cmd=f"</automod:{self.bot.internal_cmd_store.get('automod')}>")
+            description=self.locale.t(guild, "automod_val", prefix=_prefix, cmd=f"</automod enable:{self.bot.internal_cmd_store.get('automod')}>")
         )
 
         pun = Embed(
