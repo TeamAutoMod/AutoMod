@@ -387,6 +387,10 @@
     "response_doesnt_exists": "{emote} Auto responder with that name doesn't exist",
     "response_removed": "{emote} Auto responder has been deleted",
     "response_edited": "{emote} Auto responder **{name}** has been updated",
+    "response_alr_enabled": "{emote} This responder is already enabled",
+    "response_alr_disabled": "{emote} This responder is already disabled",
+    "response_disabled": "{emote} Auto responder **{name}** has been disabled",
+    "response_enabled": "{emote} Auto responder **{name}** has been enabled",
 
     "alr_highlight": "{emote} A highlight for this phrase already exists",
     "not_highlight": "{emote} No highlight for this phrase exists",

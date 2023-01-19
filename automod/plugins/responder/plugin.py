@@ -65,7 +65,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         return None
 
 
-    def update_responder(self, ctx: discord.Interaction, name: str, content: str,trigger: str) -> None:
+    def update_responder(self, ctx: discord.Interaction, name: str, content: str, trigger: str) -> None:
         self._r[ctx.guild.id][name].update({
             "content": content,
             "trigger": trigger
@@ -76,6 +76,20 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             "edited": datetime.datetime.now(),
             "trigger": trigger
         })
+
+
+    def disable_responder(self, guild: discord.Guild, name: str) -> None:
+        self._r[guild.id][name].update({
+            "disabled": True
+        })
+        self.db.responders.update(f"{guild.id}-{name}", "disabled", True)
+
+
+    def enable_responder(self, guild: discord.Guild, name: str) -> None:
+        self._r[guild.id][name].update({
+            "disabled": False
+        })
+        self.db.responders.update(f"{guild.id}-{name}", "disabled", False)
 
 
     async def cache_responders(self) -> None:
@@ -90,7 +104,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                         "author": int(e["author"]),
                         "trigger": e["trigger"],
                         "position": e["position"],
-                        "ignore_mods": e.get("ignore_mods", True)
+                        "ignore_mods": e.get("ignore_mods", True),
+                        "disabled": e.get("disabled", False)
                     }
                 }
                 
@@ -171,7 +186,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 5)])
                     e.add_field(
                         name=f"__{name}__",
-                        value="**• Search position:** {} \n**• Ignore mods:** {} \n**• Trigger:** {} \n**• Response:** \n```{}\n```".format(
+                        value="**• Enabled:** {} \n**• Search position:** {} \n**• Ignore mods:** {} \n**• Trigger:** {} \n**• Response:** \n```{}\n```".format(
+                            self.bot.emotes.get("YES") if obj.get("disabled", False) == False else self.bot.emotes.get("NO"),
                             {
                                 "startswith": "Starts with",
                                 "endswith": "Ends with",
@@ -321,6 +337,64 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
 
 
+    @_responders.command(
+        name="disable",
+        description="❌ Temporarely disabled an auto responder"
+    )
+    @discord.app_commands.describe(
+        name="Name of the auto responder",
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def disableresponder(self, ctx: discord.Interaction, name: str) -> None:
+        """
+        autoresponders_disable_help
+        examples:
+        -auto-responders disable test_responder
+        """
+        name = name.lower()
+        if ctx.guild.id in self._r:
+            if not name in self._r[ctx.guild.id]:
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_doesnt_exists", _emote="NO"), 0), ephemeral=True)
+            else:
+                if self._r[ctx.guild.id][name].get("disabled", False) == True:
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_alr_disabled", _emote="NO"), 0), ephemeral=True)
+                else:
+                    self.disable_responder(ctx.guild, name)
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_disabled", _emote="YES", name=name), 1))
+        else:
+            cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+
+
+    @_responders.command(
+        name="enable",
+        description="❌ Enables a previously disabled auto responder"
+    )
+    @discord.app_commands.describe(
+        name="Name of the auto responder",
+    )
+    @discord.app_commands.default_permissions(manage_messages=True)
+    async def enableresponder(self, ctx: discord.Interaction, name: str) -> None:
+        """
+        autoresponders_enable_help
+        examples:
+        -auto-responders enable test_responder
+        """
+        name = name.lower()
+        if ctx.guild.id in self._r:
+            if not name in self._r[ctx.guild.id]:
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_doesnt_exists", _emote="NO"), 0), ephemeral=True)
+            else:
+                if self._r[ctx.guild.id][name].get("disabled", False) == False:
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_alr_enabled", _emote="NO"), 0), ephemeral=True)
+                else:
+                    self.enable_responder(ctx.guild, name)
+                    await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_enabled", _emote="YES", name=name), 1))
+        else:
+            cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+
+
     @AutoModPluginBlueprint.listener()
     async def on_message(self, msg: discord.Message) -> None:
         if msg.author.bot == True: return
@@ -333,6 +407,8 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         for name, obj in self.get_responders(msg.guild).items():
             if obj.get("ignore_mods", True) == True:
                 if self.is_mod(msg.author): continue
+            if obj.get("disabled", False) == True: 
+                continue
             
             if (self._position_funcs[obj["position"]])(msg.content, obj["trigger"]) == True:
                 content = str(obj["content"])

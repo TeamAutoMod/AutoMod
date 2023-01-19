@@ -17,6 +17,7 @@ def Responder(ctx: discord.Interaction, name: str, content: str, trigger: Union[
         "trigger": trigger,
         "position": position.lower(),
         "ignore_mods": ignore_mods,
+        "disabled": False,
 
         "author": f"{ctx.user.id}",
         "editor": None,
