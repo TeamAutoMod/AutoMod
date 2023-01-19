@@ -339,7 +339,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
 
     @_responders.command(
         name="disable",
-        description="❌ temporarily disables an auto responder"
+        description="❌ Temporarily disables an auto responder"
     )
     @discord.app_commands.describe(
         name="Name of the auto responder",
