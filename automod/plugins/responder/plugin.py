@@ -25,10 +25,10 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         self._r = {}
         self._position_funcs = {
             "startswith": lambda msg, triggers: (
-                msg.lower().startswith(tuple([_.lower() for _ in triggers]))
+                msg.split(" ")[0].lower() in [_.lower() for _ in triggers]
             ),
             "endswith": lambda msg, triggers: (
-                msg.lower().endswith(tuple([_.lower() for _ in triggers]))
+                msg.split(" ")[-1].lower() in [_.lower() for _ in triggers]
             ),
             "contains": lambda msg, triggers: (
                 any(trigger.lower() in msg.lower() for trigger in triggers)
