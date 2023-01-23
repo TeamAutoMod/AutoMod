@@ -271,7 +271,7 @@ class AutomodRuleModal(TextModalBase):
             default=amount if amount == None else str(amount),
             placeholder="Warns upon violation (0 to just delete the message)" if _type == "warns" else "Max allowed amount for this rule",
             required=True,
-            max_length=2
+            max_length=2 if title.split(" ")[1].lower() != "length" else 4
         ))
         self.add_item(discord.ui.TextInput(
             custom_id="response",

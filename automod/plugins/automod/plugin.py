@@ -204,6 +204,9 @@ LOG_DATA = {
     "lines": {
         "rule": "Newline-Spam"
     },
+    "length": {
+        "rule": "Symbol-Spam"
+    },
     "mentions": {
         "rule": "Mention-Spam"
     },
@@ -263,6 +266,13 @@ AUTOMOD_RULES = {
         "i18n_type": "maximum lines",
         "field_name": "line",
         "field_help": "lines"
+    },
+    "length": {
+        "int_field_name": "threshold",
+        "i18n_key": "set_length",
+        "i18n_type": "maximum characters",
+        "field_name": "character",
+        "field_help": "characters"
     },
     "emotes": {
         "int_field_name": "threshold",
@@ -444,7 +454,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         return roles, channels
 
 
-    def sanitize_content(self, content: str) -> None:
+    def sanitize_content(self, content: str) -> str:
         for c in ILLEGAL_CHARS:
             content = content.replace(c, "")
         return content
@@ -686,9 +696,9 @@ class AutomodPlugin(AutoModPluginBlueprint):
                                     msg, 
                                     rules.invites.warns, 
                                     self.get_automod_reason(
-                                rules.invites, 
-                                "Sending Discord invite link or equivalent redirect"
-                            )
+                                        rules.invites, 
+                                        "Sending Discord invite link or equivalent redirect"
+                                    )
                                 )
         
         if hasattr(rules, "links"):
@@ -779,6 +789,19 @@ class AutomodPlugin(AutoModPluginBlueprint):
                     0 if (found - rules.lines.threshold) == 1 else 1, 
                     self.get_automod_reason(
                         rules.lines, 
+                        "Message too long"
+                    )
+                )
+            
+        if hasattr(rules, "length"):
+            if len(content) > rules.length.threshold:
+                return await self.delete_msg(
+                    "length", 
+                    f"**``{found}``**", 
+                    msg, 
+                    0 if (found - rules.length.threshold) == 1 else 1, 
+                    self.get_automod_reason(
+                        rules.length, 
                         "Message too long"
                     )
                 )
@@ -968,6 +991,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             "Links filter", 
             "Attachments filter", 
             "Mentions filter", 
+            "Line filter",
             "Length filter", 
             "Emotes filter", 
             "Repetition filter", 
@@ -987,7 +1011,8 @@ class AutomodPlugin(AutoModPluginBlueprint):
             "links filter": "links", 
             "attachments filter": "files", 
             "mentions filter": "mentions", 
-            "length filter": "lines", 
+            "line filter": "lines", 
+            "length filter": "length",
             "emotes filter": "emotes", 
             "repetition filter": "repeat", 
             "zalgo filter": "zalgo", 
@@ -1008,8 +1033,12 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 if amount < 5: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_am_amount", _emote="NO", field=rule.replace("s", "")), 0), ephemeral=True)
                 if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_am_amount", _emote="NO", field=rule.replace("s", "")), 0), ephemeral=True)
             else:
-                if amount < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0), ephemeral=True)
-                if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
+                if rule == "length":
+                    if amount < 20: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_chars", _emote="NO"), 0), ephemeral=True)
+                    if amount > 4000: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_chars", _emote="NO"), 0), ephemeral=True)
+                else:
+                    if amount < 0: return await i.response.send_message(embed=E(self.locale.t(i.guild, "min_warns_esp", _emote="NO"), 0), ephemeral=True)
+                    if amount > 100: return await i.response.send_message(embed=E(self.locale.t(i.guild, "max_warns", _emote="NO"), 0), ephemeral=True)
 
             current.update({
                 rule: {
@@ -1021,7 +1050,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             self.db.configs.update(i.guild.id, "automod", current)
 
             text = ""
-            if not rule in ["mentions", "lines", "emotes", "repeat"] and amount == 0:
+            if not rule in ["mentions", "lines", "length", "emotes", "repeat"] and amount == 0:
                 if rule == "links":
                     text = self.locale.t(i.guild, f"{data.i18n_key}_zero", _emote="YES", cmd=f"</links add:{self.bot.internal_cmd_store.get('links')}>")
                 elif rule == "invites":
@@ -1040,7 +1069,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         modal = AutomodRuleModal(
             self.bot, 
             f"Configure {rule.title()} Rule", 
-            "threshold" if rule in ["mentions", "lines", "emotes", "repeat"] else "warns",
+            "threshold" if rule in ["mentions", "lines", "emotes", "repeat", "length"] else "warns",
             current.get(rule, {}).get(data.int_field_name, None),
             current.get(rule, {}).get("response", None),
             current.get(rule, {}).get("reason", None),
@@ -1064,6 +1093,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
             "Links filter", 
             "Attachments filter", 
             "Mentions filter", 
+            "Line filter",
             "Length filter", 
             "Emotes filter", 
             "Repetition filter", 
@@ -1083,7 +1113,8 @@ class AutomodPlugin(AutoModPluginBlueprint):
             "links filter": "links", 
             "attachments filter": "files", 
             "mentions filter": "mentions", 
-            "length filter": "lines", 
+            "line filter": "lines", 
+            "length filter": "length", 
             "emotes filter": "emotes", 
             "repetition filter": "repeat", 
             "zalgo filter": "zalgo", 

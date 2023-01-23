@@ -162,6 +162,9 @@
     "max_warns": "{emote} Too many warns (>100)",
     "min_warns_esp": "{emote} Too few warns (<0)",
 
+    "min_chars": "{emote} Too little character limit (<20)",
+    "max_chars": "{emote} Too many characters (>4000)",
+
     "min_am_amount": "{emote} Too little {field} amount (<5)",
     "max_am_amount": "{emote} Too big {field} amount (>100)",
 
@@ -213,6 +216,7 @@
     "invalid_automod_amount": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid {field_name} amount or **off** as the second argument",
     "set_mentions": "{emote} Users will now be warned when using more than **{amount}** mention{plural}",
     "set_lines": "{emote} Users will now be warned when using more than **{amount}** line split{plural}",
+    "set_length": "{emote} Users will now be warned when sending messages with more than **{amount}** character{plural}",
     "set_emotes": "{emote} Users will now be warned when using more than **{amount}** emote{plural}",
     "set_repeat": "{emote} Users will now be warned when using the same word more than **{amount}** time{plural}",
     "set_links": "{emote} Users will now receive **{amount}** warn{plural} when using forbidden links (configure with the {cmd} command)",
@@ -292,12 +296,12 @@
 
     "case_not_found": "{emote} That case doesn't exist",
 
-    "dm_automod_rule_triggered": "{emote} Your message in **{guild_name}** has been deleted because you broke the following rule: ``{rule}``",
-    "dm_kick": "{emote} You have been kicked from **{guild_name}** for: ``{reason}``",
-    "dm_ban": "{emote} You have been banned from **{guild_name}** for: ``{reason}``",
-    "dm_warn": "{emote} You have been warned in **{guild_name}** for: ``{reason}``",
-    "dm_mute": "{emote} You have been muted in **{guild_name}** until {until} for: ``{reason}``",
-    "dm_tempban": "{emote} You have been banned in **{guild_name}** until {until} for: ``{reason}``",
+    "dm_automod_rule_triggered": "Your message in **{guild_name}** has been deleted because you broke the following rule: \n```\n{rule}\n```",
+    "dm_kick": "You have been kicked from **{guild_name}** for: \n```\n{reason}\n```",
+    "dm_ban": "You have been banned from **{guild_name}** for: \n```\n{reason}\n```",
+    "dm_warn": "You have been warned in **{guild_name}** for: \n```\n{reason}\n```",
+    "dm_mute": "You have been muted in **{guild_name}** until {until} for: \n```\n{reason}\n```",
+    "dm_tempban": "You have been banned in **{guild_name}** until {until} for: \n```\n{reason}\n```",
 
     "no_regexes": "{emote} This server doesn't have any regexes. Create one by  using {cmd}",
     "regex_name_too_long": "{emote} Regex name is too long",
@@ -347,7 +351,7 @@
     "setup_desc": "This is a small guide for setting up the bot. If you need any further help, don't hesitate to join the support server: {inv}",
     "prefix_val": "You can configure the bots prefix for text & custom commands using the ``{prefix}prefix`` command. For example, if you want the prefix to be ``!!``, you'd use ``{prefix}prefix !!``",
     "log_val": "Logging allows you to keep track of what is happening in your server. Everything related to logging is configured using the {cmd} command. The first command argument is always the option you want to configure, for example ``Mod`` for mod logs. \n\nThe following are the available log options: \n> ``Mod`` → For (auto-)mod logs like bans etc. \n> ``Server`` → For server logs like channel & emoji events \n> ``Messages`` → For message deletion/edit logs \n> ``Joins & Leaves`` → For member join/leave logs \n> ``Voice`` → For voice join/leave/switch events \n> ``Reports`` → For logging of reports via right-clicking on a message \n \nThe second command argument is the channel you want the logs to be sent to. \n\nTwo examples would be: \n> ``{prefix}logs enable Mod #mod-logs`` → Enables mod logging and sends them to #mod-logs \n> ``{prefix}logs disable Mod`` → Disables mod logs",
-    "automod_val": "You can configure rules, and how the bot should behave upon violation. This is done using the {cmd} command. The first command argument is always the rule you want to configure, for example ``Invites``. \n\nAll available rules are: \n> ``Invites filter`` → Server invites \n> ``Links filter`` → Web links other than invites \n> ``Attachments filter`` → Uncommon file types \n> ``Mentions filter`` → Max allowed mentions\n> ``Length filter`` → Max allowed line splits \n> ``Emotes filter`` → Max allowed emotes  \n> ``Repetition filter`` → Max allowed repetition of words  \n> ``Zalgo filter`` → Zalgo characters \n> ``Caps filter`` → Excessive CAPS usage \n\nExamples would be: \n> ``{prefix}automod enable Invites filter`` → Enables the Invite rule \n> ``{prefix}automod disable Repetition filter`` → Disables the repeat rule",
+    "automod_val": "You can configure rules, and how the bot should behave upon violation. This is done using the {cmd} command. The first command argument is always the rule you want to configure, for example ``Invites``. \n\nAll available rules are: \n> ``Invites filter`` → Server invites \n> ``Links filter`` → Web links other than invites \n> ``Attachments filter`` → Uncommon file types \n> ``Mentions filter`` → Max allowed mentions\n> ``Line filter`` → Max allowed line splits \n> ``Length filter`` → Max allowed characters \n> ``Emotes filter`` → Max allowed emotes  \n> ``Repetition filter`` → Max allowed repetition of words  \n> ``Zalgo filter`` → Zalgo characters \n> ``Caps filter`` → Excessive CAPS usage \n\nExamples would be: \n> ``{prefix}automod enable Invites filter`` → Enables the Invite rule \n> ``{prefix}automod disable Repetition filter`` → Disables the repeat rule",
     "pun_val": "You can easily set punishments for a specific amount of warns. This is configured using the {cmd} command. The first command argument is always the warn amount the action should be enforced at. The second argument is the action itself. \n\nThese are all available actions: \n> ``Kick`` → Kicks the user \n> ``Ban`` → Bans the user (can be temporary) \n> ``Mute`` → Temporarily mutes the user \n\nThe third argument is a duration for the action. The ``Mute`` action has to have this given, while the ``Ban`` action can take this if you want a user to be temp banned. Durations are formatted like ``2m`` for 2 minutes or ``1h`` for 1 hour. \n\nExamples would be: \n> ``{prefix}punishments add 1 Kick`` → Will kick users upon reaching 1 warn \n> ``{prefix}punishments add 2 Mute 10m`` → Will mute users upon reaching 2 warns \n> ``{prefix}punishments delete 3`` → Will remove the action configured for 3 warns",
     
     "premium_alr_enabled": "{emote} Premium is already enabled for this server",

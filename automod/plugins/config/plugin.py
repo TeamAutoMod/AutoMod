@@ -330,9 +330,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
             e.dash_field(dash_length),
             {
                 "name": f"❯ __Automoderator__",
-                "value": "**• Mentions Filter:** {} \n**• Length Filter:** {} \n**• Emotes Filter:** {} \n**• Repetition Filter:** {} \n**• Links Filter:** {} \n**• Invites Filter:** {} \n**• Attachment Filter:** {} \n**• Zalgo Filter:** {} \n**• Caps Filter:** {} \n**• Spam Filter:** {}"\
+                "value": "**• Mentions Filter:** {} \n**• Length Filter:** {} \n**• Line Filter:** {} \n**• Emotes Filter:** {} \n**• Repetition Filter:** {} \n**• Links Filter:** {} \n**• Invites Filter:** {} \n**• Attachment Filter:** {} \n**• Zalgo Filter:** {} \n**• Caps Filter:** {} \n**• Spam Filter:** {}"\
                 .format(
                     no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold} Mentions",
+                    no if not hasattr(rules, "length") else f"{rules.length.threshold} Characters",
                     no if not hasattr(rules, "lines") else f"{rules.lines.threshold} Line Splits",
                     no if not hasattr(rules, "emotes") else f"{rules.emotes.threshold} Emotes",
                     no if not hasattr(rules, "repeat") else f"{rules.repeat.threshold} Repetitions",
