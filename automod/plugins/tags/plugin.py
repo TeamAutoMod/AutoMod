@@ -39,7 +39,7 @@ class TagsPlugin(AutoResponderPlugin):
                 content = str(cmd.content)
                 for k, v in {
                     "{user}": f"<@{ctx.user.id}>",
-                    "{username}": f"{ctx.user.name}",
+                    "{username}": f"{ctx.user.display_name}",
                     "{avatar}": f"{ctx.user.avatar.url if ctx.user.avatar != None else ctx.user.display_avatar.url}",
                     "{server}": f"{ctx.guild.name}",
                     "{channel}": f"{ctx.channel.name}"

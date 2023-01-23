@@ -415,7 +415,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 
                 for k, v in {
                     "{user}": f"<@{msg.author.id}>",
-                    "{username}": f"{msg.author.name}",
+                    "{username}": f"{msg.author.display_name}",
                     "{avatar}": f"{msg.author.avatar.url if msg.author.avatar != None else msg.author.display_avatar.url}",
                     "{server}": f"{msg.guild.name}",
                     "{channel}": f"{msg.channel.name}"

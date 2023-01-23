@@ -324,16 +324,16 @@ class ActionProcessor:
         self.bot.db.tbans.insert(Tempban(msg.guild.id, user.id, until))
         
         self.dm_processor.execute(
-                msg,
-                "tempban",
-                user,
-                **{
-                    "guild_name": msg.guild.name,
-                    "until": f"<t:{round(until.timestamp())}>",
-                    "reason": log_kwargs.get("raw_reason"),
-                    "_emote": "HAMMER"
-                }
-            )
+            msg,
+            "tempban",
+            user,
+            **{
+                "guild_name": msg.guild.name,
+                "until": f"<t:{round(until.timestamp())}>",
+                "reason": log_kwargs.get("raw_reason"),
+                "_emote": "HAMMER"
+            }
+        )
 
         try:
             await msg.guild.ban(user=user)

@@ -453,7 +453,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
     def replace_vars(self, msg: discord.Message, inp: str, rule: str) -> str:
         vars = {
             "{user}": f"{msg.author.mention}",
-            "{username}": f"{msg.author.name}",
+            "{username}": f"{msg.author.display_name}",
             "{channel}": f"{msg.channel.mention}",
             "{server}": f"{msg.guild.name}",
             "{rule}": rule.title()

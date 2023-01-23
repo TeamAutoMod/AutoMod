@@ -8,7 +8,7 @@ import datetime
 import asyncio
 import logging; log = logging.getLogger()
 import datetime
-from typing import Union, Callable
+from typing import Union, Callable, Literal
 import pytz; UTC = pytz.UTC
 
 from ..warn.plugin import WarnPlugin, ShardedBotInstance
@@ -36,6 +36,20 @@ ACTIONS = {
         "action": "kick",
         "log": "kicked"
     },
+}
+
+
+DELETE_MESSAGES_ARG = Literal[
+    "None",
+    "Previous 24 hours",
+    "Previous 3 days",
+    "Previous 7 days",
+]
+DELETE_MESSAGES_ARG_MAP = {
+    "none": 0,
+    "previous 24 hours": 1,
+    "previous 3 days": 3,
+    "previous 7 days": 7
 }
 
 
@@ -161,7 +175,10 @@ class ModerationPlugin(WarnPlugin):
 
         try:
             func = getattr(ctx.guild, ACTIONS[action]["action"])
-            await func(user=user, reason=reason)
+            if action.lower() != "kick":
+                await func(user=user, reason=reason)
+            else:
+                await func(user=user, reason=reason, delete_message_days=_.get("delete_message_days", 0))
         except Exception as ex:
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
         else:
@@ -193,10 +210,11 @@ class ModerationPlugin(WarnPlugin):
     )
     @discord.app_commands.describe(
         user="The user you want to ban",
-        reason="An optional reason for the ban"
+        reason="An optional reason for the ban",
+        delete_messages="How many days of user messages to purge"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def ban(self, ctx: discord.Interaction,user: discord.User, *, reason: str = None) -> None:
+    async def ban(self, ctx: discord.Interaction, user: discord.User, *, delete_messages: DELETE_MESSAGES_ARG = "None", reason: str = None) -> None:
         """
         ban_help
         examples:
@@ -207,7 +225,7 @@ class ModerationPlugin(WarnPlugin):
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
-            await self.kick_or_ban("ban", ctx, user, reason, delete_message_days=1)
+            await self.kick_or_ban("ban", ctx, user, reason, delete_message_days=DELETE_MESSAGES_ARG_MAP[delete_messages.lower()])
         else:
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"), 0), ephemeral=True)
 
@@ -262,10 +280,11 @@ class ModerationPlugin(WarnPlugin):
     )
     @discord.app_commands.describe(
         user="The user you want to ban",
-        reason="An optional reason for the ban"
+        reason="An optional reason for the ban",
+        delete_messages="How many days of user messages to purge"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def softban(self, ctx: discord.Interaction, user: discord.User, *, reason: str = None) -> None:
+    async def softban(self, ctx: discord.Interaction, user: discord.User, *, delete_messages: DELETE_MESSAGES_ARG = "None", reason: str = None) -> None:
         """
         softban_help
         examples:
@@ -276,7 +295,7 @@ class ModerationPlugin(WarnPlugin):
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
-            await self.kick_or_ban("softban", ctx, user, reason, delete_message_days=1)
+            await self.kick_or_ban("softban", ctx, user, reason, delete_message_days=DELETE_MESSAGES_ARG_MAP[delete_messages.lower()])
         else:
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"), 0), ephemeral=True)
 
@@ -287,10 +306,11 @@ class ModerationPlugin(WarnPlugin):
     )
     @discord.app_commands.describe(
         user="The user you want to ban",
-        reason="An optional reason for the ban"
+        reason="An optional reason for the ban",
+        delete_messages="How many days of user messages to purge"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def hackban(self, ctx: discord.Interaction, user: discord.User, *, reason: str = None) -> None:
+    async def hackban(self, ctx: discord.Interaction, user: discord.User, *, delete_messages: DELETE_MESSAGES_ARG = "None", reason: str = None) -> None:
         """
         hackban_help
         examples:
@@ -301,7 +321,7 @@ class ModerationPlugin(WarnPlugin):
         try:
             await ctx.guild.fetch_ban(user)
         except discord.NotFound:
-            await self.kick_or_ban("hackban", ctx, user, reason, delete_message_days=1)
+            await self.kick_or_ban("hackban", ctx, user, reason, delete_message_days=DELETE_MESSAGES_ARG_MAP[delete_messages.lower()])
         else:
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_banned", _emote="WARN"), 0), ephemeral=True)
 
@@ -313,10 +333,11 @@ class ModerationPlugin(WarnPlugin):
     @discord.app_commands.describe(
         user="The user you want to ban",
         length="10m, 2h, 1d",
-        reason="An optional reason for the ban"
+        reason="An optional reason for the ban",
+        delete_messages="How many days of user messages to purge"
     )
     @discord.app_commands.default_permissions(ban_members=True)
-    async def tempban(self, ctx: discord.Interaction, user: discord.User, length: str, *, reason: str = None) -> None:
+    async def tempban(self, ctx: discord.Interaction, user: discord.User, length: str, *, delete_messages: DELETE_MESSAGES_ARG = "None", reason: str = None) -> None:
         """
         tempban_help
         examples:
@@ -423,7 +444,8 @@ class ModerationPlugin(WarnPlugin):
                         try:
                             await ctx.guild.ban(
                                 user=user, 
-                                reason=f"{reason} | {length}{length.unit}"
+                                reason=f"{reason} | {length}{length.unit}",
+                                delete_message_days=DELETE_MESSAGES_ARG_MAP[delete_messages.lower()]
                             )
                         except Exception as ex:
                             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "fail", _emote="NO", exc=ex), 0), ephemeral=True)
