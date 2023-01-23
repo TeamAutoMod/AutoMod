@@ -187,46 +187,46 @@ ZALGO_RE = re.compile(
 
 LOG_DATA = {
     "invites": {
-        "rule": "Anti-Invites"
+        "rule": "Invite Filter"
     },
     "links": {
-        "rule": "Anti-Links"
+        "rule": "Link Filter"
     },
     "links_blacklist": {
-        "rule": "Anti-Links (blacklist)"
+        "rule": "Link Filter (blacklist)"
     },
     "files": {
-        "rule": "Anti-Files"
+        "rule": "Attachment Filter"
     },
     "zalgo": {
-        "rule": "Anti-Zalgo"
+        "rule": "Zalgo Filter"
     },
     "lines": {
-        "rule": "Newline-Spam"
+        "rule": "Line Filter"
     },
     "length": {
-        "rule": "Symbol-Spam"
+        "rule": "Length Filter"
     },
     "mentions": {
-        "rule": "Mention-Spam"
+        "rule": "Mentions Filter"
     },
     "emotes": {
-        "rule": "Emote-Spam"
+        "rule": "Emotes Filter"
     },
     "repeat": {
-        "rule": "Anti-Repetition"  
+        "rule": "Repetition Filter"  
     },
     "regex": {
-        "rule": "Regex-Filter"
+        "rule": "Regex Filter"
     },
     "filter": {
-        "rule": "Word-Filter"
+        "rule": "Word Filter"
     },
     "antispam": {
-        "rule": "Anti-Spam"
+        "rule": "Spam Filter"
     },
     "caps": {
-        "rule": "Anti-CAPS"
+        "rule": "CAPS Filter"
     }
 }
 
