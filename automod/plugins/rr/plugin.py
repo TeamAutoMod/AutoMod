@@ -136,7 +136,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         }
         if len(rrs) < 1:
             cmd = f"</reaction-roles add:{self.bot.internal_cmd_store.get('reaction-roles')}>"
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="WARN", cmd=cmd), 2), ephemeral=True)
         else:
             e = Embed(
                 ctx,
@@ -257,7 +257,7 @@ class ReactionRolesPlugin(AutoModPluginBlueprint):
         rrs = self.db.configs.get(ctx.guild.id, "reaction_roles")
         if len(rrs) < 1:
             cmd = f"</reaction-roles add:{self.bot.internal_cmd_store.get('reaction-roles')}>"
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rr", _emote="WARN", cmd=cmd), 2), ephemeral=True)
         else:
             if message.startswith("https://"):
                 message = message.split("/")[-1]

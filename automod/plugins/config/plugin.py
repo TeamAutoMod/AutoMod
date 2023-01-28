@@ -20,6 +20,10 @@ LOG_OPTIONS = {
         "db_field": "mod_log",
         "i18n_type": "moderation logs"
     },
+    "automod": {
+        "db_field": "automod_log",
+        "i18n_type": "automod logs"
+    },
     "server": {
         "db_field": "server_log",
         "i18n_type": "server logs"
@@ -53,6 +57,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         super().__init__(bot)
         self._names = {
             "mod": "Moderation Logs",
+            "automod": "Automod Logs",
             "message": "Message Logs",
             "server": "Server Logs",
             "join": "Join Logs",
@@ -107,7 +112,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 self.bot.webhook_cache.update({
                     ctx.guild.id: {
                         **{
-                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "report_log"] if k != option
+                            k: None for k in ["mod_log", "server_log", "message_log", "join_log", "member_log", "voice_log", "report_log", "automod_log"] if k != option
                         }, 
                         **{
                             option: w
@@ -315,9 +320,10 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             {
                 "name": f"❯ __Logging__",
-                "value": "**• Mod Log:** {} \n**• Message Log:** {}\n**• Server Log:** {}\n**• Join Log:** {} \n**• Member Log:** {} \n**• Voice Log:** {} \n**• Report Log:** {}"\
+                "value": "**• Mod Log:** {} \n**• Automod Log:** {} \n**• Message Log:** {}\n**• Server Log:** {}\n**• Join Log:** {} \n**• Member Log:** {} \n**• Voice Log:** {} \n**• Report Log:** {}"\
                 .format(
                     no if config.mod_log == "" else f"<#{config.mod_log}>",
+                    no if config.automod_log == "" else f"<#{config.mod_log}>",
                     no if config.message_log == "" else f"<#{config.message_log}>",
                     no if config.server_log == "" else f"<#{config.server_log}>",
                     no if config.join_log == "" else f"<#{config.join_log}>",
@@ -558,7 +564,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
     async def log_enable(
         self, 
         ctx: discord.Interaction, 
-        option: Literal["Mod", "Server", "Messages", "Joins & Leaves", "Members", "Voice", "Reports"], 
+        option: Literal["Mod", "Automod", "Server", "Messages", "Joins & Leaves", "Members", "Voice", "Reports"], 
         channel: discord.TextChannel,
     ) -> None:
         """
@@ -573,7 +579,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         cur = self.db.configs.get(ctx.guild.id, data.db_field)
 
         if cur != "" and cur == f"{channel.id}":
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_alr_on", _emote="INFO", _type=data.i18n_type.capitalize()), 2))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_alr_on", _emote="WARN", _type=data.i18n_type.capitalize()), 2))
 
         self.db.configs.update(ctx.guild.id, data.db_field, f"{channel.id}")
         self.webhook_queue.append({
@@ -595,7 +601,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
     async def log_disable(
         self, 
         ctx: discord.Interaction, 
-        option: Literal["Mod", "Server", "Messages", "Joins & Leaves", "Members", "Voice", "Reports"]
+        option: Literal["Mod", "Automod", "Server", "Messages", "Joins & Leaves", "Members", "Voice", "Reports"]
     ) -> None:
         """
         log_disable_help
@@ -608,7 +614,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         data = Object(LOG_OPTIONS[option])
 
         if self.db.configs.get(ctx.guild.id, data.db_field) == "":
-            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_alr_off", _emote="INFO", _type=data.i18n_type.capitalize()), 2))
+            return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "log_alr_off", _emote="WARN", _type=data.i18n_type.capitalize()), 2))
 
         self.db.configs.update(ctx.guild.id, data.db_field, "")
         await self.delete_webhook(

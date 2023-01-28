@@ -510,7 +510,7 @@ class InternalPlugin(AutoModPluginBlueprint):
         roles = [x.mention for x in user.roles if str(x.id) != str(user.guild.default_role.id)]
         e = Embed(
             None,
-            color=0x2f3136,
+            color=0xf04a47,
             description=self.locale.t(
                 user.guild, 
                 "user_left", 

@@ -202,9 +202,9 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     )
                 await ctx.response.send_message(embed=e)
             else:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="WARN", cmd=cmd), 2), ephemeral=True)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
     
     @_responders.command(
@@ -287,7 +287,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_removed", _emote="YES"), 1))
         else:
             cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
 
     @_responders.command(
@@ -334,7 +334,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                 await ctx.response.send_modal(modal)
         else:
             cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
 
     @_responders.command(
@@ -363,7 +363,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_disabled", _emote="YES", name=name), 1))
         else:
             cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
 
     @_responders.command(
@@ -392,7 +392,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "response_enabled", _emote="YES", name=name), 1))
         else:
             cmd = f"</auto-responders add:{self.bot.internal_cmd_store.get('auto-responders')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_responders", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
 
     @AutoModPluginBlueprint.listener()

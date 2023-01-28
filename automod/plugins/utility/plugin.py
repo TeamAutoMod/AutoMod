@@ -882,7 +882,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         if duration == None:
             slowmodes = [x for x in self.bot.db.slowmodes.find({}) if x["id"].split("-")[0] == f"{ctx.guild.id}"]
             if len(slowmodes) < 1:
-                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="INFO"), 2), ephemeral=True)
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_slowmodes", _emote="WARN"), 2), ephemeral=True)
             else:
                 e = Embed(
                     ctx,

@@ -56,7 +56,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         """
         cmd = f"</filter add:{self.bot.internal_cmd_store.get('filter')}>"
         filters = self.db.configs.get(ctx.guild.id, "filters")
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
         e = Embed(
             ctx,
@@ -138,7 +138,7 @@ class FilterPlugin(AutoModPluginBlueprint):
         filters = self.db.configs.get(ctx.guild.id, "filters")
         cmd = f"</filter add:{self.bot.internal_cmd_store.get('filter')}>"
 
-        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+        if len(filters) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filters", _emote="WARN", cmd=cmd), 2), ephemeral=True)
         if not name in filters: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_filter", _emote="NO"), 0), ephemeral=True)
 
         del filters[name]

@@ -225,9 +225,9 @@ class TagsPlugin(AutoResponderPlugin):
                 )
                 await ctx.response.send_message(embed=e)
             else:
-                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+                await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="WARN", cmd=cmd), 2), ephemeral=True)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
     
     @_commands.command(
@@ -315,7 +315,7 @@ class TagsPlugin(AutoResponderPlugin):
                     await self.bot.tree.sync(guild=ctx.guild)
                     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "tag_removed", _emote="YES"), 1))
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO"), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="WARN"), 2), ephemeral=True)
 
 
     @_commands.command(
@@ -363,7 +363,7 @@ class TagsPlugin(AutoResponderPlugin):
                 )
                 await ctx.response.send_modal(modal)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
 
     @_commands.command(
@@ -434,7 +434,7 @@ class TagsPlugin(AutoResponderPlugin):
 
                 await ctx.response.send_message(embed=e)
         else:
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="WARN", cmd=cmd), 2), ephemeral=True)
 
 
     # @_commands.command(
@@ -459,7 +459,7 @@ class TagsPlugin(AutoResponderPlugin):
     #             self.disable_command(ctx, name)
     #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_tag", _emote="YES", cmd=name), 1))
     #     else:
-    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="WARN", cmd=cmd), 2))
 
 
     # @_commands.command(
@@ -484,7 +484,7 @@ class TagsPlugin(AutoResponderPlugin):
     #             self.disable_command(ctx, name)
     #             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "disabled_tag", _emote="YES", cmd=name), 1))
     #     else:
-    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="INFO", cmd=cmd), 2))
+    #         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_tags", _emote="WARN", cmd=cmd), 2))
 
 
 async def setup(bot: ShardedBotInstance) -> None: 

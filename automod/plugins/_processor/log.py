@@ -212,21 +212,21 @@ LOG_TYPES = {
     },
 
     "automod_rule_triggered": {
-        "channel": "mod_log",
+        "channel": "automod_log",
         "key": "log_automod",
         "color": 0x131313,
         "emote": "SWORDS",
         "action": "Automod rule triggered"
     },
     "regex_triggered": {
-        "channel": "mod_log",
+        "channel": "automod_log",
         "key": "log_regex",
         "color": 0x131313,
         "emote": "NO_ENTRY",
         "action": "Regex filter triggered"
     },
     "filter_triggered": {
-        "channel": "mod_log",
+        "channel": "automod_log",
         "key": "log_filter",
         "color": 0x131313,
         "emote": "NO_ENTRY",
@@ -254,7 +254,8 @@ class LogProcessor:
                 "join_log": [],
                 "member_log": [],
                 "voice_log": [],
-                "report_log": []
+                "report_log": [],
+                "automod_log": []
             }
 
         config = Object(LOG_TYPES[log_type])

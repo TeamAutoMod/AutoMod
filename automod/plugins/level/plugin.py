@@ -349,7 +349,7 @@ class LevelPlugin(AutoModPluginBlueprint):
 
         if len(config.rewards) < 1:
             cmd = f"</reward add:{self.bot.internal_cmd_store.get('reward')}>"
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rewards", _emote="INFO", cmd=cmd), 2), ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_rewards", _emote="WARN", cmd=cmd), 2), ephemeral=True)
         else:
             e = Embed(
                 ctx,
