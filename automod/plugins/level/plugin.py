@@ -78,8 +78,9 @@ class LevelPlugin(AutoModPluginBlueprint):
     def user_set(self, inp: List[Object]) -> List[Object]:
         final = []
         for entry in inp:
-            if not entry.id in [_.id for _ in final]:
-                final.append(entry)
+            if hasattr(entry, "id"):
+                if not entry.id in [_.id for _ in final if hasattr(_, "id")]:
+                    final.append(entry)
         return final
 
 
@@ -150,36 +151,36 @@ class LevelPlugin(AutoModPluginBlueprint):
             
         if len(config.rewards) < 1: return
 
-        rewards = OrderedDict(
-            sorted({
-                k: v for k, v in config.rewards.items() if int(k) <= int(level)
-            }.items())
+        lvl_keys = list({int(k): v for k, v in config.rewards.items()}.keys())
+        mins = [i for i in lvl_keys if level <= i]
+        maxs = [i for i in lvl_keys if level >= i]
+        new_role = guild.get_role(
+            int(config.rewards[str(max([min(mins) if len(mins) > 0 else 0, max(maxs) if len(maxs) > 0 else 0]))])
         )
-        if len(rewards) > 0:
-            new_role = guild.get_role(int(list(rewards.values())[-1]))
-            if new_role != None:
+
+        if new_role != None and new_role not in user.roles:
+            try:
+                await user.add_roles(new_role)
+            except Exception:
+                pass
+            else:
                 try:
-                    await user.add_roles(role)
+                    await user.send(embed=E(self.locale.t(guild, "new_reward", _emote="PARTY", role=new_role.name, lvl=level, server=guild.name), 3))
                 except Exception:
                     pass
-                else:
-                    try:
-                        await user.send(embed=E(self.locale.t(guild, "new_reward", _emote="PARTY", role=role.name, lvl=level, server=guild.name), 2))
-                    except Exception:
-                        pass
-                finally:
-                    if config.reward_mode == "single":
-                        to_rm = []
-                        for r in [x for x in user.roles if x != guild.default_role]:
-                            if r.id != new_role.id:
-                                if r.id in [int(_) for _ in list(rewards.values())]:
-                                    to_rm.append(r)
-                        
-                        if len(to_rm) > 0:
-                            try:
-                                await user.remove_roles(*to_rm)
-                            except Exception:
-                                pass
+            finally:
+                if config.reward_mode == "single":
+                    to_rm = []
+                    for r in [x for x in user.roles if x != guild.default_role]:
+                        if r.id != new_role.id:
+                            if r.id in [int(_) for _ in list({k: v for k, v in config.rewards.items() if int(k) > int(level)}.values())]:
+                                to_rm.append(r)
+                    
+                    if len(to_rm) > 0:
+                        try:
+                            await user.remove_roles(*to_rm)
+                        except Exception:
+                            pass
 
 
     @AutoModPluginBlueprint.listener()
@@ -213,6 +214,7 @@ class LevelPlugin(AutoModPluginBlueprint):
             xp = randint(1, 5)
         else:
             xp = randint(5, 10)
+
         for_nxt_lvl = self.get_xp_for_next_lvl(data.lvl)
         new_xp = (data.xp + xp)
 
@@ -307,6 +309,9 @@ class LevelPlugin(AutoModPluginBlueprint):
         name="reset",
         description="🔮 Resets a user back to level one"
     )
+    @discord.app_commands.describe(
+        user="The user you want to reset"
+    )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def reset(self, ctx: discord.Interaction, user: discord.Member) -> None:
         """
@@ -317,15 +322,11 @@ class LevelPlugin(AutoModPluginBlueprint):
         # if not self.has_premium(ctx.guild): return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "need_premium", _emote="NO"), 0), ephemeral=True)
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        cmd = f"</lvlsys:{self.bot.internal_cmd_store.get('lvlsys')}>"
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", cmd=cmd), 0), ephemeral=True)
 
         if self.exists(config, ctx.guild, user):
-            self.update_user_data(
-                ctx.guild,
-                user,
-                1,
-                1
-            )
+            self.update_user_data(ctx.guild, user, 1, 0)
         await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "reset_user", _emote="YES"), 1))
 
 
@@ -345,7 +346,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         self.add_missing_attrs(ctx.guild, raw)
 
         config = Object(raw)
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        cmd = f"</lvlsys:{self.bot.internal_cmd_store.get('lvlsys')}>"
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", cmd=cmd), 0), ephemeral=True)
 
         if len(config.rewards) < 1:
             cmd = f"</reward add:{self.bot.internal_cmd_store.get('reward')}>"
@@ -386,13 +388,21 @@ class LevelPlugin(AutoModPluginBlueprint):
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         self.add_missing_attrs(ctx.guild, config)
 
-        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        cmd = f"</lvlsys:{self.bot.internal_cmd_store.get('lvlsys')}>"
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", cmd=cmd), 0), ephemeral=True)
 
         if len(config["rewards"]) >= 15: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "max_rewards", _emote="NO"), 0), ephemeral=True)
 
         if str(role.id) in list(config["rewards"].values()):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "alr_reward", _emote="NO"), 0), ephemeral=True)
         else:
+            if role.position >= ctx.guild.me.top_role.position: 
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "role_too_high", _emote="NO"), 0))
+            elif role.is_default() == True:
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_default_role", _emote="NO"), 0))
+            elif role.is_assignable() == False:
+                return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "cant_assign_role", _emote="NO"), 0))
+
             config["rewards"].update({
                 str(level): str(role.id)
             })
@@ -418,7 +428,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         self.add_missing_attrs(ctx.guild, config)
 
-        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        cmd = f"</lvlsys:{self.bot.internal_cmd_store.get('lvlsys')}>"
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", cmd=cmd), 0), ephemeral=True)
 
         if not str(level) in list(config["rewards"].keys()):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_reward", _emote="NO"), 0), ephemeral=True)
@@ -446,7 +457,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         config = self.db.configs.get(ctx.guild.id, "lvl_sys")
         self.add_missing_attrs(ctx.guild, config)
 
-        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        cmd = f"</lvlsys:{self.bot.internal_cmd_store.get('lvlsys')}>"
+        if config["enabled"] == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", cmd=cmd), 0), ephemeral=True)
         
         config["reward_mode"] = mode.lower()
         self.db.configs.update(ctx.guild.id, "lvl_sys", config)
@@ -468,7 +480,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         if user == None: user = ctx.user
 
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        cmd = f"</lvlsys:{self.bot.internal_cmd_store.get('lvlsys')}>"
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", cmd=cmd), 0), ephemeral=True)
 
         if not self.exists(
             config, 
@@ -522,7 +535,8 @@ class LevelPlugin(AutoModPluginBlueprint):
         if not ctx.guild.chunked: await ctx.guild.chunk(cache=True)
         config = Object(self.db.configs.get(ctx.guild.id, "lvl_sys"))
 
-        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", prefix="/"), 0), ephemeral=True)
+        cmd = f"</lvlsys:{self.bot.internal_cmd_store.get('lvlsys')}>"
+        if config.enabled == False: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "lvl_sys_disabled", _emote="NO", cmd=cmd), 0), ephemeral=True)
         if len(config.users) < 1: return await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_one_ranked", _emote="NO"), 0), ephemeral=True)
 
         await ctx.response.defer(thinking=True)

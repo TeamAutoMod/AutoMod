@@ -168,7 +168,7 @@
     "min_am_amount": "{emote} Too little {field} amount (<5)",
     "max_am_amount": "{emote} Too big {field} amount (>100)",
 
-    "role_too_high": "{emote} This role is above my highest role. Please put it below my highest role, so I can add it to users",
+    "role_too_high": "{emote} This role is above my highest role. Please put it below my highest role, so I can assign it to users",
     "already_muted_description": "User is already muted. Do you want to extend their mute?",
     "already_tempbanned_description": "User is already tempbanned. Do you want to extend their tempban?",
     "cant_assign_role": "{emote} I won't be able to assign this role any users",
@@ -276,7 +276,7 @@
     "lvl_up_channel": "{emote} {mention}, congratulations on reaching **Level {lvl}**!",
     "lvl_up_dm": "{emote} {mention}, congratulations on reaching **Level {lvl}** in {server}!",
     "not_ranked": "{emote} User is not ranked yet",
-    "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using ``{prefix}lvlsys``",
+    "lvl_sys_disabled": "{emote} The level system is currently disabled. You can enable it by using {cmd}",
     "no_one_ranked": "{emote} No users are currently ranked",
     "lvl_sys_status": "The level system on this server is currently **{status}**",
     "changed_lvl_sys_status": "{emote} Successfully **{status}** the level system and set the notification mode to **{notifs}**",
