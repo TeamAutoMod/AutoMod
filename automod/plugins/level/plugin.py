@@ -238,7 +238,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                     _emote="PARTY", 
                     mention=msg.author.mention,
                     lvl=(data.lvl + 1)
-                ), 2))
+                ), 3))
             elif config.notif_mode == "dm":
                 try:
                     await msg.author.send(embed=E(self.locale.t(
@@ -248,7 +248,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                         mention=msg.author.mention,
                         lvl=(data.lvl + 1),
                         server=msg.guild.name
-                    ), 2))
+                    ), 3))
                 except discord.Forbidden:
                     pass
             else:
@@ -444,7 +444,7 @@ class LevelPlugin(AutoModPluginBlueprint):
         description="🎉 Configure whether to stack role rewards, or only always have the highest role reward"
     )
     @discord.app_commands.describe(
-        mode="The mod for assgning rewards (stack roles or always only allow the highest one) "
+        mode="The mode for assigning rewards (stack roles or always only allow the highest one) "
     )
     @discord.app_commands.default_permissions(manage_guild=True)
     async def role_reward_mode(self, ctx: discord.Interaction, mode: Literal["Stack", "Single"]) -> None:
