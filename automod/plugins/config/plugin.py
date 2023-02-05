@@ -306,7 +306,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": f"❯ __General__",
-                "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Join Role:** {}"\
+                "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Reaction Roles:** {} \n**• Join Role:** {}"\
                 .format(
                     "/",
                     "unlimited" if config.premium == True else no,
@@ -314,6 +314,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     len(config.regexes),
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
                     len(responders.get(ctx.guild.id, {})) if ctx.guild.id in responders else 0,
+                    len(config.reaction_roles),
                     "``NONE``" if config.join_role == "" else f"<@&{config.join_role}>"
                 ),
                 "inline": True
