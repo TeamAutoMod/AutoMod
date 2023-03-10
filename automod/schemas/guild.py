@@ -14,7 +14,7 @@ def GuildConfig(guild: discord.Guild, prefix: str) -> Dict[str, Union[str, int, 
         "prefix": "{}".format(prefix if prefix != "" or prefix != None else "+"), 
         "mute_role": "",
         "mod_role": "",
-        "join_role": "",
+        "join_role": [],
 
         "mod_log": "", 
         "message_log": "",
