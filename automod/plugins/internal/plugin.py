@@ -1011,18 +1011,22 @@ class InternalPlugin(AutoModPluginBlueprint):
         if user.guild == None: return
         if not user.guild.chunked: await self.bot.chunk_guild(user.guild)
         
-        rid = self.db.configs.get(user.guild.id, "join_role")
-        if rid != "":
-            role = user.guild.get_role(int(rid))
-            if role != None:
-                if user.pending == False:
-                    try:
-                        await user.add_roles(role)
-                    except (
-                        discord.Forbidden,
-                        discord.HTTPException
-                    ):
-                        pass
+        roles = self.db.configs.get(user.guild.id, "join_role")
+        if len(roles) > 0:
+            to_add = []
+            for rid in roles:
+                role = user.guild.get_role(int(rid))
+                if role != None: 
+                    to_add.append(role)
+
+            if user.pending == False and len(to_add) > 0:
+                try:
+                    await user.add_roles(*to_add)
+                except (
+                    discord.Forbidden,
+                    discord.HTTPException
+                ):
+                    pass
 
     
     @AutoModPluginBlueprint.listener(name="on_member_update")

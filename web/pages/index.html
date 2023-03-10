@@ -22,13 +22,20 @@
     </script>
 </head>
 <body>
+    <div id="background"></div>
+
     <div class="nav">
         <ul>
             <li>
-                <a id="brand" href="/">
-                    <div class="container">
+                <a class="brand" href="/">
+                    <div class="img_container">
                         <div class="img">
-                            <img src="img/icon.png" />
+                            <img 
+                                src="./img/icon.png" 
+                                width="41px" 
+                                height="41px" 
+                                alt="AutoMod Icon"
+                            />
                         </div>
                         <div class="text">
                             <h1>AutoMod</h1>
@@ -37,119 +44,81 @@
                 </a>
             </li>
             <li>
-                <a id="link" href="https://discord.gg/S9BEBux ">
-                    <i class="fa-brands fa-discord"></i> Server
+                <a class="link" href="https://discord.com/oauth2/authorize?client_id=697487580522086431&permissions=1374620609647&scope=bot+applications.commands" style="font-weight: bold">
+                    Invite AutoMod
                 </a>
             </li>
             <li>
-                <a id="link" href="https://github.com/TeamAutoMod/AutoMod" target="_blank">
-                    <i class="fa-brands fa-github"></i> GitHub
+                <a class="link" href="https://discord.gg/S9BEBux">
+                    Support Server
                 </a>
             </li>
             <li>
-                <a id="link" href="https://top.gg/bot/697487580522086431/vote" target="_blank">
-                    <i class="fa-regular fa-star"></i> Vote
+                <a class="link" href="https://github.com/TeamAutoMod/AutoMod" target="_blank">
+                    GitHub
                 </a>
             </li>
             <li>
-                <a id="link" href="https://twitter.com/AutoModBot" target="_blank">
-                    <i class="fa-brands fa-twitter"></i> Twitter
-                </a>
-            </li>
-            <li>
-                <a id="link" href="/commands">
-                    <i class="fa-solid fa-terminal"></i> Commands
+                <a class="link" href="https://top.gg/bot/697487580522086431/vote" target="_blank">
+                    Vote
                 </a>
             </li>
         </ul>
     </div>
 
-    <div class="container">
+    <div class="main_container">
         <div class="main_text">
             <h1>AutoMod</h1>
-            <p>The perfect Discord bot to handle all things moderation and beyond!</p>
         </div>
 
-        <div class="stats">
+        <div class="boxes">
             <ul>
-                <li id="first">
-                    <h1 onclick=invite_redirect() id="invite">
-                        Add To Server
-                    </h1>
+                <li>
+                    <div class="box_container">
+                        <div class="box_content">
+                            <h1>
+                                About AutoMod
+                            </h1>
+                        </div>
+                        <p>AutoMod is a moderation bot with multiple, customizable features for both small and large servers. Its powerful automoderator will keep your server safe and give your mods some time to sit back and relax. Try it out today! <br/>It's used in <strong id="guilds">0</strong> servers with a total of <strong id="users">0</strong> users.</p>
+                    </div>
                 </li>
-                <li id="second">
-                    <h1 id="guilds"></h1>
-                </li>
-                <li id="second"> 
-                    <h1 id="users"></h1>
-                </li>
-                <li id="second"> 
-                    <h1 id="shards"></h1>
-                </li>
-            </ul>
-        </div>
 
-        <div class="features">
-            <h2>Features</h2>
-            <ul>
                 <li>
-                    <div class="feature">
-                        <div class="content">
+                    <div class="box_container">
+                        <div class="box_content">
                             <h1>
-                                <i class="fa-solid fa-shield-halved"></i> Automoderator
+                                Getting started
                             </h1>
                         </div>
-                        <p>Robust & highly efficient automoderator with customisable rules, filters & punishments.</p>
+                        <p>Get started by adding the bot to your server.</p>
+                        <div class="btn_container">
+                            <div class="login_btn" onClick=window.location.href = '/invite'>
+                                <h2>Invite</h2>
+                            </div>
+                        </div>
                     </div>
                 </li>
+
                 <li>
-                    <div class="feature">
-                        <div class="content">
+                    <div class="box_container">
+                        <div class="box_content">
                             <h1>
-                                <i class="fa-solid fa-folder-open"></i> Case System
+                                Features
                             </h1>
                         </div>
-                        <p>Case system for past moderation actions to hold your moderators accountable.</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="feature">
-                        <div class="content">
-                            <h1>
-                                <i class="fa-solid fa-pencil"></i> Custom Commands
-                            </h1>
-                        </div>
-                        <p>Create custom slash commands & text based responders, so you don't have to keep repeating yourself.</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="feature">
-                        <div class="content">
-                            <h1>
-                                <i class="fa-solid fa-medal"></i> Level System
-                            </h1>
-                        </div>
-                        <p>The easy-to-use & balanced level system allows you to reward active users that participate in your server.</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="feature">
-                        <div class="content">
-                            <h1>
-                                <i class="fa-solid fa-user-plus"></i> Auto Roles
-                            </h1>
-                        </div>
-                        <p>Let the bot automatically give users a certain role when joining your server or even setup reaction roles.</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="feature">
-                        <div class="content">
-                            <h1>
-                                <i class="fa-solid fa-book"></i> And More
-                            </h1>
-                        </div>
-                        <p>Want to know more? Check out the help command or join the support server to find out more.</p>
+                        <p style="line-height: 1.5">
+                            <strong>• </strong>Extensive automoderator<br/>
+                            <strong>• </strong>Advanced moderation tools<br/>
+                            <strong>• </strong>Customizable level system<br/>
+                            <strong>• </strong>Custom slash commands<br/>
+                            <strong>• </strong>Automatic text responders<br/>
+                            <strong>• </strong>Compact logging<br/>
+                            <strong>• </strong>Moderation case system<br/>
+                            <strong>• </strong>Reaction roles<br/>
+                            <strong>• </strong>Join/Auto roles<br/>
+                            <strong>• </strong>And much more...<br/>
+                        </p>
                     </div>
                 </li>
             </ul>

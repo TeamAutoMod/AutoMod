@@ -506,7 +506,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
             round(self.bot.latency * 1000),
             round(shard.latency * 1000),
             round((db_t2 - db_t1) * 1000)
-        ), 2))
+        ), 3))
 
 
     @discord.app_commands.command(

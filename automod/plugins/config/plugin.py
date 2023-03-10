@@ -171,7 +171,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         parts = cid.split(":")
 
         if len(parts) != 2: 
-            if "".join(parts) == "join_role":
+            if "join_role" in "".join(parts):
                 role = i.guild.get_role(int(i.data.get("values", [1])[0]))
                 if role == None:
                     return await i.response.edit_message(embed=E(self.locale.t(i.guild, "role_not_found", _emote="NO"), 0))
@@ -183,8 +183,22 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 elif role.is_assignable() == False:
                     return await i.response.edit_message(embed=E(self.locale.t(i.guild, "cant_assign_role", _emote="NO"), 0))
 
-                self.db.configs.update(i.guild.id, "join_role", f"{role.id}")
-                return await i.response.edit_message(embed=E(self.locale.t(i.guild, "join_role_on", _emote="YES", role=role.name), 1))
+                roles = self.db.configs.get(i.guild.id, "join_role")
+                if "".join(parts) == "join_role_add":
+                    if f"{role.id}" in roles:
+                        return await i.response.edit_message(embed=E(self.locale.t(i.guild, "alr_join_role", _emote="NO"), 0))
+                    else:
+                        roles.append(str(role.id))
+                        self.db.configs.update(i.guild.id, "join_role", roles)
+                        return await i.response.edit_message(embed=E(self.locale.t(i.guild, "join_role_on", _emote="YES", role=role.name), 1), view=None)
+                else:
+                    if not f"{role.id}" in roles:
+                        return await i.response.edit_message(embed=E(self.locale.t(i.guild, "no_join_role", _emote="NO"), 0))
+                    else:
+                        roles.remove(str(role.id))
+                        self.db.configs.update(i.guild.id, "join_role", roles)
+                        return await i.response.edit_message(embed=E(self.locale.t(i.guild, "join_role_off", _emote="YES", role=role.name), 1), view=None)
+
         
         if not "log" in parts[0]: return
         
@@ -306,7 +320,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         e.add_fields([
             {
                 "name": f"❯ __General__",
-                "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Reaction Roles:** {} \n**• Join Role:** {}"\
+                "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Reaction Roles:** {} \n**• Join Roles:** {}"\
                 .format(
                     "/",
                     "unlimited" if config.premium == True else no,
@@ -315,7 +329,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                     len(tags.get(ctx.guild.id, {})) if ctx.guild.id in tags else 0,
                     len(responders.get(ctx.guild.id, {})) if ctx.guild.id in responders else 0,
                     len(config.reaction_roles),
-                    "``NONE``" if config.join_role == "" else f"<@&{config.join_role}>"
+                    "``NONE``" if len(config.join_role) < 1 else len(config.join_role)
                 ),
                 "inline": True
             },
@@ -676,7 +690,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         -ignore-logs add
         """
         view = RoleChannelSelect("log_add")
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_add"), color=2), view=view, ephemeral=True)
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_add"), color=3), view=view, ephemeral=True)
 
 
     @ignore_log.command(
@@ -691,29 +705,66 @@ class ConfigPlugin(AutoModPluginBlueprint):
         -ignore-logs remove
         """
         view = RoleChannelSelect("log_remove")
-        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=2), view=view, ephemeral=True)
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "bypass_remove"), color=3), view=view, ephemeral=True)
 
 
-    @discord.app_commands.command(
+    join_role_command = discord.app_commands.Group(
         name="join-role",
-        description="🚪 Configure the join role (role users automatically get when joining the server)"
+        description="🚪 Configure join roles (roles users get upon joing)",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @join_role_command.command(
+        name="add",
+        description="🚪 Add a new join role"
     )
     @discord.app_commands.default_permissions(manage_roles=True)
-    async def join_role(self, ctx: discord.Interaction, disable: Literal["True", "False"] = None) -> None:
+    async def add_join_role(self, ctx: discord.Interaction) -> None:
         """
         join_role_help
         examples:
-        -join_role Members
-        -join_role @Members
-        -join_role 793880854367043614
-        -join_role disable:True
+        -join_role add
         """
-        if disable == "True":
-            self.db.configs.update(ctx.guild.id, "join_role", "")
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "join_role_off", _emote="YES"), 1))
+        view = RoleSelect(1, 1, "join_role_add")
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_add"), 3), view=view, ephemeral=True)
+
+
+    @join_role_command.command(
+        name="remove",
+        description="🚪 Removes a join role"
+    )
+    @discord.app_commands.default_permissions(manage_roles=True)
+    async def add_join_role(self, ctx: discord.Interaction) -> None:
+        """
+        join_role_help
+        examples:
+        -join_role remove
+        """
+        view = RoleSelect(1, 1, "join_role_remove")
+        await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_remove"), 2), view=view, ephemeral=True)
+
+
+    @join_role_command.command(
+        name="list",
+        description="🚪 Shows a list of join roles"
+    )
+    @discord.app_commands.default_permissions(manage_roles=True)
+    async def list_join_role(self, ctx: discord.Interaction) -> None:
+        """
+        join_role_help
+        examples:
+        -join_role list
+        """
+        roles = self.db.configs.get(ctx.guild.id, "join_role")
+        if len(roles) > 0:
+            e = Embed(
+                ctx, 
+                title="Join Roles", 
+                description="\n".join([f"**•** <@&{r}>" for r in roles])
+            )
+            await ctx.response.send_message(embed=e)
         else:
-            view = RoleSelect(1, 1, "join_role")
-            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role"), 2), view=view, ephemeral=True)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_join_roles", _emote="WARN"), 2), ephemeral=True)
+
 
 
     @discord.app_commands.command(

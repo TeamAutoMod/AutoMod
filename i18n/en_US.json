@@ -199,9 +199,12 @@
     "invalid_mod_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **off** as the second argument",
     "mod_role_on": "{emote} Set **{role}** as the mod role",
 
-    "join_role_off": "{emote} Removed the join role",
     "invalid_join_role": "{emote} Looks like you used to command a bit incorrect. You have to use either a valid role or **True** for the disable parameter as the second argument",
-    "join_role_on": "{emote} Set **{role}** as the join role",
+    "join_role_on": "{emote} Added **{role}** as a join role",
+    "join_role_off": "{emote} Removed **{role}** as a join role",
+    "no_join_role": "{emote} This isn't a join role",
+    "alr_join_role": "{emote} This role is already set as a join role",
+    "no_join_roles": "{emote} This server doesn't have any join roles",
 
     "prefix_too_long": "{emote} Prefix is too long (>20)",
     "prefix_updated": "{emote} Updated prefix to **{prefix}**",
@@ -380,7 +383,8 @@
 
     "bypass_add": "Select the roles & channels you want to add to the bypass list below",
     "bypass_remove": "Select the roles & channels you want to remove from the bypass list below",
-    "select_role": "Select a join role below (make sure it's below my highest role)",
+    "select_role_add": "Select a role to add below (make sure it's below my highest role)",
+    "select_role_remove": "Select a role to remove below",
     "role_not_found": "{emote} Role not found",
 
     "invalid_regex_responder": "{emote} The provided RegEx seems to be invalid. If you need help, check this site https://regexr.com/",
