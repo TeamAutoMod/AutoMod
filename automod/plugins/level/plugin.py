@@ -112,8 +112,11 @@ class LevelPlugin(AutoModPluginBlueprint):
     
 
     def add_missing_attrs(self, guild: discord.Guild, doc: dict) -> None:
-        if "rewards" not in doc:
+        if "rewards" not in:
             doc["rewards"] = {}
+        else:
+            if doc["rewards"] = None:
+                doc["rewards"] = {}
         if "reward_mode" not in doc:
             doc["reward_mode"] = "stack"
         self.db.configs.update(guild.id, "lvl_sys", doc)
