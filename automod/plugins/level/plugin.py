@@ -291,7 +291,7 @@ class LevelPlugin(AutoModPluginBlueprint):
                     config["reward_mode"].title()
                 )
             )
-            await ctx.response.send_message(embed=e)
+            await ctx.response.send_message(embed=e, ephemeral=True)
         else:
             if enabled != None:
                 if enabled.lower() == "true":

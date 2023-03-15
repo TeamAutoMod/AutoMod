@@ -212,15 +212,15 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         description="✅ Creates a new auto responder"
     )
     @discord.app_commands.describe(
-        position="Where or how to search messages for triggers",
+        trigger="Where or how to search messages for triggers",
         ignore_mods="Whether to ignore mods for this responder"
     )
     @discord.app_commands.default_permissions(manage_messages=True)
     async def addresponder(
         self, 
         ctx: discord.Interaction,
-        position: Literal["Starts with", "Ends with", "Contains", "RegEx"],
-        ignore_mods: Literal["True", "False"] = "True"
+        trigger: Literal["Starts with", "Ends with", "Contains", "RegEx"],
+        ignore_mods: Literal["True", "False"]
     ) -> None:
         """
         autoresponders_add_help
@@ -228,7 +228,7 @@ class AutoResponderPlugin(AutoModPluginBlueprint):
         -auto-responders position:Starts with
         -auto-responders position:RegEx
         """
-        position = position.replace(" ", "").lower()
+        position = trigger.replace(" ", "").lower()
         ignore_mods = ignore_mods.lower()
         async def callback(
             i: discord.Interaction
