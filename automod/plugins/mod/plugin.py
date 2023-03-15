@@ -175,7 +175,7 @@ class ModerationPlugin(WarnPlugin):
 
         try:
             func = getattr(ctx.guild, ACTIONS[action]["action"])
-            if action.lower() != "kick":
+            if action.lower() == "kick":
                 await func(user=user, reason=reason)
             else:
                 await func(user=user, reason=reason, delete_message_days=_.get("delete_message_days", 0))
