@@ -363,7 +363,7 @@ class EmbedBuilderModal(TextModalBase):
 
 
 class ResponseCreateModal(TextModalBase):
-    def __init__(self, bot, title: str, position: str,callback: Callable) -> None:
+    def __init__(self, bot, title: str, position: str, callback: Callable) -> None:
         super().__init__(bot, title, callback)
         self._placeholders = {
             "startswith": "Triggers for the response, seperated by commas (checks beginning of a message)",
