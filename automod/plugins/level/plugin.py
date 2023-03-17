@@ -87,24 +87,13 @@ class LevelPlugin(AutoModPluginBlueprint):
     def lb_pos(self, i: int,user: Union[str,discord.Member]) -> str:
         i = (i+1)
         if i == 1:
-            return f"🏆 {user}"
+            return f"🏆 {user.mention}"
         elif i == 2:
-            return f"🥈 {user}"
+            return f"🥈 {user.mention}"
         elif i == 3:
-            return f"🥉 {user}"
+            return f"🥉 {user.mention}"
         else:
-            if len(str(i)) >= 2 and int(str(i)[-2]) == 1:
-                end = "th"
-            else:
-                if int(str(i)[-1]) == 1:
-                    end = "st"
-                elif int(str(i)[-1]) == 2:
-                    end = "nd"
-                elif int(str(i)[-1]) == 3:
-                    end = "rd"
-                else:
-                    end = "th"
-            return f"__{i}{end}__ {user}"
+            return f"**#{i}** {user.mention}"
 
 
     def has_premium(self, guild: discord.Guild) -> None:
@@ -556,22 +545,15 @@ class LevelPlugin(AutoModPluginBlueprint):
         )
 
         final_data = self.construct_leaderboard_data(ctx, data)
+        user_list = []
         for i, entry in enumerate(final_data):
             user = ctx.guild.get_member(int(entry.id.split("-")[-1]))
             if user == None: 
                 self.delete_entry(entry)
             else:
-                if (i+1) % 2 == 0: e.add_fields([e.blank_field(True, 10)])
-                e.add_field(
-                    name=f"{self.lb_pos(i, user)}",
-                    value="**• Level:** {} \n**• Total XP:** {} \n⠀"\
-                        .format(
-                            entry.lvl,
-                            entry.xp
-                        ),
-                    inline=True
-                )
+                user_list.append(f"{self.lb_pos(i, user)} \n{self.bot.emotes.get('EMPTY')} ``Level {entry.lvl} ({entry.xp} XP)``")
         
+        e.description = "\n\n".join(user_list)
         e.set_footer(
             text="Your rank: #{}".format(
                 data.index([x for x in data if int(x.id.split("-")[-1]) == ctx.user.id][0]) + 1

@@ -766,6 +766,58 @@ class ConfigPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_join_roles", _emote="WARN"), 2), ephemeral=True)
 
 
+    # welcome_message_command = discord.app_commands.Group(
+    #     name="welcome-message",
+    #     description="🚪 Configure a welcome message for new users",
+    #     default_permissions=discord.Permissions(manage_guild=True)
+    # )
+    # @welcome_message_command.command(
+    #     name="add",
+    #     description="🚪 Set a new welcome message"
+    # )
+    # @discord.app_commands.describe(
+    #     channel="Where to send the welcome message"
+    # )
+    # @discord.app_commands.default_permissions(manage_roles=True)
+    # async def add_welcome_message(self, ctx: discord.Interaction, channel: discord.TextChannel) -> None:
+    #     """
+    #     welcome_message_add_help
+    #     examples:
+    #     -welcome_message add
+    #     """
+    #     view = RoleSelect(1, 1, "join_role_add")
+    #     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_add"), 3), view=view, ephemeral=True)
+
+
+    # @welcome_message_command.command(
+    #     name="remove",
+    #     description="🚪 Removes the welcome message"
+    # )
+    # @discord.app_commands.default_permissions(manage_roles=True)
+    # async def remove_welcome_message(self, ctx: discord.Interaction) -> None:
+    #     """
+    #     welcome_message_remove_help
+    #     examples:
+    #     -welcome_message remove
+    #     """
+    #     view = RoleSelect(1, 1, "join_role_add")
+    #     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_add"), 3), view=view, ephemeral=True)
+
+
+    # @welcome_message_command.command(
+    #     name="show",
+    #     description="🚪 Shows the current welcome message"
+    # )
+    # @discord.app_commands.default_permissions(manage_roles=True)
+    # async def show_welcome_message(self, ctx: discord.Interaction) -> None:
+    #     """
+    #     welcome_message_show_help
+    #     examples:
+    #     -welcome_message show
+    #     """
+    #     view = RoleSelect(1, 1, "join_role_add")
+    #     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_add"), 3), view=view, ephemeral=True)
+
 
     @discord.app_commands.command(
         name="default-reason",
