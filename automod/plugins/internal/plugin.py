@@ -330,7 +330,7 @@ class InternalPlugin(AutoModPluginBlueprint):
             if not self.db.configs.exists(guild.id):
                 self.db.configs.insert(GuildConfig(guild, self.config.default_prefix))
             
-            entry = self.find_in_audit_log(guild, AuditLogAction.bot_add, lambda x: x.target.id == self.bot.user.id)
+            entry = await self.find_in_audit_log(guild, AuditLogAction.bot_add, lambda x: x.target.id == self.bot.user.id)
             if entry != None:
                 mod = guild.get_member(entry.user.id)
                 if mod != None:
