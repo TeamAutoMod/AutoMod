@@ -294,7 +294,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
     async def on_member_join(self, user: discord.Member) -> None:
         if user.guild == None: return
 
-        config = self.db.configs.get("welcome")
+        config = self.db.configs.get(user.guild.id, "welcome")
         if config["enabled"] == True:
             channel = user.guild.get_channel(int(config["channel"]))
             if channel != None:
