@@ -319,7 +319,7 @@ class UtilityPlugin(AutoModPluginBlueprint):
         for p in plugins:
             cmds = self.get_plugin_commands(ctx, self.bot.get_plugin(p))
             e.add_field(
-                name=f"❯ **{ACTUAL_PLUGIN_NAMES[p]}**",
+                name=f"{ACTUAL_PLUGIN_NAMES[p]}",
                 value=", ".join([f"``{x.qualified_name}``" for x in cmds]),
                 inline=False
             )
