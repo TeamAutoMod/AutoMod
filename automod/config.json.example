@@ -21,6 +21,7 @@
 
     "support_invite": "https://discord.gg/S9BEBux",
     "web_url_base": "http://localhost:3000",
+    "blank_icon": "https://cdn.discordapp.com/attachments/874097258889629716/1087114262893297694/transparent_logo.png",
 
     "mongo_url": "mongodb+srv://<user>:<password>@XXX.XXX.mongodb.net/main?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",
     "db_name": "main",

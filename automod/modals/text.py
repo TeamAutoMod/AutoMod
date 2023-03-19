@@ -446,3 +446,28 @@ class ResponseEditModal(TextModalBase):
             required=False,
             max_length=len(self._vars_text)
         ))
+
+
+class WelcomeMessageModal(TextModalBase):
+    def __init__(self, bot, title: str, current_message: str, callback: Callable) -> None:
+        super().__init__(bot, title, callback)
+        self._vars_text = "{user}  ━ The mention of the user, e.g. @paul \n{username}  ━ The name of the user, e.g. paul \n{avatar}  ━ The avatar URL of the user\n{server}  ━ The server name \n{user_count}  ━ New user count"
+        
+        self.add_item(discord.ui.TextInput(
+            custom_id="message",
+            label="Message",
+            style=discord.TextStyle.short,
+            placeholder="Message sent when users join",
+            default=current_message if len(current_message) > 0 else None,
+            required=True,
+            max_length=2000
+        ))
+        self.add_item(discord.ui.TextInput(
+            custom_id="vars",
+            label="Variable Reference",
+            style=discord.TextStyle.long,
+            placeholder="Putting something here won't have any effects. This field is just to show the available variables",
+            default=self._vars_text,
+            required=False,
+            max_length=len(self._vars_text)
+        ))

@@ -285,19 +285,19 @@ class CasesPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "❯ __User__",
+                "name": "User",
                 "value": f"<@{data.user_id}> ({data.user_id})"
             },
             {
-                "name": "❯ __Moderator__",
+                "name": "Moderator",
                 "value": f"<@{data.mod_id}> ({data.mod_id})"
             },
             {
-                "name": "❯ __Timestamp__",
+                "name": "Timestamp",
                 "value": f"<t:{round(data.timestamp.timestamp())}>"
             },
             {
-                "name": "❯ __Reason__",
+                "name": "Reason",
                 "value": f"{data.reason}"
             },
         ])
@@ -305,14 +305,14 @@ class CasesPlugin(AutoModPluginBlueprint):
         if hasattr(data, "warns_added"):
             if int(data.warns_added) > 0: 
                 e.add_field(
-                    name=f"❯ __Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}__",
+                    name=f"Warns {'removed' if data.type.lower() == 'unwarn' else 'added'}",
                     value=f"{data.warns_added}"
                 )
         
         if hasattr(data, "until"):
             if data.until != "": 
                 e.add_field(
-                    name="❯ __Until__",
+                    name="Until",
                     value=f"{data.until}"
                 )
         await ctx.response.send_message(embed=e)
@@ -348,7 +348,7 @@ class CasesPlugin(AutoModPluginBlueprint):
         no, yes = "``NO``", self.bot.emotes.get("YES")
         e.add_fields([
             {
-                "name": "❯ __Status__",
+                "name": "Status",
                 "value": "**• Banned:** {}{} \n**• Muted:** {} \n**• Muted until:** {}"\
                 .format(
                     yes if ban_data != None else no,
@@ -358,7 +358,7 @@ class CasesPlugin(AutoModPluginBlueprint):
                 )
             },
             {
-                "name": "❯ __Warnings__",
+                "name": "Warnings",
                 "value": "**• Warns:** {}"\
                 .format(
                     0 if warns == None else warns

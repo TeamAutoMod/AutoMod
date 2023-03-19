@@ -30,6 +30,11 @@ app.get("/invite", (_, res) => {
 })
 
 
+app.get("/server", (_, res) => {
+    res.redirect(process.env.SERVER_INVITE)
+})
+
+
 app.get("/privacy", (_, res) => {
     res.sendFile(
         path.join(__dirname + "/pages/privacy.html")

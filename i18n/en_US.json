@@ -206,6 +206,10 @@
     "alr_join_role": "{emote} This role is already set as a join role",
     "no_join_roles": "{emote} This server doesn't have any join roles",
 
+    "no_welcome_message": "{emote} This server doesn't have a welcome message yet",
+    "added_welcome_message": "{emote} Welcome message has been added",
+    "removed_welcome_message": "{emote} Welcome message has been removed",
+
     "prefix_too_long": "{emote} Prefix is too long (>20)",
     "prefix_updated": "{emote} Updated prefix to **{prefix}**",
 

@@ -184,6 +184,7 @@ class ShardedBotInstance(commands.AutoShardedBot):
                             guild_count=len(self.guilds)
                         )
                     )
+                    # status=discord.Status.do_not_disturb
                 )
 
         if not self.ready:

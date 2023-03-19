@@ -11,7 +11,7 @@ import asyncio
 from .. import AutoModPluginBlueprint, ShardedBotInstance
 from ...types import Embed, Duration, E
 from ...views import SetupView, RoleChannelSelect, RoleSelect, ConfigView
-from ...modals import DefaultReasonModal
+from ...modals import DefaultReasonModal, WelcomeMessageModal
 
 
 
@@ -250,7 +250,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "❯ __Roles__",
+                "name": "Roles",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
@@ -262,7 +262,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "❯ __Channels__",
+                "name": "Channels",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
@@ -274,7 +274,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "❯ __Ignored__",
+                "name": "Ignored",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in ignored if x != None
@@ -288,6 +288,29 @@ class ConfigPlugin(AutoModPluginBlueprint):
         ])
 
         await i.response.edit_message(embed=e)
+
+
+    @AutoModPluginBlueprint.listener()
+    async def on_member_join(self, user: discord.Member) -> None:
+        if user.guild == None: return
+
+        config = self.db.configs.get("welcome")
+        if config["enabled"] == True:
+            channel = user.guild.get_channel(int(config["channel"]))
+            if channel != None:
+                try:
+                    message = config["message"]
+                    for k, v in {
+                        "{user}": f"<@{user.id}>",
+                        "{username}": f"{user.display_name}",
+                        "{avatar}": f"{user.avatar.url if user.avatar != None else user.display_avatar.url}",
+                        "{server}": f"{user.guild.name}",
+                        "{user_count}": f"{len(user.guild.members)}"
+                    }.items():
+                        message = message.replace(k, v)
+                    await channel.send(message)
+                except Exception:
+                    pass
 
 
     @discord.app_commands.command(
@@ -319,7 +342,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": f"❯ __General__",
+                "name": f"General",
                 "value": "**• Prefix:** {} \n**• Premium:** {} \n**• Filters:** {} \n**• Regexes:** {} \n**• Custom Commands:** {} \n**• Auto Responders:** {} \n**• Reaction Roles:** {} \n**• Join Roles:** {}"\
                 .format(
                     "/",
@@ -334,7 +357,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"❯ __Logging__",
+                "name": f"Logging",
                 "value": "**• Mod Log:** {} \n**• Automod Log:** {} \n**• Message Log:** {}\n**• Server Log:** {}\n**• Join Log:** {} \n**• Member Log:** {} \n**• Voice Log:** {} \n**• Report Log:** {}"\
                 .format(
                     no if config.mod_log == "" else f"<#{config.mod_log}>",
@@ -350,7 +373,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": f"❯ __Automoderator__",
+                "name": f"Automoderator",
                 "value": "**• Mentions Filter:** {} \n**• Length Filter:** {} \n**• Line Filter:** {} \n**• Emotes Filter:** {} \n**• Repetition Filter:** {} \n**• Links Filter:** {} \n**• Invites Filter:** {} \n**• Attachment Filter:** {} \n**• Zalgo Filter:** {} \n**• Caps Filter:** {} \n**• Spam Filter:** {}"\
                 .format(
                     no if not hasattr(rules, "mentions") else f"{rules.mentions.threshold} Mentions",
@@ -368,7 +391,7 @@ class ConfigPlugin(AutoModPluginBlueprint):
                 "inline": True
             },
             {
-                "name": f"❯ __Punishments__",
+                "name": f"Punishments",
                 "value": "\n".join([
                     f"**• {x} Warn{'' if int(x) == 1 else 's'}:** {y.capitalize() if len(y.split(' ')) == 1 else y.split(' ')[0].capitalize() + ' ' + y.split(' ')[-2] + y.split(' ')[-1][0]}" \
                     for x, y in dict(
@@ -382,29 +405,28 @@ class ConfigPlugin(AutoModPluginBlueprint):
             },
             e.dash_field(dash_length),
             {
-                "name": f"❯ __Ignored Roles (automod)__",
+                "name": f"Ignored Roles (automod)",
                 "value": f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_roles_automod) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_automod])),
                 "inline": True
             },
             e.blank_field(inline=True),
             {
-                "name": f"❯ __Ignored Channels (automod)__",
+                "name": f"Ignored Channels (automod)",
                 "value":  f"None, use </ignore-automod add:{c.get('ignore-automod')}> for configuration" if len(config.ignored_channels_automod) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_automod])),
                 "inline": True
             },
             {
-                "name": f"❯ __Ignored Roles (logging)__",
+                "name": f"Ignored Roles (logging)",
                 "value":  f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_roles_log) < 1 else "{}".format(", ".join([f"<@&{x}>" for x in config.ignored_roles_log])),
                 "inline": True
             },
             e.blank_field(inline=True),
             {
-                "name": f"❯ __Ignored Channels (logging)__",
+                "name": f"Ignored Channels (logging)",
                 "value": f"None, use </ignore-logs add:{c.get('ignore-logs')}> for configuration" if len(config.ignored_channels_log) < 1 else "{}".format(", ".join([f"<#{x}>" for x in config.ignored_channels_log])),
                 "inline": True
             }
         ])
-        e.credits()
 
         view = ConfigView(self.bot)
         await ctx.followup.send(embed=e, view=view)
@@ -666,11 +688,11 @@ class ConfigPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "❯ __Roles__",
+                    "name": "Roles",
                     "value": "{}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                 },
                 {
-                    "name": "❯ __Channels__",
+                    "name": "Channels",
                     "value": "{}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                 }
             ])
@@ -766,57 +788,105 @@ class ConfigPlugin(AutoModPluginBlueprint):
             await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_join_roles", _emote="WARN"), 2), ephemeral=True)
 
 
-    # welcome_message_command = discord.app_commands.Group(
-    #     name="welcome-message",
-    #     description="🚪 Configure a welcome message for new users",
-    #     default_permissions=discord.Permissions(manage_guild=True)
-    # )
-    # @welcome_message_command.command(
-    #     name="add",
-    #     description="🚪 Set a new welcome message"
-    # )
-    # @discord.app_commands.describe(
-    #     channel="Where to send the welcome message"
-    # )
-    # @discord.app_commands.default_permissions(manage_roles=True)
-    # async def add_welcome_message(self, ctx: discord.Interaction, channel: discord.TextChannel) -> None:
-    #     """
-    #     welcome_message_add_help
-    #     examples:
-    #     -welcome_message add
-    #     """
-    #     view = RoleSelect(1, 1, "join_role_add")
-    #     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_add"), 3), view=view, ephemeral=True)
+    welcome_message_command = discord.app_commands.Group(
+        name="welcome-message",
+        description="🚪 Configure a welcome message for new users",
+        default_permissions=discord.Permissions(manage_guild=True)
+    )
+    @welcome_message_command.command(
+        name="add",
+        description="🚪 Set a new welcome message"
+    )
+    @discord.app_commands.describe(
+        channel="Where to send the welcome message"
+    )
+    @discord.app_commands.default_permissions(manage_roles=True)
+    async def add_welcome_message(self, ctx: discord.Interaction, channel: discord.TextChannel) -> None:
+        """
+        welcome_message_add_help
+        examples:
+        -welcome_message add
+        """
+        current = self.db.configs.get(ctx.guild.id, "welcome")
+
+        async def callback(
+            i: discord.Interaction
+        ) -> None:
+            message, = self.bot.extract_args(i, "message")
+            
+            current.update({
+                "enabled": True,
+                "channel": f"{channel.id}",
+                "message": message
+            })
+            self.db.configs.update(i.guild.id, "default_reason", current)
+            await i.response.send_message(embed=E(self.locale.t(i.guild, "added_welcome_message", _emote="YES"), 1))
+
+        modal = WelcomeMessageModal(
+            self.bot,
+            "Welcome Message",
+            current["message"],
+            callback
+        )
+        await ctx.response.send_modal(modal)
 
 
-    # @welcome_message_command.command(
-    #     name="remove",
-    #     description="🚪 Removes the welcome message"
-    # )
-    # @discord.app_commands.default_permissions(manage_roles=True)
-    # async def remove_welcome_message(self, ctx: discord.Interaction) -> None:
-    #     """
-    #     welcome_message_remove_help
-    #     examples:
-    #     -welcome_message remove
-    #     """
-    #     view = RoleSelect(1, 1, "join_role_add")
-    #     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_add"), 3), view=view, ephemeral=True)
+    @welcome_message_command.command(
+        name="remove",
+        description="🚪 Removes the welcome message"
+    )
+    @discord.app_commands.default_permissions(manage_roles=True)
+    async def remove_welcome_message(self, ctx: discord.Interaction) -> None:
+        """
+        welcome_message_remove_help
+        examples:
+        -welcome_message remove
+        """
+        config = self.db.configs.get(ctx.guild.id, "welcome")
+        if config["enabled"] == False:
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_welcome_message", _emote="WARN"), 2), ephemeral=True)
+        else:
+            config.update({
+                "enabled": False,
+                "channel": "",
+                "message": ""
+            })
+            self.db.configs.update(ctx.guild.id, "welcome", config)
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "removed_welcome_message", _emote="YES"), 1))
 
 
-    # @welcome_message_command.command(
-    #     name="show",
-    #     description="🚪 Shows the current welcome message"
-    # )
-    # @discord.app_commands.default_permissions(manage_roles=True)
-    # async def show_welcome_message(self, ctx: discord.Interaction) -> None:
-    #     """
-    #     welcome_message_show_help
-    #     examples:
-    #     -welcome_message show
-    #     """
-    #     view = RoleSelect(1, 1, "join_role_add")
-    #     await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "select_role_add"), 3), view=view, ephemeral=True)
+    @welcome_message_command.command(
+        name="show",
+        description="🚪 Shows the current welcome message"
+    )
+    @discord.app_commands.default_permissions(manage_roles=True)
+    async def show_welcome_message(self, ctx: discord.Interaction) -> None:
+        """
+        welcome_message_show_help
+        examples:
+        -welcome_message show
+        """
+        config = self.db.configs.get(ctx.guild.id, "welcome")
+        if config["enabled"] == False:
+            await ctx.response.send_message(embed=E(self.locale.t(ctx.guild, "no_welcome_message", _emote="WARN"), 2), ephemeral=True)
+        else:
+            e = Embed(
+                ctx,
+                title="Welcome Message"
+            )
+            e.add_fields([
+                {
+                    "name": "❯ **Channel**",
+                    "value": f"<#{config['channel']}>",
+                    "inline": False
+                },
+                {
+                    "name": "❯ **Message**",
+                    "value": f"```\n{config['message']}\n```",
+                    "inline": False
+                }
+            ])
+            await ctx.response.send_message(embed=e)
 
 
     @discord.app_commands.command(

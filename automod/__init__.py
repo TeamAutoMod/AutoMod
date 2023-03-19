@@ -59,7 +59,7 @@ class _Formatter(logging.Formatter):
         return res
     
 
-logging.getLogger("discord").propagate = False
+#logging.getLogger("discord").propagate = False
 for aiohttp_logger in [
     "access", "client", "internal", "server", "web", "websocket"
 ]: logging.getLogger(f"aiohttp.{aiohttp_logger}").propagate = False

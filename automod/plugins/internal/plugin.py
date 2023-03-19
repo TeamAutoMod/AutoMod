@@ -329,6 +329,36 @@ class InternalPlugin(AutoModPluginBlueprint):
         finally:
             if not self.db.configs.exists(guild.id):
                 self.db.configs.insert(GuildConfig(guild, self.config.default_prefix))
+            
+            entry = self.find_in_audit_log(guild, AuditLogAction.bot_add, lambda x: x.target.id == self.bot.user.id)
+            if entry != None:
+                mod = guild.get_member(entry.user.id)
+                if mod != None:
+                    try:
+                        e = Embed(None)
+                        e.set_author(name=f"Thanks for adding me to {guild.name}", icon_url=guild.icon.url)
+                        e.set_thumbnail(url=self.bot.config.blank_icon) # hard coded, but whatever
+                        e.add_fields([
+                            {
+                                "name": "Setup",
+                                "value": "For basic setup help, you should use the ``/setup`` command. \nIf you want to view your current server config, use ``/config`` and if you just want to modify the automoderator, use ``/automod enable``",
+                                "inline": False
+                            },
+                            {
+                                "name": "Support",
+                                "value": f"If you need any additional help, feel free to join the [support server]({self.bot.config.support_invite}) for all your questions. \nIf you want to get an overview of all commands, use ``/help``.",
+                                "inline": False
+                            },
+                            {
+                                "name": "Vote",
+                                "value": f"In case you like the bot and you want to support it for free, then vote for us on [Top.gg](https://top.gg/bot/{self.bot.user.id}) and leave a positive review!",
+                                "inline": False
+                            }
+                        ])
+                        e.credits()
+                        await mod.send(embed=e)
+                    except Exception:
+                        pass
 
 
     @AutoModPluginBlueprint.listener()
