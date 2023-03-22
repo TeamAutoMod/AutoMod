@@ -5,7 +5,7 @@ from discord.ui import View
 
 from typing import Callable, Dict, Any, List
 
-from .buttons import DeleteBtn, ActionedBtn, DeleteHighlightBtn, LinkBtn
+from .buttons import DeleteBtn, ActionedBtn, LinkBtn
 
 
 
@@ -54,4 +54,3 @@ class HighlightDMView(View):
             **kwargs
         )
         self.add_item(LinkBtn(_url=f"{msg.jump_url}", _label="View Message"))
-        self.add_item(DeleteHighlightBtn(bot, lambda x: x == user_id, delete_func, func_args))
