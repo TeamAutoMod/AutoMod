@@ -133,6 +133,7 @@ dmypy.json
 /automod/plugins/_processor/config.py
 /frontend
 /js
+/website
 /configs
 
 # Docker

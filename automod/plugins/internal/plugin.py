@@ -715,10 +715,10 @@ class InternalPlugin(AutoModPluginBlueprint):
         if hasattr(b, "topic") and hasattr(b, "topic"):
             if b.topic != a.topic:
                 new = "Topic (``{}`` → ``{}``)".format(
-                    a.topic, 
-                    b.topic
+                    a.topic if a.topic != None else "None", 
+                    b.topic if b.topic != None else "None"
                 )
-                if len(change) < 1: change += new
+                if len(change) < 1: change = new
                 else: change += f" & {new}"
         
         if len(change) < 1: return
