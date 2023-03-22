@@ -395,9 +395,9 @@ class AutomodPlugin(AutoModPluginBlueprint):
         for i in words:
             i = i.replace("*", "", (i.count("*") - 1)) # remove multiple wildcards
             if i.endswith("*"):
-                wildcards.append(i.replace("*", ".+"))
+                wildcards.append(re.escape(i.replace("*", ".+")))
             else:
-                normal.append(i)
+                normal.append(re.escape(i))
 
         try:
             return re.compile(r"|".join([*normal, *wildcards]), re.IGNORECASE)
@@ -930,7 +930,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
         )
         e.add_fields([
             {
-                "name": "❯ __Roles__",
+                "name": "Roles",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, discord.Role)
@@ -942,7 +942,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "❯ __Channels__",
+                "name": "Channels",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in added if isinstance(x, (discord.TextChannel, discord.VoiceChannel, discord.ForumChannel))
@@ -954,7 +954,7 @@ class AutomodPlugin(AutoModPluginBlueprint):
                 ) > 0 else f"{self.bot.emotes.get('NO')}"
             },
             {
-                "name": "❯ __Ignored__",
+                "name": "Ignored",
                 "value": "{}".format(", ".join(
                     [
                         x.mention for x in ignored if x != None
@@ -1412,11 +1412,11 @@ class AutomodPlugin(AutoModPluginBlueprint):
             )
             e.add_fields([
                 {
-                    "name": "❯ __Roles__",
+                    "name": "Roles",
                     "value": "{}".format(", ".join([f"<@&{x}>" for x in roles])) if len(roles) > 0 else "> None"
                 },
                 {
-                    "name": "❯ __Channels__",
+                    "name": "Channels",
                     "value": "{}".format(", ".join([f"<#{x}>" for x in channels])) if len(channels) > 0 else "> None"
                 }
             ])
